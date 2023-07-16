@@ -1,0 +1,17 @@
+name: fakeplayer
+version: '${project.version}'
+main: io.github.hello09x.fakeplayer.Main
+api-version: '1.20'
+
+commands:
+  fakeplayer:
+    description: '假人相关命令'
+    usage: §2/fp ? for more info
+    aliases:
+      - fp
+
+permissions:
+  fakeplayer:
+    default: true
+  fakeplayer.admin:
+    default: op
