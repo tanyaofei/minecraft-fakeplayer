@@ -22,9 +22,9 @@ public final class Main extends JavaPlugin {
         }
 
         {
-            getServer().getPluginManager().registerEvents(PlayerQuitListener.instance, Main.getInstance());
+//            getServer().getPluginManager().registerEvents(PlayerQuitListener.instance, Main.getInstance());
             getServer().getPluginManager().registerEvents(PlayerDeathListener.instance, Main.getInstance());
-            getServer().getPluginManager().registerEvents(PlayerTeleportListener.instance, Main.getInstance());
+//            getServer().getPluginManager().registerEvents(PlayerTeleportListener.instance, Main.getInstance());
         }
 
     }

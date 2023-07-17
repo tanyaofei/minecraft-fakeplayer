@@ -1,8 +1,15 @@
 package io.github.hello09x.fakeplayer.manager;
 
+import com.mojang.authlib.GameProfile;
+import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import properties.FakeplayerProperties;
@@ -21,8 +28,8 @@ public class FakePlayerManager {
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
     public synchronized void spawnFakePlayer(
-            @NotNull Player creator,
-            @NotNull Location location
+            @NotNull CommandSender creator,
+            @NotNull Location at
     ) {
         var existed = getFakePlayers(creator).size();
         if (!creator.isOp() && existed >= properties.getMaximum()) {
@@ -36,22 +43,26 @@ public class FakePlayerManager {
             name = name.substring(0, (16 - suffix.length()));
         }
         name = name + suffix;
-        FakePlayerSpawner.spawn(
+
+        var player = new FakePlayer(
+                ((CraftServer) Bukkit.getServer()).getServer(),
+                ((CraftWorld) at.getWorld()).getHandle(),
                 UUID.randomUUID(),
                 name,
-                creator,
-                location
+                at
         );
+        var p = player.prepare();
+        p.setMetadata(FakePlayerSpawner.META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
     }
 
-    public @Nullable Player getFakePlayer(@NotNull Player creator, @NotNull String name) {
+    public @Nullable Player getFakePlayer(@NotNull CommandSender creator, @NotNull String name) {
         var fake = getFakePlayer(name);
         if (fake == null) {
             return null;
         }
 
         var c = getCreator(fake);
-        if (c == null || !c.equals(creator.getUniqueId())) {
+        if (c == null || !c.equals(creator.getName())) {
             return null;
         }
 
@@ -79,13 +90,13 @@ public class FakePlayerManager {
         return fakes.size();
     }
 
-    public @Nullable UUID getCreator(@NotNull Player fakePlayer) {
+    public @Nullable String getCreator(@NotNull Player fakePlayer) {
         var meta = fakePlayer.getMetadata(FakePlayerSpawner.META_KEY_CREATOR);
         if (meta.isEmpty()) {
             return null;
         }
 
-        return UUID.fromString(meta.get(0).asString());
+        return meta.get(0).asString();
     }
 
     public int removeFakePlayers() {
@@ -105,15 +116,15 @@ public class FakePlayerManager {
                 .collect(Collectors.toList());
     }
 
-    public @NotNull List<Player> getFakePlayers(@NotNull Player creator) {
-        var creatorUniqueId = creator.getUniqueId().toString();
+    public @NotNull List<Player> getFakePlayers(@NotNull CommandSender creator) {
+        var name = creator.getName();
         return Bukkit
                 .getServer()
                 .getOnlinePlayers()
                 .stream()
                 .filter(p -> p.getMetadata(FakePlayerSpawner.META_KEY_CREATOR)
                         .stream()
-                        .anyMatch(meta -> meta.asString().equals(creatorUniqueId)))
+                        .anyMatch(meta -> meta.asString().equals(name)))
                 .collect(Collectors.toList());
     }
 

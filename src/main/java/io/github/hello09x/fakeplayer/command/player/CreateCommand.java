@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.command.player;
 
 import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,14 +37,29 @@ public class CreateCommand extends ExecutableCommand {
             @NotNull String label,
             @NotNull String[] args
     ) {
-        if (!(sender instanceof Player p)) {
-            sender.sendMessage(text("你不是玩家...", RED));
-            return true;
+        if (sender instanceof Player p) {
+            manager.spawnFakePlayer(
+                    p,
+                    ((Player) sender).getLocation()
+            );
+        } else {
+            if (args.length != 3) {
+                return false;
+            }
+
+            double x, y, z;
+            try {
+                x = Double.parseDouble(args[0]);
+                y = Double.parseDouble(args[1]);
+                z = Double.parseDouble(args[2]);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+
+            var world = sender.getServer().getWorlds().get(0);
+            manager.spawnFakePlayer(sender, new Location(world, x, y, z));
         }
-        manager.spawnFakePlayer(
-                p,
-                ((Player) sender).getLocation()
-        );
+
         sender.sendMessage(text("创建成功", GRAY));
         return true;
     }

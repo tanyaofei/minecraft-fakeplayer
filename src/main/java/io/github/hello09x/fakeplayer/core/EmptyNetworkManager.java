@@ -1,14 +1,30 @@
 package io.github.hello09x.fakeplayer.core;
 
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.protocol.EnumProtocolDirection;
+import net.minecraft.network.Connection;
+import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.PacketFlow;
 
-public class EmptyNetworkManager extends NetworkManager {
+import java.io.IOException;
 
-    public EmptyNetworkManager(EnumProtocolDirection enumprotocoldirection) {
-        super(enumprotocoldirection);
-        this.m = new EmptyChannel(null);
-        this.n = this.m.remoteAddress();
-        this.preparing = false;
+public class EmptyNetworkManager extends Connection {
+    public EmptyNetworkManager(PacketFlow flag) throws IOException {
+        super(flag);
+        this.channel = new EmptyChannel(null);
+        this.address = this.channel.remoteAddress();
+    }
+
+    @Override
+    public boolean isConnected() {
+        return true;
+    }
+
+    @Override
+    public void send(Packet packet, PacketSendListener genericfuturelistener) {
+    }
+
+    @Override
+    public void handleDisconnection() {
+        super.handleDisconnection();
     }
 }
