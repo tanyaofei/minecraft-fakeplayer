@@ -46,11 +46,6 @@ public class TpHereCommand extends AbstractTeleportCommand {
             return true;
         }
 
-        if (!fake.getWorld().equals(creator.getWorld())) {
-            sender.sendMessage(text("暂不支持跨世界传送...", RED));
-            return true;
-        }
-
         teleport(fake, creator);
         return true;
     }

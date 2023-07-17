@@ -2,12 +2,16 @@ package io.github.hello09x.fakeplayer.entity;
 
 import com.mojang.authlib.GameProfile;
 import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyNetworkManager;
+import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import lombok.Getter;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +19,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
@@ -22,31 +27,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
+
 public class FakePlayer extends ServerPlayer {
 
-    private final UUID uniqueId;
+    public final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
 
-    private final String name;
-
-    private final Location spawnLocation;
+    @Getter
+    private @NotNull
+    final Location spawnLocation;
 
     public FakePlayer(
-            MinecraftServer server,
-            ServerLevel world,
-            UUID uniqueId,
-            String name,
-            Location at
+            @NotNull MinecraftServer server,
+            @NotNull ServerLevel world,
+            @NotNull UUID uniqueId,
+            @NotNull String name,
+            @NotNull Location at
     ) {
         super(server, world, new GameProfile(uniqueId, name));
-        this.uniqueId = uniqueId;
-        this.name = name;
         this.spawnLocation = at;
 
         try {
@@ -56,9 +63,25 @@ public class FakePlayer extends ServerPlayer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        if (advancements != null) {
+            try {
+                advancements.set(
+                        this,
+                        new EmptyAdvancements(
+                                server.getFixerUpper(),
+                                server.getPlayerList(),
+                                server.getAdvancements(),
+                                Main.getInstance().getDataFolder().getParentFile().toPath(),
+                                this
+                        ));
+            } catch (IllegalAccessException ignored) {
+            }
+        }
+
     }
 
-    private static boolean isChunkLoaded(Location at) {
+    private static boolean isChunkLoaded(@NotNull Location at) {
         if (at.getWorld() == null) {
             return false;
         }
@@ -67,17 +90,21 @@ public class FakePlayer extends ServerPlayer {
         return at.getWorld().isChunkLoaded(x, z);
     }
 
-    public Player prepare() {
-        addToPlayerList();
-        spawn();
+    public @NotNull Player spawn() {
+        this.boardcast();
+        this.addEntityToWorld();
 
         var p = Objects.requireNonNull(Bukkit.getPlayer(this.uuid));
         p.setSleepingIgnored(true);
         p.setPersistent(false);
+        p.setInvulnerable(true);
 
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!p.isOnline()) {
+                    cancel();
+                }
                 doTick();
                 tickCount++;
             }
@@ -86,9 +113,9 @@ public class FakePlayer extends ServerPlayer {
     }
 
     @SuppressWarnings("all")
-    public void addToPlayerList() {
-        var packet = new ServerboundClientInformationPacket(
-                "EN",
+    public void boardcast() {
+        this.updateOptions(new ServerboundClientInformationPacket(
+                "en_us",
                 10,
                 ChatVisiblity.FULL,
                 false,
@@ -96,14 +123,14 @@ public class FakePlayer extends ServerPlayer {
                 HumanoidArm.LEFT,
                 false,
                 true
-        );
-        this.updateOptions(packet);
+        ));
 
         var entity = this.getBukkitEntity();
         var handle = (ServerPlayer) ((CraftEntity) entity).getHandle();
         if (handle.level() == null) {
             return;
         }
+
         var playerList = handle.level().players();
         if (!playerList.contains(handle)) {
             ((List) playerList).add(handle);
@@ -132,15 +159,15 @@ public class FakePlayer extends ServerPlayer {
 
     }
 
-    public void spawn() {
+    public void addEntityToWorld() {
         var entity = this.getBukkitEntity();
         var handle = (ServerPlayer) ((CraftEntity) entity).getHandle();
 
         if (!isChunkLoaded(spawnLocation)) {
             spawnLocation.getChunk().load();
         }
-        handle.level().addFreshEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
 
+        handle.level().addFreshEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
         ((CraftServer) Bukkit.getServer()).getHandle().respawn(
                 this,
                 true,
@@ -149,6 +176,7 @@ public class FakePlayer extends ServerPlayer {
 
         // move directly
         getBukkitEntity().teleport(spawnLocation);
+        spawnLocation.getWorld().playSound(spawnLocation, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
 
 

@@ -7,6 +7,7 @@ import net.kyori.adventure.sound.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,18 +91,7 @@ public abstract class AbstractTeleportCommand extends ExecutableCommand {
     }
 
     protected void teleport(@NotNull Player from, @NotNull Player to) {
-        from.teleport(to.getLocation());
-        from.playSound(Sound.sound(
-                ENTITY_ENDERMAN_TELEPORT.key(),
-                Sound.Source.PLAYER,
-                1.0F,
-                1.0F
-        ));
-        to.playSound(Sound.sound(
-                ENTITY_ENDERMAN_TELEPORT.key(),
-                Sound.Source.PLAYER,
-                1.0F,
-                1.0F
-        ));
+        from.teleport(to.getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
+        to.getLocation().getWorld().playSound(to.getLocation(), ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
 }

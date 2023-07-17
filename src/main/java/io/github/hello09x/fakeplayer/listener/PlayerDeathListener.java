@@ -19,6 +19,7 @@ public class PlayerDeathListener implements Listener {
             return;
         }
 
+        // 假人不会复活, 死掉了就踢掉
         player.kick();
     }
 

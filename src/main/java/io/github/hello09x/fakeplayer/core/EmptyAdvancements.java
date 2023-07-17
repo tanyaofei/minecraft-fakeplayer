@@ -1,0 +1,67 @@
+package io.github.hello09x.fakeplayer.core;
+
+import com.mojang.datafixers.DataFixer;
+import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Map;
+
+public class EmptyAdvancements extends PlayerAdvancements {
+
+    public final static Field PROGRESS = ReflectionUtils.getFirstFieldByType(PlayerAdvancements.class, Map.class, false);
+
+    public EmptyAdvancements(
+            DataFixer datafixer,
+            PlayerList playerlist,
+            ServerAdvancementManager manager,
+            Path path,
+            ServerPlayer player
+    ) {
+        super(datafixer, playerlist, manager, path, player);
+        this.save();
+    }
+
+    @Override
+    public boolean award(Advancement advancement, String s) {
+        return false;
+    }
+
+    @Override
+    public void flushDirty(ServerPlayer player) {
+    }
+
+    @Override
+    public AdvancementProgress getOrStartProgress(Advancement advancement) {
+        return new AdvancementProgress();
+    }
+
+    @Override
+    public boolean revoke(Advancement advancement, String s) {
+        return false;
+    }
+
+    @Override
+    public void save() {
+    }
+
+    @Override
+    public void setPlayer(ServerPlayer player) {
+    }
+
+    @Override
+    public void setSelectedTab(Advancement advancement) {
+    }
+
+    @Override
+    public void stopListening() {
+    }
+
+
+}

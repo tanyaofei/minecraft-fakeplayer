@@ -91,8 +91,7 @@ public class RemoveCommand extends ExecutableCommand {
         return fakes
                 .stream()
                 .map(Player::getName)
-                .filter(name -> args[0].isBlank()
-                        || name.toLowerCase().contains(args[0].toLowerCase()))
+                .filter(name -> args[0].isBlank() || name.toLowerCase().contains(args[0].toLowerCase()))
                 .toList();
     }
 }

@@ -12,6 +12,9 @@ commands:
 
 permissions:
   fakeplayer:
-    default: true
+    description: '假人基础权限'
+    default: op
+
   fakeplayer.admin:
+    description: '假人管理员权限'
     default: op
