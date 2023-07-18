@@ -55,7 +55,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     protected SocketAddress localAddress0() {
-        return new InetSocketAddress("10.10.10.10", 25565);
+        return new InetSocketAddress("127.0.0.1", 25565);
     }
 
     @Override

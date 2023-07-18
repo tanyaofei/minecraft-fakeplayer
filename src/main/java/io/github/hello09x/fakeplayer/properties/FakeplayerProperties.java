@@ -65,6 +65,11 @@ public class FakeplayerProperties extends AbstractProperties {
      */
     private List<String> destroyCommands;
 
+    /**
+     * 模拟登陆
+     */
+    private boolean simulateLogin;
+
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
@@ -80,6 +85,7 @@ public class FakeplayerProperties extends AbstractProperties {
         this.preparingCommands = file.getStringList("preparing-commands");
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
+        this.simulateLogin = file.getBoolean("simulate-login", true);
     }
 
     private static int maxIfZero(int value) {

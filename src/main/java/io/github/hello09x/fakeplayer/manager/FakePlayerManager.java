@@ -140,6 +140,9 @@ public class FakePlayerManager {
     public int removeFakePlayers(@NotNull CommandSender creator) {
         var fakers = getFakePlayers(creator);
         fakers.forEach(Player::kick);
+        synchronized (nameCounter) {
+            nameCounter.remove(creator.getName());
+        }
         return fakers.size();
     }
 
@@ -181,6 +184,9 @@ public class FakePlayerManager {
     public int removeFakePlayers() {
         var fakers = getFakePlayers();
         fakers.forEach(Player::kick);
+        synchronized (nameCounter) {
+            nameCounter.clear();
+        }
         return fakers.size();
     }
 
@@ -245,13 +251,17 @@ public class FakePlayerManager {
     }
 
     private @NotNull
-    synchronized String generateName(CommandSender creator) {
+    String generateName(CommandSender creator) {
         var base = properties.getNameTemplate();
         if (base.isBlank()) {
             base = creator.getName();
         }
 
-        var count = nameCounter.getOrDefault(creator.getName(), 0);
+        int count;
+        synchronized (nameCounter) {
+            count = nameCounter.getOrDefault(creator.getName(), 0);
+        }
+
         var suffix = "_" + (++count);
         nameCounter.put(creator.getName(), count);
 
