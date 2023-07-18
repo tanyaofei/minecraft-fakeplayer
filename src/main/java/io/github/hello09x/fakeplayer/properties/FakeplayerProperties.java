@@ -17,7 +17,7 @@ public class FakeplayerProperties extends AbstractProperties {
 
     public final static FakeplayerProperties instance = new FakeplayerProperties(
             Main.getInstance(),
-            "2"
+            "3"
     );
 
     /**
