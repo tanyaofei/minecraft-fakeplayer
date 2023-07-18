@@ -5,7 +5,6 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyNetworkManager;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.util.ReflectionUtils;
 import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
@@ -18,7 +17,6 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
-import org.apache.commons.lang3.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -209,7 +207,6 @@ public class FakePlayer extends ServerPlayer {
         super.baseTick();
         this.tickChunks();
         this.tickLookAt();
-        this.tickNonsense();
     }
 
     /**
@@ -225,28 +222,6 @@ public class FakePlayer extends ServerPlayer {
             return;
         }
         bukkitPlayer.lookAt(nearby.get(0), LookAnchor.EYES, LookAnchor.EYES);
-    }
-
-    /**
-     * 胡言乱语
-     */
-    public void tickNonsense() {
-        if (this.tickCount == 0 || (this.tickCount & (8192 - 1)) != 0) {
-            // 每 6 分钟
-            return;
-        }
-
-        if ((this.tickCount & 1) != 0) {
-            // 1/2 的几率
-            return;
-        }
-
-        var nonsense = FakeplayerProperties.instance.getNonsense();
-        if (nonsense.isEmpty()) {
-            return;
-        }
-
-        bukkitPlayer.chat(nonsense.get(RandomUtils.nextInt(0, nonsense.size())));
     }
 
     /**

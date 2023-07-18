@@ -17,14 +17,15 @@ permissions:
     children:
       - fakeplayer.spawn
       - fakeplayer.tp
+    default: op
 
   fakeplayer.spawn:
     description: '假人创建权限'
-    default: true
+    default: op
 
   fakeplayer.tp:
     description: '假人传送权限'
-    default: true
+    default: op
 
   fakeplayer.admin:
     description: '假人管理员权限'

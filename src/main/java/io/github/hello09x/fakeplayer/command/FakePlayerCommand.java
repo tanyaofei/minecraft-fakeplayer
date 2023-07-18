@@ -20,6 +20,7 @@ public class FakePlayerCommand extends ParentCommand {
         instance.register("tphere", TpHereCommand.instance);
         instance.register("tps", TpSwapCommand.instance);
         instance.register("reload", ReloadCommand.instance);
+        instance.register("list", ListCommand.instance);
     }
 
     protected FakePlayerCommand(@NotNull String description, @Nullable String permission) {

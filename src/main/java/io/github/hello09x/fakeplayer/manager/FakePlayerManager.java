@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.manager;
 
+import com.google.common.base.Throwables;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.text;
@@ -30,13 +32,20 @@ public class FakePlayerManager {
 
     public final static FakePlayerManager instance = new FakePlayerManager();
 
+    private final static Logger log = Main.getInstance().getLogger();
+
     private final static String META_KEY_CREATOR = "fakeplayer:creator";
 
     private final static String META_KEY_CREATOR_IP = "fakeplayer:creator-ip";
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
-    private volatile int count = 1;
+    /**
+     * 命名计数器
+     * key: 创建者名称
+     * value: 创建数
+     */
+    private final Map<String, Integer> nameCounter = new HashMap<>();
 
     private final SeedUUID idGenerator = new SeedUUID(String.valueOf(Bukkit.getServer().getWorlds().get(0).getSeed()));
 
@@ -90,14 +99,16 @@ public class FakePlayerManager {
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
                 ((CraftWorld) spawnAt.getWorld()).getHandle(),
-                generatePlayerId(),
-                generatePlayerName(creator),
+                generateId(),
+                generateName(creator),
                 spawnAt
         ).spawn(properties.getTickPeriod());
 
         faker.setMetadata(META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
         faker.setMetadata(META_KEY_CREATOR_IP, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
         faker.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
+
+        dispatchCommands(faker, properties.getPreparingCommands());
     }
 
     public @Nullable Player getFakePlayer(@NotNull CommandSender creator, @NotNull String name) {
@@ -221,7 +232,7 @@ public class FakePlayerManager {
                 .count();
     }
 
-    private @NotNull UUID generatePlayerId() {
+    private @NotNull UUID generateId() {
         int maxTries = 5;
         while (maxTries > 0) {
             var id = idGenerator.uuid();
@@ -234,14 +245,60 @@ public class FakePlayerManager {
     }
 
     private @NotNull
-    synchronized String generatePlayerName(CommandSender creator) {
-        var name = creator.getName();
-        var suffix = "_" + count++;
-        if (name.length() + suffix.length() > 16) {
-            name = name.substring(0, (16 - suffix.length()));
+    synchronized String generateName(CommandSender creator) {
+        var base = properties.getNameTemplate();
+        if (base.isBlank()) {
+            base = creator.getName();
+        }
+
+        var count = nameCounter.getOrDefault(creator.getName(), 0);
+        var suffix = "_" + (++count);
+        nameCounter.put(creator.getName(), count);
+
+        String name;
+        if (base.length() + suffix.length() > 16) {
+            name = base.substring(0, (16 - suffix.length()));
+        } else {
+            name = base;
         }
         name = name + suffix;
         return name;
+    }
+
+    public boolean dispatchCommands(@NotNull Player player, @NotNull List<String> commands) {
+        if (commands.isEmpty()) {
+            return true;
+        }
+
+        if (!isFakePlayer(player)) {
+            return false;
+        }
+
+        var server = Bukkit.getServer();
+        var sender = Bukkit.getConsoleSender();
+        for (var cmd : properties.getPreparingCommands()) {
+            cmd = cmd.trim();
+            if (cmd.startsWith("/")) {
+                cmd = cmd.substring(1);
+            }
+            if (cmd.length() > 1) {
+                cmd = cmd
+                        .replaceAll("%p", player.getName())
+                        .replaceAll("%u", player.getUniqueId().toString());
+            }
+
+            if (cmd.isBlank()) {
+                continue;
+            }
+
+            try {
+                server.dispatchCommand(sender, cmd);
+            } catch (Throwable e) {
+                log.warning(Throwables.getStackTraceAsString(e));
+            }
+        }
+
+        return true;
     }
 
 

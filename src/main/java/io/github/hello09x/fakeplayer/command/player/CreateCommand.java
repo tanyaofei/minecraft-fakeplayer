@@ -19,7 +19,7 @@ public class CreateCommand extends ExecutableCommand {
 
     public final static CreateCommand instance = new CreateCommand(
             "创建假人",
-            "/fp create [名称]",
+            "/fp create",
             "fakeplayer.spawn"
     );
 

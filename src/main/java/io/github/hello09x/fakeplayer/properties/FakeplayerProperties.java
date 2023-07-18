@@ -36,6 +36,11 @@ public class FakeplayerProperties extends AbstractProperties {
     private long tickPeriod;
 
     /**
+     * 命名模版
+     */
+    private String nameTemplate;
+
+    /**
      * 创建者玩家下线时是否跟随下线
      */
     private boolean followQuiting;
@@ -51,9 +56,14 @@ public class FakeplayerProperties extends AbstractProperties {
     private int kaleTps;
 
     /**
-     * 胡言乱语
+     * 准备命令
      */
-    private List<String> nonsense;
+    private List<String> preparingCommands;
+
+    /**
+     * 销毁命令
+     */
+    private List<String> destroyCommands;
 
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
@@ -67,7 +77,9 @@ public class FakeplayerProperties extends AbstractProperties {
         this.followQuiting = file.getBoolean("follow-quiting", true);
         this.detectIp = file.getBoolean("detect-ip", false);
         this.kaleTps = file.getInt("kale-tps", 10);
-        this.nonsense = file.getStringList("nonsense");
+        this.preparingCommands = file.getStringList("preparing-commands");
+        this.destroyCommands = file.getStringList("destroy-commands");
+        this.nameTemplate = file.getString("name-template", "");
     }
 
     private static int maxIfZero(int value) {
