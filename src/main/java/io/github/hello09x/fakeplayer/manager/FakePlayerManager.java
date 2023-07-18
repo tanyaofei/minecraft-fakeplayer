@@ -4,6 +4,7 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
+import io.github.hello09x.fakeplayer.util.SeedUUID;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,18 +13,17 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
 public class FakePlayerManager {
@@ -37,6 +37,8 @@ public class FakePlayerManager {
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
     private volatile int count = 1;
+
+    private final SeedUUID idGenerator = new SeedUUID(String.valueOf(Bukkit.getServer().getWorlds().get(0).getSeed()));
 
     public FakePlayerManager() {
         // 服务器 tps 过低删除所有假人
@@ -61,11 +63,11 @@ public class FakePlayerManager {
      * 创建一个假人
      *
      * @param creator 创建者
-     * @param at      生成地点
+     * @param spawnAt 生成地点
      */
     public synchronized void spawnFakePlayer(
             @NotNull CommandSender creator,
-            @NotNull Location at
+            @NotNull Location spawnAt
     ) {
         var playerLimit = properties.getPlayerLimit();
         if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getFakePlayers(creator).size() >= playerLimit) {
@@ -84,20 +86,13 @@ public class FakePlayerManager {
             return;
         }
 
-        var name = creator.getName();
-        var suffix = "_" + count++;
-        if (name.length() + suffix.length() > 16) {
-            name = name.substring(0, (16 - suffix.length()));
-        }
-        name = name + suffix;
-
         var faker = new FakePlayer(
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
-                ((CraftWorld) at.getWorld()).getHandle(),
-                UUID.randomUUID(),
-                name,
-                at
+                ((CraftWorld) spawnAt.getWorld()).getHandle(),
+                generatePlayerId(),
+                generatePlayerName(creator),
+                spawnAt
         ).spawn(properties.getTickPeriod());
 
         faker.setMetadata(META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
@@ -106,17 +101,10 @@ public class FakePlayerManager {
     }
 
     public @Nullable Player getFakePlayer(@NotNull CommandSender creator, @NotNull String name) {
-        var fake = getFakePlayer(name);
-        if (fake == null) {
-            return null;
-        }
-
-        var c = getCreator(fake);
-        if (c == null || !c.equals(creator.getName())) {
-            return null;
-        }
-
-        return fake;
+        return Optional
+                .ofNullable(getFakePlayer(name))
+                .filter(faker -> Objects.equals(this.getCreator(faker), creator.getName()))
+                .orElse(null);
     }
 
     /**
@@ -126,16 +114,10 @@ public class FakePlayerManager {
      * @return 假人
      */
     public @Nullable Player getFakePlayer(@NotNull String name) {
-        var player = Bukkit.getServer().getPlayer(name);
-        if (player == null) {
-            return null;
-        }
-
-        if (!isFakePlayer(player)) {
-            return null;
-        }
-
-        return player;
+        return Optional
+                .ofNullable(Bukkit.getServer().getPlayer(name))
+                .filter(this::isFakePlayer)
+                .orElse(null);
     }
 
     /**
@@ -145,23 +127,24 @@ public class FakePlayerManager {
      * @return 移除假人的数量
      */
     public int removeFakePlayers(@NotNull CommandSender creator) {
-        var fakes = getFakePlayers(creator);
-        for (var f : fakes) {
-            f.kick();
-        }
-        return fakes.size();
+        var fakers = getFakePlayers(creator);
+        fakers.forEach(Player::kick);
+        return fakers.size();
     }
 
+    /**
+     * 根据名称删除假人
+     *
+     * @param name 名称
+     * @return 名称对应的玩家不在线或者不是假人
+     */
     public boolean removeFakePlayer(@NotNull String name) {
-        var faker = getFakePlayer(name);
-        if (faker == null) {
-            return false;
+        var faker = Optional.ofNullable(getFakePlayer(name)).filter(this::isFakePlayer);
+        if (faker.isPresent()) {
+            faker.get().kick();
+            return true;
         }
-        if (!isFakePlayer(faker)) {
-            return false;
-        }
-        faker.kick();
-        return true;
+        return false;
     }
 
     /**
@@ -171,12 +154,12 @@ public class FakePlayerManager {
      * @return 假人的创建者
      */
     public @Nullable String getCreator(@NotNull Player fakePlayer) {
-        var meta = fakePlayer.getMetadata(META_KEY_CREATOR);
-        if (meta.isEmpty()) {
-            return null;
-        }
-
-        return meta.get(0).asString();
+        return fakePlayer
+                .getMetadata(META_KEY_CREATOR)
+                .stream()
+                .findFirst()
+                .map(MetadataValue::asString)
+                .orElse(null);
     }
 
     /**
@@ -185,11 +168,9 @@ public class FakePlayerManager {
      * @return 移除的假人数量
      */
     public int removeFakePlayers() {
-        var fakes = getFakePlayers();
-        for (var f : fakes) {
-            f.kick();
-        }
-        return fakes.size();
+        var fakers = getFakePlayers();
+        fakers.forEach(Player::kick);
+        return fakers.size();
     }
 
     /**
@@ -238,6 +219,29 @@ public class FakePlayerManager {
                 .stream()
                 .filter(p -> p.getMetadata(META_KEY_CREATOR_IP).stream().anyMatch(meta -> meta.asString().equals(address)))
                 .count();
+    }
+
+    private @NotNull UUID generatePlayerId() {
+        int maxTries = 5;
+        while (maxTries > 0) {
+            var id = idGenerator.uuid();
+            if (Bukkit.getServer().getPlayer(id) == null) {
+                return id;
+            }
+            maxTries--;
+        }
+        return UUID.randomUUID();
+    }
+
+    private @NotNull
+    synchronized String generatePlayerName(CommandSender creator) {
+        var name = creator.getName();
+        var suffix = "_" + count++;
+        if (name.length() + suffix.length() > 16) {
+            name = name.substring(0, (16 - suffix.length()));
+        }
+        name = name + suffix;
+        return name;
     }
 
 

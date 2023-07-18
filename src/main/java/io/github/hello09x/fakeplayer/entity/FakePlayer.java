@@ -40,11 +40,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class FakePlayer extends ServerPlayer {
 
     private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
     private final static Field distanceManager = ReflectionUtils.getFirstFieldByAssignFromType(ChunkMap.class, DistanceManager.class, false);
+    private final static Logger log = Main.getInstance().getLogger();
 
     @Getter
     private @NotNull
@@ -179,6 +181,7 @@ public class FakePlayer extends ServerPlayer {
     /**
      * 将实体加入到世界
      */
+    @SuppressWarnings("resource")
     public void addEntityToWorld() {
         var entity = this.getBukkitEntity();
         var handle = (ServerPlayer) ((CraftEntity) entity).getHandle();
@@ -228,12 +231,13 @@ public class FakePlayer extends ServerPlayer {
      * 胡言乱语
      */
     public void tickNonsense() {
-        if (this.tickCount == 0 || this.tickCount % 6_000 != 0) {
+        if (this.tickCount == 0 || (this.tickCount & (8192 - 1)) != 0) {
+            // 每 6 分钟
             return;
         }
 
-        if (RandomUtils.nextInt(0, 3) != 1) {
-            // 1/3 的几率
+        if ((this.tickCount & 1) != 0) {
+            // 1/2 的几率
             return;
         }
 

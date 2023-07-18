@@ -13,7 +13,7 @@ public class PlayerDeathListener implements Listener {
     private final FakePlayerManager manager = FakePlayerManager.instance;
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void handlePlayerDead(@NotNull PlayerDeathEvent event) {
+    public void handlePlayerDeath(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
         if (!manager.isFakePlayer(player)) {
             return;
