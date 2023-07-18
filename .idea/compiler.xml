@@ -9,5 +9,9 @@
         <module name="fakeplayer" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fakeplayer (1)" target="17" />
+      <module name="fakeplayer (2)" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
