@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.command.player;
 import io.github.hello09x.fakeplayer.command.MessageException;
 import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

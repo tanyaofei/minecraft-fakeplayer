@@ -5,22 +5,26 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyNetworkManager;
+import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
-import net.minecraft.server.level.ChunkMap;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
+import org.apache.commons.lang3.RandomUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -32,21 +36,29 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
-
 public class FakePlayer extends ServerPlayer {
 
-    public final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
+    private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
+    private final static Field distanceManager = ReflectionUtils.getFirstFieldByAssignFromType(ChunkMap.class, DistanceManager.class, false);
 
     @Getter
     private @NotNull
     final Location spawnLocation;
 
+    @Getter
+    private final String creator;
+
+    private Player bukkitPlayer;
+
+    private volatile DistanceManager dm;
+
     public FakePlayer(
+            @NotNull String creator,
             @NotNull MinecraftServer server,
             @NotNull ServerLevel world,
             @NotNull UUID uniqueId,
@@ -54,6 +66,7 @@ public class FakePlayer extends ServerPlayer {
             @NotNull Location at
     ) {
         super(server, world, new GameProfile(uniqueId, name));
+        this.creator = creator;
         this.spawnLocation = at;
 
         try {
@@ -90,33 +103,37 @@ public class FakePlayer extends ServerPlayer {
         return at.getWorld().isChunkLoaded(x, z);
     }
 
-    public @NotNull Player spawn() {
+    public @NotNull Player spawn(long tickPeriod) {
         this.boardcast();
         this.addEntityToWorld();
 
-        var p = Objects.requireNonNull(Bukkit.getPlayer(this.uuid));
-        p.setSleepingIgnored(true);
-        p.setPersistent(false);
-        p.setInvulnerable(true);
+        bukkitPlayer = Objects.requireNonNull(Bukkit.getPlayer(this.uuid));
+        bukkitPlayer.setSleepingIgnored(true);
+        bukkitPlayer.setPersistent(false);
+        bukkitPlayer.setInvulnerable(true);
 
         new BukkitRunnable() {
             @Override
+            @SneakyThrows
             public void run() {
-                if (!p.isOnline()) {
+                if (!bukkitPlayer.isOnline()) {
                     cancel();
                 }
                 doTick();
                 tickCount++;
             }
-        }.runTaskTimer(Main.getInstance(), 0, 1);
-        return p;
+        }.runTaskTimer(Main.getInstance(), 0, tickPeriod);
+        return bukkitPlayer;
     }
 
+    /**
+     * 通知其他玩家加入假人
+     */
     @SuppressWarnings("all")
     public void boardcast() {
         this.updateOptions(new ServerboundClientInformationPacket(
                 "en_us",
-                10,
+                Bukkit.getServer().getViewDistance(),
                 ChatVisiblity.FULL,
                 false,
                 0,
@@ -159,6 +176,9 @@ public class FakePlayer extends ServerPlayer {
 
     }
 
+    /**
+     * 将实体加入到世界
+     */
     public void addEntityToWorld() {
         var entity = this.getBukkitEntity();
         var handle = (ServerPlayer) ((CraftEntity) entity).getHandle();
@@ -166,6 +186,7 @@ public class FakePlayer extends ServerPlayer {
         if (!isChunkLoaded(spawnLocation)) {
             spawnLocation.getChunk().load();
         }
+
 
         handle.level().addFreshEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
         ((CraftServer) Bukkit.getServer()).getHandle().respawn(
@@ -177,6 +198,91 @@ public class FakePlayer extends ServerPlayer {
         // move directly
         getBukkitEntity().teleport(spawnLocation);
         spawnLocation.getWorld().playSound(spawnLocation, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void doTick() {
+        super.doTick();
+        super.baseTick();
+        this.tickChunks();
+        this.tickLookAt();
+        this.tickNonsense();
+    }
+
+    /**
+     * 看向最近的实体
+     */
+    public void tickLookAt() {
+        if (this.tickCount % 20 != 0) {
+            return;
+        }
+
+        var nearby = this.bukkitPlayer.getNearbyEntities(3, 3, 3);
+        if (nearby.isEmpty()) {
+            return;
+        }
+        bukkitPlayer.lookAt(nearby.get(0), LookAnchor.EYES, LookAnchor.EYES);
+    }
+
+    /**
+     * 胡言乱语
+     */
+    public void tickNonsense() {
+        if (this.tickCount == 0 || this.tickCount % 6_000 != 0) {
+            return;
+        }
+
+        if (RandomUtils.nextInt(0, 3) != 1) {
+            // 1/3 的几率
+            return;
+        }
+
+        var nonsense = FakeplayerProperties.instance.getNonsense();
+        if (nonsense.isEmpty()) {
+            return;
+        }
+
+        bukkitPlayer.chat(nonsense.get(RandomUtils.nextInt(0, nonsense.size())));
+    }
+
+    /**
+     * 刷新区块
+     */
+    @SneakyThrows
+    public void tickChunks() {
+        if (this.dm == null) {
+            var chunkMap = ((CraftWorld) bukkitPlayer.getWorld()).getHandle().getChunkSource().chunkMap;
+            this.dm = (DistanceManager) distanceManager.get(chunkMap);
+        }
+
+        var pos = ((CraftPlayer) bukkitPlayer).getHandle().chunkPosition();
+        dm.addRegionTicketAtDistance(TicketType.PLAYER, pos, Bukkit.getServer().getSimulationDistance(), pos);
+    }
+
+    public @NotNull Player getBukkitPlayer() {
+        if (this.bukkitPlayer == null) {
+            throw new IllegalStateException("fake player never spawn");
+        }
+        return this.bukkitPlayer;
+    }
+
+    public List<Chunk> getNearbyChunks() {
+        var distance = Math.min(Bukkit.getSimulationDistance(), this.bukkitPlayer.getSimulationDistance());
+
+        var center = bukkitPlayer.getChunk();
+        var minX = center.getX() - distance;
+        var maxX = center.getX() + distance;
+        var minZ = center.getZ() - distance;
+        var maxZ = center.getZ() + distance;
+
+        var world = this.bukkitPlayer.getWorld();
+        var ret = new ArrayList<Chunk>(((distance * 2) + 1) * (distance * 2) + 1);
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                ret.add(world.getChunkAt(x, z));
+            }
+        }
+        return ret;
     }
 
 

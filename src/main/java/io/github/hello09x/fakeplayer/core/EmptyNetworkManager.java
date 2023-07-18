@@ -20,7 +20,7 @@ public class EmptyNetworkManager extends Connection {
     }
 
     @Override
-    public void send(Packet packet, PacketSendListener genericfuturelistener) {
+    public void send(Packet packet, PacketSendListener listener) {
     }
 
     @Override

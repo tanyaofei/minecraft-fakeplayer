@@ -11,20 +11,19 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public class TpCommand extends AbstractTeleportCommand {
-
+public class TpToCommand extends AbstractTeleportCommand {
 
     private final FakePlayerManager manager = FakePlayerManager.instance;
 
 
-    public final static TpCommand instance = new TpCommand(
+    public final static TpToCommand instance = new TpToCommand(
             "传送到假人身边",
             "/fp tp <名称>",
-            "fakeplayer"
+            "fakeplayer.tp"
     );
 
 
-    public TpCommand(@NotNull String description, @NotNull String usage, @Nullable String permission) {
+    public TpToCommand(@NotNull String description, @NotNull String usage, @Nullable String permission) {
         super(description, usage, permission);
     }
 

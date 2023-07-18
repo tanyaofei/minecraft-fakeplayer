@@ -1,5 +1,32 @@
-version: 2
+# FakePlayer - 假人插件
 
+这个插件模拟出真实的玩家来保证区块的加载以及怪物的刷新
+
+### 支持版本
+
+1.20.1 的 paper, purpur(建议)
+
+## 命令
+
++ /fp create - 创建一个假人
++ /fp remove - 删除假人
++ /fp tp - 传送到假人身边
++ /fp tphere - 将假人传送到自己身边
++ /fp tps - 与假人交换位置
+
+此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等
+
+## 权限
+
++ fakeplayer.spawn - 创建、删除假人
++ fakeplayer.tp - 假人 tp 权限
++ fakeplayer.admin - 管理员权限
+
+## 配置项
+
+这个不定时更新内容，具体以插件的 `config.yml 为准`
+
+```yml
 # 服务器最多存在多少个假人
 # 默认: 1000
 server-limit: 1000
@@ -17,7 +44,7 @@ tick-period: 1
 follow-quiting: true
 
 # 是否检测 IP
-# 如果启用, 则一个 IP 只能创建 `maximum` 个假人
+# 如果启用, 则一个 IP 只能创建 `player-limit` 个假人
 # 能够避免玩家开小号疯狂创建假人
 detect-ip: false
 
@@ -39,3 +66,4 @@ nonsense:
   - 你们卡吗，我怎么动不了了
   - 能不能在我这里建个挂机池？
   - 汤姆哥有点小帅
+```

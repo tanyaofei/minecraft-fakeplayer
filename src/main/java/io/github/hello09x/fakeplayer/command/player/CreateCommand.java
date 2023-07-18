@@ -14,14 +14,13 @@ import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class CreateCommand extends ExecutableCommand {
 
     public final static CreateCommand instance = new CreateCommand(
             "创建假人",
-            "/fp create",
-            "fakeplayer"
+            "/fp create [名称]",
+            "fakeplayer.spawn"
     );
 
     private final FakePlayerManager manager = FakePlayerManager.instance;
@@ -60,7 +59,7 @@ public class CreateCommand extends ExecutableCommand {
             manager.spawnFakePlayer(sender, new Location(world, x, y, z));
         }
 
-        sender.sendMessage(text("创建成功", GRAY));
+        sender.sendMessage(text("创建假人成功", GRAY));
         return true;
     }
 

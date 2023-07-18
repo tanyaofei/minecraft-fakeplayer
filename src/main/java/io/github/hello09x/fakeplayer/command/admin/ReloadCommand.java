@@ -1,13 +1,11 @@
 package io.github.hello09x.fakeplayer.command.admin;
 
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import properties.FakeplayerProperties;
 
 import java.util.List;
 

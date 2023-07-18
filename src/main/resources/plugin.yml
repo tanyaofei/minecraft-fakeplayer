@@ -2,6 +2,7 @@ name: fakeplayer
 version: '${project.version}'
 main: io.github.hello09x.fakeplayer.Main
 api-version: '1.20'
+author: hello09x
 
 commands:
   fakeplayer:
@@ -11,9 +12,19 @@ commands:
       - fp
 
 permissions:
-  fakeplayer:
-    description: '假人基础权限'
-    default: op
+  fakeplayer.all:
+    description: '假人所有基础权限'
+    children:
+      - fakeplayer.spawn
+      - fakeplayer.tp
+
+  fakeplayer.spawn:
+    description: '假人创建权限'
+    default: true
+
+  fakeplayer.tp:
+    description: '假人传送权限'
+    default: true
 
   fakeplayer.admin:
     description: '假人管理员权限'
