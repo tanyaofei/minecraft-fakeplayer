@@ -127,3 +127,5 @@ server/
 server2/
 
 lib/
+
+.idea/
