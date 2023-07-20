@@ -1,10 +1,7 @@
 package io.github.hello09x.fakeplayer;
 
 import io.github.hello09x.fakeplayer.command.RootCommand;
-import io.github.hello09x.fakeplayer.listener.PlayerDeathListener;
-import io.github.hello09x.fakeplayer.listener.PlayerInteractAtEntityListener;
-import io.github.hello09x.fakeplayer.listener.PlayerPreLoginListener;
-import io.github.hello09x.fakeplayer.listener.PlayerQuitListener;
+import io.github.hello09x.fakeplayer.listener.*;
 import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import io.github.hello09x.fakeplayer.repository.UsedUUIDRepository;
 import lombok.Getter;
@@ -39,6 +36,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(PlayerQuitListener.instance, this);
         pm.registerEvents(PlayerDeathListener.instance, this);
         pm.registerEvents(PlayerInteractAtEntityListener.instance, this);
+        pm.registerEvents(PlayerTeleportListener.instance, this);
     }
 
 }

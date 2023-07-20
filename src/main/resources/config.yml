@@ -51,6 +51,11 @@ simulate-login: false
 # 默认: false
 avoid-suffocation: false
 
+# 是否允许跨世界传送
+# 跟某些插件不兼容, 跨世界传送会导致假人飞走
+# 可自行测试
+tp-across-worlds: false
+
 # 预准备命令
 # 假人诞生时会以控制台的身份按顺序执行以下命令
 # 你可以用这个来实现权限组的分配之类的命令
@@ -60,7 +65,7 @@ avoid-suffocation: false
 #   %u: 假人 uuid
 #   %c: 创建者的名称
 preparing-commands:
-  - '/give %p poppy'
+  - '/give %p 1 poppy'
   - ''
 
 # 假人销毁时执行的命令

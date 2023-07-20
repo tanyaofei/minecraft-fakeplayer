@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
@@ -41,6 +43,11 @@ public class TpHereCommand extends AbstractTpCommand {
         var target = getTarget(creator, args);
         if (target == null) {
             return false;
+        }
+
+        if (!Objects.equals(creator.getLocation().getWorld().getUID(), target.getLocation().getWorld().getUID())) {
+            sender.sendMessage(text("无法跨世界传送假人...", RED));
+            return true;
         }
 
         super.teleport(target, creator);

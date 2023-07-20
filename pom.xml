@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x</groupId>
     <artifactId>fakeplayer</artifactId>
-    <version>1_20_R1-0.0.6</version>
+    <version>1_20_R1-0.0.7</version>
     <packaging>jar</packaging>
 
     <name>fakeplayer</name>

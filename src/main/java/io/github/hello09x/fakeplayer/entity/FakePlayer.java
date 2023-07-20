@@ -7,6 +7,7 @@ import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyNetworkManager;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.util.ChunkCoord;
 import io.github.hello09x.fakeplayer.util.ReflectionUtils;
 import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
@@ -20,10 +21,7 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
@@ -38,9 +36,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import static java.lang.Math.min;
@@ -65,7 +65,9 @@ public class FakePlayer {
 
     private Player bukkitPlayer;
 
-    private volatile DistanceManager dm;
+    private final int distance;
+
+    private ChunkCoord lastCoord;
 
     public FakePlayer(
             @NotNull String creator,
@@ -87,6 +89,12 @@ public class FakePlayer {
             log.warning("无法为假人创建虚拟的网络连接\n" + Throwables.getStackTraceAsString(e));
             throw new RuntimeException(e);
         }
+
+        var distance = properties.getDistance();
+        if (distance <= 0) {
+            distance = Bukkit.getSimulationDistance();
+        }
+        this.distance = distance;
 
         if (advancements != null) {
             try {
@@ -113,13 +121,19 @@ public class FakePlayer {
         return at.getWorld().isChunkLoaded(x, z);
     }
 
+    @SneakyThrows
+    private static DistanceManager getDistanceManager(@NotNull World world) {
+        var chunkMap = ((CraftWorld) world).getHandle().getChunkSource().chunkMap;
+        return (DistanceManager) Objects.requireNonNull(distanceManager).get(chunkMap);
+    }
+
     public @NotNull Player spawn(
             long tickPeriod,
             boolean invulnerable,
             boolean lookAtEntity,
             boolean collidable
     ) {
-        this.boardcast();
+        this.broadcast();
         this.addEntityToWorld();
 
         bukkitPlayer = Objects.requireNonNull(Bukkit.getPlayer(this.handle.getUUID()));
@@ -129,11 +143,12 @@ public class FakePlayer {
         bukkitPlayer.setCollidable(collidable);
 
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 if (!bukkitPlayer.isOnline()) {
+                    removeLastChunkTicket();
                     cancel();
+                    return;
                 }
                 doTick(lookAtEntity);
             }
@@ -142,56 +157,8 @@ public class FakePlayer {
         if (properties.isSimulateLogin()) {
             simulateLogin();
         }
+
         return bukkitPlayer;
-    }
-
-    /**
-     * 通知其他玩家加入假人
-     */
-    @SuppressWarnings("all")
-    public void boardcast() {
-        handle.updateOptions(new ServerboundClientInformationPacket(
-                "en_us",
-                Bukkit.getServer().getViewDistance(),
-                ChatVisiblity.FULL,
-                false,
-                0,
-                HumanoidArm.LEFT,
-                false,
-                true                // allow listing
-        ));
-
-        var entity = this.handle.getBukkitEntity();
-        if (handle.level() == null) {
-            return;
-        }
-
-        var playerList = handle.level().players();
-        if (!playerList.contains(handle)) {
-            ((List) playerList).add(handle);
-        }
-
-        try {
-            var updatePlayerStatus = ChunkMap.class.getDeclaredMethod(
-                    "a",
-                    ServerPlayer.class,
-                    boolean.class
-            );
-            updatePlayerStatus.setAccessible(true);
-            updatePlayerStatus.invoke(
-                    ((ServerLevel) handle.level()).getChunkSource().chunkMap,
-                    handle,
-                    true
-            );
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        for(var online: Bukkit.getOnlinePlayers()) {
-            ((CraftPlayer) online).getHandle().connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, handle));
-            ((CraftPlayer) online).getHandle().connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED, handle));
-        }
-
     }
 
     /**
@@ -240,25 +207,56 @@ public class FakePlayer {
     }
 
     /**
+     * 通知其他玩家加入假人
+     */
+    public void broadcast() {
+        handle.updateOptions(new ServerboundClientInformationPacket(
+                "en_us",
+                Bukkit.getServer().getViewDistance(),
+                ChatVisiblity.FULL,
+                false,
+                0,
+                HumanoidArm.LEFT,
+                false,
+                true                // allow listing
+        ));
+
+        for (var online : Bukkit.getOnlinePlayers()) {
+            ((CraftPlayer) online).getHandle().connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, handle));
+            ((CraftPlayer) online).getHandle().connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED, handle));
+        }
+
+    }
+
+    public void removeLastChunkTicket() {
+        if (lastCoord == null) {
+            return;
+        }
+        getDistanceManager(lastCoord.world()).removeRegionTicketAtDistance(
+                TicketType.PLUGIN_TICKET,
+                lastCoord.pos(),
+                this.distance + 2,
+                Main.getInstance()
+        );
+    }
+
+    /**
      * 刷新区块
      */
     @SneakyThrows
     public void tickChunks() {
-        if (this.dm == null) {
-            var chunkMap = ((CraftWorld) bukkitPlayer.getWorld()).getHandle().getChunkSource().chunkMap;
-            if (distanceManager != null) {
-                this.dm = (DistanceManager) distanceManager.get(chunkMap);
-            }
-        }
-
-        var distance = properties.getDistance();
-        if (distance <= 0) {
-            distance = Bukkit.getSimulationDistance();
-        }
-
+        removeLastChunkTicket();
         var pos = ((CraftPlayer) bukkitPlayer).getHandle().chunkPosition();
-        int offset = distance + 2; // FULL(33) - 2 = ENTITY_TICKING(31)
-        dm.addRegionTicketAtDistance(TicketType.PLAYER, pos, offset, pos);
+        getDistanceManager(bukkitPlayer.getWorld()).addRegionTicketAtDistance(
+                TicketType.PLUGIN_TICKET,
+                pos,
+                this.distance + 2,
+                Main.getInstance()
+        );
+        this.lastCoord = new ChunkCoord(
+                bukkitPlayer.getWorld(),
+                pos
+        );
     }
 
     public @NotNull Player getBukkitPlayer() {

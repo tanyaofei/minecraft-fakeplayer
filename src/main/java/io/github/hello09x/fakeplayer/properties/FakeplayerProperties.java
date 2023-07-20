@@ -81,6 +81,8 @@ public class FakeplayerProperties extends AbstractProperties {
      */
     private boolean avoidSuffocation;
 
+    private boolean tpAcrossWorlds;
+
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
@@ -107,6 +109,7 @@ public class FakeplayerProperties extends AbstractProperties {
         this.simulateLogin = file.getBoolean("simulate-login", false);
         this.distance = file.getInt("distance", 0);
         this.avoidSuffocation = file.getBoolean("avoid-suffocation", false);
+        this.tpAcrossWorlds = file.getBoolean("tp-across-worlds", false);
     }
 
 }
