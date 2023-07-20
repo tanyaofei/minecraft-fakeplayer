@@ -21,7 +21,7 @@ public class PlayerQuitListener implements Listener {
     public void handlePlayerQuit(@NotNull PlayerQuitEvent event) {
         var player = event.getPlayer();
         if (manager.isFake(player)) {
-            manager.cleanup(player );
+            manager.cleanup(player);
             manager.dispatchCommands(player, properties.getDestroyCommands());
         } else {
             int removed;

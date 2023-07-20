@@ -4,6 +4,8 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedUUIDRepository;
+import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
+import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.MetadataUtils;
 import io.github.hello09x.fakeplayer.util.SeedUUID;
@@ -17,9 +19,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -40,6 +44,7 @@ public class FakePlayerManager {
     private final static String META_KEY_CREATOR_IP = "fakeplayer:creator-ip";
     private final static String META_KEY_NAME_SOURCE = "fakeplayer:name-source";
     private final static String META_KEY_NAME_SEQUENCE = "fakeplayer:name-sequence";
+    private final static String META_KEY_NAME_ATTACK_TASK_ID = "fakeplayer:attack-task-id";
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
@@ -47,9 +52,9 @@ public class FakePlayerManager {
 
     private final NameManager nameManager = NameManager.instance;
 
-    private SeedUUID idGenerator = new SeedUUID(properties.getUuidSeed());
+    private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
-    public FakePlayerManager() {
+    private FakePlayerManager() {
         // 服务器 tps 过低删除所有假人
         new Timer().schedule(new TimerTask() {
             @Override
@@ -95,16 +100,23 @@ public class FakePlayerManager {
             return;
         }
 
-        var name = nameManager.borrow(creator);
+        var name = nameManager.take(creator);
+        boolean invulnerable = true, lookAtEntity = true, collidable = true;
+        if (creator instanceof Player p) {
+            var creatorId = p.getUniqueId();
+            invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
+            lookAtEntity = userConfigRepository.selectOrDefault(creatorId, Configs.look_at_entity);
+            collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
+        }
 
         var faker = new FakePlayer(
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
                 ((CraftWorld) spawnAt.getWorld()).getHandle(),
-                generateId(),
+                generateId(name.name()),
                 name.name(),
                 spawnAt
-        ).spawn(properties.getTickPeriod());
+        ).spawn(properties.getTickPeriod(), invulnerable, lookAtEntity, collidable);
 
         faker.setMetadata(META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
         faker.setMetadata(META_KEY_CREATOR_IP, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
@@ -207,10 +219,25 @@ public class FakePlayerManager {
     }
 
     public void cleanup(@NotNull Player fakePlayer) {
+        if (!isFake(fakePlayer)) {
+            return;
+        }
+
         var metas = MetadataUtils.get(fakePlayer, META_KEY_NAME_SOURCE, META_KEY_NAME_SEQUENCE);
         var source = metas[0];
         var sequence = metas[1];
         nameManager.giveback(source.asString(), sequence.asInt());
+
+        var location = fakePlayer.getLocation();
+        var world = location.getWorld();
+        var items = fakePlayer.getInventory().getContents().clone();
+        fakePlayer.getInventory().clear();
+        for (var item : items) {
+            if (item == null) {
+                continue;
+            }
+            world.dropItemNaturally(location, item).setPickupDelay(5);
+        }
     }
 
     /**
@@ -241,6 +268,12 @@ public class FakePlayerManager {
         return !player.getMetadata(META_KEY_CREATOR).isEmpty();
     }
 
+    /**
+     * 获取 IP 地址创建着多少个假人
+     *
+     * @param address IP 地址
+     * @return 该 IP 地址创建着多少个假人
+     */
     public long countByAddress(@NotNull String address) {
         return Bukkit.getServer()
                 .getOnlinePlayers()
@@ -249,24 +282,61 @@ public class FakePlayerManager {
                 .count();
     }
 
-    private @NotNull UUID generateId() {
-        if (!idGenerator.getOriginSeed().equals(properties.getUuidSeed())) {
-            idGenerator = new SeedUUID(properties.getUuidSeed());
+    /**
+     * 生成一个 UUID
+     *
+     * @return UUID
+     */
+    private @NotNull UUID generateId(@NotNull String name) {
+        var uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
+        if (Bukkit.getServer().getOfflinePlayer(uuid).hasPlayedBefore()) {
+            uuid = UUID.randomUUID();
+            log.warning("Could not generate a UUID bound with name which is never used at this server, using random UUID as fallback: " + uuid);
         }
-
-        int maxTries = 5;
-        while (maxTries > 0) {
-            var id = idGenerator.uuid();
-            if (!Bukkit.getServer().getOfflinePlayer(id).hasPlayedBefore()) {
-                return id;
-            }
-            maxTries--;
-        }
-
-        var uuid = UUID.randomUUID();
-        log.warning("Could not generate a UUID which is never used at this server, using random UUID as fallback: " + uuid);
         return uuid;
     }
+
+    @ApiStatus.Experimental
+    public void setAttack(@NotNull Player fakePlayer, int tickPeriod) {
+        if (!isFake(fakePlayer)) {
+            return;
+        }
+
+        var meta = MetadataUtils.getFirst(fakePlayer, META_KEY_NAME_ATTACK_TASK_ID);
+        if (meta != null) {
+            var oldTaskId = meta.asInt();
+            Bukkit.getScheduler().cancelTask(oldTaskId);
+            fakePlayer.removeMetadata(META_KEY_NAME_ATTACK_TASK_ID, Main.getInstance());
+        }
+
+        var action = new Runnable() {
+            @Override
+            public void run() {
+                var entity = fakePlayer.getTargetEntity(3);
+                if (entity != null) {
+                    fakePlayer.swingMainHand();
+                    fakePlayer.attack(entity);
+                }
+            }
+        };
+
+        if (tickPeriod <= 1) {
+            action.run();
+            return;
+        }
+
+        var task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!fakePlayer.isOnline()) {
+                    cancel();
+                }
+                action.run();
+            }
+        }.runTaskTimer(Main.getInstance(), tickPeriod, tickPeriod);
+        fakePlayer.setMetadata(META_KEY_NAME_ATTACK_TASK_ID, new FixedMetadataValue(Main.getInstance(), task.getTaskId()));
+    }
+
 
     public void dispatchCommands(@NotNull Player player, @NotNull List<String> commands) {
         if (commands.isEmpty()) {

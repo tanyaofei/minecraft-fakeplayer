@@ -40,10 +40,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static java.lang.Math.min;
@@ -53,7 +50,7 @@ public class FakePlayer {
     private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
     private final static Field distanceManager = ReflectionUtils.getFirstFieldByAssignFromType(ChunkMap.class, DistanceManager.class, false);
     private final static Logger log = Main.getInstance().getLogger();
-    public final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
+    private final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
@@ -78,8 +75,8 @@ public class FakePlayer {
             @NotNull String name,
             @NotNull Location at
     ) {
-        this.handle = new ServerPlayer(server, world, new GameProfile(uniqueId, name));
         this.creator = creator;
+        this.handle = new ServerPlayer(server, world, new GameProfile(uniqueId, name));
         this.spawnLocation = at.clone();
 
         try {
@@ -105,7 +102,6 @@ public class FakePlayer {
             } catch (IllegalAccessException ignored) {
             }
         }
-
     }
 
     private static boolean isChunkLoaded(@NotNull Location at) {
@@ -117,23 +113,29 @@ public class FakePlayer {
         return at.getWorld().isChunkLoaded(x, z);
     }
 
-    public @NotNull Player spawn(long tickPeriod) {
+    public @NotNull Player spawn(
+            long tickPeriod,
+            boolean invulnerable,
+            boolean lookAtEntity,
+            boolean collidable
+    ) {
         this.boardcast();
         this.addEntityToWorld();
 
         bukkitPlayer = Objects.requireNonNull(Bukkit.getPlayer(this.handle.getUUID()));
         bukkitPlayer.setSleepingIgnored(true);
         bukkitPlayer.setPersistent(false);
-        bukkitPlayer.setInvulnerable(true);
+        bukkitPlayer.setInvulnerable(invulnerable);
+        bukkitPlayer.setCollidable(collidable);
 
         new BukkitRunnable() {
+
             @Override
-            @SneakyThrows
             public void run() {
                 if (!bukkitPlayer.isOnline()) {
                     cancel();
                 }
-                doTick();
+                doTick(lookAtEntity);
             }
         }.runTaskTimer(Main.getInstance(), 0, tickPeriod);
 
@@ -212,11 +214,13 @@ public class FakePlayer {
     /**
      * 玩家每 tick 要做的事情
      */
-    public void doTick() {
+    public void doTick(boolean tickLookAt) {
         this.handle.doTick();
         this.handle.baseTick();
         this.tickChunks();
-        this.tickLookAt();
+        if (tickLookAt) {
+            this.tickLookAt();
+        }
         this.handle.tickCount++;
     }
 

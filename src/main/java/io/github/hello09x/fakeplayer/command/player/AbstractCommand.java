@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +40,7 @@ public abstract class AbstractCommand extends ExecutableCommand {
             return null;
         }
 
-        var lookAt = p.getTargetEntity(10);
+        var lookAt = p.getTargetEntity(5);
         if (!(lookAt instanceof Player target) || !manager.isFake(target)) {
             var creations = manager.getAll(sender);
             if (creations.size() == 1) {
@@ -60,8 +61,8 @@ public abstract class AbstractCommand extends ExecutableCommand {
             @NotNull String label,
             @NotNull String[] args
     ) {
-        if (args.length > 1) {
-            return Collections.emptyList();
+        if (args.length != 1) {
+            return new ArrayList<>();
         }
 
         var fakers = sender.isOp()
@@ -69,10 +70,10 @@ public abstract class AbstractCommand extends ExecutableCommand {
                 : manager.getAll(sender);
 
         if (fakers.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
-        var input = args.length == 0 ? "" : args[0].toLowerCase();
+        var input = args[0];
         var names = fakers.stream().map(Player::getName);
         if (!input.isEmpty()) {
             names = names.filter(name -> name.toLowerCase().contains(input));

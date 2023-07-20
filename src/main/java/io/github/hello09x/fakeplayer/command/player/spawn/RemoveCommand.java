@@ -16,7 +16,7 @@ public class RemoveCommand extends AbstractCommand {
 
     public final static RemoveCommand instance = new RemoveCommand(
             "移除假人",
-            "/fp remove [名称]",
+            "/fp remove [假人名称]",
             "fakeplayer.spawn"
     );
 

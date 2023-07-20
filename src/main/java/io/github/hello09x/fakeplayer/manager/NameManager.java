@@ -1,15 +1,12 @@
 package io.github.hello09x.fakeplayer.manager;
 
-import com.mojang.datafixers.types.templates.Named;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import javax.lang.model.element.Name;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -25,7 +22,7 @@ public class NameManager {
     private final static Logger log = Main.getInstance().getLogger();
 
 
-    public GeneratedName borrow(CommandSender creator) {
+    public GeneratedName take(CommandSender creator) {
         var source = properties.getNameTemplate();
         if (source.isBlank()) {
             source = creator.getName();
@@ -34,7 +31,7 @@ public class NameManager {
         int tries = 10;
         while (tries != 0) {
             var seq = nameSources.computeIfAbsent(source, key -> new NameSource(properties.getPlayerLimit())).pop();
-            var suffix = "_" + seq;
+            var suffix = "_" + (seq + 1);
 
             String name;
             if (source.length() + suffix.length() > 16) {

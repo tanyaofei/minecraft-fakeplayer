@@ -16,7 +16,7 @@ public class TpSwapCommand extends AbstractTpCommand {
 
     public final static TpSwapCommand instance = new TpSwapCommand(
             "与假人交换位置",
-            "/fp tps [名称]",
+            "/fp tps [假人名称]",
             "fakeplayer.tp"
     );
 

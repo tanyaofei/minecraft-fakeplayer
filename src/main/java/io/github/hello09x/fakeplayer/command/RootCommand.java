@@ -1,9 +1,9 @@
 package io.github.hello09x.fakeplayer.command;
 
 import io.github.hello09x.fakeplayer.command.admin.ReloadCommand;
-import io.github.hello09x.fakeplayer.command.player.control.AttackCommand;
+import io.github.hello09x.fakeplayer.command.player.config.ConfigCommand;
 import io.github.hello09x.fakeplayer.command.player.control.DropCommand;
-import io.github.hello09x.fakeplayer.command.player.control.UseCommand;
+import io.github.hello09x.fakeplayer.command.player.control.OpenCommand;
 import io.github.hello09x.fakeplayer.command.player.spawn.CreateCommand;
 import io.github.hello09x.fakeplayer.command.player.spawn.ListCommand;
 import io.github.hello09x.fakeplayer.command.player.spawn.RemoveCommand;
@@ -32,11 +32,13 @@ public class RootCommand extends ParentCommand {
         instance.register("tphere", TpHereCommand.instance);
         instance.register("tps", TpSwapCommand.instance);
 
+        // config
+        instance.register("config", ConfigCommand.instance);
 
         // control
-//        instance.register("drop", DropCommand.instance);
+        instance.register("drop", DropCommand.instance);
+        instance.register("open", OpenCommand.instance);
 //        instance.register("attack", AttackCommand.instance);
-//        instance.register("use", UseCommand.instance);
 
         // admin
         instance.register("reload", ReloadCommand.instance);

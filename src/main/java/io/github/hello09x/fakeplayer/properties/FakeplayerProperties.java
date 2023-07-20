@@ -72,11 +72,6 @@ public class FakeplayerProperties extends AbstractProperties {
     private boolean simulateLogin;
 
     /**
-     * UUID 种子
-     */
-    private String uuidSeed;
-
-    /**
      * 距离
      */
     private int distance;
@@ -110,13 +105,8 @@ public class FakeplayerProperties extends AbstractProperties {
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
-        this.uuidSeed = file.getString("uuid-seed", "");
         this.distance = file.getInt("distance", 0);
         this.avoidSuffocation = file.getBoolean("avoid-suffocation", false);
-
-        if (uuidSeed.isBlank()) {
-            uuidSeed = defaultSeed();
-        }
     }
 
 }

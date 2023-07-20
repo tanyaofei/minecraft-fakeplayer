@@ -10,7 +10,7 @@ public class DropCommand extends AbstractCommand {
 
     public final static DropCommand instance = new DropCommand(
             "丢弃手上的物品",
-            "/fp drop [名称]",
+            "/fp drop [假人名称]",
             "fakeplayer.control"
     );
 
@@ -33,7 +33,6 @@ public class DropCommand extends AbstractCommand {
         if (target == null) {
             return false;
         }
-
         target.dropItem(true);
         return true;
     }

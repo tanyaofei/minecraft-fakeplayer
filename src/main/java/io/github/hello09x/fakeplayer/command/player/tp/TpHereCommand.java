@@ -14,7 +14,7 @@ public class TpHereCommand extends AbstractTpCommand {
 
     public final static TpHereCommand instance = new TpHereCommand(
             "传送假人到身边",
-            "/fp tphere [名称]",
+            "/fp tphere [假人名称]",
             "fakeplayer.tp"
     );
 

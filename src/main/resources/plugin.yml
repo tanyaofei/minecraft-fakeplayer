@@ -3,8 +3,6 @@ version: '${project.version}'
 main: io.github.hello09x.fakeplayer.Main
 api-version: '1.20'
 author: hello09x
-depend:
-  - ProtocolLib
 
 commands:
   fakeplayer:
@@ -19,7 +17,7 @@ permissions:
     children:
       - fakeplayer.spawn
       - fakeplayer.tp
-#      - fakeplayer.control
+      - fakeplayer.control
     default: op
 
   fakeplayer.spawn:
@@ -29,9 +27,10 @@ permissions:
   fakeplayer.tp:
     description: '拥有 tp, tphere, tps 命令执行的权限'
     default: op
-#
-#  fakeplayer.control:
-#    description: '拥有 /fp drop, /fp attach, /fp use 命令执行的权限'
+
+  fakeplayer.control:
+    description: '拥有 open, drop 命令执行的权限'
+    default: op
 
   fakeplayer.admin:
     description: '假人管理员权限'

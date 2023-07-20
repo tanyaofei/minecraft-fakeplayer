@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import io.github.hello09x.fakeplayer.command.RootCommand;
 import io.github.hello09x.fakeplayer.listener.PlayerDeathListener;
+import io.github.hello09x.fakeplayer.listener.PlayerInteractAtEntityListener;
 import io.github.hello09x.fakeplayer.listener.PlayerPreLoginListener;
 import io.github.hello09x.fakeplayer.listener.PlayerQuitListener;
 import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
@@ -43,9 +44,11 @@ public final class Main extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(PlayerPreLoginListener.instance, getInstance());
-        getServer().getPluginManager().registerEvents(PlayerQuitListener.instance, getInstance());
-        getServer().getPluginManager().registerEvents(PlayerDeathListener.instance, getInstance());
+        var pm = getServer().getPluginManager();
+        pm.registerEvents(PlayerPreLoginListener.instance, this);
+        pm.registerEvents(PlayerQuitListener.instance, this);
+        pm.registerEvents(PlayerDeathListener.instance, this);
+        pm.registerEvents(PlayerInteractAtEntityListener.instance, this);
     }
 
 }
