@@ -37,7 +37,7 @@ public class RootCommand extends ParentCommand {
 
         // control
         instance.register("drop", DropCommand.instance);
-        instance.register("open", OpenCommand.instance);
+//        instance.register("open", OpenCommand.instance);
 //        instance.register("attack", AttackCommand.instance);
 
         // admin
