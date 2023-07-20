@@ -1,6 +1,5 @@
-package io.github.hello09x.fakeplayer.command.player;
+package io.github.hello09x.fakeplayer.command.player.tp;
 
-import io.github.hello09x.fakeplayer.command.MessageException;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
@@ -13,11 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public class TpSwapCommand extends AbstractTeleportCommand {
+public class TpSwapCommand extends AbstractTpCommand {
 
     public final static TpSwapCommand instance = new TpSwapCommand(
             "与假人交换位置",
-            "/fp tps <名称>",
+            "/fp tps [名称]",
             "fakeplayer.tp"
     );
 
@@ -37,18 +36,16 @@ public class TpSwapCommand extends AbstractTeleportCommand {
             return true;
         }
 
-        Player fake;
-        try {
-            fake = getFakePlayer(creator, args);
-        } catch (MessageException e) {
-            sender.sendMessage(e.getText());
-            return true;
+        var target = getTarget(sender, args);
+        if (target == null) {
+            return false;
         }
 
-        var l1 = creator.getLocation();
-        var l2 = fake.getLocation();
 
-        fake.teleport(l1, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        var l1 = creator.getLocation();
+        var l2 = target.getLocation();
+
+        target.teleport(l1, PlayerTeleportEvent.TeleportCause.PLUGIN);
         l1.getWorld().playSound(l1, Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
         creator.teleport(l2, PlayerTeleportEvent.TeleportCause.PLUGIN);

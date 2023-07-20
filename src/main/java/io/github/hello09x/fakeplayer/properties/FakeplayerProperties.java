@@ -5,6 +5,7 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.tanyaofei.plugin.toolkit.properties.AbstractProperties;
 import lombok.Getter;
 import lombok.ToString;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ public class FakeplayerProperties extends AbstractProperties {
 
     public final static FakeplayerProperties instance = new FakeplayerProperties(
             Main.getInstance(),
-            "3"
+            "6"
     );
 
     /**
@@ -70,8 +71,31 @@ public class FakeplayerProperties extends AbstractProperties {
      */
     private boolean simulateLogin;
 
+    /**
+     * UUID 种子
+     */
+    private String uuidSeed;
+
+    /**
+     * 距离
+     */
+    private int distance;
+
+    /**
+     * 防窒息
+     */
+    private boolean avoidSuffocation;
+
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
+    }
+
+    private static int maxIfZero(int value) {
+        return value == 0 ? Integer.MAX_VALUE : value;
+    }
+
+    private static String defaultSeed() {
+        return String.valueOf(Bukkit.getWorlds().get(0).getSeed());
     }
 
     @Override
@@ -85,11 +109,14 @@ public class FakeplayerProperties extends AbstractProperties {
         this.preparingCommands = file.getStringList("preparing-commands");
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
-        this.simulateLogin = file.getBoolean("simulate-login", true);
-    }
+        this.simulateLogin = file.getBoolean("simulate-login", false);
+        this.uuidSeed = file.getString("uuid-seed", "");
+        this.distance = file.getInt("distance", 0);
+        this.avoidSuffocation = file.getBoolean("avoid-suffocation", false);
 
-    private static int maxIfZero(int value) {
-        return value == 0 ? Integer.MAX_VALUE : value;
+        if (uuidSeed.isBlank()) {
+            uuidSeed = defaultSeed();
+        }
     }
 
 }

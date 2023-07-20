@@ -20,11 +20,12 @@ public class PlayerQuitListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void handlePlayerQuit(@NotNull PlayerQuitEvent event) {
         var player = event.getPlayer();
-        if (manager.isFakePlayer(player)) {
+        if (manager.isFake(player)) {
+            manager.cleanup(player );
             manager.dispatchCommands(player, properties.getDestroyCommands());
         } else {
             int removed;
-            if (properties.isFollowQuiting() && (removed = manager.removeFakePlayers(player)) > 0) {
+            if (properties.isFollowQuiting() && (removed = manager.removeAll(player)) > 0) {
                 log.info(String.format("玩家 %s 下线, 已清理 %d 个假人", event.getPlayer().getName(), removed));
             }
         }

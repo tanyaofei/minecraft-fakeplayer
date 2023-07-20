@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.core;
 
 import io.netty.channel.*;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
@@ -55,7 +56,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     protected SocketAddress localAddress0() {
-        return new InetSocketAddress("127.0.0.1", 25565);
+        return new InetSocketAddress(InetAddress.getLoopbackAddress().getHostName(), 25565);
     }
 
     @Override
@@ -75,6 +76,6 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     protected SocketAddress remoteAddress0() {
-        return new InetSocketAddress("10.10.10.10", 25565);
+        return new InetSocketAddress(InetAddress.getLoopbackAddress().getHostName(), 25565);
     }
 }

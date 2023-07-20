@@ -1,7 +1,6 @@
-package io.github.hello09x.fakeplayer.command.player;
+package io.github.hello09x.fakeplayer.command.player.tp;
 
 import io.github.hello09x.fakeplayer.command.MessageException;
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,19 +10,19 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public class TpToCommand extends AbstractTeleportCommand {
+public class TpHereCommand extends AbstractTpCommand {
 
-    private final FakePlayerManager manager = FakePlayerManager.instance;
-
-
-    public final static TpToCommand instance = new TpToCommand(
-            "传送到假人身边",
-            "/fp tp <名称>",
+    public final static TpHereCommand instance = new TpHereCommand(
+            "传送假人到身边",
+            "/fp tphere [名称]",
             "fakeplayer.tp"
     );
 
-
-    public TpToCommand(@NotNull String description, @NotNull String usage, @Nullable String permission) {
+    public TpHereCommand(
+            @NotNull String description,
+            @NotNull String usage,
+            @Nullable String permission
+    ) {
         super(description, usage, permission);
     }
 
@@ -39,16 +38,14 @@ public class TpToCommand extends AbstractTeleportCommand {
             return true;
         }
 
-        Player fake;
-        try {
-            fake = getFakePlayer(creator, args);
-        } catch (MessageException e) {
-            sender.sendMessage(e.getText());
-            return true;
+        var target = getTarget(creator, args);
+        if (target == null) {
+            return false;
         }
 
-        teleport(creator, fake);
+        super.teleport(target, creator);
         return true;
     }
+
 
 }

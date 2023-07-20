@@ -1,12 +1,10 @@
-package io.github.hello09x.fakeplayer.command.player;
+package io.github.hello09x.fakeplayer.command.player.spawn;
 
 import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
 import io.github.tanyaofei.plugin.toolkit.database.Page;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,8 +64,8 @@ public class ListCommand extends ExecutableCommand {
         }
 
         var fakers = sender.isOp()
-                ? manager.getFakePlayers()
-                : manager.getFakePlayers(sender);
+                ? manager.getAll()
+                : manager.getAll(sender);
 
         var total = fakers.size();
         var pages = total == 0 ? 1 : (int) Math.ceil((double) total / size);

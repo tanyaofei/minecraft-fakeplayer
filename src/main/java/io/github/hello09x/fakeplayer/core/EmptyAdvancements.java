@@ -15,8 +15,6 @@ import java.util.Map;
 
 public class EmptyAdvancements extends PlayerAdvancements {
 
-    public final static Field PROGRESS = ReflectionUtils.getFirstFieldByType(PlayerAdvancements.class, Map.class, false);
-
     public EmptyAdvancements(
             DataFixer datafixer,
             PlayerList playerlist,

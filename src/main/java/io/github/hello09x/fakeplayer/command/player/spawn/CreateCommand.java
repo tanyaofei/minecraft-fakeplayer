@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.command.player;
+package io.github.hello09x.fakeplayer.command.player.spawn;
 
 import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;

@@ -1,10 +1,11 @@
 package io.github.hello09x.fakeplayer.manager;
 
-import com.google.common.base.Throwables;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.repository.UsedUUIDRepository;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
+import io.github.hello09x.fakeplayer.util.MetadataUtils;
 import io.github.hello09x.fakeplayer.util.SeedUUID;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
@@ -37,17 +38,16 @@ public class FakePlayerManager {
     private final static String META_KEY_CREATOR = "fakeplayer:creator";
 
     private final static String META_KEY_CREATOR_IP = "fakeplayer:creator-ip";
+    private final static String META_KEY_NAME_SOURCE = "fakeplayer:name-source";
+    private final static String META_KEY_NAME_SEQUENCE = "fakeplayer:name-sequence";
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
-    /**
-     * 命名计数器
-     * key: 创建者名称
-     * value: 创建数
-     */
-    private final Map<String, Integer> nameCounter = new HashMap<>();
+    private final UsedUUIDRepository usedIdsRepository = UsedUUIDRepository.instance;
 
-    private final SeedUUID idGenerator = new SeedUUID(String.valueOf(Bukkit.getServer().getWorlds().get(0).getSeed()));
+    private final NameManager nameManager = NameManager.instance;
+
+    private SeedUUID idGenerator = new SeedUUID(properties.getUuidSeed());
 
     public FakePlayerManager() {
         // 服务器 tps 过低删除所有假人
@@ -58,7 +58,7 @@ public class FakePlayerManager {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (removeFakePlayers() > 0) {
+                            if (removeAll() > 0) {
                                 Bukkit.getServer().broadcast(text("[服务器过于卡顿, 已删除所有假人]").style(Style.style(RED, ITALIC)));
                             }
                         }
@@ -79,13 +79,13 @@ public class FakePlayerManager {
             @NotNull Location spawnAt
     ) {
         var playerLimit = properties.getPlayerLimit();
-        if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getFakePlayers(creator).size() >= playerLimit) {
+        if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
             creator.sendMessage(text("你创建的假人数量已达到上限...", RED));
             return;
         }
 
         var serverLimit = properties.getServerLimit();
-        if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getFakePlayers().size() >= serverLimit) {
+        if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getAll().size() >= serverLimit) {
             creator.sendMessage(text("服务器假人数量已达到上限...", RED));
             return;
         }
@@ -95,25 +95,38 @@ public class FakePlayerManager {
             return;
         }
 
+        var name = nameManager.borrow(creator);
+
         var faker = new FakePlayer(
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
                 ((CraftWorld) spawnAt.getWorld()).getHandle(),
                 generateId(),
-                generateName(creator),
+                name.name(),
                 spawnAt
         ).spawn(properties.getTickPeriod());
 
         faker.setMetadata(META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
         faker.setMetadata(META_KEY_CREATOR_IP, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
+        faker.setMetadata(META_KEY_NAME_SOURCE, new FixedMetadataValue(Main.getInstance(), name.source()));
+        faker.setMetadata(META_KEY_NAME_SEQUENCE, new FixedMetadataValue(Main.getInstance(), name.sequence()));
         faker.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
 
-        dispatchCommands(faker, properties.getPreparingCommands());
+        usedIdsRepository.add(faker.getUniqueId());
+
+        // 由于模拟登陆需要延迟执行
+        // 因此准备命令需要更晚执行
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                dispatchCommands(faker, properties.getPreparingCommands());
+            }
+        }.runTaskLater(Main.getInstance(), 5);
     }
 
-    public @Nullable Player getFakePlayer(@NotNull CommandSender creator, @NotNull String name) {
+    public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
         return Optional
-                .ofNullable(getFakePlayer(name))
+                .ofNullable(get(name))
                 .filter(faker -> Objects.equals(this.getCreator(faker), creator.getName()))
                 .orElse(null);
     }
@@ -124,10 +137,10 @@ public class FakePlayerManager {
      * @param name 名称
      * @return 假人
      */
-    public @Nullable Player getFakePlayer(@NotNull String name) {
+    public @Nullable Player get(@NotNull String name) {
         return Optional
                 .ofNullable(Bukkit.getServer().getPlayer(name))
-                .filter(this::isFakePlayer)
+                .filter(this::isFake)
                 .orElse(null);
     }
 
@@ -137,12 +150,9 @@ public class FakePlayerManager {
      * @param creator 创建者
      * @return 移除假人的数量
      */
-    public int removeFakePlayers(@NotNull CommandSender creator) {
-        var fakers = getFakePlayers(creator);
+    public int removeAll(@NotNull CommandSender creator) {
+        var fakers = getAll(creator);
         fakers.forEach(Player::kick);
-        synchronized (nameCounter) {
-            nameCounter.remove(creator.getName());
-        }
         return fakers.size();
     }
 
@@ -152,13 +162,13 @@ public class FakePlayerManager {
      * @param name 名称
      * @return 名称对应的玩家不在线或者不是假人
      */
-    public boolean removeFakePlayer(@NotNull String name) {
-        var faker = Optional.ofNullable(getFakePlayer(name)).filter(this::isFakePlayer);
-        if (faker.isPresent()) {
-            faker.get().kick();
-            return true;
+    public boolean remove(@NotNull String name) {
+        var fakePlayer = Optional.ofNullable(get(name)).filter(this::isFake).orElse(null);
+        if (fakePlayer == null) {
+            return false;
         }
-        return false;
+        fakePlayer.kick();
+        return true;
     }
 
     /**
@@ -168,10 +178,7 @@ public class FakePlayerManager {
      * @return 假人的创建者
      */
     public @Nullable String getCreator(@NotNull Player fakePlayer) {
-        return fakePlayer
-                .getMetadata(META_KEY_CREATOR)
-                .stream()
-                .findFirst()
+        return Optional.ofNullable(MetadataUtils.getFirst(fakePlayer, META_KEY_CREATOR))
                 .map(MetadataValue::asString)
                 .orElse(null);
     }
@@ -181,19 +188,16 @@ public class FakePlayerManager {
      *
      * @return 移除的假人数量
      */
-    public int removeFakePlayers() {
-        var fakers = getFakePlayers();
+    public int removeAll() {
+        var fakers = getAll();
         fakers.forEach(Player::kick);
-        synchronized (nameCounter) {
-            nameCounter.clear();
-        }
         return fakers.size();
     }
 
     /**
      * @return 获取所有假人
      */
-    public @NotNull List<Player> getFakePlayers() {
+    public @NotNull List<Player> getAll() {
         return Bukkit
                 .getServer()
                 .getOnlinePlayers()
@@ -202,13 +206,20 @@ public class FakePlayerManager {
                 .collect(Collectors.toList());
     }
 
+    public void cleanup(@NotNull Player fakePlayer) {
+        var metas = MetadataUtils.get(fakePlayer, META_KEY_NAME_SOURCE, META_KEY_NAME_SEQUENCE);
+        var source = metas[0];
+        var sequence = metas[1];
+        nameManager.giveback(source.asString(), sequence.asInt());
+    }
+
     /**
      * 获取创建者创建的所有假人
      *
      * @param creator 创建者
      * @return 创建者创建的假人
      */
-    public @NotNull List<Player> getFakePlayers(@NotNull CommandSender creator) {
+    public @NotNull List<Player> getAll(@NotNull CommandSender creator) {
         var name = creator.getName();
         return Bukkit
                 .getServer()
@@ -226,7 +237,7 @@ public class FakePlayerManager {
      * @param player 玩家
      * @return 是否是假人
      */
-    public boolean isFakePlayer(@NotNull Player player) {
+    public boolean isFake(@NotNull Player player) {
         return !player.getMetadata(META_KEY_CREATOR).isEmpty();
     }
 
@@ -239,49 +250,31 @@ public class FakePlayerManager {
     }
 
     private @NotNull UUID generateId() {
+        if (!idGenerator.getOriginSeed().equals(properties.getUuidSeed())) {
+            idGenerator = new SeedUUID(properties.getUuidSeed());
+        }
+
         int maxTries = 5;
         while (maxTries > 0) {
             var id = idGenerator.uuid();
-            if (Bukkit.getServer().getPlayer(id) == null) {
+            if (!Bukkit.getServer().getOfflinePlayer(id).hasPlayedBefore()) {
                 return id;
             }
             maxTries--;
         }
-        return UUID.randomUUID();
+
+        var uuid = UUID.randomUUID();
+        log.warning("Could not generate a UUID which is never used at this server, using random UUID as fallback: " + uuid);
+        return uuid;
     }
 
-    private @NotNull
-    String generateName(CommandSender creator) {
-        var base = properties.getNameTemplate();
-        if (base.isBlank()) {
-            base = creator.getName();
-        }
-
-        int count;
-        synchronized (nameCounter) {
-            count = nameCounter.getOrDefault(creator.getName(), 0);
-        }
-
-        var suffix = "_" + (++count);
-        nameCounter.put(creator.getName(), count);
-
-        String name;
-        if (base.length() + suffix.length() > 16) {
-            name = base.substring(0, (16 - suffix.length()));
-        } else {
-            name = base;
-        }
-        name = name + suffix;
-        return name;
-    }
-
-    public boolean dispatchCommands(@NotNull Player player, @NotNull List<String> commands) {
+    public void dispatchCommands(@NotNull Player player, @NotNull List<String> commands) {
         if (commands.isEmpty()) {
-            return true;
+            return;
         }
 
-        if (!isFakePlayer(player)) {
-            return false;
+        if (!isFake(player)) {
+            return;
         }
 
         var server = Bukkit.getServer();
@@ -293,22 +286,17 @@ public class FakePlayerManager {
             }
             if (cmd.length() > 1) {
                 cmd = cmd
-                        .replaceAll("%p", player.getName())
-                        .replaceAll("%u", player.getUniqueId().toString());
+                        .replace("%p", player.getName())
+                        .replace("%u", player.getUniqueId().toString())
+                        .replace("%c", Objects.requireNonNull(getCreator(player), "Missing creator id at fake player metadata"));
             }
 
             if (cmd.isBlank()) {
                 continue;
             }
 
-            try {
-                server.dispatchCommand(sender, cmd);
-            } catch (Throwable e) {
-                log.warning(Throwables.getStackTraceAsString(e));
-            }
+            server.dispatchCommand(sender, cmd);
         }
-
-        return true;
     }
 
 

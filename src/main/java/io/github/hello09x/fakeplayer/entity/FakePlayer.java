@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.entity;
 
+import com.google.common.base.Throwables;
 import com.mojang.authlib.GameProfile;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
@@ -45,11 +46,14 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import static java.lang.Math.min;
+
 public class FakePlayer {
 
     private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
     private final static Field distanceManager = ReflectionUtils.getFirstFieldByAssignFromType(ChunkMap.class, DistanceManager.class, false);
     private final static Logger log = Main.getInstance().getLogger();
+    public final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
@@ -76,13 +80,14 @@ public class FakePlayer {
     ) {
         this.handle = new ServerPlayer(server, world, new GameProfile(uniqueId, name));
         this.creator = creator;
-        this.spawnLocation = at;
+        this.spawnLocation = at.clone();
 
         try {
             var networkManager = new EmptyNetworkManager(PacketFlow.CLIENTBOUND);
             this.handle.connection = new EmptyConnection(server, networkManager, this.handle);
             networkManager.setListener(this.handle.connection);
         } catch (IOException e) {
+            log.warning("无法为假人创建虚拟的网络连接\n" + Throwables.getStackTraceAsString(e));
             throw new RuntimeException(e);
         }
 
@@ -151,7 +156,7 @@ public class FakePlayer {
                 0,
                 HumanoidArm.LEFT,
                 false,
-                true
+                true                // allow listing
         ));
 
         var entity = this.handle.getBukkitEntity();
@@ -192,24 +197,21 @@ public class FakePlayer {
      */
     @SuppressWarnings("resource")
     public void addEntityToWorld() {
-        var entity = this.handle.getBukkitEntity();
-        if (!isChunkLoaded(spawnLocation)) {
-            spawnLocation.getChunk().load();
-        }
-
-
-        this.handle.level().addFreshEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        handle.level().addFreshEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
         ((CraftServer) Bukkit.getServer()).getHandle().respawn(
                 this.handle,
-                true,
+                ((CraftWorld) this.spawnLocation.getWorld()).getHandle(),
+                true,   // keep player inventory
+                this.spawnLocation,
+                properties.isAvoidSuffocation(),
                 PlayerRespawnEvent.RespawnReason.PLUGIN
         );
-
-        // move directly
-        this.handle.getBukkitEntity().teleport(spawnLocation);
         spawnLocation.getWorld().playSound(spawnLocation, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
 
+    /**
+     * 玩家每 tick 要做的事情
+     */
     public void doTick() {
         this.handle.doTick();
         this.handle.baseTick();
@@ -245,19 +247,25 @@ public class FakePlayer {
             }
         }
 
+        var distance = properties.getDistance();
+        if (distance <= 0) {
+            distance = Bukkit.getSimulationDistance();
+        }
+
         var pos = ((CraftPlayer) bukkitPlayer).getHandle().chunkPosition();
-        dm.addRegionTicketAtDistance(TicketType.PLAYER, pos, Bukkit.getServer().getSimulationDistance(), pos);
+        int offset = distance + 2; // FULL(33) - 2 = ENTITY_TICKING(31)
+        dm.addRegionTicketAtDistance(TicketType.PLAYER, pos, offset, pos);
     }
 
     public @NotNull Player getBukkitPlayer() {
         if (this.bukkitPlayer == null) {
-            throw new IllegalStateException("fake player never spawn");
+            throw new IllegalStateException("fake player never spawned");
         }
         return this.bukkitPlayer;
     }
 
     public List<Chunk> getNearbyChunks() {
-        var distance = Math.min(Bukkit.getSimulationDistance(), this.bukkitPlayer.getSimulationDistance());
+        var distance = min(Bukkit.getSimulationDistance(), this.bukkitPlayer.getSimulationDistance());
 
         var center = bukkitPlayer.getChunk();
         var minX = center.getX() - distance;
@@ -276,33 +284,44 @@ public class FakePlayer {
     }
 
     public void simulateLogin() {
-
         new BukkitRunnable() {
             @Override
             public void run() {
                 Bukkit.getPluginManager().callEvent(
                         new AsyncPlayerPreLoginEvent(
                                 handle.getGameProfile().getName(),
-                                InetAddress.getLoopbackAddress(),
-                                InetAddress.getLoopbackAddress(),
+                                fakeAddress,
+                                fakeAddress,
                                 handle.getUUID(),
-                                bukkitPlayer.getPlayerProfile()
+                                bukkitPlayer.getPlayerProfile(),
+                                fakeAddress.getHostName()
                         ));
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getPluginManager().callEvent(
+                                new PlayerLoginEvent(
+                                        bukkitPlayer,
+                                        fakeAddress.getHostName(),
+                                        fakeAddress,
+                                        fakeAddress
+                                )
+                        );
+                    }
+                }.runTaskLater(Main.getInstance(), 1);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getPluginManager().callEvent(
+                                new PlayerJoinEvent(bukkitPlayer,
+                                        (Component) null)
+                        );
+                    }
+                }.runTaskLater(Main.getInstance(), 2);
             }
         }.runTaskAsynchronously(Main.getInstance());
-
-        Bukkit.getPluginManager().callEvent(
-                new PlayerLoginEvent(
-                        bukkitPlayer,
-                        InetAddress.getLoopbackAddress().getHostName(),
-                        InetAddress.getLoopbackAddress(),
-                        InetAddress.getLoopbackAddress())
-        );
-
-        Bukkit.getPluginManager().callEvent(
-                new PlayerJoinEvent(bukkitPlayer,
-                        (Component) null)
-        );
     }
 
 

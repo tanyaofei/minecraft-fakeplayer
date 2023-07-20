@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x</groupId>
     <artifactId>fakeplayer</artifactId>
-    <version>1_20_R1-0.0.4</version>
+    <version>1_20_R1-0.0.5</version>
     <packaging>jar</packaging>
 
     <name>fakeplayer</name>
@@ -92,8 +92,7 @@
 
     <repositories>
         <repository>
-            <id>minecraft-libraries</id>
-            <name>Minecraft Libraries</name>
+            <id>minecraft</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
         <repository>
@@ -105,18 +104,20 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>citizens-repo</id>
-            <url>https://maven.citizensnpcs.co/repo</url>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${craftbukkit.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>io.github.tanyaofei</groupId>
             <artifactId>plugintoolkit</artifactId>
@@ -142,6 +143,13 @@
             <artifactId>spigot</artifactId>
             <version>1.20.1-R0.1-SNAPSHOT</version>
             <classifier>remapped-mojang</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
 
