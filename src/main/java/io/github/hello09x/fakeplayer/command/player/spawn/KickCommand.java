@@ -12,17 +12,17 @@ import java.util.List;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
-public class RemoveCommand extends AbstractCommand {
+public class KickCommand extends AbstractCommand {
 
-    public final static RemoveCommand instance = new RemoveCommand(
+    public final static KickCommand instance = new KickCommand(
             "移除假人",
-            "/fp remove [假人名称]",
+            "/fp kick [假人名称]",
             "fakeplayer.spawn"
     );
 
     private final FakePlayerManager manager = FakePlayerManager.instance;
 
-    public RemoveCommand(
+    public KickCommand(
             @NotNull String description,
             @NotNull String usage,
             @Nullable String permission

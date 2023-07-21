@@ -19,7 +19,7 @@ public class ListCommand extends ExecutableCommand {
 
     public final static ListCommand instance = new ListCommand(
             "查看所有假人",
-            "/list [页码] [数量]",
+            "/fp list [页码] [数量]",
             "fakeplayer.spawn"
     );
     private final static FakePlayerManager manager = FakePlayerManager.instance;

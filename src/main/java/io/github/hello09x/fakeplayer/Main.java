@@ -35,7 +35,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(PlayerPreLoginListener.instance, this);
         pm.registerEvents(PlayerQuitListener.instance, this);
         pm.registerEvents(PlayerDeathListener.instance, this);
-//        pm.registerEvents(PlayerInteractAtEntityListener.instance, this);
+        pm.registerEvents(PlayerInteractAtEntityListener.instance, this);
         pm.registerEvents(PlayerTeleportListener.instance, this);
     }
 

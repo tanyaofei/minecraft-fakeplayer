@@ -8,8 +8,9 @@ import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.MetadataUtils;
-import io.github.hello09x.fakeplayer.util.SeedUUID;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -216,6 +217,21 @@ public class FakePlayerManager {
                 .stream()
                 .filter(p -> !p.getMetadata(META_KEY_CREATOR).isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    public void openInventory(@NotNull Player player, @NotNull Player fakePlayer) {
+        if (!isFake(fakePlayer)) {
+            return;
+        }
+
+        player.showTitle(Title.title(
+                text("取物品有概率消失", RED),
+                text("尽量使用 Shift + 左键取物品"),
+                Title.Times.times(Ticks.duration(10), Ticks.duration(20), Ticks.duration(20))
+        ));
+
+        var inv = fakePlayer.getInventory();
+        player.openInventory(inv);
     }
 
     public void cleanup(@NotNull Player fakePlayer) {

@@ -27,7 +27,7 @@ public class PlayerInteractAtEntityListener implements Listener {
         }
 
         if (player.isOp() || Objects.equals(manager.getCreator(target), player.getName())) {
-            player.openInventory(target.getInventory());
+            manager.openInventory(player, target);
         }
 
     }

@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.command.player.control;
 
 import io.github.hello09x.fakeplayer.command.player.AbstractCommand;
+import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,15 +11,17 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public class OpenCommand extends AbstractCommand {
+public class InvseeCommand extends AbstractCommand {
 
-    public final static OpenCommand instance = new OpenCommand(
+    private final FakePlayerManager manager = FakePlayerManager.instance;
+
+    public final static InvseeCommand instance = new InvseeCommand(
             "打开假人背包",
             "/fp open [假人名称]",
             "fakeplayer.control"
     );
 
-    public OpenCommand(@NotNull String description, @NotNull String usage, @Nullable String permission) {
+    public InvseeCommand(@NotNull String description, @NotNull String usage, @Nullable String permission) {
         super(description, usage, permission);
     }
 
@@ -34,7 +37,7 @@ public class OpenCommand extends AbstractCommand {
             return false;
         }
 
-        p.openInventory(target.getInventory());
+        manager.openInventory(p, target);
         return true;
     }
 }

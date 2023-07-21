@@ -65,7 +65,7 @@ tp-across-worlds: false
 #   %u: 假人 uuid
 #   %c: 创建者的名称
 preparing-commands:
-  - '/give %p 1 poppy'
+  - '/give %p poppy 1'
   - ''
 
 # 假人销毁时执行的命令

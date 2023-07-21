@@ -21,7 +21,7 @@ permissions:
     default: op
 
   fakeplayer.spawn:
-    description: '拥有 create, remove, list 命令执行的权限'
+    description: '拥有 create, kick, list 命令执行的权限'
     default: op
 
   fakeplayer.tp:
@@ -29,7 +29,7 @@ permissions:
     default: op
 
   fakeplayer.control:
-    description: '拥有 open, drop 命令执行的权限'
+    description: '拥有 invsee, drop 命令执行的权限'
     default: op
 
   fakeplayer.admin:
