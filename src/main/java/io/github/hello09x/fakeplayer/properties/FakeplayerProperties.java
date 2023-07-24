@@ -5,7 +5,6 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.tanyaofei.plugin.toolkit.properties.AbstractProperties;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -30,11 +29,6 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
      * 服务器最多多少个假人
      */
     private int serverLimit;
-
-    /**
-     * 动作更新间隔
-     */
-    private long tickPeriod;
 
     /**
      * 命名模版
@@ -83,7 +77,6 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
     protected void reload(@NotNull FileConfiguration file) {
         this.playerLimit = maxIfZero(file.getInt("player-limit", 1));
         this.serverLimit = maxIfZero(file.getInt("server-limit", 1000));
-        this.tickPeriod = file.getLong("tick-period", 1);
         this.followQuiting = file.getBoolean("follow-quiting", true);
         this.detectIp = file.getBoolean("detect-ip", false);
         this.kaleTps = file.getInt("kale-tps", 10);
