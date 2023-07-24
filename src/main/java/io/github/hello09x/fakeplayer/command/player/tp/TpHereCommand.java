@@ -1,13 +1,10 @@
 package io.github.hello09x.fakeplayer.command.player.tp;
 
-import io.github.hello09x.fakeplayer.command.MessageException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;

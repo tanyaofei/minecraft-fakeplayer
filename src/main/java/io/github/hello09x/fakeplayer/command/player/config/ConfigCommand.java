@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 public class ConfigCommand extends ParentCommand {
 
     public final static ConfigCommand instance = new ConfigCommand(
-            "假人个人配置",
+            "假人玩家个性化配置",
             null
     );
 

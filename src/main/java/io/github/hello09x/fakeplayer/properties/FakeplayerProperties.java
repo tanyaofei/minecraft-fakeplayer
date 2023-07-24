@@ -79,7 +79,7 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.serverLimit = maxIfZero(file.getInt("server-limit", 1000));
         this.followQuiting = file.getBoolean("follow-quiting", true);
         this.detectIp = file.getBoolean("detect-ip", false);
-        this.kaleTps = file.getInt("kale-tps", 10);
+        this.kaleTps = file.getInt("kale-tps", 0);
         this.preparingCommands = file.getStringList("preparing-commands");
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");

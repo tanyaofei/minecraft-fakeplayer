@@ -11,17 +11,10 @@ import java.util.function.Function;
  * @param mapper       转换器
  */
 public record Config<T>(
-
-
         String name,
-
-
         String label,
-
         T defaultValue,
-
         List<String> options,
-
         Function<String, T> mapper
 
 ) {

@@ -64,7 +64,7 @@ public class FakeplayerManager {
                         @Override
                         public void run() {
                             if (removeAll() > 0) {
-                                Bukkit.getServer().broadcast(text("[服务器过于卡顿, 已删除所有假人]").style(Style.style(RED, ITALIC)));
+                                Bukkit.getServer().broadcast(text("[服务器过于卡顿, 已移除所有假人]").style(Style.style(RED, ITALIC)));
                             }
                         }
                     }.runTask(Main.getInstance());
@@ -130,8 +130,7 @@ public class FakeplayerManager {
         dispatchCommands(player, properties.getPreparingCommands());
 
         // 先等待玩家 spawn 之后再 tp, 否则 tp 不生效
-        // 可能会被别的插件干预
-        // 因此 TP 两次
+        // 可能会被别的插件干预, 因此 tp 两次
         var spawnpoint = spawnAt.getWorld().getSpawnLocation().clone();
         new BukkitRunnable() {
             @Override
@@ -327,19 +326,16 @@ public class FakeplayerManager {
             fakePlayer.removeMetadata(META_KEY_NAME_ATTACK_TASK_ID, Main.getInstance());
         }
 
-        var action = new Runnable() {
-            @Override
-            public void run() {
-                var entity = fakePlayer.getTargetEntity(3);
-                if (entity != null) {
-                    fakePlayer.swingMainHand();
-                    fakePlayer.attack(entity);
-                }
+        Runnable attack = () -> {
+            var entity = fakePlayer.getTargetEntity(3);
+            if (entity != null) {
+                fakePlayer.swingMainHand();
+                fakePlayer.attack(entity);
             }
         };
 
         if (tickPeriod <= 1) {
-            action.run();
+            attack.run();
             return;
         }
 
@@ -349,9 +345,9 @@ public class FakeplayerManager {
                 if (!fakePlayer.isOnline()) {
                     cancel();
                 }
-                action.run();
+                attack.run();
             }
-        }.runTaskTimer(Main.getInstance(), tickPeriod, tickPeriod);
+        }.runTaskTimer(Main.getInstance(), 0, tickPeriod);
         fakePlayer.setMetadata(META_KEY_NAME_ATTACK_TASK_ID, new FixedMetadataValue(Main.getInstance(), task.getTaskId()));
     }
 

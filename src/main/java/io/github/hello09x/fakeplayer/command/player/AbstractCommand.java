@@ -39,7 +39,7 @@ public abstract class AbstractCommand extends ExecutableCommand {
             return null;
         }
 
-        var lookAt = p.getTargetEntity(5);
+        var lookAt = p.getTargetEntity(32);
         if (!(lookAt instanceof Player target) || !manager.isFake(target)) {
             var creations = manager.getAll(sender);
             if (creations.size() == 1) {
