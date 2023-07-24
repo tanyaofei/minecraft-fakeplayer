@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.manager;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
-import io.github.hello09x.fakeplayer.repository.UsedUUIDRepository;
+import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
@@ -13,9 +13,9 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -34,14 +34,13 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
-public class FakePlayerManager {
+public class FakeplayerManager {
 
-    public final static FakePlayerManager instance = new FakePlayerManager();
+    public final static FakeplayerManager instance = new FakeplayerManager();
 
     private final static Logger log = Main.getInstance().getLogger();
 
     private final static String META_KEY_CREATOR = "fakeplayer:creator";
-
     private final static String META_KEY_CREATOR_IP = "fakeplayer:creator-ip";
     private final static String META_KEY_NAME_SOURCE = "fakeplayer:name-source";
     private final static String META_KEY_NAME_SEQUENCE = "fakeplayer:name-sequence";
@@ -49,13 +48,13 @@ public class FakePlayerManager {
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
-    private final UsedUUIDRepository usedIdsRepository = UsedUUIDRepository.instance;
+    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
 
     private final NameManager nameManager = NameManager.instance;
 
     private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
-    private FakePlayerManager() {
+    private FakeplayerManager() {
         // 服务器 tps 过低删除所有假人
         new Timer().schedule(new TimerTask() {
             @Override
@@ -80,7 +79,7 @@ public class FakePlayerManager {
      * @param creator 创建者
      * @param spawnAt 生成地点
      */
-    public synchronized void spawnFakePlayer(
+    public synchronized void spawn(
             @NotNull CommandSender creator,
             @NotNull Location spawnAt
     ) {
@@ -110,31 +109,45 @@ public class FakePlayerManager {
             collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
         }
 
-        var faker = new FakePlayer(
+        var serverPlayer = new FakePlayer(
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
-                ((CraftWorld) spawnAt.getWorld()).getHandle(),
                 generateId(name.name()),
-                name.name(),
-                spawnAt
-        ).spawn(properties.getTickPeriod(), invulnerable, lookAtEntity, collidable);
+                name.name()
+        );
 
-        faker.setMetadata(META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
-        faker.setMetadata(META_KEY_CREATOR_IP, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
-        faker.setMetadata(META_KEY_NAME_SOURCE, new FixedMetadataValue(Main.getInstance(), name.source()));
-        faker.setMetadata(META_KEY_NAME_SEQUENCE, new FixedMetadataValue(Main.getInstance(), name.sequence()));
-        faker.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
+        var player = serverPlayer.getBukkitPlayer();
+        player.setMetadata(META_KEY_CREATOR, new FixedMetadataValue(Main.getInstance(), creator.getName()));
+        player.setMetadata(META_KEY_CREATOR_IP, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
+        player.setMetadata(META_KEY_NAME_SOURCE, new FixedMetadataValue(Main.getInstance(), name.source()));
+        player.setMetadata(META_KEY_NAME_SEQUENCE, new FixedMetadataValue(Main.getInstance(), name.sequence()));
+        player.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
 
-        usedIdsRepository.add(faker.getUniqueId());
+        serverPlayer.spawn(invulnerable, collidable, lookAtEntity);
 
-        // 由于模拟登陆需要延迟执行
-        // 因此准备命令需要更晚执行
+        usedIdRepository.add(player.getUniqueId());
+
+        dispatchCommands(player, properties.getPreparingCommands());
+
+        // 先等待玩家 spawn 之后再 tp, 否则 tp 不生效
+        // 可能会被别的插件干预
+        // 因此 TP 两次
+        var spawnpoint = spawnAt.getWorld().getSpawnLocation().clone();
         new BukkitRunnable() {
             @Override
             public void run() {
-                dispatchCommands(faker, properties.getPreparingCommands());
+                player.teleport(spawnpoint);
             }
         }.runTaskLater(Main.getInstance(), 5);
+
+        var moveTo = spawnAt.clone();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.teleport(moveTo);
+                moveTo.getWorld().playSound(moveTo, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
+        }.runTaskLater(Main.getInstance(), 20);
     }
 
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
@@ -243,17 +256,6 @@ public class FakePlayerManager {
         var source = metas[0];
         var sequence = metas[1];
         nameManager.giveback(source.asString(), sequence.asInt());
-
-        var location = fakePlayer.getLocation();
-        var world = location.getWorld();
-        var items = fakePlayer.getInventory().getContents().clone();
-        fakePlayer.getInventory().clear();
-        for (var item : items) {
-            if (item == null) {
-                continue;
-            }
-            world.dropItemNaturally(location, item).setPickupDelay(5);
-        }
     }
 
     /**

@@ -14,11 +14,11 @@ import java.util.List;
 
 @Getter
 @ToString
-public class FakeplayerProperties extends AbstractProperties {
+public class FakeplayerProperties extends AbstractProperties<FakeplayerProperties> {
 
     public final static FakeplayerProperties instance = new FakeplayerProperties(
             Main.getInstance(),
-            "6"
+            "7"
     );
 
     /**
@@ -71,28 +71,12 @@ public class FakeplayerProperties extends AbstractProperties {
      */
     private boolean simulateLogin;
 
-    /**
-     * 距离
-     */
-    private int distance;
-
-    /**
-     * 防窒息
-     */
-    private boolean avoidSuffocation;
-
-    private boolean tpAcrossWorlds;
-
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
 
     private static int maxIfZero(int value) {
-        return value == 0 ? Integer.MAX_VALUE : value;
-    }
-
-    private static String defaultSeed() {
-        return String.valueOf(Bukkit.getWorlds().get(0).getSeed());
+        return value <= 0 ? Integer.MAX_VALUE : value;
     }
 
     @Override
@@ -107,9 +91,6 @@ public class FakeplayerProperties extends AbstractProperties {
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
-        this.distance = file.getInt("distance", 0);
-        this.avoidSuffocation = file.getBoolean("avoid-suffocation", false);
-        this.tpAcrossWorlds = file.getBoolean("tp-across-worlds", false);
     }
 
 }

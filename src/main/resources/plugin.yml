@@ -17,7 +17,6 @@ permissions:
     children:
       - fakeplayer.spawn
       - fakeplayer.tp
-      - fakeplayer.control
     default: op
 
   fakeplayer.spawn:
@@ -26,10 +25,6 @@ permissions:
 
   fakeplayer.tp:
     description: '拥有 tp, tphere, tps 命令执行的权限'
-    default: op
-
-  fakeplayer.control:
-    description: '拥有 invsee, drop 命令执行的权限'
     default: op
 
   fakeplayer.admin:

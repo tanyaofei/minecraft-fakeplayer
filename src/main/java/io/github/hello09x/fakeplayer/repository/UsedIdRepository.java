@@ -14,15 +14,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class UsedUUIDRepository {
+public class UsedIdRepository {
 
 
-    public final static UsedUUIDRepository instance = new UsedUUIDRepository();
+    public final static UsedIdRepository instance = new UsedIdRepository();
     private final static Logger log = Main.getInstance().getLogger();
 
     private final Set<UUID> UUIDS = new HashSet<>();
 
-    public UsedUUIDRepository() {
+    public UsedIdRepository() {
         this.load();
     }
 

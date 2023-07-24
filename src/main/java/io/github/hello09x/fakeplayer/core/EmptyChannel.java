@@ -9,6 +9,8 @@ import java.net.SocketAddress;
 public class EmptyChannel extends AbstractChannel {
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
+    private final static EventLoop EVENT_LOOP = new DefaultEventLoop();
+
     public EmptyChannel(Channel parent) {
         super(parent);
     }
@@ -77,5 +79,10 @@ public class EmptyChannel extends AbstractChannel {
     @Override
     protected SocketAddress remoteAddress0() {
         return new InetSocketAddress(InetAddress.getLoopbackAddress().getHostName(), 25565);
+    }
+
+    @Override
+    public EventLoop eventLoop() {
+        return EVENT_LOOP;
     }
 }

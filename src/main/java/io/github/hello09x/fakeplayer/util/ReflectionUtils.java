@@ -8,7 +8,6 @@ import java.lang.reflect.Modifier;
 
 public class ReflectionUtils {
 
-    private final static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     public static @Nullable Field getFirstFieldByType(Class<?> clazz, Class<?> fieldType, boolean includeStatic) {
         for (var field : clazz.getDeclaredFields()) {

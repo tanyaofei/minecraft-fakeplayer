@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.command.player.spawn;
 
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -23,7 +23,7 @@ public class CreateCommand extends ExecutableCommand {
             "fakeplayer.spawn"
     );
 
-    private final FakePlayerManager manager = FakePlayerManager.instance;
+    private final FakeplayerManager manager = FakeplayerManager.instance;
 
     public CreateCommand(@NotNull String description, @NotNull String usage, @Nullable String permission) {
         super(description, usage, permission);
@@ -37,7 +37,7 @@ public class CreateCommand extends ExecutableCommand {
             @NotNull String[] args
     ) {
         if (sender instanceof Player p) {
-            manager.spawnFakePlayer(
+            manager.spawn(
                     p,
                     ((Player) sender).getLocation()
             );
@@ -56,7 +56,7 @@ public class CreateCommand extends ExecutableCommand {
             }
 
             var world = sender.getServer().getWorlds().get(0);
-            manager.spawnFakePlayer(sender, new Location(world, x, y, z));
+            manager.spawn(sender, new Location(world, x, y, z));
         }
 
         sender.sendMessage(text("创建假人成功", GRAY));

@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x</groupId>
     <artifactId>fakeplayer</artifactId>
-    <version>1_20_R1-0.0.7</version>
+    <version>1_20_R1-0.1.0</version>
     <packaging>jar</packaging>
 
     <name>fakeplayer</name>
@@ -141,18 +141,10 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>${craftbukkit.version}</version>
             <classifier>remapped-mojang</classifier>
             <scope>provided</scope>
         </dependency>
-
-
-        <!--        <dependency>-->
-        <!--            <groupId>com.comphenix.protocol</groupId>-->
-        <!--            <artifactId>ProtocolLib</artifactId>-->
-        <!--            <version>5.0.0</version>-->
-        <!--            <scope>provided</scope>-->
-        <!--        </dependency>-->
 
     </dependencies>
 </project>

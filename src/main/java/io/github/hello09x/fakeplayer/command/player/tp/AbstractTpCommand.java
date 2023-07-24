@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.command.player.tp;
 
 import io.github.hello09x.fakeplayer.command.player.AbstractCommand;
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -13,7 +13,7 @@ import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
 public abstract class AbstractTpCommand extends AbstractCommand {
 
 
-    protected final FakePlayerManager manager = FakePlayerManager.instance;
+    protected final FakeplayerManager manager = FakeplayerManager.instance;
 
     protected final FakeplayerProperties properties = FakeplayerProperties.instance;
 

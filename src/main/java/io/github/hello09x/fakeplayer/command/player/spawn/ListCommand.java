@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.command.player.spawn;
 
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
 import io.github.tanyaofei.plugin.toolkit.database.Page;
 import org.bukkit.command.Command;
@@ -22,7 +22,7 @@ public class ListCommand extends ExecutableCommand {
             "/fp list [页码] [数量]",
             "fakeplayer.spawn"
     );
-    private final static FakePlayerManager manager = FakePlayerManager.instance;
+    private final static FakeplayerManager manager = FakeplayerManager.instance;
 
     public ListCommand(
             @NotNull String description,

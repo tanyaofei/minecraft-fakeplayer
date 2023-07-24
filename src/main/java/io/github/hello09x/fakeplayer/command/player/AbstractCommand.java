@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.command.player;
 
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.tanyaofei.plugin.toolkit.command.ExecutableCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -9,14 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public abstract class AbstractCommand extends ExecutableCommand {
 
-    private final FakePlayerManager manager = FakePlayerManager.instance;
+    private final FakeplayerManager manager = FakeplayerManager.instance;
 
     public AbstractCommand(
             @NotNull String description,

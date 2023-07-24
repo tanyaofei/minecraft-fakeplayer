@@ -43,11 +43,6 @@ public class TpSwapCommand extends AbstractTpCommand {
             return false;
         }
 
-        if (!Objects.equals(creator.getLocation().getWorld().getUID(), target.getLocation().getWorld().getUID())) {
-            sender.sendMessage(text("无法跨世界传送假人...", RED));
-            return true;
-        }
-
         var l1 = creator.getLocation();
         var l2 = target.getLocation();
 

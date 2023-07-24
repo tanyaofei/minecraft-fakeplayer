@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.command.player.control;
 
 import io.github.hello09x.fakeplayer.command.player.AbstractCommand;
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class InvseeCommand extends AbstractCommand {
 
-    private final FakePlayerManager manager = FakePlayerManager.instance;
+    private final FakeplayerManager manager = FakeplayerManager.instance;
 
     public final static InvseeCommand instance = new InvseeCommand(
             "打开假人背包",

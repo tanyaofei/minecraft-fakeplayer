@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.command.player.tp;
 
-import io.github.hello09x.fakeplayer.command.MessageException;
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,7 +12,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class TpToCommand extends AbstractTpCommand {
 
-    private final FakePlayerManager manager = FakePlayerManager.instance;
+    private final FakeplayerManager manager = FakeplayerManager.instance;
 
 
     public final static TpToCommand instance = new TpToCommand(

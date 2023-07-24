@@ -21,7 +21,6 @@ public class NameManager {
 
     private final static Logger log = Main.getInstance().getLogger();
 
-
     public GeneratedName take(CommandSender creator) {
         var source = properties.getNameTemplate();
         if (source.isBlank()) {
@@ -41,7 +40,7 @@ public class NameManager {
             }
             name += suffix;
 
-            if (Bukkit.getServer().getOfflinePlayerIfCached(name) != null) {
+            if (Bukkit.getServer().getOfflinePlayer(name).hasPlayedBefore()) {
                 tries--;
                 continue;
             }

@@ -2,8 +2,8 @@ package io.github.hello09x.fakeplayer;
 
 import io.github.hello09x.fakeplayer.command.RootCommand;
 import io.github.hello09x.fakeplayer.listener.*;
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
-import io.github.hello09x.fakeplayer.repository.UsedUUIDRepository;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,17 +26,13 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        FakePlayerManager.instance.removeAll();
-        UsedUUIDRepository.instance.save();
+        FakeplayerManager.instance.removeAll();
+        UsedIdRepository.instance.save();
     }
 
     private void registerListeners() {
         var pm = getServer().getPluginManager();
-        pm.registerEvents(PlayerPreLoginListener.instance, this);
-        pm.registerEvents(PlayerQuitListener.instance, this);
-        pm.registerEvents(PlayerDeathListener.instance, this);
-        pm.registerEvents(PlayerInteractAtEntityListener.instance, this);
-        pm.registerEvents(PlayerTeleportListener.instance, this);
+        pm.registerEvents(PlayerListeners.instance, this);
     }
 
 }

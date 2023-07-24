@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.command.player.spawn;
 
 import io.github.hello09x.fakeplayer.command.player.AbstractCommand;
-import io.github.hello09x.fakeplayer.manager.FakePlayerManager;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public class KickCommand extends AbstractCommand {
             "fakeplayer.spawn"
     );
 
-    private final FakePlayerManager manager = FakePlayerManager.instance;
+    private final FakeplayerManager manager = FakeplayerManager.instance;
 
     public KickCommand(
             @NotNull String description,

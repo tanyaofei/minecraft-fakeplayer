@@ -45,11 +45,6 @@ public class TpHereCommand extends AbstractTpCommand {
             return false;
         }
 
-        if (!Objects.equals(creator.getLocation().getWorld().getUID(), target.getLocation().getWorld().getUID())) {
-            sender.sendMessage(text("无法跨世界传送假人...", RED));
-            return true;
-        }
-
         super.teleport(target, creator);
         return true;
     }
