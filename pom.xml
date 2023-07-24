@@ -138,6 +138,9 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--    远程仓库中没有, 需要使用 spigot BuildTool.jar 在本地仓库中安装    -->
+        <!-- https://www.spigotmc.org/wiki/buildtools/ -->
+        <!-- https://blog.jeff-media.com/nms-use-mojang-mappings-for-your-spigot-plugins/ -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
