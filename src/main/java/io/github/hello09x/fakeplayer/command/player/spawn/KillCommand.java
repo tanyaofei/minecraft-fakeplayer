@@ -10,19 +10,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-public class KickCommand extends AbstractCommand {
+public class KillCommand extends AbstractCommand {
 
-    public final static KickCommand instance = new KickCommand(
+    public final static KillCommand instance = new KillCommand(
             "移除假人",
-            "/fp kick [假人名称]",
+            "/fp kill [假人] [-a|-all]",
             "fakeplayer.spawn"
     );
 
     private final FakeplayerManager manager = FakeplayerManager.instance;
 
-    public KickCommand(
+    public KillCommand(
             @NotNull String description,
             @NotNull String usage,
             @Nullable String permission
@@ -37,13 +39,10 @@ public class KickCommand extends AbstractCommand {
             @NotNull String label,
             @NotNull String[] args
     ) {
-        if (args.length != 1) {
-            return false;
-        }
-
-        var name = args[0];
-        if (name.equals("@all") || name.equals("@a")) {
-            int removed = manager.removeAll();
+        if (hasFlag(args, "-a") || hasFlag(args, "--all")) {
+            int removed = sender.isOp()
+                    ? manager.removeAll()
+                    : manager.removeAll(sender);
             sender.sendMessage(text(String.format("已移除 %d 个假人", removed), GRAY));
             return true;
         }
@@ -53,7 +52,10 @@ public class KickCommand extends AbstractCommand {
             return false;
         }
         manager.remove(target.getName());
-        sender.sendMessage(text("移除假人成功", GRAY));
+        sender.sendMessage(textOfChildren(
+                text("你移除了假人 ", GRAY),
+                text(target.getName(), WHITE)
+        ));
         return true;
     }
 
@@ -70,8 +72,8 @@ public class KickCommand extends AbstractCommand {
                 label,
                 args
         );
-        if (sender.isOp() && suggestion != null) {
-            suggestion.add(0, "@all");
+        if (args.length == 1 && suggestion != null) {
+            suggestion.add(0, "--all");
         }
         return suggestion;
     }

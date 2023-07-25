@@ -17,7 +17,7 @@ public class TpToCommand extends AbstractTpCommand {
 
     public final static TpToCommand instance = new TpToCommand(
             "传送到假人身边",
-            "/fp tp [假人名称]",
+            "/fp tp [假人]",
             "fakeplayer.tp"
     );
 

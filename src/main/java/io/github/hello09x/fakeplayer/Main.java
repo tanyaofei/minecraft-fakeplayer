@@ -1,8 +1,9 @@
 package io.github.hello09x.fakeplayer;
 
 import io.github.hello09x.fakeplayer.command.RootCommand;
-import io.github.hello09x.fakeplayer.listener.*;
+import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.optional.BungeeCordServer;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,11 @@ public final class Main extends JavaPlugin {
             getServer().getPluginCommand("fakeplayer").setExecutor(RootCommand.instance);
         }
 
+        {
+            getServer().getMessenger().registerIncomingPluginChannel(Main.getInstance(), "BungeeCord", BungeeCordServer.instance);
+            getServer().getMessenger().registerOutgoingPluginChannel(Main.getInstance(), "BungeeCord");
+        }
+
         registerListeners();
     }
 
@@ -28,6 +34,11 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         FakeplayerManager.instance.removeAll();
         UsedIdRepository.instance.save();
+
+        {
+            getServer().getMessenger().unregisterIncomingPluginChannel(this);
+            getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+        }
     }
 
     private void registerListeners() {

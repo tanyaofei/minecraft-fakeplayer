@@ -17,16 +17,35 @@ permissions:
     children:
       - fakeplayer.spawn
       - fakeplayer.tp
+      - fakeplayer.profile
+      - fakeplayer.exp
+      - fakeplayer.action
     default: op
 
   fakeplayer.spawn:
-    description: '拥有 create, kick, list 命令执行的权限'
+    description: '拥有 create, kick, list 命令权限'
     default: op
 
   fakeplayer.tp:
-    description: '拥有 tp, tphere, tps 命令执行的权限'
+    description: '拥有 tp, tphere, tps 命令权限'
+    default: op
+
+  fakeplayer.profile:
+    description: '拥有 health, exp 命令权限'
+    default: op
+
+  fakeplayer.action:
+    description: '拥有 drop, dropinv, sneak 命令权限'
+    default: op
+
+  fakeplayer.experimental.action:
+    default: op
+    description: '拥有 attack, use 命令权限'
+
+  fakeplayer.exp:
+    description: '拥有 expme 命令权限'
     default: op
 
   fakeplayer.admin:
-    description: '假人管理员权限'
+    description: '假人管理员命令权限'
     default: op

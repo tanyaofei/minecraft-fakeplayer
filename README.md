@@ -9,17 +9,23 @@
 ## 特性
 
 1. 这个假人有点"真", 与真实玩家一致, 可以保持区块的刷新和怪物生成, 距离取决于服务器设置的模拟距离
-2. 假人不会拾取物品, 死亡时会被踢出游戏
-3. 假人的原生数据档案、成就数据不会存档，但第三方的档案还会存在
+2. 假人的原生数据档案、成就数据不会存档，但第三方的档案还会存在
 
 ## 命令
 
 + /fp create - 创建一个假人
-+ /fp kick - 移除假人
++ /fp kill - 移除假人
 + /fp tp - 传送到假人身边
 + /fp tps - 与假人交换位置
 + /fp tphere - 将假人传送到自己身边
++ /fp expme - 转移假人的经验值
++ /fp health - 查看假人的生命值
++ /fp exp - 查看假人的经验值
 + /fp config - 玩家个性化配置
++ /fp config set - 设置个性化配置
++ /fp config get - 查看个性化配置
++ /fp attack - 让假人点击鼠标左键 **(实验性)**
++ /fp use - 让假人点击鼠标右键 **(实验性)**
 
 此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等
 
@@ -27,9 +33,20 @@
 
 **_默认所有权限是 op 拥有，请通过权限管理插件来分配！_**
 
-+ fakeplayer.spawn - create, list, kick 等命令权限
-+ fakeplayer.tp - 假人 tp, tps, tphere 等命令指令权限
++ fakeplayer.spawn - `create`, `list`, `kill` 等使用命令权限
++ fakeplayer.tp - `tp`, `tps`, `tphere` 等传送指令权限
++ fakeplayer.profile - `exp`, `health`等查看假人信息命令权限 
++ fakeplayer.action - `drop`, `dropinv`, `invsee`, `sneak` 等控制命令权限
+
+
++ fakeplayer.experimental.action - `attack`, `use` 等控制命令权限 **(目前为实验性的, 未经过可靠性验证, 待成熟后将会移至 `fakeplayer.action`)**
+
+
 + fakeplayer.admin - 管理员权限
+
+ 
+ 
+ _config 相关命令没有配置权限节点_
 
 ## 已知问题
 

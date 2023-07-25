@@ -3,8 +3,8 @@ package io.github.hello09x.fakeplayer.entity;
 import com.mojang.authlib.GameProfile;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
-import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
+import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.util.ReflectionUtils;
@@ -63,7 +63,6 @@ public class FakePlayer {
         this.server = server;
 
         this.bukkitPlayer.setPersistent(false);
-        this.bukkitPlayer.setCanPickupItems(false);
         if (advancements != null) {
             try {
                 advancements.set(

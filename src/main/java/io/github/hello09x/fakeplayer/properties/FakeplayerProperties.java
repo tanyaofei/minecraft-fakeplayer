@@ -10,15 +10,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Getter
 @ToString
 public class FakeplayerProperties extends AbstractProperties<FakeplayerProperties> {
 
-    public final static FakeplayerProperties instance = new FakeplayerProperties(
-            Main.getInstance(),
-            "7"
-    );
+    public final static FakeplayerProperties instance;
+    private final static Logger log;
+
+    static {
+        log = Main.getInstance().getLogger();
+        instance = new FakeplayerProperties(
+                Main.getInstance(),
+                "7"
+        );
+    }
 
     /**
      * 每位玩家最多多少个假人
@@ -39,6 +46,11 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
      * 创建者玩家下线时是否跟随下线
      */
     private boolean followQuiting;
+
+    /**
+     * 是否允许玩家切换 bungeeCord 服务器时不跟随下线
+     */
+    private boolean bungee;
 
     /**
      * 是否探测 IP
@@ -84,6 +96,12 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
+        this.bungee = file.getBoolean("bungee", true);
+
+        if (this.nameTemplate.startsWith("-")) {
+            log.warning("假人名称模版不能以 - 开头, 该配置不会生效");
+            this.nameTemplate = "";
+        }
     }
 
 }

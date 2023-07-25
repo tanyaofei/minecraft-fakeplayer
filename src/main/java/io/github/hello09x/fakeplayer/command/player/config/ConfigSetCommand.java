@@ -19,7 +19,7 @@ public class ConfigSetCommand extends AbstractConfigCommand {
     public final static ConfigSetCommand instance = new ConfigSetCommand(
             "修改假人参数配置",
             "/fp config set <配置项> <配置值>",
-            "fakeplayer.config"
+            null
     );
 
 

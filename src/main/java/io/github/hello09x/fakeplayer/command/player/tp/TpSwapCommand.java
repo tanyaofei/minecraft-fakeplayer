@@ -9,8 +9,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
@@ -18,7 +16,7 @@ public class TpSwapCommand extends AbstractTpCommand {
 
     public final static TpSwapCommand instance = new TpSwapCommand(
             "与假人交换位置",
-            "/fp tps [假人名称]",
+            "/fp tps [假人]",
             "fakeplayer.tp"
     );
 

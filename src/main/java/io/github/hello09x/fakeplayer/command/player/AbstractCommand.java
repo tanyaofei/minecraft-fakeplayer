@@ -8,9 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class AbstractCommand extends ExecutableCommand {
@@ -30,9 +28,12 @@ public abstract class AbstractCommand extends ExecutableCommand {
             @NotNull String[] args
     ) {
         if (args.length != 0) {
-            return sender.isOp()
-                    ? manager.get(args[0])
-                    : manager.get(sender, args[0]);
+            var name = Arrays.stream(args).filter(arg -> !arg.startsWith("-")).findFirst().orElse(null);
+            if (name != null) {
+                return sender.isOp()
+                        ? manager.get(args[0])
+                        : manager.get(sender, args[0]);
+            }
         }
 
         if (!(sender instanceof Player p)) {
@@ -80,4 +81,25 @@ public abstract class AbstractCommand extends ExecutableCommand {
 
         return names.collect(Collectors.toList());
     }
+
+
+    protected @Nullable String getArgs(@NotNull String[] args, @NotNull String name) {
+        for (var arg : args) {
+            if (!arg.startsWith(name + ":")) {
+                continue;
+            }
+
+            return arg.split(":")[1];
+        }
+        return null;
+    }
+
+    protected @NotNull String getArgs(@NotNull String[] args, @NotNull String name, @NotNull String defaultValue) {
+        return Optional.ofNullable(getArgs(args, name)).orElse(defaultValue);
+    }
+
+    protected boolean hasFlag(@NotNull String[] args, @NotNull String flag) {
+        return Arrays.stream(args).anyMatch(i -> i.contains(flag));
+    }
+
 }
