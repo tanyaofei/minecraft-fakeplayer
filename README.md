@@ -37,6 +37,7 @@
 + fakeplayer.tp - `tp`, `tps`, `tphere` 等传送指令权限
 + fakeplayer.profile - `exp`, `health`等查看假人信息命令权限 
 + fakeplayer.action - `drop`, `dropinv`, `invsee`, `sneak` 等控制命令权限
++ fakeplayer.exp - `expme` 等命令权限
 
 
 + fakeplayer.experimental.action - `attack`, `use` 等控制命令权限 **(目前为实验性的, 未经过可靠性验证, 待成熟后将会移至 `fakeplayer.action`)**
