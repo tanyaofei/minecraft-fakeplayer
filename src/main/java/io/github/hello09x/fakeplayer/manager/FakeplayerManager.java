@@ -112,34 +112,35 @@ public class FakeplayerManager {
      * @param creator 创建者
      * @param spawnAt 生成地点
      */
-    public synchronized void spawn(
+    public synchronized @Nullable Player spawn(
             @NotNull CommandSender creator,
             @NotNull Location spawnAt
     ) {
         var playerLimit = properties.getPlayerLimit();
         if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
             creator.sendMessage(text("你创建的假人数量已达到上限...", RED));
-            return;
+            return null;
         }
 
         var serverLimit = properties.getServerLimit();
         if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getAll().size() >= serverLimit) {
             creator.sendMessage(text("服务器假人数量已达到上限...", RED));
-            return;
+            return null;
         }
 
         if (!creator.isOp() && properties.isDetectIp() && countByAddress(AddressUtils.getAddress(creator)) >= 1) {
             creator.sendMessage(text("你所在 IP 创建的假人数量已达到上限...", RED));
-            return;
+            return null;
         }
 
         var name = nameManager.take(creator);
-        boolean invulnerable = true, lookAtEntity = true, collidable = true;
+        boolean invulnerable = true, lookAtEntity = true, collidable = true, pickupItems = true;
         if (creator instanceof Player p) {
             var creatorId = p.getUniqueId();
             invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
             lookAtEntity = userConfigRepository.selectOrDefault(creatorId, Configs.look_at_entity);
             collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
+            pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
         }
 
         var serverPlayer = new FakePlayer(
@@ -156,11 +157,12 @@ public class FakeplayerManager {
         player.setMetadata(FakeplayerMetadata.NAME_SEQUENCE.key, new FixedMetadataValue(Main.getInstance(), name.sequence()));
         player.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
 
-        serverPlayer.spawn(invulnerable, collidable, lookAtEntity);
+        serverPlayer.spawn(invulnerable, collidable, lookAtEntity, pickupItems);
 
         usedIdRepository.add(player.getUniqueId());
 
         dispatchCommands(player, properties.getPreparingCommands());
+        performCommands(player);
 
         // 先等待玩家 spawn 之后再 tp, 否则 tp 不生效
         // 可能会被别的插件干预, 因此 tp 两次
@@ -180,6 +182,8 @@ public class FakeplayerManager {
                 moveTo.getWorld().playSound(moveTo, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
             }
         }.runTaskLater(Main.getInstance(), 20);
+
+        return player;
     }
 
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
@@ -354,6 +358,24 @@ public class FakeplayerManager {
             log.warning("Could not generate a UUID bound with name which is never used at this server, using random UUID as fallback: " + uuid);
         }
         return uuid;
+    }
+
+    public void performCommands(@NotNull Player player) {
+       if (!isFake(player)) {
+            return;
+        }
+
+        for (var cmd : properties.getSelfCommands()) {
+            cmd = cmd.trim();
+            if (cmd.startsWith("/")) {
+                cmd = cmd.substring(1);
+            }
+            if (cmd.isBlank()) {
+                continue;
+            }
+
+            player.performCommand(cmd);
+        }
     }
 
     public void dispatchCommands(@NotNull Player player, @NotNull List<String> commands) {

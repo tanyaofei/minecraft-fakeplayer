@@ -37,4 +37,12 @@ public class ActionSetting {
         return new ActionSetting(0, 1, 0);
     }
 
+    public static ActionSetting interval(int interval) {
+        return new ActionSetting(-1, interval, 0);
+    }
+
+    public static ActionSetting continuous() {
+        return new ActionSetting(-1, 1, 0);
+    }
+
 }

@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x</groupId>
     <artifactId>fakeplayer</artifactId>
-    <version>1_20_R1-0.1.1</version>
+    <version>1_20_R1-0.1.2</version>
     <packaging>jar</packaging>
 
     <name>fakeplayer</name>
@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -43,6 +43,14 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>dev.jorel.commandapi</pattern>
+                            <shadedPattern>io.github.hello09x.shaded.commandapi</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>net.md-5</groupId>
@@ -58,7 +66,8 @@
                         <configuration>
                             <srgIn>org.spigotmc:minecraft-server:${craftbukkit.version}:txt:maps-mojang</srgIn>
                             <reverse>true</reverse>
-                            <remappedDependencies>org.spigotmc:spigot:${craftbukkit.version}:jar:remapped-mojang
+                            <remappedDependencies>
+                                org.spigotmc:spigot:${craftbukkit.version}:jar:remapped-mojang
                             </remappedDependencies>
                             <remappedArtifactAttached>true</remappedArtifactAttached>
                             <remappedClassifierName>remapped-obf</remappedClassifierName>
@@ -138,6 +147,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- https://github.com/JorelAli/CommandAPI -->
+        <dependency>
+            <groupId>dev.jorel</groupId>
+            <artifactId>commandapi-bukkit-shade</artifactId>
+            <version>9.0.3</version>
+        </dependency>
+
         <!--    远程仓库中没有, 需要使用 spigot BuildTool.jar 在本地仓库中安装    -->
         <!-- https://www.spigotmc.org/wiki/buildtools/ -->
         <!-- https://blog.jeff-media.com/nms-use-mojang-mappings-for-your-spigot-plugins/ -->
@@ -150,4 +166,5 @@
         </dependency>
 
     </dependencies>
+
 </project>

@@ -17,10 +17,12 @@ public class ActionManager {
     public void tick() {
         if (setting.wait > 0) {
             setting.wait--;
+            inactiveTick();
             return;
         }
 
         if (setting.times == 0) {
+            inactiveTick();
             return;
         }
 
@@ -31,6 +33,10 @@ public class ActionManager {
             }
             setting.wait = setting.interval;
         }
+    }
+
+    public void inactiveTick() {
+        action.inactiveTick(this.actionPack);
     }
 
     public void stop() {

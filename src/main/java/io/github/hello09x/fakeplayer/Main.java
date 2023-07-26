@@ -1,6 +1,8 @@
 package io.github.hello09x.fakeplayer;
 
-import io.github.hello09x.fakeplayer.command.RootCommand;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
+import io.github.hello09x.fakeplayer.command.Commands;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.optional.BungeeCordServer;
@@ -14,13 +16,17 @@ public final class Main extends JavaPlugin {
     private static Main instance;
 
     @Override
+    public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this).silentLogs(true));
+    }
+
+    @Override
     public void onEnable() {
         // Plugin startup logic
-        instance = this;
 
-        {
-            getServer().getPluginCommand("fakeplayer").setExecutor(RootCommand.instance);
-        }
+        instance = this;
+        Commands.register();
+        CommandAPI.onEnable();
 
         {
             getServer().getMessenger().registerIncomingPluginChannel(Main.getInstance(), "BungeeCord", BungeeCordServer.instance);
@@ -39,6 +45,8 @@ public final class Main extends JavaPlugin {
             getServer().getMessenger().unregisterIncomingPluginChannel(this);
             getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         }
+
+        CommandAPI.onDisable();
     }
 
     private void registerListeners() {
