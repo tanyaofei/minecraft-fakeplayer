@@ -77,7 +77,7 @@ public class FakeplayerManager {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!properties.isFollowQuiting() || !properties.isBungeecord()) {
+                if (!properties.isFollowQuiting()) {
                     return;
                 }
 
@@ -90,11 +90,15 @@ public class FakeplayerManager {
                         continue;
                     }
 
-                    for (var fakePlayer : entry.getValue()) {
-                        remove(fakePlayer.getName());
-                    }
-
-                    log.info(String.format("玩家 %s 已不在线, 已移除 %d 个假人", entry.getKey(), entry.getValue().size()));
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            for (var fakePlayer : entry.getValue()) {
+                                remove(fakePlayer.getName());
+                            }
+                            log.info(String.format("玩家 %s 已不在线, 已移除 %d 个假人", entry.getKey(), entry.getValue().size()));
+                        }
+                    }.runTask(Main.getInstance());
                 }
 
 
@@ -202,7 +206,7 @@ public class FakeplayerManager {
      */
     public @Nullable Player get(@NotNull String name) {
         return Optional
-                .ofNullable(Bukkit.getServer().getPlayer(name))
+                .ofNullable(Bukkit.getServer().getPlayerExact(name))
                 .filter(this::isFake)
                 .orElse(null);
     }

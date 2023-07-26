@@ -48,11 +48,6 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
     private boolean followQuiting;
 
     /**
-     * 是否允许玩家切换 bungeeCord 服务器时不跟随下线
-     */
-    private boolean bungeecord;
-
-    /**
      * 是否探测 IP
      */
     private boolean detectIp;
@@ -102,7 +97,6 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
-        this.bungeecord = file.getBoolean("bungeecord", true);
 
         if (this.nameTemplate.startsWith("-")) {
             log.warning("假人名称模版不能以 - 开头, 该配置不会生效: " + this.nameTemplate);

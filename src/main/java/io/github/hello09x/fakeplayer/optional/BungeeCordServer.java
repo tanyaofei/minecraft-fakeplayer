@@ -27,7 +27,7 @@ public class BungeeCordServer implements PluginMessageListener {
     }
 
     public boolean isPlayerOnline(@NotNull String name) {
-        return onlinePlayers.contains(name) || Bukkit.getServer().getPlayer(name) != null;
+        return onlinePlayers.contains(name) || (Bukkit.getServer().getPlayerExact(name) != null);
     }
 
     @Override
