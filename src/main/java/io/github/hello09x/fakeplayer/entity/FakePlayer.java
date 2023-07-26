@@ -82,7 +82,8 @@ public class FakePlayer {
     public void spawn(
             boolean invulnerable,
             boolean collidable,
-            boolean lookAtEntity
+            boolean lookAtEntity,
+            boolean pickupItems
     ) {
         if (properties.isSimulateLogin()) {
             preLogin:
@@ -132,6 +133,7 @@ public class FakePlayer {
 
         bukkitPlayer.setInvulnerable(invulnerable);
         bukkitPlayer.setCollidable(collidable);
+        bukkitPlayer.setCanPickupItems(pickupItems);
         new BukkitRunnable() {
             @Override
             public void run() {

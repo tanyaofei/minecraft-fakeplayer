@@ -42,6 +42,14 @@ public interface Configs {
             Boolean::valueOf
     );
 
+    Config<Boolean> pickup_items = build(
+            "pickup_items",
+            "是否可拾取物品",
+            true,
+            List.of("true", "false"),
+            Boolean::valueOf
+    );
+
 
     private static <T> Config<T> build(
             @NotNull String name,

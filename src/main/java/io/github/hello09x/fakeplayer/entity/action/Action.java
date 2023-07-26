@@ -248,6 +248,10 @@ public enum Action {
 
     public void stop(@NotNull ActionPack ap) {}
 
+    public void inactiveTick(@NotNull ActionPack ap) {
+        this.stop(ap);
+    }
+
     public static class ActionPack {
 
         public final ServerPlayer player;

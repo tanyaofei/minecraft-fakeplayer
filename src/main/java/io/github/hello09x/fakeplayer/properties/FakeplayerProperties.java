@@ -68,6 +68,11 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
     private List<String> preparingCommands;
 
     /**
+     * 自执行命令
+     */
+    private List<String> selfCommands;
+
+    /**
      * 销毁命令
      */
     private List<String> destroyCommands;
@@ -92,6 +97,7 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.followQuiting = file.getBoolean("follow-quiting", true);
         this.detectIp = file.getBoolean("detect-ip", false);
         this.kaleTps = file.getInt("kale-tps", 0);
+        this.selfCommands = file.getStringList("self-commands");
         this.preparingCommands = file.getStringList("preparing-commands");
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");

@@ -1,15 +1,12 @@
-package io.github.hello09x.fakeplayer.command.player.profile;
+package io.github.hello09x.fakeplayer.command;
 
-import io.github.hello09x.fakeplayer.command.player.AbstractCommand;
+import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
@@ -17,42 +14,27 @@ import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
 
-public class HealthCommand extends AbstractCommand {
+public class ProfileCommand extends AbstractCommand {
 
+    public final static ProfileCommand instance = new ProfileCommand();
 
-    public static final HealthCommand instance = new HealthCommand(
-            "获取假人生命值",
-            "/fp health [假人]",
-            "fakeplayer.profile"
-    );
-
-    public HealthCommand(
-            @NotNull String description,
-            @NotNull String usage,
-            @Nullable String permission
-    ) {
-        super(description, usage, permission);
-    }
-
-    public static double round(double num, double base) {
-        if (num % base == 0) {
-            return num;
-        }
-        return Math.floor(num / base) * base;
-    }
-
-    @Override
-    protected boolean execute(
-            @NotNull CommandSender sender,
-            @NotNull Command command,
-            @NotNull String label,
-            @NotNull String[] args
-    ) {
+    public void exp(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        if (target == null) {
-            return false;
-        }
 
+        var level = target.getLevel();
+        var total = target.getTotalExperience();
+        sender.sendMessage(textOfChildren(
+                text(target.getName(), GRAY),
+                text(" 当前 ", GRAY),
+                text(level, DARK_GREEN),
+                text(" 级, 共 ", GRAY),
+                text(total, DARK_GREEN),
+                text(" 点经验值", GRAY)
+        ));
+    }
+
+    public void health(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        var target = getTarget(sender, args);
         var health = target.getHealth();
         double max = Optional.ofNullable(target.getAttribute(GENERIC_MAX_HEALTH))
                 .map(AttributeInstance::getValue)
@@ -73,8 +55,6 @@ public class HealthCommand extends AbstractCommand {
             color = DARK_RED;
         }
 
-        var h = BigDecimal.valueOf(health).setScale(1, RoundingMode.DOWN);
-
         sender.sendMessage(textOfChildren(
                 text(target.getName()),
                 text(" 当前生命值: ", GRAY),
@@ -82,7 +62,13 @@ public class HealthCommand extends AbstractCommand {
                 text("/", color),
                 text(max, color)
         ));
-        return true;
+    }
+
+    private static double round(double num, double base) {
+        if (num % base == 0) {
+            return num;
+        }
+        return Math.floor(num / base) * base;
     }
 
 }
