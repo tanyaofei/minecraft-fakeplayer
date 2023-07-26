@@ -17,6 +17,7 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -54,7 +55,8 @@ public class FakePlayer {
             @NotNull String creator,
             @NotNull MinecraftServer server,
             @NotNull UUID uniqueId,
-            @NotNull String name
+            @NotNull String name,
+            @NotNull Location spawnAt
     ) {
         this.creator = creator;
         this.handle = new ServerPlayer(server, Objects.requireNonNull(server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
@@ -86,7 +88,6 @@ public class FakePlayer {
             boolean pickupItems
     ) {
         if (properties.isSimulateLogin()) {
-            preLogin:
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -102,7 +103,6 @@ public class FakePlayer {
                 }
             }.runTaskAsynchronously(Main.getInstance());
 
-            login:
             {
                 Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(
                         this.bukkitPlayer,
@@ -112,7 +112,6 @@ public class FakePlayer {
             }
         }
 
-        gaming:
         {
             var connection = new EmptyConnection(PacketFlow.CLIENTBOUND);
             var listener = new EmptyServerGamePacketListener(this.server, connection, this.handle);
@@ -120,7 +119,6 @@ public class FakePlayer {
             connection.setListener(listener);
         }
 
-        spawn:
         {
             var connection = new EmptyConnection(PacketFlow.CLIENTBOUND);
             var listener = new EmptyLoginPacketListener(server, connection);

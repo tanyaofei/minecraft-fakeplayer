@@ -18,7 +18,11 @@ public class EmptyConnection extends Connection {
     }
 
     @Override
-    public void send(Packet packet, PacketSendListener listener) {
+    public void send(Packet<?> packet, PacketSendListener listener) {
+    }
+
+    @Override
+    public void send(Packet<?> packet) {
     }
 
     @Override

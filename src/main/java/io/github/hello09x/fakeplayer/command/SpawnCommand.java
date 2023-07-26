@@ -21,7 +21,7 @@ public class SpawnCommand extends AbstractCommand {
     public final static SpawnCommand instance = new SpawnCommand();
 
     public void create(@NotNull Player sender, CommandArguments args) {
-        var fakePlayer = fakeplayerManager.spawn(sender, sender.getLocation());
+        var fakePlayer = fakeplayerManager.spawn(sender, sender.getLocation().clone());
         if (fakePlayer != null) {
             sender.sendMessage(textOfChildren(
                     text("你创建了假人 ", GRAY),

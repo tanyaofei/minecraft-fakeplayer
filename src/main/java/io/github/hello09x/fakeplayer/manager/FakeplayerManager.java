@@ -4,7 +4,6 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.entity.FakeplayerMetadata;
 import io.github.hello09x.fakeplayer.entity.action.Action;
-import io.github.hello09x.fakeplayer.entity.action.PlayerActionManager;
 import io.github.hello09x.fakeplayer.optional.BungeeCordServer;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
@@ -54,8 +53,6 @@ public class FakeplayerManager {
 
     private final BungeeCordServer bungee = BungeeCordServer.instance;
 
-    private final PlayerActionManager playerActionManager = PlayerActionManager.instance;
-
     private FakeplayerManager() {
         var timer = new Timer();
 
@@ -80,7 +77,7 @@ public class FakeplayerManager {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!properties.isFollowQuiting() || !properties.isBungee()) {
+                if (!properties.isFollowQuiting() || !properties.isBungeecord()) {
                     return;
                 }
 
@@ -88,12 +85,12 @@ public class FakeplayerManager {
                         .stream()
                         .collect(Collectors.groupingBy(FakeplayerManager.this::getCreator));
 
-                for(var entry: group.entrySet()) {
+                for (var entry : group.entrySet()) {
                     if (bungee.isPlayerOnline(entry.getKey())) {
                         continue;
                     }
 
-                    for(var fakePlayer: entry.getValue()) {
+                    for (var fakePlayer : entry.getValue()) {
                         remove(fakePlayer.getName());
                     }
 
@@ -143,47 +140,51 @@ public class FakeplayerManager {
             pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
         }
 
-        var serverPlayer = new FakePlayer(
+        var player = new FakePlayer(
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
                 generateId(name.name()),
-                name.name()
+                name.name(),
+                spawnAt
         );
 
-        var player = serverPlayer.getBukkitPlayer();
-        player.setMetadata(FakeplayerMetadata.CREATOR.key, new FixedMetadataValue(Main.getInstance(), creator.getName()));
-        player.setMetadata(FakeplayerMetadata.CREATOR_IP.key, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
-        player.setMetadata(FakeplayerMetadata.NAME_SOURCE.key, new FixedMetadataValue(Main.getInstance(), name.source()));
-        player.setMetadata(FakeplayerMetadata.NAME_SEQUENCE.key, new FixedMetadataValue(Main.getInstance(), name.sequence()));
-        player.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
+        var bukkitPlayer = player.getBukkitPlayer();
+        bukkitPlayer.setMetadata(FakeplayerMetadata.CREATOR.key, new FixedMetadataValue(Main.getInstance(), creator.getName()));
+        bukkitPlayer.setMetadata(FakeplayerMetadata.CREATOR_IP.key, new FixedMetadataValue(Main.getInstance(), AddressUtils.getAddress(creator)));
+        bukkitPlayer.setMetadata(FakeplayerMetadata.NAME_SOURCE.key, new FixedMetadataValue(Main.getInstance(), name.source()));
+        bukkitPlayer.setMetadata(FakeplayerMetadata.NAME_SEQUENCE.key, new FixedMetadataValue(Main.getInstance(), name.sequence()));
+        bukkitPlayer.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
 
-        serverPlayer.spawn(invulnerable, collidable, lookAtEntity, pickupItems);
+        player.spawn(invulnerable, collidable, lookAtEntity, pickupItems);
 
-        usedIdRepository.add(player.getUniqueId());
+        usedIdRepository.add(bukkitPlayer.getUniqueId());
 
-        dispatchCommands(player, properties.getPreparingCommands());
-        performCommands(player);
+        dispatchCommands(bukkitPlayer, properties.getPreparingCommands());
+        performCommands(bukkitPlayer);
 
-        // 先等待玩家 spawn 之后再 tp, 否则 tp 不生效
-        // 可能会被别的插件干预, 因此 tp 两次
-        var spawnpoint = spawnAt.getWorld().getSpawnLocation().clone();
+        bukkitPlayer.teleport(spawnAt); // 当前 tick 必须传到出生点否则无法触发区块刷新
+        spawnAt.getWorld().playSound(spawnAt, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+
+        // 可能被别的插件干预
+        // 在下一 tick 里探测
         new BukkitRunnable() {
             @Override
             public void run() {
-                player.teleport(spawnpoint);
-            }
-        }.runTaskLater(Main.getInstance(), 5);
+                if (spawnAt.distance(bukkitPlayer.getLocation()) < 16) {
+                    return;
+                }
 
-        var moveTo = spawnAt.clone();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.teleport(moveTo);
-                moveTo.getWorld().playSound(moveTo, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+                bukkitPlayer.teleport(spawnAt.getWorld().getSpawnLocation());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        bukkitPlayer.teleport(spawnAt);
+                    }
+                }.runTaskLater(Main.getInstance(), 1);
             }
-        }.runTaskLater(Main.getInstance(), 20);
+        }.runTaskLater(Main.getInstance(), 1);
 
-        return player;
+        return bukkitPlayer;
     }
 
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
@@ -361,7 +362,7 @@ public class FakeplayerManager {
     }
 
     public void performCommands(@NotNull Player player) {
-       if (!isFake(player)) {
+        if (!isFake(player)) {
             return;
         }
 
