@@ -21,7 +21,7 @@ public class NameManager {
 
     private final static Logger log = Main.getInstance().getLogger();
 
-    public GeneratedName take(CommandSender creator) {
+    public SequenceName take(CommandSender creator) {
         var source = properties.getNameTemplate();
         if (source.isBlank()) {
             source = creator.getName();
@@ -45,7 +45,7 @@ public class NameManager {
                 continue;
             }
 
-            return new GeneratedName(
+            return new SequenceName(
                     source,
                     seq,
                     name
@@ -54,7 +54,7 @@ public class NameManager {
 
         var name = "FAKE_" + RandomStringUtils.random(11, true, true);
         log.warning("Could not generate a name which is never used at this server after 10 tries, using random player name as fallback: " + name);
-        return new GeneratedName("random", 0, name);
+        return new SequenceName("random", 0, name);
     }
 
     public void giveback(@NotNull String source, @NotNull Integer sequence) {
@@ -62,7 +62,7 @@ public class NameManager {
     }
 
 
-    public record GeneratedName(
+    public record SequenceName(
             String source,
             Integer sequence,
             String name

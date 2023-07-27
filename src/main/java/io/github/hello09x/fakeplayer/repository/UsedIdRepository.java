@@ -58,7 +58,7 @@ public class UsedIdRepository {
         }
     }
 
-    public void save() {
+    public void saveAll() {
         var folder = Main.getInstance().getDataFolder();
         if (!folder.exists() && !folder.mkdirs()) {
             return;

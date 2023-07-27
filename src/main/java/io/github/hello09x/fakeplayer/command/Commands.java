@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.entity.action.Action;
@@ -16,6 +17,7 @@ import static io.github.hello09x.fakeplayer.command.AbstractCommand.targetArgume
 public class Commands {
 
     private final static String PERMISSION_SPAWN = "fakeplayer.spawn";
+    private final static String PERMISSION_SPAWN_LOCATION = "fakeplayer.spawn.location";
     private final static String PERMISSION_PROFILE = "fakeplayer.profile";
     private final static String PERMISSION_TP = "fakeplayer.tp";
     private final static String PERMISSION_EXP = "fakeplayer.exp";
@@ -31,7 +33,7 @@ public class Commands {
                         "fakeplayer 可以用来创建一个模拟为玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
                 )
                 .withUsage(
-                        "§6/fp create §7- §f创建假人",
+                        "§6/fp spawn §7- §f创建假人",
                         "§6/fp kill [假人] §7- §f移除假人",
                         "§6/fp list [页码] [数量] §7- §f查看所有假人",
                         "§6/fp tp [假人] §7- §f传送到假人身边",
@@ -45,8 +47,9 @@ public class Commands {
                         "§6/fp drop [假人] [-a|--all] §7- §f丢弃手上物品",
                         "§6/fp dropinv [假人] §7- §f丢弃背包物品",
                         "§6/fp sneak [假人] §7- §f开启/取消潜行",
-                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §f鼠标左键",
-                        "§6/fp use <once|continuous|interval|stop> [假人] §7- §f鼠标右键"
+                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §f模拟鼠标左键",
+                        "§6/fp use <once|continuous|interval|stop> [假人] §7- §f模拟鼠标右键",
+                        "§6/fp reload §7- §f重载配置文件"
                 )
                 .withSubcommands(
                         new CommandAPICommand("help")
@@ -54,9 +57,10 @@ public class Commands {
                                 .withOptionalArguments(new IntegerArgument("page", 1))
                                 .executesPlayer(HelpCommand.instance::help),
 
-                        new CommandAPICommand("create")
+                        new CommandAPICommand("spawn")
                                 .withPermission(PERMISSION_SPAWN)
-                                .executesPlayer(SpawnCommand.instance::create),
+                                .withOptionalArguments(new LocationArgument("location").withPermission(PERMISSION_SPAWN_LOCATION))
+                                .executes(SpawnCommand.instance::spawn),
                         new CommandAPICommand("kill")
                                 .withPermission(PERMISSION_SPAWN)
                                 .withOptionalArguments(multiTargetArgument("targets"))
@@ -65,6 +69,10 @@ public class Commands {
                                 .withPermission(PERMISSION_SPAWN)
                                 .withOptionalArguments(new IntegerArgument("page", 1), new IntegerArgument("size", 1))
                                 .executes(SpawnCommand.instance::list),
+                        new CommandAPICommand("distance")
+                                .withPermission(PERMISSION_SPAWN)
+                                .withOptionalArguments(targetArgument("target"))
+                                .executesPlayer(SpawnCommand.instance::distance),
 
                         new CommandAPICommand("exp")
                                 .withPermission(PERMISSION_PROFILE)
@@ -96,8 +104,7 @@ public class Commands {
                                         new CommandAPICommand("set")
                                                 .withArguments(
                                                         ConfigCommand.configArgument("config"),
-                                                        ConfigCommand.configValueArgument("config", "value")
-                                                )
+                                                        ConfigCommand.configValueArgument("config", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
                         new CommandAPICommand("attack")
@@ -110,8 +117,7 @@ public class Commands {
                                 .withPermission(PERMISSION_ACTION)
                                 .withOptionalArguments(
                                         targetArgument("target"),
-                                        new MultiLiteralArgument("all", List.of("-a", "--all"))
-                                )
+                                        new MultiLiteralArgument("all", List.of("-a", "--all")))
                                 .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(
                                         sender,
                                         args,
@@ -155,8 +161,7 @@ public class Commands {
                 new CommandAPICommand("interval")
                         .withOptionalArguments(
                                 new IntegerArgument("interval", 1),
-                                targetArgument("target")
-                        )
+                                targetArgument("target"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
                     ActionCommand.instance.action(sender, args, action, ActionSetting.interval(interval));

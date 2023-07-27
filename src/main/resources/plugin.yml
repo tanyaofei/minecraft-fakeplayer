@@ -16,7 +16,11 @@ permissions:
     default: op
 
   fakeplayer.spawn:
-    description: '拥有 create, kill, list 命令权限'
+    description: '拥有 spawn, kill, list 命令权限'
+    default: op
+
+  fakeplayer.spawn.location:
+    description: '使用 spawn 命令时可以指定出生点'
     default: op
 
   fakeplayer.tp:

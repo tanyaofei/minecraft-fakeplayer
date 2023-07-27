@@ -11,6 +11,7 @@ import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,19 +24,11 @@ public abstract class AbstractCommand {
 
     public static Argument<Player> targetArgument(@NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
-            var sender = info.sender();
-            var name = info.currentInput();
-            var target = sender.isOp()
-                    ? FakeplayerManager.instance.get(name)
-                    : FakeplayerManager.instance.get(sender, name);
-
+            var target = tryGetTarget(info.sender(), info.currentInput());
             if (target == null) {
-                var targets = FakeplayerManager.instance.getAll(sender);
-                if (targets.size() != 1) {
-                    throw CustomArgument.CustomArgumentException.fromString("你需要指定假人");
-                }
-                target = targets.get(0);
+                throw CustomArgument.CustomArgumentException.fromString("你需要指定假人");
             }
+
             return target;
         }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
             var sender = info.sender();
@@ -59,21 +52,17 @@ public abstract class AbstractCommand {
             var sender = info.sender();
             var name = info.currentInput();
 
-            if (name.equals("--all")) {
+            if (name.equals("--all") || name.equals("-a")) {
                 return sender.isOp()
                         ? FakeplayerManager.instance.getAll()
                         : FakeplayerManager.instance.getAll(sender);
             }
 
-            var one = sender.isOp()
-                    ? FakeplayerManager.instance.get(name)
-                    : FakeplayerManager.instance.get(sender, name);
+            var target = tryGetTarget(sender, name);
+            return target == null
+                    ? Collections.emptyList()
+                    : Collections.singletonList(target);
 
-            if (one == null) {
-                return Collections.emptyList();
-            }
-
-            return Collections.singletonList(one);
         }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
             var sender = info.sender();
             var arg = info.currentArg().toLowerCase();
@@ -82,14 +71,24 @@ public abstract class AbstractCommand {
                     ? FakeplayerManager.instance.getAll()
                     : FakeplayerManager.instance.getAll(sender);
 
-            var names = fakes.stream().map(Player::getName);
+            var names = Stream.concat(fakes.stream().map(Player::getName), Stream.of("-a", "--all"));
             if (!arg.isEmpty()) {
                 names = names.filter(n -> n.toLowerCase().contains(arg));
             }
 
-            names = Stream.concat(Stream.of("--all"), names);
             return names.toArray(String[]::new);
         }));
+    }
+
+    private static @Nullable Player tryGetTarget(@NotNull CommandSender sender, @NotNull String name) {
+        if (name.isBlank()) {
+            var targets = FakeplayerManager.instance.getAll(sender);
+            return targets.size() == 1 ? targets.get(0) : null;
+        } else {
+            return sender.isOp()
+                    ? FakeplayerManager.instance.get(name)
+                    : FakeplayerManager.instance.get(sender, name);
+        }
     }
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {

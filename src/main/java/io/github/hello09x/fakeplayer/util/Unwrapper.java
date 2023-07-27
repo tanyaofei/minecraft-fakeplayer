@@ -13,7 +13,7 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class UnwrapUtils {
+public class Unwrapper {
 
     public static @NotNull ServerPlayer getServerPlayer(@NotNull Player player) {
         return ((CraftPlayer) player).getHandle();

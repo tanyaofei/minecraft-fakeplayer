@@ -2,28 +2,29 @@ package io.github.hello09x.fakeplayer.optional;
 
 import com.google.common.io.ByteStreams;
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class BungeeCordServer implements PluginMessageListener {
+public class Multiserver implements PluginMessageListener {
 
 
-    public final static BungeeCordServer instance = new BungeeCordServer();
+    public final static Multiserver instance = new Multiserver();
 
     private final Set<String> onlinePlayers = new HashSet<>();
 
-    public BungeeCordServer() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                refreshOnlinePlayersAsynchronously();
-            }
-        }, 0, 10_000);
+    private final ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
+
+    public Multiserver() {
+        timer.scheduleAtFixedRate(this::refreshOnlinePlayersAsynchronously, 0, 10, TimeUnit.SECONDS);
     }
 
     public boolean isPlayerOnline(@NotNull String name) {
@@ -61,7 +62,6 @@ public class BungeeCordServer implements PluginMessageListener {
                 .getServer()
                 .getOnlinePlayers()
                 .stream()
-                .filter(p -> !FakeplayerManager.instance.isFake(p))
                 .findAny()
                 .orElse(null);
 
@@ -77,6 +77,10 @@ public class BungeeCordServer implements PluginMessageListener {
                 "BungeeCord",
                 out.toByteArray()
         );
+    }
+
+    public void onDisable() {
+        this.timer.shutdown();
     }
 
 
