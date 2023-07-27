@@ -43,6 +43,10 @@ permissions:
     description: '拥有 expme 命令权限'
     default: op
 
+  fakeplayer.cmd:
+    description: '拥有 cmd 命令权限'
+    default: op
+
   fakeplayer.admin:
     description: '假人管理员命令权限'
     default: op

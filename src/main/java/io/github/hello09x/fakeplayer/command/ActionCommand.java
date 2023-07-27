@@ -26,7 +26,12 @@ public class ActionCommand extends AbstractCommand {
 
     public void sneak(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var sneaking = !target.isSneaking();
+        var sneaking = args
+                .getOptional("sneaking")
+                .map(String.class::cast)
+                .map(Boolean::valueOf)
+                .orElse(!target.isSneaking());
+
         target.setSneaking(sneaking);
 
         sender.sendMessage(textOfChildren(
@@ -34,7 +39,6 @@ public class ActionCommand extends AbstractCommand {
                 text("现在", GRAY),
                 text(sneaking ? "潜行中" : "取消了潜行", GRAY)
         ));
-
 
     }
 

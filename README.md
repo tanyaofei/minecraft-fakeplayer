@@ -20,9 +20,9 @@
 + /fp tp - 传送到假人身边
 + /fp tps - 与假人交换位置
 + /fp tphere - 将假人传送到自己身边
-+ /fp expme - 转移假人的经验值
 + /fp health - 查看假人的生命值
 + /fp exp - 查看假人的经验值
++ /fp expme - 转移假人的经验值
 + /fp config - 玩家个性化配置
 + /fp config set - 设置个性化配置
 + /fp config get - 查看个性化配置
@@ -30,6 +30,7 @@
 + /fp dropinv - 丢弃背包物品
 + /fp attack - 让假人点击鼠标左键 **(实验性)**
 + /fp use - 让假人点击鼠标右键 **(实验性)**
++ /fp cmd - 让假人执行他有权限执行的命令
 
 此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等
 
@@ -41,7 +42,8 @@
 + fakeplayer.tp - `tp`, `tps`, `tphere` 等传送指令权限
 + fakeplayer.profile - `exp`, `health`等查看假人信息命令权限 
 + fakeplayer.action - `drop`, `dropinv`, `invsee`, `sneak` 等控制命令权限
-+ fakeplayer.exp - `expme` 等命令权限
++ fakeplayer.exp - `expme` 命令权限
++ fakeplayer.cmd - `cmd` 命令权限
 
 
 + fakeplayer.experimental.action - `attack`, `use` 等控制命令权限 **(目前为实验性的, 未经过可靠性验证, 待成熟后将会移至 `fakeplayer.action`)**

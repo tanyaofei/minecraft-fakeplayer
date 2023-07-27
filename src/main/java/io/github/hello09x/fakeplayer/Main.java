@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.github.hello09x.fakeplayer.command.Commands;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.optional.Multiserver;
+import io.github.hello09x.fakeplayer.optional.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +29,7 @@ public final class Main extends JavaPlugin {
         CommandAPI.onEnable();
 
         {
-            getServer().getMessenger().registerIncomingPluginChannel(Main.getInstance(), "BungeeCord", Multiserver.instance);
+            getServer().getMessenger().registerIncomingPluginChannel(Main.getInstance(), "BungeeCord", WildFakeplayerManager.instance);
             getServer().getMessenger().registerOutgoingPluginChannel(Main.getInstance(), "BungeeCord");
         }
 
@@ -41,7 +41,7 @@ public final class Main extends JavaPlugin {
         FakeplayerManager.instance.removeAll();
         UsedIdRepository.instance.saveAll();
         FakeplayerManager.instance.onDisable();
-        Multiserver.instance.onDisable();
+        WildFakeplayerManager.instance.onDisable();
 
         {
             getServer().getMessenger().unregisterIncomingPluginChannel(this);

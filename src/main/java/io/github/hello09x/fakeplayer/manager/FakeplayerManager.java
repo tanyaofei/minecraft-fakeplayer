@@ -4,7 +4,6 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.entity.Metadatas;
 import io.github.hello09x.fakeplayer.entity.action.Action;
-import io.github.hello09x.fakeplayer.optional.Multiserver;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
@@ -50,8 +49,6 @@ public class FakeplayerManager {
 
     private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
-    private final Multiserver multiserver = Multiserver.instance;
-
     private final ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
 
     private FakeplayerManager() {
@@ -68,29 +65,6 @@ public class FakeplayerManager {
                     }
                 }, 0, 60, TimeUnit.SECONDS
         );
-
-        timer.scheduleAtFixedRate(() -> {
-            @SuppressWarnings("all")
-            var group = getAll()
-                    .stream()
-                    .collect(Collectors.groupingBy(FakeplayerManager.this::getCreator));
-
-            for (var entry : group.entrySet()) {
-                if (multiserver.isPlayerOnline(entry.getKey())) {
-                    continue;
-                }
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        for (var fakePlayer : entry.getValue()) {
-                            remove(fakePlayer.getName());
-                        }
-                        log.info(String.format("玩家 %s 已不在线, 已移除 %d 个假人", entry.getKey(), entry.getValue().size()));
-                    }
-                }.runTask(Main.getInstance());
-            }
-        }, 0, 15, TimeUnit.SECONDS);
     }
 
     /**

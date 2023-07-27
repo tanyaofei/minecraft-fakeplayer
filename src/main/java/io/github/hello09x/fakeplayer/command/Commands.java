@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.CommandArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
@@ -24,6 +25,7 @@ public class Commands {
     private final static String PERMISSION_ACTION = "fakeplayer.action";
     private final static String PERMISSION_EXPERIMENTAL_ACTION = "fakeplayer.experimental.action";
     private final static String PERMISSION_ADMIN = "fakeplayer.admin";
+    private final static String PERMISSION_CMD = "fakeplayer.cmd";
 
     public static void register() {
         new CommandAPICommand("fakeplayer")
@@ -36,6 +38,7 @@ public class Commands {
                         "§6/fp spawn §7- §f创建假人",
                         "§6/fp kill [假人] §7- §f移除假人",
                         "§6/fp list [页码] [数量] §7- §f查看所有假人",
+                        "§6/fp distance §7- §f查看与假人的距离",
                         "§6/fp tp [假人] §7- §f传送到假人身边",
                         "§6/fp tphere [假人] §7- §f将假人传送到身边",
                         "§6/fp tps [假人] §7- §f与假人交换位置",
@@ -49,6 +52,7 @@ public class Commands {
                         "§6/fp sneak [假人] §7- §f开启/取消潜行",
                         "§6/fp attack <once|continuous|interval|stop> [假人] §7- §f模拟鼠标左键",
                         "§6/fp use <once|continuous|interval|stop> [假人] §7- §f模拟鼠标右键",
+                        "§6/fp cmd §7- §f让假人执行命令",
                         "§6/fp reload §7- §f重载配置文件"
                 )
                 .withSubcommands(
@@ -130,12 +134,20 @@ public class Commands {
                         new CommandAPICommand("sneak")
                                 .withPermission(PERMISSION_ACTION)
                                 .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(new MultiLiteralArgument("sneaking", List.of("true", "false")))
                                 .executes(ActionCommand.instance::sneak),
 
                         new CommandAPICommand("expme")
                                 .withPermission(PERMISSION_EXP)
                                 .withOptionalArguments(targetArgument("target"))
                                 .executesPlayer(ExpCommand.instance::expme),
+
+                        new CommandAPICommand("cmd")
+                                .withPermission(PERMISSION_CMD)
+                                .withArguments(
+                                        targetArgument("target"),
+                                        new CommandArgument("command"))
+                                .executes(CmdCommand.instance::cmd),
 
                         new CommandAPICommand("reload")
                                 .withPermission(PERMISSION_ADMIN)
