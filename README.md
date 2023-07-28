@@ -69,7 +69,7 @@
 ```yaml
 self-commands:
   - '/register 12345 12345'
-  - '/login 12345 12345'
+  - '/login 12345'
 ```
 
 ### 每次假人生成控制台有报错日志
