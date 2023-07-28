@@ -30,7 +30,7 @@
 + `/fp jump (once | continuous | interval | stop) [假人]` - 跳跃
 + `/fp drop [假人] [-a|--all]` - 丢弃手上物品
 + `/fp dropinv [假人]` - 丢弃背包物品
-+ `/fp look (north | south | east|  west | up | down | at) [假人]` - 看向指定位置
++ `/fp look (north | south | east| west | up | down | at) [假人]` - 看向指定位置
 + `/fp turn (left | right | back | to) [假人]` - 转身到指定位置
 + `/fp move (forward | backward | left | right) [假人]` - 移动假人
 + `/fp cmd <假人>` - 执行命令
@@ -42,27 +42,66 @@
 
 **_默认所有权限是 op 拥有，请通过权限管理插件来分配！_**
 
-+ fakeplayer.spawn - `create`, `list`, `kill` 等使用命令权限
-+ fakeplayer.tp - `tp`, `tps`, `tphere` 等传送指令权限
-+ fakeplayer.profile - `exp`, `health`等查看假人信息命令权限 
-+ fakeplayer.action - `drop`, `dropinv`, `invsee`, `sneak` 等控制命令权限
-+ fakeplayer.exp - `expme` 命令权限
-+ fakeplayer.cmd - `cmd` 命令权限
-
-
-+ fakeplayer.experimental.action - `attack`, `use` 等控制命令权限 **(目前为实验性的, 未经过可靠性验证, 待成熟后将会移至 `fakeplayer.action`)**
-
-
-+ fakeplayer.admin - 管理员权限
-
- 
- 
- _config 相关命令没有配置权限节点_
+| 节点                             | 指令                                                         |
+|--------------------------------|------------------------------------------------------------|
+| fakeplayer.spawn               | `spawn`, `list`, `kill`, `distance`                        |
+| fakeplayer.spawn.location      | `spawn` 可以指定出生点                                            |
+| fakeplayer.tp                  | `tp`, `tps`, `tphere`                                      |
+| fakeplayer.profile             | `exp`, `health`                                            |
+| fakeplayer.exp                 | `expme`                                                    |
+| fakeplayer.action              | `drop`, `dropinv`, `sneak`, `turn`, `jump`, `look`, `move` |
+| fakeplayer.experimental.action | `attack`, `use`                                            |
+| fakeplayer.cmd                 | `cmd`                                                      |
+| fakeplayer.admin               | `reload`                                                   |
+| 无                              | `config`                                                   |
 
 ## 已知问题
 
-1. 与 `clearfog` 清除迷雾插件不兼容, 会导致假人生成后被随机传送
+1. 与 `clearfog(清除迷雾)` 或者 `multiverse(多世界)` 可能存在不兼容, 会导致假人出生一刻被传送走, 但已针对这种情况特殊处理了
 
+## FAQ
+
+### 假人生成之后过了一会自动掉线
+
+这可能是由于类似 `AutheMe` 等登陆插件探测到假人长时间没有登陆, 可以在配置文件里的 `self-commands`
+里将注册登陆的指令放进去比如:
+
+```yaml
+self-commands:
+  - '/register 12345 12345'
+  - '/login 12345 12345'
+```
+
+### 每次假人生成控制台有报错日志
+
+这可能是由于 `LuckPerm` 或者其他插件没有监测到假人登陆但检测到假人加入游戏而导致,
+你可以忽略它或者也修改配置文件开启模拟登陆:
+
+```yaml
+simulate-login: true
+```
+
+### 用了假人之后 `ESS` 或者其他插件多了好多存档
+
+由于假人确实是一个玩家, 因此他会触发第三方插件创建存档, 此插件暂时无法针对那么多插件逐个处理, 但是已经尽可能地减少多余的存档,
+具体的方案是：
+
+1. 通过假人的名称生成对应的 UUID, 同样的名称只会生成一份第三方存档
+2. 不记录 `Minecraft` 自带的玩家存档和成就数据
+
+此外, `plugin/fakeplayer` 目录下有一份 `used-uuid.txt` 文件记录着假人使用过的
+UUID，你可以通过这份文件筛查来清理多余的第三方插件存档。这份文件会在服务器关闭时更新。
+
+### BungeeCord 玩家切换服务器假人会下线吗？
+
+如果你的服务器 `spigot.yml` 里的 `bungeecord` 设置值为 `true`, 那么此插件将会进行兼容,
+只要玩家在任意一个服务器里游玩，即使切换服务器他创建的假人都不会触发`跟随下线`。
+
+### 会支持 Folia 吗?
+
+有计划，但可能比较久。之前尝试过但发现要兼容的内容有点多，持续关注一下～
+
+----
 
 ## 配置项
 
@@ -71,7 +110,7 @@
 ```yml
 # 配置文件版本
 # 不要修改这个值
-version: 8
+version: 9
 
 # 服务器最多存在多少个假人
 # 默认: 1000
@@ -95,12 +134,6 @@ name-template: ''
 # 如果玩家只是切换服务器, 那么不会触发跟随下线
 follow-quiting: true
 
-# 是否开启 bungeeCord 跟随下线
-# 如果开启则玩家在切换服务器时不会因为在当前服务器下线而导致跟随下线
-# 此配置仅在 `follow-quiting` 为 `true` 时生效
-bungee: true
-
-# 是否检测 IP
 # 如果启用, 则一个 IP 只能创建 `maximum` 个假人
 # 能够避免玩家开小号疯狂创建假人
 detect-ip: true
@@ -142,10 +175,8 @@ destroy-commands:
 
 # 自执行命令
 # 假人在诞生时会以自己的身份按顺序执行命令
-# 你可以在这里做一些 /register 之类的命令
+# 你可以在这里做添加 /register 和 /login 命令来防止 `AuthMe` 等插件踢掉超时未登陆的玩家
 self-commands:
   - ''
   - ''
-
-
 ```
