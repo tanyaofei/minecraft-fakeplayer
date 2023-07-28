@@ -77,6 +77,11 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
      */
     private boolean simulateLogin;
 
+    /**
+     * 退出时是否丢弃背包物品
+     */
+    private boolean dropInventoryOnQuiting;
+
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
@@ -97,6 +102,7 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
+        this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
 
         if (this.nameTemplate.startsWith("-")) {
             log.warning("假人名称模版不能以 - 开头, 该配置不会生效: " + this.nameTemplate);

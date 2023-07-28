@@ -63,7 +63,6 @@ public class FakePlayer {
         this.server = server;
 
         this.bukkitPlayer.setPersistent(false);
-        this.bukkitPlayer.getInventory().clear();   // 防止一些插件在 spawn 之前就 kick 掉导致没有清空背包
         if (advancements != null) {
             try {
                 advancements.set(
@@ -131,7 +130,6 @@ public class FakePlayer {
         bukkitPlayer.setInvulnerable(invulnerable);
         bukkitPlayer.setCollidable(collidable);
         bukkitPlayer.setCanPickupItems(pickupItems);
-        bukkitPlayer.getInventory().clear();        // 一些同步背包的插件可能在 join 的时候恢复背包, 这个时候清空掉防止物品被复制了
         new BukkitRunnable() {
             @Override
             public void run() {

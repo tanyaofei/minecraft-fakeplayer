@@ -24,6 +24,10 @@ name-template: ''
 # 如果玩家只是切换服务器, 那么不会触发跟随下线
 follow-quiting: true
 
+# 退出时是否丢弃背包物品
+# 有跨服背包同步的谨慎开启, 需验证是否会导致物品复制
+drop-inventory-on-quiting: true
+
 # 如果启用, 则一个 IP 只能创建 `maximum` 个假人
 # 能够避免玩家开小号疯狂创建假人
 detect-ip: true

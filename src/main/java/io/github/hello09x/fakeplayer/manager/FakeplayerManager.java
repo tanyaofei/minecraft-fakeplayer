@@ -240,7 +240,9 @@ public class FakeplayerManager {
                 Metadatas.NAME_SEQUENCE.get(fakePlayer).asInt()
         );
         Arrays.stream(Metadatas.values()).forEach(meta -> meta.remove(fakePlayer));
-        Action.dropInventory(Unwrapper.getServerPlayer(fakePlayer));
+        if (properties.isDropInventoryOnQuiting()) {
+            Action.dropInventory(Unwrapper.getServerPlayer(fakePlayer));
+        }
     }
 
     /**
