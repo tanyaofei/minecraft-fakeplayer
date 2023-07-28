@@ -122,7 +122,7 @@ public class FakeplayerManager {
 
         usedIdRepository.add(bukkitPlayer.getUniqueId());
         dispatchCommands(bukkitPlayer, properties.getPreparingCommands());
-        performCommands(bukkitPlayer);
+        performCommands(bukkitPlayer, properties.getSelfCommands());
 
         bukkitPlayer.teleport(spawnAt); // 当前 tick 必须传到出生点否则无法触发区块刷新
         spawnAt.getWorld().playSound(spawnAt, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
@@ -239,9 +239,7 @@ public class FakeplayerManager {
                 Metadatas.NAME_SEQUENCE.get(fakePlayer).asInt()
         );
         Arrays.stream(Metadatas.values()).forEach(meta -> meta.remove(fakePlayer));
-        if (properties.isDropInventoryOnQuiting()) {
-            Action.dropInventory(Unwrapper.getServerPlayer(fakePlayer));
-        }
+        Action.dropInventory(Unwrapper.getServerPlayer(fakePlayer));
     }
 
     /**
@@ -298,12 +296,15 @@ public class FakeplayerManager {
         return uuid;
     }
 
-    public void performCommands(@NotNull Player player) {
+    public void performCommands(@NotNull Player player, @NotNull List<String> commands) {
+        if (commands.isEmpty()) {
+            return;
+        }
         if (!isFake(player)) {
             return;
         }
 
-        for (var cmd : properties.getSelfCommands()) {
+        for (var cmd : commands) {
             cmd = cmd.trim();
             if (cmd.startsWith("/")) {
                 cmd = cmd.substring(1);
@@ -327,7 +328,7 @@ public class FakeplayerManager {
 
         var server = Bukkit.getServer();
         var sender = Bukkit.getConsoleSender();
-        for (var cmd : properties.getPreparingCommands()) {
+        for (var cmd : commands) {
             cmd = cmd.trim();
             if (cmd.startsWith("/")) {
                 cmd = cmd.substring(1);

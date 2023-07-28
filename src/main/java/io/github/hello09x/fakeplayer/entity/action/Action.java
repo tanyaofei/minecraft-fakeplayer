@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.entity.action;
 
 import io.github.hello09x.fakeplayer.util.Tracer;
-import net.minecraft.core.BlockPos;
+import lombok.AllArgsConstructor;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -13,14 +13,15 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.*;
 
+@AllArgsConstructor
 public enum Action {
 
-    USE {
+    USE("交互/使用/放置") {
         @Override
         @SuppressWarnings("resource")
-        public boolean tick(@NotNull ActionPack ap) {
-            if (ap.itemUseFreeze > 0) {
-                ap.itemUseFreeze--;
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+            if (ap.use.freeze > 0) {
+                ap.use.freeze--;
                 return false;
             }
 
@@ -42,7 +43,7 @@ public enum Action {
                             var result = player.gameMode.useItemOn(player, world, player.getItemInHand(hand), hand, blockHit);
                             if (result.consumesAction()) {
                                 player.swing(hand);
-                                ap.itemUseFreeze = 3;
+                                ap.use.freeze = 3;
                                 return true;
                             }
                         }
@@ -55,18 +56,18 @@ public enum Action {
                         boolean itemFrameEmpty = (entity instanceof ItemFrame) && ((ItemFrame) entity).getItem().isEmpty();
                         var pos = entityHit.getLocation().subtract(entity.getX(), entity.getY(), entity.getZ());
                         if (entity.interactAt(player, pos, hand).consumesAction()) {
-                            ap.itemUseFreeze = 3;
+                            ap.use.freeze = 3;
                             return true;
                         }
                         if (player.interactOn(entity, hand).consumesAction() && !(handWasEmpty && itemFrameEmpty)) {
-                            ap.itemUseFreeze = 3;
+                            ap.use.freeze = 3;
                             return true;
                         }
                     }
                 }
                 var handItem = player.getItemInHand(hand);
                 if (player.gameMode.useItem(player, player.level(), handItem, hand).consumesAction()) {
-                    ap.itemUseFreeze = 3;
+                    ap.use.freeze = 3;
                     return true;
                 }
             }
@@ -74,16 +75,16 @@ public enum Action {
         }
 
         @Override
-        public void stop(@NotNull ActionPack ap) {
-            ap.itemUseFreeze = 0;
+        public void stop(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+            ap.use.freeze = 0;
             ap.player.releaseUsingItem();
         }
     },
 
-    ATTACK {
+    ATTACK("攻击/破坏") {
         @Override
         @SuppressWarnings("resource")
-        public boolean tick(@NotNull ActionPack ap) {
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
             var player = ap.player;
             var hit = getTarget(player);
             switch (hit.getType()) {
@@ -96,8 +97,8 @@ public enum Action {
                     return true;
                 }
                 case BLOCK -> {
-                    if (ap.blockHitFreeze > 0) {
-                        ap.blockHitFreeze--;
+                    if (ap.attack.freeze > 0) {
+                        ap.attack.freeze--;
                         return false;
                     }
 
@@ -109,8 +110,8 @@ public enum Action {
                         return false;
                     }
 
-                    if (ap.curBlockPos != null && player.level().getBlockState(ap.curBlockPos).isAir()) {
-                        ap.curBlockPos = null;
+                    if (ap.attack.pos != null && player.level().getBlockState(ap.attack.pos).isAir()) {
+                        ap.attack.pos = null;
                         return false;
                     }
 
@@ -124,11 +125,11 @@ public enum Action {
                                 player.level().getMaxBuildHeight(),
                                 -1
                         );
-                        ap.blockHitFreeze = 5;
-                    } else if (ap.curBlockPos == null || !ap.curBlockPos.equals(pos)) {
-                        if (ap.curBlockPos != null) {
+                        ap.attack.freeze = 5;
+                    } else if (ap.attack.pos == null || !ap.attack.pos.equals(pos)) {
+                        if (ap.attack.pos != null) {
                             player.gameMode.handleBlockBreakAction(
-                                    ap.curBlockPos,
+                                    ap.attack.pos,
                                     ABORT_DESTROY_BLOCK,
                                     side,
                                     player.level().getMaxBuildHeight(),
@@ -144,20 +145,20 @@ public enum Action {
                                 -1
                         );
 
-                        if (!state.isAir() && ap.curBlockPgs == 0) {
+                        if (!state.isAir() && ap.attack.progress == 0) {
                             state.attack(player.level(), pos, player);
                         }
 
                         if (!state.isAir() && state.getDestroyProgress(player, player.level(), pos) >= 1) {
-                            ap.curBlockPos = null;
+                            ap.attack.pos = null;
                             broken = true;
                         } else {
-                            ap.curBlockPos = pos;
-                            ap.curBlockPgs = 0;
+                            ap.attack.pos = pos;
+                            ap.attack.progress = 0;
                         }
                     } else {
-                        ap.curBlockPgs += state.getDestroyProgress(player, player.level(), pos);
-                        if (ap.curBlockPgs >= 1) {
+                        ap.attack.progress += state.getDestroyProgress(player, player.level(), pos);
+                        if (ap.attack.progress >= 1) {
                             player.gameMode.handleBlockBreakAction(
                                     pos,
                                     STOP_DESTROY_BLOCK,
@@ -165,11 +166,11 @@ public enum Action {
                                     player.level().getMaxBuildHeight(),
                                     -1
                             );
-                            ap.curBlockPos = null;
-                            ap.blockHitFreeze = 5;
+                            ap.attack.pos = null;
+                            ap.attack.freeze = 5;
                             broken = true;
                         }
-                        player.level().destroyBlockProgress(-1, pos, (int) (ap.curBlockPgs * 10));
+                        player.level().destroyBlockProgress(-1, pos, (int) (ap.attack.progress * 10));
                     }
 
                     player.resetLastActionTime();
@@ -181,30 +182,52 @@ public enum Action {
         }
 
         @Override
-        public void stop(@NotNull ActionPack ap) {
-            if (ap.curBlockPos == null) {
+        @SuppressWarnings("resource")
+        public void stop(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+            if (ap.attack.pos == null) {
                 return;
             }
 
             var player = ap.player;
-            player.level().destroyBlockProgress(-1, ap.curBlockPos, -1);
+            player.level().destroyBlockProgress(-1, ap.attack.pos, -1);
             player.gameMode.handleBlockBreakAction(
-                    ap.curBlockPos,
+                    ap.attack.pos,
                     ABORT_DESTROY_BLOCK,
                     Direction.DOWN,
                     player.level().getMaxBuildHeight(),
                     -1
             );
-            ap.curBlockPos = null;
-            ap.blockHitFreeze = 0;
-            ap.curBlockPgs = 0;
+            ap.attack.pos = null;
+            ap.attack.freeze = 0;
+            ap.attack.progress = 0;
+        }
+    },
+
+    JUMP("跳") {
+        @Override
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+            var player = ap.player;
+            if (setting.limit == 1) {
+                if (player.onGround()) {
+                    player.jumpFromGround();
+                    return true;
+                }
+            }
+
+            player.setJumping(true);
+            return true;
+        }
+
+        @Override
+        public void inactiveTick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+            ap.player.setJumping(false);
         }
     },
 
 
-    DROP_ITEM {
+    DROP_ITEM("丢弃手上物品") {
         @Override
-        public boolean tick(@NotNull ActionPack ap) {
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
             var player = ap.player;
             player.resetLastActionTime();
             player.drop(false);
@@ -212,9 +235,9 @@ public enum Action {
         }
     },
 
-    DROP_STACK {
+    DROP_STACK("丢弃手上整组物品") {
         @Override
-        public boolean tick(@NotNull ActionPack ap) {
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
             var player = ap.player;
             player.resetLastActionTime();
             player.drop(true);
@@ -222,15 +245,17 @@ public enum Action {
         }
     },
 
-    DROP_INVENTORY {
+    DROP_INVENTORY("丢弃背包物品") {
         @Override
-        public boolean tick(@NotNull ActionPack ap) {
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
             var player = ap.player;
             dropInventory(player);
             return true;
         }
     };
 
+
+    public final String name;
 
     static HitResult getTarget(ServerPlayer player) {
         double reach = player.gameMode.isCreative() ? 5 : 4.5f;
@@ -244,31 +269,13 @@ public enum Action {
         }
     }
 
-    public abstract boolean tick(@NotNull ActionPack ap);
 
-    public void stop(@NotNull ActionPack ap) {}
+    public abstract boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting);
 
-    public void inactiveTick(@NotNull ActionPack ap) {
-        this.stop(ap);
-    }
+    public void stop(@NotNull ActionPack ap, @NotNull ActionSetting setting) {}
 
-    public static class ActionPack {
-
-        public final ServerPlayer player;
-
-        // attack
-        public BlockPos curBlockPos;
-        public float curBlockPgs;
-        public int blockHitFreeze;
-
-
-        // use
-        public int itemUseFreeze;
-
-        public ActionPack(ServerPlayer player) {
-            this.player = player;
-        }
-
+    public void inactiveTick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+        this.stop(ap, setting);
     }
 
 

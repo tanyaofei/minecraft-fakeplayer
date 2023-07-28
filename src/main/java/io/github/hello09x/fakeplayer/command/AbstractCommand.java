@@ -21,7 +21,7 @@ public abstract class AbstractCommand {
 
     protected final FakeplayerManager fakeplayerManager = FakeplayerManager.instance;
 
-    public static Argument<Player> targetArgument(@NotNull String nodeName) {
+    public static Argument<Player> target(@NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             return sender.isOp()
@@ -44,7 +44,7 @@ public abstract class AbstractCommand {
         }));
     }
 
-    public static Argument<List<Player>> multiTargetArgument(@NotNull String nodeName) {
+    public static Argument<List<Player>> targets(@NotNull String nodeName) {
         return new CustomArgument<List<Player>, String>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var arg = info.currentInput();

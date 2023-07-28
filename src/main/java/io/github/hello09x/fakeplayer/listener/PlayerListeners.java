@@ -32,7 +32,7 @@ public class PlayerListeners implements Listener {
      * 拒绝假人用过的 ID 上线
      */
     @EventHandler(ignoreCancelled = true)
-    public void handleUsedIdLogin(@NotNull AsyncPlayerPreLoginEvent event) {
+    public void onLogin(@NotNull AsyncPlayerPreLoginEvent event) {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             return;
         }
@@ -49,7 +49,7 @@ public class PlayerListeners implements Listener {
      * 死亡退出游戏
      */
     @EventHandler(ignoreCancelled = true)
-    public void handlePlayerDeath(@NotNull PlayerDeathEvent event) {
+    public void onDead(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
         if (!manager.isFake(player)) {
             return;
@@ -63,7 +63,7 @@ public class PlayerListeners implements Listener {
      * 退出游戏掉落背包
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void handlePlayerQuit(@NotNull PlayerQuitEvent event) {
+    public void onQuit(@NotNull PlayerQuitEvent event) {
         var player = event.getPlayer();
         if (!manager.isFake(player)) {
             return;

@@ -5,13 +5,13 @@ import net.minecraft.server.level.ServerPlayer;
 public class ActionManager {
 
     public final Action action;
-    public final Action.ActionPack actionPack;
+    public final ActionPack actionPack;
     public ActionSetting setting;
 
     public ActionManager(ServerPlayer player, Action action, ActionSetting setting) {
         this.action = action;
         this.setting = setting;
-        this.actionPack = new Action.ActionPack(player);
+        this.actionPack = new ActionPack(player);
     }
 
     public void tick() {
@@ -26,7 +26,7 @@ public class ActionManager {
             return;
         }
 
-        var done = action.tick(this.actionPack);
+        var done = action.tick(this.actionPack, this.setting);
         if (done) {
             if (setting.times > 0) {
                 setting.times--;
@@ -36,11 +36,11 @@ public class ActionManager {
     }
 
     public void inactiveTick() {
-        action.inactiveTick(this.actionPack);
+        action.inactiveTick(this.actionPack, this.setting);
     }
 
     public void stop() {
-        action.stop(this.actionPack);
+        action.stop(this.actionPack, this.setting);
     }
 
 

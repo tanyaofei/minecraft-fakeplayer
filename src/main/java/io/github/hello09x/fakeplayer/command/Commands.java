@@ -8,12 +8,15 @@ import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.entity.action.Action;
 import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
+import net.minecraft.core.Direction;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Arrays;
 
-import static io.github.hello09x.fakeplayer.command.AbstractCommand.multiTargetArgument;
-import static io.github.hello09x.fakeplayer.command.AbstractCommand.targetArgument;
+import static io.github.hello09x.fakeplayer.command.AbstractCommand.target;
+import static io.github.hello09x.fakeplayer.command.AbstractCommand.targets;
+import static io.github.hello09x.fakeplayer.command.ConfigCommand.config;
+import static io.github.hello09x.fakeplayer.command.ConfigCommand.configValue;
 
 public class Commands {
 
@@ -28,11 +31,11 @@ public class Commands {
     private final static String PERMISSION_CMD = "fakeplayer.cmd";
 
     public static void register() {
-        new CommandAPICommand("fakeplayer")
+        command("fakeplayer")
                 .withAliases("fp")
                 .withHelp(
-                        "假人相关命令",
-                        "fakeplayer 可以用来创建一个模拟为玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
+                        "假人",
+                        "可以创建模拟玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
                 )
                 .withUsage(
                         "§6/fp spawn §7- §f创建假人",
@@ -47,138 +50,200 @@ public class Commands {
                         "§6/fp health [假人] §7- §f查看生命值",
                         "§6/fp exp [假人] §7- §f查看经验值",
                         "§6/fp expme [假人] §7- §f转移经验值",
+                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §攻击/破坏",
+                        "§6/fp use <once|continuous|interval|stop> [假人] §7- §f使用/交互/放置",
+                        "§6/fp jump <once|continuous|interval|stop> [假人] §7- §f跳跃",
                         "§6/fp drop [假人] [-a|--all] §7- §f丢弃手上物品",
                         "§6/fp dropinv [假人] §7- §f丢弃背包物品",
-                        "§6/fp sneak [假人] §7- §f开启/取消潜行",
-                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §f模拟鼠标左键",
-                        "§6/fp use <once|continuous|interval|stop> [假人] §7- §f模拟鼠标右键",
-                        "§6/fp cmd §7- §f让假人执行命令",
+                        "§6/fp look <north|south|east|west|up|down|at> §7- §f看向指定位置",
+                        "§6/fp move <forward|backward|left|right> §7- §f移动假人",
+                        "§6/fp cmd §7- §f执行命令",
                         "§6/fp reload §7- §f重载配置文件"
                 )
                 .withSubcommands(
-                        new CommandAPICommand("help")
+                        command("help")
                                 .withAliases("?")
                                 .withOptionalArguments(new IntegerArgument("page", 1))
                                 .executesPlayer(HelpCommand.instance::help),
 
-                        new CommandAPICommand("spawn")
+                        command("spawn")
                                 .withPermission(PERMISSION_SPAWN)
-                                .withOptionalArguments(new LocationArgument("location").withPermission(PERMISSION_SPAWN_LOCATION))
+                                .withOptionalArguments(location("location").withPermission(PERMISSION_SPAWN_LOCATION))
                                 .executes(SpawnCommand.instance::spawn),
-                        new CommandAPICommand("kill")
+                        command("kill")
                                 .withPermission(PERMISSION_SPAWN)
-                                .withOptionalArguments(multiTargetArgument("targets"))
+                                .withOptionalArguments(targets("targets"))
                                 .executes(SpawnCommand.instance::kill),
-                        new CommandAPICommand("list")
+                        command("list")
                                 .withPermission(PERMISSION_SPAWN)
-                                .withOptionalArguments(new IntegerArgument("page", 1), new IntegerArgument("size", 1))
+                                .withOptionalArguments(integer("page", 1), integer("size", 1))
                                 .executes(SpawnCommand.instance::list),
-                        new CommandAPICommand("distance")
+                        command("distance")
                                 .withPermission(PERMISSION_SPAWN)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executesPlayer(SpawnCommand.instance::distance),
 
-                        new CommandAPICommand("exp")
+                        command("exp")
                                 .withPermission(PERMISSION_PROFILE)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executes(ProfileCommand.instance::exp),
-                        new CommandAPICommand("health")
+                        command("health")
                                 .withPermission(PERMISSION_PROFILE)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executes(ProfileCommand.instance::health),
 
-                        new CommandAPICommand("tp")
+                        command("tp")
                                 .withPermission(PERMISSION_TP)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executesPlayer(TpCommand.instance::tp),
-                        new CommandAPICommand("tphere")
+                        command("tphere")
                                 .withPermission(PERMISSION_TP)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executesPlayer(TpCommand.instance::tphere),
-                        new CommandAPICommand("tps")
+                        command("tps")
                                 .withPermission(PERMISSION_TP)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executesPlayer(TpCommand.instance::tps),
 
-                        new CommandAPICommand("config")
+                        command("config")
                                 .withSubcommands(
-                                        new CommandAPICommand("get")
-                                                .withArguments(ConfigCommand.configArgument("config"))
+                                        command("get")
+                                                .withArguments(config("config"))
                                                 .executesPlayer(ConfigCommand.instance::getConfig),
-                                        new CommandAPICommand("set")
+                                        command("set")
                                                 .withArguments(
-                                                        ConfigCommand.configArgument("config"),
-                                                        ConfigCommand.configValueArgument("config", "value"))
+                                                        config("config"),
+                                                        configValue("config", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
-                        new CommandAPICommand("attack")
+                        command("attack")
                                 .withPermission(PERMISSION_EXPERIMENTAL_ACTION)
-                                .withSubcommands(buildActionCommand(Action.ATTACK)),
-                        new CommandAPICommand("use")
+                                .withSubcommands(action(Action.ATTACK)),
+                        command("use")
                                 .withPermission(PERMISSION_EXPERIMENTAL_ACTION)
-                                .withSubcommands(buildActionCommand(Action.USE)),
-                        new CommandAPICommand("drop")
+                                .withSubcommands(action(Action.USE)),
+                        command("jump")
+                                .withPermission(PERMISSION_ACTION)
+                                .withSubcommands(action(Action.JUMP)),
+                        command("drop")
                                 .withPermission(PERMISSION_ACTION)
                                 .withOptionalArguments(
-                                        targetArgument("target"),
-                                        new MultiLiteralArgument("all", List.of("-a", "--all")))
+                                        target("target"),
+                                        literals("all", "-a", "--all"))
                                 .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(
                                         sender,
                                         args,
                                         args.getOptional("all").isPresent() ? Action.DROP_STACK : Action.DROP_ITEM,
                                         ActionSetting.once())),
-                        new CommandAPICommand("dropinv")
+                        command("dropinv")
                                 .withPermission(PERMISSION_ACTION)
-                                .withOptionalArguments(targetArgument("target"))
-                                .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(sender, args, Action.DROP_INVENTORY, ActionSetting.once())),
-                        new CommandAPICommand("sneak")
+                                .withOptionalArguments(target("target"))
+                                .executes(ActionCommand.instance.action(Action.DROP_INVENTORY, ActionSetting.once())),
+                        command("sneak")
                                 .withPermission(PERMISSION_ACTION)
-                                .withOptionalArguments(targetArgument("target"))
-                                .withOptionalArguments(new MultiLiteralArgument("sneaking", List.of("true", "false")))
+                                .withOptionalArguments(target("target"))
+                                .withOptionalArguments(literals("sneaking", "true", "false"))
                                 .executes(ActionCommand.instance::sneak),
+                        command("look")
+                                .withPermission(PERMISSION_ACTION)
+                                .withSubcommands(
+                                        command("north")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.look(Direction.NORTH)),
+                                        command("south")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.look(Direction.SOUTH)),
+                                        command("west")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.look(Direction.WEST)),
+                                        command("east")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.look(Direction.EAST)),
+                                        command("up")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.look(Direction.UP)),
+                                        command("down")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.look(Direction.DOWN)),
+                                        command("at")
+                                                .withArguments(new LocationArgument("location"))
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance::lookAt)
+                                ),
+                        command("move")
+                                .withPermission(PERMISSION_ACTION)
+                                .withSubcommands(
+                                        command("forward")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.move(1, 0)),
+                                        command("backward")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.move(-1, 0)),
+                                        command("left")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.move(0, 1)),
+                                        command("right")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.move(0, -1))
+                                ),
 
-                        new CommandAPICommand("expme")
+                        command("expme")
                                 .withPermission(PERMISSION_EXP)
-                                .withOptionalArguments(targetArgument("target"))
+                                .withOptionalArguments(target("target"))
                                 .executesPlayer(ExpCommand.instance::expme),
 
-                        new CommandAPICommand("cmd")
+                        command("cmd")
                                 .withPermission(PERMISSION_CMD)
                                 .withArguments(
-                                        targetArgument("target"),
+                                        target("target"),
                                         new CommandArgument("command"))
                                 .executes(CmdCommand.instance::cmd),
 
-                        new CommandAPICommand("reload")
+                        command("reload")
                                 .withPermission(PERMISSION_ADMIN)
                                 .executes(ReloadCommand.instance::reload)
 
                 ).register();
     }
 
-    private static CommandAPICommand[] buildActionCommand(@NotNull Action action) {
+    private static CommandAPICommand[] action(@NotNull Action action) {
         return new CommandAPICommand[]{
-                new CommandAPICommand("once")
-                        .withOptionalArguments(targetArgument("target"))
-                        .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(sender, args, action, ActionSetting.once())
+                command("once")
+                        .withOptionalArguments(target("target"))
+                        .executes(ActionCommand.instance.action(action, ActionSetting.once())
                 ),
-                new CommandAPICommand("continuous")
-                        .withOptionalArguments(targetArgument("target"))
-                        .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(sender, args, action, ActionSetting.continuous())
+                command("continuous")
+                        .withOptionalArguments(target("target"))
+                        .executes(ActionCommand.instance.action(action, ActionSetting.continuous())),
+                command("stop")
+                        .withOptionalArguments(target("target"))
+                        .executes(ActionCommand.instance.action(action, ActionSetting.stop())
                 ),
-                new CommandAPICommand("stop")
-                        .withOptionalArguments(targetArgument("target"))
-                        .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(sender, args, action, ActionSetting.stop())
-                ),
-                new CommandAPICommand("interval")
+                command("interval")
                         .withOptionalArguments(
-                                new IntegerArgument("interval", 1),
-                                targetArgument("target"))
+                                integer("interval", 1),
+                                target("target"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
                     ActionCommand.instance.action(sender, args, action, ActionSetting.interval(interval));
                 })
         };
+    }
+
+    private static CommandAPICommand command(@NotNull String name) {
+        return new CommandAPICommand(name);
+    }
+
+    public static IntegerArgument integer(String name, int min) {
+        return new IntegerArgument(name, min);
+    }
+
+    public static LocationArgument location(String name) {
+        return new LocationArgument(name);
+    }
+
+    public static MultiLiteralArgument literals(String name, String... literals) {
+        return new MultiLiteralArgument(name, Arrays.asList(literals));
     }
 
 

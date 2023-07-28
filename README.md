@@ -28,6 +28,9 @@
 + /fp config get - 查看个性化配置
 + /fp drop - 丢弃手上物品
 + /fp dropinv - 丢弃背包物品
++ /fp look - 让假人看向指定位置
++ /fp move - 让家人移动
++ /fp jump - 让假人跳跃
 + /fp attack - 让假人点击鼠标左键 **(实验性)**
 + /fp use - 让假人点击鼠标右键 **(实验性)**
 + /fp cmd - 让假人执行他有权限执行的命令

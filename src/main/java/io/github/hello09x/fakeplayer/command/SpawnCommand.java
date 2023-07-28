@@ -26,12 +26,11 @@ public class SpawnCommand extends AbstractCommand {
 
     private static String toLocationString(@NotNull Location location) {
         return location.getWorld().getName()
-                + " 世界: "
+                + ": "
                 + StringUtils.joinWith(", ",
                 MathUtils.round(location.getX(), 0.5),
                 MathUtils.round(location.getY(), 0.5),
                 MathUtils.round(location.getZ(), 0.5));
-
     }
 
     public void spawn(@NotNull CommandSender sender, CommandArguments args) {
@@ -131,9 +130,9 @@ public class SpawnCommand extends AbstractCommand {
 
         var distance = location1.distance(location2);
         sender.sendMessage(textOfChildren(
-                text("你与 "),
+                text("你与 ", GRAY),
                 text(target.getName()),
-                text(" 相距 "),
+                text(" 相距 ", GRAY),
                 text(MathUtils.round(distance, 0.5), WHITE)
         ));
     }

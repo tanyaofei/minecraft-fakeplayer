@@ -130,6 +130,7 @@ public class FakePlayer {
         bukkitPlayer.setInvulnerable(invulnerable);
         bukkitPlayer.setCollidable(collidable);
         bukkitPlayer.setCanPickupItems(pickupItems);
+        bukkitPlayer.getInventory().clear();        // 一些同步背包的插件可能在 JOIN 的时候恢复背包, 这个时候清空掉防止物品被复制了
         new BukkitRunnable() {
             @Override
             public void run() {
