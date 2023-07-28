@@ -5,6 +5,7 @@ import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -61,7 +62,7 @@ public class PlayerListeners implements Listener {
     /**
      * 退出游戏掉落背包
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void handlePlayerQuit(@NotNull PlayerQuitEvent event) {
         var player = event.getPlayer();
         if (!manager.isFake(player)) {

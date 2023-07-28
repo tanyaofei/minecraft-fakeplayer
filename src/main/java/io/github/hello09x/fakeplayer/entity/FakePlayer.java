@@ -17,7 +17,6 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -55,8 +54,7 @@ public class FakePlayer {
             @NotNull String creator,
             @NotNull MinecraftServer server,
             @NotNull UUID uniqueId,
-            @NotNull String name,
-            @NotNull Location spawnAt
+            @NotNull String name
     ) {
         this.creator = creator;
         this.handle = new ServerPlayer(server, Objects.requireNonNull(server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));

@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.github.hello09x.fakeplayer.command.Commands;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.optional.WildFakeplayerManager;
+import io.github.hello09x.fakeplayer.manager.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;

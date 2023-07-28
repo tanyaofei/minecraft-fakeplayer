@@ -1,8 +1,7 @@
-package io.github.hello09x.fakeplayer.optional;
+package io.github.hello09x.fakeplayer.manager;
 
 import com.google.common.io.ByteStreams;
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
