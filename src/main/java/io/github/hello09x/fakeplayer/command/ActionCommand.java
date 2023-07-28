@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.command;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
+import dev.jorel.commandapi.wrappers.Rotation;
 import io.github.hello09x.fakeplayer.entity.action.Action;
 import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
 import io.github.hello09x.fakeplayer.entity.action.PlayerActionManager;
@@ -16,6 +17,8 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.textOfChildren;
@@ -143,6 +146,31 @@ public class ActionCommand extends AbstractCommand {
                     text(" 动了一下", GRAY)
             ));
         };
+    }
+
+    public CommandExecutor turn(float yaw, float pitch) {
+        return (sender, args) -> {
+            var target = getTarget(sender, args);
+            turn(Unwrapper.getServerPlayer(target), yaw, pitch);
+            sender.sendMessage(textOfChildren(
+                    text(target.getName()),
+                    text(" 动了一下身子", GRAY)
+            ));
+        };
+    }
+
+    public void turnTo(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        var target = getTarget(sender, args);
+        var rotation = Objects.requireNonNull((Rotation) args.get("rotation"));
+        turn(Unwrapper.getServerPlayer(target), rotation.getYaw(), rotation.getPitch());
+        sender.sendMessage(textOfChildren(
+                text(target.getName()),
+                text(" 动了一下身子", GRAY)
+        ));
+    }
+
+    private void turn(@NotNull ServerPlayer player, float yaw, float pitch) {
+        look(player, player.getYRot() + yaw, player.getXRot() + pitch);
     }
 
 }

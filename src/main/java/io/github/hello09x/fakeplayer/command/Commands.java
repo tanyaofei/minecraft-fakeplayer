@@ -1,10 +1,7 @@
 package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.CommandArgument;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.LocationArgument;
-import dev.jorel.commandapi.arguments.MultiLiteralArgument;
+import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.entity.action.Action;
 import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
@@ -56,6 +53,7 @@ public class Commands {
                         "§6/fp drop [假人] [-a|--all] §7- §f丢弃手上物品",
                         "§6/fp dropinv [假人] §7- §f丢弃背包物品",
                         "§6/fp look <north|south|east|west|up|down|at> §7- §f看向指定位置",
+                        "§6/fp turn <left|right|back|to> §7- §f转身到指定位置",
                         "§6/fp move <forward|backward|left|right> §7- §f移动假人",
                         "§6/fp cmd §7- §f执行命令",
                         "§6/fp reload §7- §f重载配置文件"
@@ -170,6 +168,24 @@ public class Commands {
                                                 .withOptionalArguments(target("target"))
                                                 .executes(ActionCommand.instance::lookAt)
                                 ),
+                        command("turn")
+                                .withPermission(PERMISSION_ACTION)
+                                .withSubcommands(
+                                        command("left")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.turn(-90, 0)),
+                                        command("right")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.turn(90, 0)),
+                                        command("back")
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance.turn(180, 0)),
+                                        command("to")
+                                                .withArguments(new RotationArgument("rotation"))
+                                                .withOptionalArguments(target("target"))
+                                                .executes(ActionCommand.instance::turnTo)
+                                )
+                        ,
                         command("move")
                                 .withPermission(PERMISSION_ACTION)
                                 .withSubcommands(
