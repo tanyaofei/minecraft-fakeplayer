@@ -24,7 +24,7 @@ public class ConfigCommand extends AbstractCommand {
 
     private final UserConfigRepository repository = UserConfigRepository.instance;
 
-    public static Argument<Config<Object>> config(String nodeName) {
+    public static Argument<Config<Object>> config(@NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
             try {
@@ -35,7 +35,7 @@ public class ConfigCommand extends AbstractCommand {
         }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Configs.values()).map(Config::name).toList()));
     }
 
-    public static Argument<Object> configValue(String configNodeName, String nodeName) {
+    public static Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             @SuppressWarnings("unchecked")
             var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));

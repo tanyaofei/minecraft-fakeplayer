@@ -20,8 +20,7 @@ public class NameSource {
         this(0);
     }
 
-    public
-    synchronized int pop() {
+    public synchronized int pop() {
         if (names.isEmpty()) {
             var newCapacity = capacity * 2;
             for (int i = capacity; i < newCapacity; i++) {

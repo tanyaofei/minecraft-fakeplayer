@@ -34,7 +34,7 @@ public class SpawnCommand extends AbstractCommand {
                 MathUtils.round(location.getZ(), 0.5));
     }
 
-    public void spawn(@NotNull CommandSender sender, CommandArguments args) {
+    public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var world = (World) args.get("world");
         var location = (Location) args.get("location");
         if (world == null || location == null) {
@@ -48,7 +48,7 @@ public class SpawnCommand extends AbstractCommand {
             location.setWorld(world);
         }
 
-        var fakePlayer = fakeplayerManager.spawn(sender, location.clone());
+        var fakePlayer = fakeplayerManager.spawn(sender, location);
         if (fakePlayer != null) {
             sender.sendMessage(textOfChildren(
                     text("你创建了假人 ", GRAY),
@@ -59,7 +59,7 @@ public class SpawnCommand extends AbstractCommand {
         }
     }
 
-    public void kill(@NotNull CommandSender sender, CommandArguments args) {
+    public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
         var targets = (List<Player>) args.get("targets");
         if (targets == null) {

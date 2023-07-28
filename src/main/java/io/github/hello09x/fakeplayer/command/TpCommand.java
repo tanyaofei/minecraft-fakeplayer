@@ -2,13 +2,9 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import io.github.hello09x.fakeplayer.util.Teleportor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
-
-import static org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT;
 
 public class TpCommand extends AbstractCommand {
 
@@ -27,19 +23,15 @@ public class TpCommand extends AbstractCommand {
     public void tps(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
 
-        var l1 = sender.getLocation();
-        var l2 = target.getLocation();
+        var l1 = sender.getLocation().clone();
+        var l2 = target.getLocation().clone();
 
-        target.teleport(l1, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        l1.getWorld().playSound(l1, Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-        sender.teleport(l2, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        l2.getWorld().playSound(l2, Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        Teleportor.teleportAndSound(target, l1);
+        Teleportor.teleportAndSound(sender, l2);
     }
 
     private void teleport(@NotNull Player from, @NotNull Player to) {
-        from.teleport(to.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-        to.getLocation().getWorld().playSound(to.getLocation(), ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        Teleportor.teleportAndSound(from, to.getLocation());
     }
 
 

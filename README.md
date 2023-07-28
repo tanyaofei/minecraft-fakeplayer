@@ -13,28 +13,28 @@
 
 ## 命令
 
-+ /fp ? - 查看帮助手册
-+ /fp reload - 重载配置文件
-+ /fp create - 创建一个假人
-+ /fp kill - 移除假人
-+ /fp tp - 传送到假人身边
-+ /fp tps - 与假人交换位置
-+ /fp tphere - 将假人传送到自己身边
-+ /fp health - 查看假人的生命值
-+ /fp exp - 查看假人的经验值
-+ /fp expme - 转移假人的经验值
-+ /fp config - 玩家个性化配置
-+ /fp config set - 设置个性化配置
-+ /fp config get - 查看个性化配置
-+ /fp drop - 丢弃手上物品
-+ /fp dropinv - 丢弃背包物品
-+ /fp look - 让假人看向指定位置
-+ /fp move - 让假人移动
-+ /fp turn - 让假人转身
-+ /fp jump - 让假人跳跃
-+ /fp attack - 让假人点击鼠标左键 **(实验性)**
-+ /fp use - 让假人点击鼠标右键 **(实验性)**
-+ /fp cmd - 让假人执行他有权限执行的命令
++ `/fp spawn [世界] [位置]` - 创建假人
++ `/fp kill [假人]` - 移除假人
++ `/fp list [页码] [数量]` - 查看所有假人
++ `/fp distance` - 查看与假人的距离
++ `/fp tp [假人]` - 传送到假人身边
++ `/fp tphere [假人]` - 将假人传送到身边
++ `/fp tps [假人]` - 与假人交换位置
++ `/fp config get <配置项>` - 查看配置项
++ `/fp config set <配置项> <配置值>` - 设置配置项
++ `/fp health [假人]` - 查看生命值
++ `/fp exp [假人]` - 查看经验值
++ `/fp expme [假人]` - 转移经验值
++ `/fp attack (once | continuous | interval | stop) [假人]` - 攻击/破坏
++ `/fp use (once | continuous | interval | stop) [假人]` - 使用/交互/放置
++ `/fp jump (once | continuous | interval | stop) [假人]` - 跳跃
++ `/fp drop [假人] [-a|--all]` - 丢弃手上物品
++ `/fp dropinv [假人]` - 丢弃背包物品
++ `/fp look (north | south | east|  west | up | down | at) [假人]` - 看向指定位置
++ `/fp turn (left | right | back | to) [假人]` - 转身到指定位置
++ `/fp move (forward | backward | left | right) [假人]` - 移动假人
++ `/fp cmd <假人>` - 执行命令
++ `/fp reload` - 重载配置文件
 
 此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等
 

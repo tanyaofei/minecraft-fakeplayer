@@ -9,11 +9,11 @@ import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
+import io.github.hello09x.fakeplayer.util.Teleportor;
 import io.github.hello09x.fakeplayer.util.Unwrapper;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Player;
@@ -94,7 +94,7 @@ public class FakeplayerManager {
             return null;
         }
 
-        var seqname = nameManager.take(creator);
+        var sn = nameManager.take(creator);
         boolean invulnerable = true, lookAtEntity = true, collidable = true, pickupItems = true;
         if (creator instanceof Player p) {
             var creatorId = p.getUniqueId();
@@ -107,16 +107,16 @@ public class FakeplayerManager {
         var player = new FakePlayer(
                 creator.getName(),
                 ((CraftServer) Bukkit.getServer()).getServer(),
-                generateId(seqname.name()),
-                seqname.name()
+                generateId(sn.name()),
+                sn.name()
         );
 
         var bukkitPlayer = player.getBukkitPlayer();
         Metadatas.CREATOR.set(bukkitPlayer, creator.getName());
         Metadatas.CREATOR_IP.set(bukkitPlayer, AddressUtils.getAddress(creator));
-        Metadatas.NAME_SOURCE.set(bukkitPlayer, seqname.source());
-        Metadatas.NAME_SEQUENCE.set(bukkitPlayer, seqname.sequence());
-        bukkitPlayer.playerListName(text(creator.getName() + "的假人").style(Style.style(GRAY, ITALIC)));
+        Metadatas.NAME_SOURCE.set(bukkitPlayer, sn.source());
+        Metadatas.NAME_SEQUENCE.set(bukkitPlayer, sn.sequence());
+        bukkitPlayer.playerListName(text(bukkitPlayer.getName() + " (假人)").style(Style.style(GRAY, ITALIC)));
 
         player.spawn(invulnerable, collidable, lookAtEntity, pickupItems);
 
@@ -124,29 +124,30 @@ public class FakeplayerManager {
         dispatchCommands(bukkitPlayer, properties.getPreparingCommands());
         performCommands(bukkitPlayer, properties.getSelfCommands());
 
-        bukkitPlayer.teleport(spawnAt); // 当前 tick 必须传到出生点否则无法触发区块刷新
-        spawnAt.getWorld().playSound(spawnAt, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        spawnAt = spawnAt.clone();
+        Teleportor.teleportAndSound(bukkitPlayer, spawnAt); // 当前 tick 必须传到出生点否则无法触发区块刷新
+        ensureSpawnpoint(bukkitPlayer, spawnAt);    // 防止别的插件比如 `multicore` 把他带离出生点
 
-        // 可能被别的插件干预
-        // 在下一 tick 里探测
+        return bukkitPlayer;
+    }
+
+    private void ensureSpawnpoint(@NotNull Player player, @NotNull Location spawnpoint) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (spawnAt.distance(bukkitPlayer.getLocation()) < 16) {
+                if (spawnpoint.getWorld().equals(spawnpoint.getWorld()) && spawnpoint.distance(player.getLocation()) < 16) {
                     return;
                 }
 
-                bukkitPlayer.teleport(spawnAt.getWorld().getSpawnLocation());
+                player.teleport(spawnpoint.getWorld().getSpawnLocation());
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        bukkitPlayer.teleport(spawnAt);
+                        player.teleport(spawnpoint);
                     }
                 }.runTaskLater(Main.getInstance(), 1);
             }
         }.runTaskLater(Main.getInstance(), 1);
-
-        return bukkitPlayer;
     }
 
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {

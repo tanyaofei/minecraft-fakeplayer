@@ -42,7 +42,12 @@ public class ActionCommand extends AbstractCommand {
         return (sender, args) -> action(sender, args, action, setting.clone());
     }
 
-    public void action(@NotNull CommandSender sender, @NotNull CommandArguments args, @NotNull Action action, @NotNull ActionSetting setting) throws WrapperCommandSyntaxException {
+    public void action(
+            @NotNull CommandSender sender,
+            @NotNull CommandArguments args,
+            @NotNull Action action,
+            @NotNull ActionSetting setting
+    ) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         actionManager.setAction(target, action, setting);
 

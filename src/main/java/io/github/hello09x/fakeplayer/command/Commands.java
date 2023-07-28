@@ -55,7 +55,7 @@ public class Commands {
                         "§6/fp look (north|south|east|west|up|down|at) [假人] §7- §f看向指定位置",
                         "§6/fp turn (left|right|back|to) [假人] §7- §f转身到指定位置",
                         "§6/fp move (forward|backward|left|right) [假人] §7- §f移动假人",
-                        "§6/fp cmd §7- §f执行命令",
+                        "§6/fp cmd <假人> <命令> §7- §f执行命令",
                         "§6/fp reload §7- §f重载配置文件"
                 )
                 .withSubcommands(

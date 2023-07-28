@@ -14,14 +14,12 @@ import java.util.logging.Logger;
 public class NameManager {
 
     public final static NameManager instance = new NameManager();
-
+    private final static Logger log = Main.getInstance().getLogger();
+    private final static int MAX_LENGTH = 16;   // mojang required
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
-
     private final ConcurrentHashMap<String, NameSource> nameSources = new ConcurrentHashMap<>();
 
-    private final static Logger log = Main.getInstance().getLogger();
-
-    public SequenceName take(CommandSender creator) {
+    public @NotNull SequenceName take(CommandSender creator) {
         var source = properties.getNameTemplate();
         if (source.isBlank()) {
             source = creator.getName();
@@ -33,8 +31,8 @@ public class NameManager {
             var suffix = "_" + (seq + 1);
 
             String name;
-            if (source.length() + suffix.length() > 16) {
-                name = source.substring(0, (16 - suffix.length()));
+            if (source.length() + suffix.length() > MAX_LENGTH) {
+                name = source.substring(0, (MAX_LENGTH - suffix.length()));
             } else {
                 name = source;
             }
@@ -52,7 +50,8 @@ public class NameManager {
             );
         }
 
-        var name = "FAKE_" + RandomStringUtils.random(11, true, true);
+        var name = "_fp_";
+        name = name + RandomStringUtils.random(MAX_LENGTH - name.length(), true, true);
         log.warning("Could not generate a name which is never used at this server after 10 tries, using random player name as fallback: " + name);
         return new SequenceName("random", 0, name);
     }
