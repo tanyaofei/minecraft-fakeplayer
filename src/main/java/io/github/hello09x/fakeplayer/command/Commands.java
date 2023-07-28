@@ -50,7 +50,7 @@ public class Commands {
                         "§6/fp health [假人] §7- §f查看生命值",
                         "§6/fp exp [假人] §7- §f查看经验值",
                         "§6/fp expme [假人] §7- §f转移经验值",
-                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §攻击/破坏",
+                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §f攻击/破坏",
                         "§6/fp use <once|continuous|interval|stop> [假人] §7- §f使用/交互/放置",
                         "§6/fp jump <once|continuous|interval|stop> [假人] §7- §f跳跃",
                         "§6/fp drop [假人] [-a|--all] §7- §f丢弃手上物品",
