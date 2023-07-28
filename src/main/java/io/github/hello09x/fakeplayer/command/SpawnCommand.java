@@ -8,6 +8,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +35,17 @@ public class SpawnCommand extends AbstractCommand {
     }
 
     public void spawn(@NotNull CommandSender sender, CommandArguments args) {
+        var world = (World) args.get("world");
         var location = (Location) args.get("location");
-        if (location == null) {
+        if (world == null || location == null) {
             if (sender instanceof Player p) {
                 location = p.getLocation();
             } else {
                 location = Bukkit.getServer().getWorlds().get(0).getSpawnLocation();
             }
+        } else {
+            location = location.clone();
+            location.setWorld(world);
         }
 
         var fakePlayer = fakeplayerManager.spawn(sender, location.clone());

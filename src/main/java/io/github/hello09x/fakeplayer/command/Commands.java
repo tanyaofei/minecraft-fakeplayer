@@ -35,7 +35,7 @@ public class Commands {
                         "可以创建模拟玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
                 )
                 .withUsage(
-                        "§6/fp spawn §7- §f创建假人",
+                        "§6/fp spawn [世界] [位置] §7- §f创建假人",
                         "§6/fp kill [假人] §7- §f移除假人",
                         "§6/fp list [页码] [数量] §7- §f查看所有假人",
                         "§6/fp distance §7- §f查看与假人的距离",
@@ -47,14 +47,14 @@ public class Commands {
                         "§6/fp health [假人] §7- §f查看生命值",
                         "§6/fp exp [假人] §7- §f查看经验值",
                         "§6/fp expme [假人] §7- §f转移经验值",
-                        "§6/fp attack <once|continuous|interval|stop> [假人] §7- §f攻击/破坏",
-                        "§6/fp use <once|continuous|interval|stop> [假人] §7- §f使用/交互/放置",
-                        "§6/fp jump <once|continuous|interval|stop> [假人] §7- §f跳跃",
+                        "§6/fp attack (once|continuous|interval|stop) [假人] §7- §f攻击/破坏",
+                        "§6/fp use (once|continuous|interval|stop) [假人] §7- §f使用/交互/放置",
+                        "§6/fp jump (once|continuous|interval|stop) [假人] §7- §f跳跃",
                         "§6/fp drop [假人] [-a|--all] §7- §f丢弃手上物品",
                         "§6/fp dropinv [假人] §7- §f丢弃背包物品",
-                        "§6/fp look <north|south|east|west|up|down|at> §7- §f看向指定位置",
-                        "§6/fp turn <left|right|back|to> §7- §f转身到指定位置",
-                        "§6/fp move <forward|backward|left|right> §7- §f移动假人",
+                        "§6/fp look (north|south|east|west|up|down|at) [假人] §7- §f看向指定位置",
+                        "§6/fp turn (left|right|back|to) [假人] §7- §f转身到指定位置",
+                        "§6/fp move (forward|backward|left|right) [假人] §7- §f移动假人",
                         "§6/fp cmd §7- §f执行命令",
                         "§6/fp reload §7- §f重载配置文件"
                 )
@@ -66,7 +66,10 @@ public class Commands {
 
                         command("spawn")
                                 .withPermission(PERMISSION_SPAWN)
-                                .withOptionalArguments(location("location").withPermission(PERMISSION_SPAWN_LOCATION))
+                                .withOptionalArguments(
+                                        world("world").withPermission(PERMISSION_SPAWN_LOCATION),
+                                        location("location").withPermission(PERMISSION_SPAWN_LOCATION)
+                                )
                                 .executes(SpawnCommand.instance::spawn),
                         command("kill")
                                 .withPermission(PERMISSION_SPAWN)
@@ -164,7 +167,7 @@ public class Commands {
                                                 .withOptionalArguments(target("target"))
                                                 .executes(ActionCommand.instance.look(Direction.DOWN)),
                                         command("at")
-                                                .withArguments(new LocationArgument("location"))
+                                                .withArguments(location("location"))
                                                 .withOptionalArguments(target("target"))
                                                 .executes(ActionCommand.instance::lookAt)
                                 ),
@@ -181,7 +184,7 @@ public class Commands {
                                                 .withOptionalArguments(target("target"))
                                                 .executes(ActionCommand.instance.turn(180, 0)),
                                         command("to")
-                                                .withArguments(new RotationArgument("rotation"))
+                                                .withArguments(rotation("rotation"))
                                                 .withOptionalArguments(target("target"))
                                                 .executes(ActionCommand.instance::turnTo)
                                 )
@@ -256,6 +259,14 @@ public class Commands {
 
     public static LocationArgument location(String name) {
         return new LocationArgument(name);
+    }
+
+    public static RotationArgument rotation(String name) {
+        return new RotationArgument(name);
+    }
+
+    public static WorldArgument world(String name) {
+        return new WorldArgument(name);
     }
 
     public static MultiLiteralArgument literals(String name, String... literals) {
