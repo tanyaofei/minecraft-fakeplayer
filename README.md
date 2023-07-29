@@ -67,9 +67,10 @@
 里将注册登陆的指令放进去比如:
 
 ```yaml
+# 注意留意密码不能设置太简单不然 AuthMe 会不给使用
 self-commands:
-  - '/register 12345 12345'
-  - '/login 12345'
+  - '/register abc123! abc123!'
+  - '/login abc123!'
 ```
 
 ### 每次假人生成控制台有报错日志
