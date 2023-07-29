@@ -9,7 +9,7 @@ import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
-import io.github.hello09x.fakeplayer.util.Teleportor;
+import io.github.hello09x.fakeplayer.util.Tasker;
 import io.github.hello09x.fakeplayer.util.Unwrapper;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
@@ -79,18 +79,18 @@ public class FakeplayerManager {
     ) {
         var playerLimit = properties.getPlayerLimit();
         if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
-            creator.sendMessage(text("你创建的假人数量已达到上限...", RED));
+            creator.sendMessage(text("你创建的假人数量已达到上限", GRAY));
             return null;
         }
 
         var serverLimit = properties.getServerLimit();
         if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getAll().size() >= serverLimit) {
-            creator.sendMessage(text("服务器假人数量已达到上限...", RED));
+            creator.sendMessage(text("服务器假人数量已达到上限", GRAY));
             return null;
         }
 
         if (!creator.isOp() && properties.isDetectIp() && countByAddress(AddressUtils.getAddress(creator)) >= 1) {
-            creator.sendMessage(text("你所在 IP 创建的假人数量已达到上限...", RED));
+            creator.sendMessage(text("你所在 IP 创建的假人数量已达到上限", GRAY));
             return null;
         }
 
@@ -116,38 +116,17 @@ public class FakeplayerManager {
         Metadatas.CREATOR_IP.set(bukkitPlayer, AddressUtils.getAddress(creator));
         Metadatas.NAME_SOURCE.set(bukkitPlayer, sn.source());
         Metadatas.NAME_SEQUENCE.set(bukkitPlayer, sn.sequence());
-        bukkitPlayer.playerListName(text(bukkitPlayer.getName() + " (假人)").style(Style.style(GRAY, ITALIC)));
+        bukkitPlayer.playerListName(text(bukkitPlayer.getName()).style(Style.style(GRAY, ITALIC)));
 
-        player.spawn(invulnerable, collidable, lookAtEntity, pickupItems);
+        player.spawn(spawnAt.clone(), invulnerable, collidable, lookAtEntity, pickupItems);
 
         usedIdRepository.add(bukkitPlayer.getUniqueId());
-        dispatchCommands(bukkitPlayer, properties.getPreparingCommands());
-        performCommands(bukkitPlayer, properties.getSelfCommands());
-
-        spawnAt = spawnAt.clone();
-        Teleportor.teleportAndSound(bukkitPlayer, spawnAt); // 当前 tick 必须传到出生点否则无法触发区块刷新
-        ensureSpawnpoint(bukkitPlayer, spawnAt);    // 防止别的插件比如 `multicore` 把他带离出生点
+        Tasker.later(() -> {
+            dispatchCommands(bukkitPlayer, properties.getPreparingCommands());
+            performCommands(bukkitPlayer, properties.getSelfCommands());
+        }, 20);
 
         return bukkitPlayer;
-    }
-
-    private void ensureSpawnpoint(@NotNull Player player, @NotNull Location spawnpoint) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (spawnpoint.getWorld().equals(spawnpoint.getWorld()) && spawnpoint.distance(player.getLocation()) < 16) {
-                    return;
-                }
-
-                player.teleport(spawnpoint.getWorld().getSpawnLocation());
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        player.teleport(spawnpoint);
-                    }
-                }.runTaskLater(Main.getInstance(), 1);
-            }
-        }.runTaskLater(Main.getInstance(), 1);
     }
 
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {

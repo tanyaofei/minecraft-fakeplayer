@@ -32,7 +32,7 @@ public class PlayerListeners implements Listener {
      * 拒绝假人用过的 ID 上线
      */
     @EventHandler(ignoreCancelled = true)
-    public void onLogin(@NotNull AsyncPlayerPreLoginEvent event) {
+    public void onPreLogin(@NotNull AsyncPlayerPreLoginEvent event) {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             return;
         }

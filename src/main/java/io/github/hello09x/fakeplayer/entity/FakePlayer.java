@@ -8,6 +8,8 @@ import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import io.github.hello09x.fakeplayer.util.Tasker;
+import io.github.hello09x.fakeplayer.util.Teleportor;
 import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +19,7 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -32,6 +35,10 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public class FakePlayer {
+
+    private final static String WORLD_OVERWORLD = "world";
+    private final static String WORLD_NETHER = "world_nether";
+
 
     private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
     private final static Logger log = Main.getInstance().getLogger();
@@ -80,6 +87,7 @@ public class FakePlayer {
     }
 
     public void spawn(
+            Location spawnAt,
             boolean invulnerable,
             boolean collidable,
             boolean lookAtEntity,
@@ -149,6 +157,33 @@ public class FakePlayer {
                 }
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
+
+        if (spawnAt.getWorld().getName().equals(WORLD_OVERWORLD)) {
+            // 如果假人出生点是主世界
+            // 那么需要让他跨一次世界
+            Tasker.nextTick(() -> {
+                bukkitPlayer.teleport(Objects.requireNonNull(Bukkit.getWorld(WORLD_NETHER), "缺少地狱世界: " + WORLD_NETHER).getSpawnLocation());
+                Tasker.nextTick(() -> Teleportor.teleportAndSound(bukkitPlayer, spawnAt));
+            });
+        } else {
+            Teleportor.teleportAndSound(bukkitPlayer, spawnAt);
+        }
+
+        // 防止别的插件把假人带走, 比如 multiverse
+        Tasker.later(() -> {
+            if (
+                    spawnAt.getWorld().equals(bukkitPlayer.getLocation().getWorld())
+                            && spawnAt.distance(bukkitPlayer.getLocation()) < 16
+            ) {
+                return;
+            }
+
+            bukkitPlayer.teleport(spawnAt.getWorld().getSpawnLocation());
+            Tasker.nextTick(() -> bukkitPlayer.teleport(spawnAt));
+        }, 3);
+
+
     }
+
 
 }
