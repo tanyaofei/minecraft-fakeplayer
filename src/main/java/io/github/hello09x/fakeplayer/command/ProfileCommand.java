@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.fakeplayer.util.Experience;
 import io.github.hello09x.fakeplayer.util.MathUtils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.AttributeInstance;
@@ -23,7 +24,7 @@ public class ProfileCommand extends AbstractCommand {
         var target = getTarget(sender, args);
 
         var level = target.getLevel();
-        var total = target.getTotalExperience();
+        var total = Experience.getExp(target);
         sender.sendMessage(textOfChildren(
                 text(target.getName(), GRAY),
                 text(" 当前 ", GRAY),
