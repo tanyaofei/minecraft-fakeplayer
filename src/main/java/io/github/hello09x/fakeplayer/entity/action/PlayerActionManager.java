@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.entity.action;
 
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.util.Unwrapper;
+import io.github.hello09x.fakeplayer.util.Unwrapped;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,7 +36,7 @@ public class PlayerActionManager {
     ) {
         var managers = MANAGERS.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
         var manager = managers.computeIfAbsent(action, key -> new ActionManager(
-                Unwrapper.getServerPlayer(player),
+                Unwrapped.getServerPlayer(player),
                 action,
                 setting
         ));

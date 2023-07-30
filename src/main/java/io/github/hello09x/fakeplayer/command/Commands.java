@@ -23,7 +23,6 @@ public class Commands {
     private final static String PERMISSION_TP = "fakeplayer.tp";
     private final static String PERMISSION_EXP = "fakeplayer.exp";
     private final static String PERMISSION_ACTION = "fakeplayer.action";
-    private final static String PERMISSION_EXPERIMENTAL_ACTION = "fakeplayer.experimental.action";
     private final static String PERMISSION_ADMIN = "fakeplayer.admin";
     private final static String PERMISSION_CMD = "fakeplayer.cmd";
 
@@ -119,10 +118,10 @@ public class Commands {
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
                         command("attack")
-                                .withPermission(PERMISSION_EXPERIMENTAL_ACTION)
+                                .withPermission(PERMISSION_ACTION)
                                 .withSubcommands(action(Action.ATTACK)),
                         command("use")
-                                .withPermission(PERMISSION_EXPERIMENTAL_ACTION)
+                                .withPermission(PERMISSION_ACTION)
                                 .withSubcommands(action(Action.USE)),
                         command("jump")
                                 .withPermission(PERMISSION_ACTION)

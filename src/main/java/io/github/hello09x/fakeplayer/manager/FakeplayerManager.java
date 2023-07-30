@@ -10,7 +10,7 @@ import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.Tasker;
-import io.github.hello09x.fakeplayer.util.Unwrapper;
+import io.github.hello09x.fakeplayer.util.Unwrapped;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -65,6 +65,24 @@ public class FakeplayerManager {
                     }
                 }, 0, 60, TimeUnit.SECONDS
         );
+    }
+
+    private static List<String> standardCommands(List<String> commands) {
+        var ret = new ArrayList<String>(commands.size());
+        for (var cmd : commands) {
+            cmd = cmd.trim();
+            if (cmd.startsWith("/")) {
+                if (cmd.length() < 2) {
+                    continue;
+                }
+                cmd = cmd.substring(1);
+            }
+            if (cmd.isBlank()) {
+                continue;
+            }
+            ret.add(cmd);
+        }
+        return ret;
     }
 
     /**
@@ -220,7 +238,7 @@ public class FakeplayerManager {
         );
         Arrays.stream(Metadatas.values()).forEach(meta -> meta.remove(fakePlayer));
         if (properties.isDropInventoryOnQuiting()) {
-            Action.dropInventory(Unwrapper.getServerPlayer(fakePlayer));
+            Action.dropInventory(Unwrapped.getServerPlayer(fakePlayer));
         }
     }
 
@@ -286,16 +304,10 @@ public class FakeplayerManager {
             return;
         }
 
-        for (var cmd : commands) {
-            cmd = cmd.trim();
-            if (cmd.startsWith("/")) {
-                cmd = cmd.substring(1);
+        for (var cmd : standardCommands(commands)) {
+            if (!player.performCommand(cmd)) {
+                log.warning("执行命令失败: " + cmd);
             }
-            if (cmd.isBlank()) {
-                continue;
-            }
-
-            player.performCommand(cmd);
         }
     }
 
@@ -310,11 +322,7 @@ public class FakeplayerManager {
 
         var server = Bukkit.getServer();
         var sender = Bukkit.getConsoleSender();
-        for (var cmd : commands) {
-            cmd = cmd.trim();
-            if (cmd.startsWith("/")) {
-                cmd = cmd.substring(1);
-            }
+        for (var cmd : standardCommands(commands)) {
             if (cmd.length() > 1) {
                 cmd = cmd
                         .replace("%p", player.getName())
@@ -326,7 +334,9 @@ public class FakeplayerManager {
                 continue;
             }
 
-            server.dispatchCommand(sender, cmd);
+            if (!server.dispatchCommand(sender, cmd)) {
+                log.warning("执行命令失败: " + cmd);
+            }
         }
     }
 

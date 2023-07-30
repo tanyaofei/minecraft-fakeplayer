@@ -79,7 +79,7 @@ public abstract class AbstractCommand {
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         return Optional
-                .ofNullable((Player) args.getUnchecked("target"))
+                .ofNullable((Player) args.get("target"))
                 .or(() -> {
                     var all = FakeplayerManager.instance.getAll(sender);
                     if (all.size() != 1) {

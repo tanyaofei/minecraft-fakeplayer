@@ -62,7 +62,7 @@ public class PlayerListeners implements Listener {
     /**
      * 退出游戏掉落背包
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onQuit(@NotNull PlayerQuitEvent event) {
         var player = event.getPlayer();
         if (!manager.isFake(player)) {

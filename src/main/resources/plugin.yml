@@ -32,12 +32,8 @@ permissions:
     default: op
 
   fakeplayer.action:
-    description: '拥有 drop, dropinv, sneak, look, move, jump 命令权限'
+    description: '拥有 drop, dropinv, sneak, look, move, jump, attack, use 命令权限'
     default: op
-
-  fakeplayer.experimental.action:
-    default: op
-    description: '拥有 attack, use 命令权限'
 
   fakeplayer.exp:
     description: '拥有 expme 命令权限'

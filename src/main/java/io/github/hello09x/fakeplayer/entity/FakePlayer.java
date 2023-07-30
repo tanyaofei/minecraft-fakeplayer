@@ -7,12 +7,9 @@ import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
-import io.github.hello09x.fakeplayer.util.ReflectionUtils;
-import io.github.hello09x.fakeplayer.util.Tasker;
-import io.github.hello09x.fakeplayer.util.Teleportor;
+import io.github.hello09x.fakeplayer.util.*;
 import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
@@ -20,8 +17,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -66,7 +61,7 @@ public class FakePlayer {
         this.creator = creator;
         this.handle = new ServerPlayer(server, Objects.requireNonNull(server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
         this.bukkitPlayer = this.handle.getBukkitEntity();
-        ((CraftPlayer) this.bukkitPlayer).readExtraData(new CompoundTag()); // set play before avoiding first join message
+        CraftUtils.setPlayBefore(this.bukkitPlayer);
         this.server = server;
 
         this.bukkitPlayer.setPersistent(false);
@@ -128,7 +123,7 @@ public class FakePlayer {
         {
             var connection = new EmptyConnection(PacketFlow.CLIENTBOUND);
             var listener = new EmptyLoginPacketListener(server, connection);
-            ((CraftServer) Bukkit.getServer()).getHandle().placeNewPlayer(
+            Unwrapped.getPlayerList(Bukkit.getServer()).placeNewPlayer(
                     listener.connection,
                     handle
             );
