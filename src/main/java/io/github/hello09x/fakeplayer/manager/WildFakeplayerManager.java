@@ -66,14 +66,16 @@ public class WildFakeplayerManager implements PluginMessageListener {
                 .collect(Collectors.groupingBy(manager::getCreator));
 
         for (var entry : group.entrySet()) {
-            if (entry.getValue().isEmpty() || isPlayerOnline(entry.getKey())) {
+            var creator = entry.getKey();
+            var targets = entry.getValue();
+            if (targets.isEmpty() || isPlayerOnline(creator)) {
                 return;
             }
 
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (var target : entry.getValue()) {
+                    for (var target : targets) {
                         manager.remove(target.getName());
                     }
                     log.info(String.format("玩家 %s 已不在线, 移除他创建的 %d 个假人", entry.getKey(), entry.getValue().size()));
@@ -120,7 +122,9 @@ public class WildFakeplayerManager implements PluginMessageListener {
     }
 
     private boolean isPlayerOnline(@NotNull String name) {
-        return bungeePlayers.contains(name) || Bukkit.getServer().getPlayerExact(name) != null;
+        return Bukkit.getConsoleSender().getName().equals(name)
+                || bungeePlayers.contains(name)
+                || Bukkit.getServer().getPlayerExact(name) != null;
     }
 
 }
