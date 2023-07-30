@@ -63,7 +63,6 @@ public class ActionCommand extends AbstractCommand {
         sender.sendMessage(textOfChildren(
                 text(target.getName()),
                 text(desc, GRAY),
-                text(" "),
                 text(action.name, GRAY)
         ));
     }

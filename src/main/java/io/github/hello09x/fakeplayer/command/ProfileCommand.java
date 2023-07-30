@@ -26,7 +26,7 @@ public class ProfileCommand extends AbstractCommand {
         var level = target.getLevel();
         var total = Experience.getExp(target);
         sender.sendMessage(textOfChildren(
-                text(target.getName(), GRAY),
+                text(target.getName(), WHITE),
                 text(" 当前 ", GRAY),
                 text(level, DARK_GREEN),
                 text(" 级, 共 ", GRAY),
@@ -58,7 +58,7 @@ public class ProfileCommand extends AbstractCommand {
         }
 
         sender.sendMessage(textOfChildren(
-                text(target.getName()),
+                text(target.getName(), WHITE),
                 text(" 当前生命值: ", GRAY),
                 text(MathUtils.round(health, 0.5), color),
                 text("/", color),
