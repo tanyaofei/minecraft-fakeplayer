@@ -17,14 +17,14 @@ import static io.github.hello09x.fakeplayer.command.ConfigCommand.configValue;
 
 public class Commands {
 
-    private final static String PERMISSION_SPAWN = "fakeplayer.spawn";
-    private final static String PERMISSION_SPAWN_LOCATION = "fakeplayer.spawn.location";
-    private final static String PERMISSION_PROFILE = "fakeplayer.profile";
-    private final static String PERMISSION_TP = "fakeplayer.tp";
-    private final static String PERMISSION_EXP = "fakeplayer.exp";
-    private final static String PERMISSION_ACTION = "fakeplayer.action";
-    private final static String PERMISSION_ADMIN = "fakeplayer.admin";
-    private final static String PERMISSION_CMD = "fakeplayer.cmd";
+    public final static String PERMISSION_SPAWN = "fakeplayer.spawn";
+    public final static String PERMISSION_SPAWN_LOCATION = "fakeplayer.spawn.location";
+    public final static String PERMISSION_PROFILE = "fakeplayer.profile";
+    public final static String PERMISSION_TP = "fakeplayer.tp";
+    public final static String PERMISSION_EXP = "fakeplayer.exp";
+    public final static String PERMISSION_ACTION = "fakeplayer.action";
+    public final static String PERMISSION_ADMIN = "fakeplayer.admin";
+    public final static String PERMISSION_CMD = "fakeplayer.cmd";
 
     public static void register() {
         command("fakeplayer")

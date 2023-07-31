@@ -12,13 +12,13 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Math;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class SpawnCommand extends AbstractCommand {
@@ -106,13 +106,14 @@ public class SpawnCommand extends AbstractCommand {
                 size
         );
 
+        var canTp = sender instanceof Player && sender.hasPermission(Commands.PERMISSION_TP);
         sender.sendMessage(p.toComponent(
                 "假人",
                 fakeplayer -> textOfChildren(
                         text(fakeplayer.getName() + " (" + fakeplayerManager.getCreator(fakeplayer) + ")", GOLD),
                         text(" - ", GRAY),
                         text(toLocationString(fakeplayer.getLocation()), WHITE),
-                        text(" [<--传送]", AQUA).clickEvent(ClickEvent.runCommand("/fp tp " + fakeplayer.getName())),
+                        canTp ? text(" [<--传送]", AQUA).clickEvent(ClickEvent.runCommand("/fp tp " + fakeplayer.getName())) : empty(),
                         text(" [<--移除]", RED).clickEvent(ClickEvent.runCommand("/fp kill " + fakeplayer.getName()))
                 ),
                 String.format("/fp list %d %d", page - 1, size),
@@ -120,11 +121,15 @@ public class SpawnCommand extends AbstractCommand {
         ));
     }
 
-    public void distance(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+    public void distance(
+            @NotNull Player sender,
+            @NotNull CommandArguments args
+    ) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var location1 = target.getLocation();
-        var location2 = sender.getLocation();
-        if (!location2.getWorld().equals(location1.getWorld())) {
+        var from = target.getLocation().toBlockLocation();
+        var to = sender.getLocation().toBlockLocation();
+
+        if (!from.getWorld().equals(to.getWorld())) {
             sender.sendMessage(textOfChildren(
                     text("你离 ", GRAY),
                     text(target.getName()),
@@ -133,14 +138,24 @@ public class SpawnCommand extends AbstractCommand {
             return;
         }
 
-        var distance = location1.distance(location2);
+        var euclidean = MathUtils.round(from.distance(to), 0.5);
+        var x = Math.abs(from.getBlockX() - to.getBlockX());
+        var y = Math.abs(from.getBlockY() - to.getBlockY());
+        var z = Math.abs(from.getBlockZ() - to.getBlockZ());
+
         sender.sendMessage(textOfChildren(
                 text("你与 ", GRAY),
-                text(target.getName()),
-                text(" 相距 ", GRAY),
-                text(MathUtils.round(distance, 0.5), WHITE)
+                text(target.getName(), WHITE),
+                text("的距离: ", GRAY),
+                newline(),
+                text("- 欧氏距离: ", GRAY), text(euclidean, WHITE),
+                newline(),
+                text("- x 距离: ", GRAY), text(x, WHITE),
+                newline(),
+                text("- y 距离: ", GRAY), text(y, WHITE),
+                newline(),
+                text("- z 距离: ", GRAY), text(z, WHITE)
         ));
     }
-
 
 }
