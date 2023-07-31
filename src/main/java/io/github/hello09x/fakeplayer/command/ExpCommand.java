@@ -35,7 +35,7 @@ public class ExpCommand extends AbstractCommand {
                 text(target.getName(), WHITE),
                 text(" 转移 ", GRAY),
                 text(exp, DARK_GREEN),
-                text(" 点经验值给你", GRAY)
+                text(" 点经验给你", GRAY)
         ));
     }
 

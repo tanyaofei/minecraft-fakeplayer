@@ -37,6 +37,7 @@ public class CmdCommand extends AbstractCommand {
                     text(toCommandString(cmd), RED),
                     text(" , 请检查命令是否正确以及假人是否有权限", GRAY)
             ));
+            return;
         }
 
         sender.sendMessage(textOfChildren(

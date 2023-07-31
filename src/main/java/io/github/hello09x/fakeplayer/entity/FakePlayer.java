@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -33,6 +35,7 @@ public class FakePlayer {
 
     private final static String WORLD_OVERWORLD = "world";
     private final static String WORLD_NETHER = "world_nether";
+    private final static String WORLD_THE_END = "world_the_end";
 
 
     private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
@@ -81,6 +84,25 @@ public class FakePlayer {
         }
     }
 
+    /**
+     * 判断世界是否是主世界
+     *
+     * @param world 世界
+     * @return 该世界是否是主世界
+     */
+    private static boolean isOverworld(@NotNull World world) {
+        return world.getName().equals(WORLD_OVERWORLD);
+    }
+
+    /**
+     * 让假人诞生
+     *
+     * @param spawnAt      出生点
+     * @param invulnerable 是否无敌
+     * @param collidable   是否具有碰撞体
+     * @param lookAtEntity 是否看向实体
+     * @param pickupItems  是否可以拾取物品
+     */
     public void spawn(
             Location spawnAt,
             boolean invulnerable,
@@ -153,14 +175,21 @@ public class FakePlayer {
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
 
-        if (spawnAt.getWorld().getName().equals(WORLD_OVERWORLD)) {
+        if (isOverworld(spawnAt.getWorld())) {
             // 如果假人出生点是主世界
-            // 那么需要让他跨一次世界
+            // 那么需要让他跨一次世界再传送过去
             Tasker.nextTick(() -> {
-                bukkitPlayer.teleport(Objects.requireNonNull(Bukkit.getWorld(WORLD_NETHER), "缺少地狱世界: " + WORLD_NETHER).getSpawnLocation());
+                var nether = Optional
+                        .ofNullable(Bukkit.getWorld(WORLD_NETHER))
+                        .orElseGet(() -> Bukkit.getWorld(WORLD_THE_END));
+                if (nether == null) {
+                    log.warning(String.format("由于缺少地狱世界: %s, 当前创建的假人 %s 可能无法刷新怪物, 需要玩家手动将他传送到其他世界后再传送回来", WORLD_NETHER, bukkitPlayer.getName()));
+                    return;
+                }
                 Tasker.nextTick(() -> Teleportor.teleportAndSound(bukkitPlayer, spawnAt));
             });
         } else {
+            // 不是主世界直接传送即可
             Teleportor.teleportAndSound(bukkitPlayer, spawnAt);
         }
 
@@ -176,8 +205,6 @@ public class FakePlayer {
             bukkitPlayer.teleport(spawnAt.getWorld().getSpawnLocation());
             Tasker.nextTick(() -> bukkitPlayer.teleport(spawnAt));
         }, 3);
-
-
     }
 
 

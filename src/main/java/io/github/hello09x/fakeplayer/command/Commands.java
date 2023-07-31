@@ -61,7 +61,7 @@ public class Commands {
                 .withSubcommands(
                         command("help")
                                 .withAliases("?")
-                                .withOptionalArguments(new IntegerArgument("page", 1))
+                                .withOptionalArguments(integer("page", 1))
                                 .executesPlayer(HelpCommand.instance::help),
 
                         command("spawn")
@@ -77,7 +77,9 @@ public class Commands {
                                 .executes(SpawnCommand.instance::kill),
                         command("list")
                                 .withPermission(PERMISSION_SPAWN)
-                                .withOptionalArguments(integer("page", 1), integer("size", 1))
+                                .withOptionalArguments(
+                                        integer("page", 1),
+                                        integer("size", 1))
                                 .executes(SpawnCommand.instance::list),
                         command("distance")
                                 .withPermission(PERMISSION_SPAWN)
@@ -142,8 +144,9 @@ public class Commands {
                                 .executes(ActionCommand.instance.action(Action.DROP_INVENTORY, ActionSetting.once())),
                         command("sneak")
                                 .withPermission(PERMISSION_ACTION)
-                                .withOptionalArguments(target("target"))
-                                .withOptionalArguments(literals("sneaking", "true", "false"))
+                                .withOptionalArguments(
+                                        literals("sneaking", "true", "false"),
+                                        target("target"))
                                 .executes(ActionCommand.instance::sneak),
                         command("look")
                                 .withPermission(PERMISSION_ACTION)
@@ -187,8 +190,7 @@ public class Commands {
                                                 .withArguments(rotation("rotation"))
                                                 .withOptionalArguments(target("target"))
                                                 .executes(ActionCommand.instance::turnTo)
-                                )
-                        ,
+                                ),
                         command("move")
                                 .withPermission(PERMISSION_ACTION)
                                 .withSubcommands(
@@ -253,23 +255,23 @@ public class Commands {
         return new CommandAPICommand(name);
     }
 
-    public static IntegerArgument integer(String name, int min) {
+    private static IntegerArgument integer(@NotNull String name, int min) {
         return new IntegerArgument(name, min);
     }
 
-    public static LocationArgument location(String name) {
+    private static LocationArgument location(@NotNull String name) {
         return new LocationArgument(name);
     }
 
-    public static RotationArgument rotation(String name) {
+    private static RotationArgument rotation(@NotNull String name) {
         return new RotationArgument(name);
     }
 
-    public static WorldArgument world(String name) {
+    private static WorldArgument world(@NotNull String name) {
         return new WorldArgument(name);
     }
 
-    public static MultiLiteralArgument literals(String name, String... literals) {
+    private static MultiLiteralArgument literals(@NotNull String name, @NotNull String @NotNull ... literals) {
         return new MultiLiteralArgument(name, Arrays.asList(literals));
     }
 
