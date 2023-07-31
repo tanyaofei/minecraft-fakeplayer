@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.entity.action;
 
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.util.Unwrapped;
+import io.github.hello09x.fakeplayer.util.nms.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,7 +36,7 @@ public class PlayerActionManager {
     ) {
         var managers = MANAGERS.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
         var manager = managers.computeIfAbsent(action, key -> new ActionManager(
-                Unwrapped.getServerPlayer(player),
+                NMS.getInstance().getServerPlayer(player),
                 action,
                 setting
         ));
@@ -50,7 +50,7 @@ public class PlayerActionManager {
             var player = Bukkit.getPlayer(entry.getKey());
             if (player == null) {
                 itr.remove();
-                for(var manager: entry.getValue().values()) {
+                for (var manager : entry.getValue().values()) {
                     manager.stop();
                 }
                 continue;

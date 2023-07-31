@@ -8,7 +8,7 @@ import io.github.hello09x.fakeplayer.entity.action.Action;
 import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
 import io.github.hello09x.fakeplayer.entity.action.PlayerActionManager;
 import io.github.hello09x.fakeplayer.util.MathUtils;
-import io.github.hello09x.fakeplayer.util.Unwrapped;
+import io.github.hello09x.fakeplayer.util.nms.NMS;
 import io.papermc.paper.entity.LookAnchor;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -118,7 +118,7 @@ public class ActionCommand extends AbstractCommand {
             @NotNull Player target,
             @NotNull Direction direction
     ) {
-        var player = Unwrapped.getServerPlayer(target);
+        var player = NMS.getInstance().getServerPlayer(target);
         switch (direction) {
             case NORTH -> look(player, 180, 0);
             case SOUTH -> look(player, 0, 0);
@@ -137,7 +137,7 @@ public class ActionCommand extends AbstractCommand {
     public CommandExecutor move(float forward, float strafing) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
-            var player = Unwrapped.getServerPlayer(target);
+            var player = NMS.getInstance().getServerPlayer(target);
             float vel = target.isSneaking() ? 0.3F : 1.0F;
             if (forward != 0.0F) {
                 player.zza = vel * forward;
@@ -155,7 +155,7 @@ public class ActionCommand extends AbstractCommand {
     public CommandExecutor turn(float yaw, float pitch) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
-            turn(Unwrapped.getServerPlayer(target), yaw, pitch);
+            turn(NMS.getInstance().getServerPlayer(target), yaw, pitch);
             sender.sendMessage(textOfChildren(
                     text(target.getName()),
                     text(" 动了一下身子", GRAY)
@@ -166,7 +166,7 @@ public class ActionCommand extends AbstractCommand {
     public void turnTo(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var rotation = Objects.requireNonNull((Rotation) args.get("rotation"));
-        turn(Unwrapped.getServerPlayer(target), rotation.getYaw(), rotation.getPitch());
+        turn(NMS.getInstance().getServerPlayer(target), rotation.getYaw(), rotation.getPitch());
         sender.sendMessage(textOfChildren(
                 text(target.getName()),
                 text(" 动了一下身子", GRAY)

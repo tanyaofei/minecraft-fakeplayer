@@ -7,7 +7,9 @@ import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.manager.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
+import io.github.hello09x.fakeplayer.util.nms.NMS;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
@@ -24,6 +26,12 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
+        try {
+            NMS.getInstance();
+        } catch (Throwable e) {
+            getLogger().warning(String.format("不支持的核心版本, minecraftVersion:%s, bukkitVersion: %s, version:%s", Bukkit.getMinecraftVersion(), Bukkit.getBukkitVersion(), Bukkit.getVersion()));
+        }
+
         instance = this;
         Commands.register();
         CommandAPI.onEnable();
@@ -33,7 +41,10 @@ public final class Main extends JavaPlugin {
             getServer().getMessenger().registerOutgoingPluginChannel(Main.getInstance(), "BungeeCord");
         }
 
-        registerListeners();
+        {
+            getServer().getPluginManager().registerEvents(PlayerListeners.instance, this);
+        }
+
     }
 
     @Override
@@ -49,11 +60,6 @@ public final class Main extends JavaPlugin {
         }
 
         CommandAPI.onDisable();
-    }
-
-    private void registerListeners() {
-        var pm = getServer().getPluginManager();
-        pm.registerEvents(PlayerListeners.instance, this);
     }
 
 }

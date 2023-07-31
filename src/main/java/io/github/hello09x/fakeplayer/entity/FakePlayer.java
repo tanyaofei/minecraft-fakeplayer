@@ -7,7 +7,10 @@ import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
-import io.github.hello09x.fakeplayer.util.*;
+import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import io.github.hello09x.fakeplayer.util.Tasker;
+import io.github.hello09x.fakeplayer.util.Teleportor;
+import io.github.hello09x.fakeplayer.util.nms.NMS;
 import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
 import net.minecraft.network.protocol.PacketFlow;
@@ -63,7 +66,7 @@ public class FakePlayer {
         this.creator = creator;
         this.handle = new ServerPlayer(server, Objects.requireNonNull(server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
         this.bukkitPlayer = this.handle.getBukkitEntity();
-        CraftUtils.setPlayBefore(this.bukkitPlayer);
+        NMS.getInstance().setPlayBefore(this.bukkitPlayer);
         this.server = server;
 
         this.bukkitPlayer.setPersistent(false);
@@ -132,7 +135,7 @@ public class FakePlayer {
         {
             var connection = new EmptyConnection(PacketFlow.CLIENTBOUND);
             var listener = new EmptyLoginPacketListener(server, connection);
-            Unwrapped.getPlayerList(Bukkit.getServer()).placeNewPlayer(
+            NMS.getInstance().getPlayerList(Bukkit.getServer()).placeNewPlayer(
                     listener.connection,
                     handle
             );

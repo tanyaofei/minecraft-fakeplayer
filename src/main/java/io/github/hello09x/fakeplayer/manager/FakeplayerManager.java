@@ -11,7 +11,7 @@ import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.Tasker;
-import io.github.hello09x.fakeplayer.util.Unwrapped;
+import io.github.hello09x.fakeplayer.util.nms.NMS;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -116,7 +116,7 @@ public class FakeplayerManager {
 
         var player = new FakePlayer(
                 creator.getName(),
-                Unwrapped.getMinecraftServer(Bukkit.getServer()),
+                NMS.getInstance().getMinecraftServer(Bukkit.getServer()),
                 generateId(sn.name()),
                 sn.name()
         );
@@ -251,7 +251,7 @@ public class FakeplayerManager {
         );
         Arrays.stream(Metadata.values()).forEach(meta -> meta.remove(fakePlayer));
         if (properties.isDropInventoryOnQuiting()) {
-            Action.dropInventory(Unwrapped.getServerPlayer(fakePlayer));
+            Action.dropInventory(NMS.getInstance().getServerPlayer(fakePlayer));
         }
     }
 
