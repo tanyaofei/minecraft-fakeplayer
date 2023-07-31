@@ -44,13 +44,13 @@ public interface Configs {
 
     Config<Boolean> pickup_items = build(
             "pickup_items",
-            "是否可拾取物品",
+            "拾取物品",
             true,
             List.of("true", "false"),
             Boolean::valueOf
     );
 
-
+    @SuppressWarnings("SameParameterValue")
     private static <T> Config<T> build(
             @NotNull String name,
             @NotNull String label,
@@ -63,6 +63,7 @@ public interface Configs {
         return config;
     }
 
+    @SuppressWarnings("unchecked")
     static <T> @NotNull Config<T> valueOf(@NotNull String name) {
         var config = Constants.values.get(name);
         if (config == null) {

@@ -16,7 +16,6 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -96,20 +95,8 @@ public class FakePlayer {
 
     /**
      * 让假人诞生
-     *
-     * @param spawnAt      出生点
-     * @param invulnerable 是否无敌
-     * @param collidable   是否具有碰撞体
-     * @param lookAtEntity 是否看向实体
-     * @param pickupItems  是否可以拾取物品
      */
-    public void spawn(
-            Location spawnAt,
-            boolean invulnerable,
-            boolean collidable,
-            boolean lookAtEntity,
-            boolean pickupItems
-    ) {
+    public void spawn(@NotNull SpawnOption option) {
         if (properties.isSimulateLogin()) {
             new BukkitRunnable() {
                 @Override
@@ -152,9 +139,12 @@ public class FakePlayer {
             connection.setListener(listener);
         }
 
-        bukkitPlayer.setInvulnerable(invulnerable);
-        bukkitPlayer.setCollidable(collidable);
-        bukkitPlayer.setCanPickupItems(pickupItems);
+        bukkitPlayer.setInvulnerable(option.invulnerable());
+        bukkitPlayer.setCollidable(option.collidable());
+        bukkitPlayer.setCanPickupItems(option.pickupItems());
+        var spawnAt = option.spawnAt().clone();
+        var lookAtEntity = option.lookAtEntity();
+
         new BukkitRunnable() {
             @Override
             public void run() {

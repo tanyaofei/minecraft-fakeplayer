@@ -1,12 +1,12 @@
 package io.github.hello09x.fakeplayer.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -28,6 +28,10 @@ public class Unwrapped {
         return ((CraftWorld) world).getHandle();
     }
 
+    public static @NotNull MinecraftServer getMinecraftServer(@NotNull Server server) {
+        return ((CraftServer) server).getServer();
+    }
+
     public static @NotNull BlockState getBlockState(@NotNull Block block) {
         return ((CraftBlock) block).getNMS();
     }
@@ -41,7 +45,7 @@ public class Unwrapped {
     }
 
     public static @NotNull PlayerList getPlayerList(@NotNull Server server) {
-        return ((CraftServer) Bukkit.getServer()).getHandle();
+        return ((CraftServer) server).getHandle();
     }
 
 

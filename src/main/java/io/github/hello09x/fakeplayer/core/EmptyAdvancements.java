@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.core;
 
 import com.mojang.datafixers.DataFixer;
-import io.github.hello09x.fakeplayer.util.ReflectionUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.server.PlayerAdvancements;
@@ -9,9 +8,7 @@ import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 
-import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.util.Map;
 
 public class EmptyAdvancements extends PlayerAdvancements {
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public enum Metadatas {
+public enum Metadata {
 
     CREATOR("creator"),
     CREATOR_IP("creator-ip"),
@@ -18,7 +18,7 @@ public enum Metadatas {
 
     public final String key;
 
-    Metadatas(@NotNull String key) {
+    Metadata(@NotNull String key) {
         this.key = "fakeplayer:" + key;
     }
 

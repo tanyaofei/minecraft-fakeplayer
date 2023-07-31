@@ -4,7 +4,6 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.util.MathUtils;
 import io.github.tanyaofei.plugin.toolkit.database.Page;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class SpawnCommand extends AbstractCommand {
@@ -106,15 +106,15 @@ public class SpawnCommand extends AbstractCommand {
                 size
         );
 
-        var canTp = sender instanceof Player && sender.hasPermission(Commands.PERMISSION_TP);
+        var canTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.toComponent(
                 "假人",
                 fakeplayer -> textOfChildren(
                         text(fakeplayer.getName() + " (" + fakeplayerManager.getCreator(fakeplayer) + ")", GOLD),
                         text(" - ", GRAY),
                         text(toLocationString(fakeplayer.getLocation()), WHITE),
-                        canTp ? text(" [<--传送]", AQUA).clickEvent(ClickEvent.runCommand("/fp tp " + fakeplayer.getName())) : empty(),
-                        text(" [<--移除]", RED).clickEvent(ClickEvent.runCommand("/fp kill " + fakeplayer.getName()))
+                        canTp ? text(" [<--传送]", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())) : empty(),
+                        text(" [<--移除]", RED).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
                 ),
                 String.format("/fp list %d %d", page - 1, size),
                 String.format("/fp list %d %d", page + 1, size)
