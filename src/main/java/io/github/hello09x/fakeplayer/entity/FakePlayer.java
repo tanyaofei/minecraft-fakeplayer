@@ -19,12 +19,14 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -33,12 +35,15 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
+
 public class FakePlayer {
 
     private final static String WORLD_OVERWORLD = "world";
-    private final static String WORLD_NETHER = "world_nether";
-    private final static String WORLD_THE_END = "world_the_end";
-
 
     private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
     private final static Logger log = Main.getInstance().getLogger();
@@ -66,10 +71,10 @@ public class FakePlayer {
         this.creator = creator;
         this.handle = new ServerPlayer(server, Objects.requireNonNull(server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
         this.bukkitPlayer = this.handle.getBukkitEntity();
-        NMS.getInstance().setPlayBefore(this.bukkitPlayer);
         this.server = server;
 
-        this.bukkitPlayer.setPersistent(false);
+        NMS.getInstance().setPlayBefore(bukkitPlayer);
+        bukkitPlayer.setPersistent(false);
         if (advancements != null) {
             try {
                 advancements.set(
@@ -96,6 +101,10 @@ public class FakePlayer {
         return world.getName().equals(WORLD_OVERWORLD);
     }
 
+    private static @Nullable World getNonOverworld() {
+        return Bukkit.getWorlds().stream().filter(w -> !w.getName().equals("world")).findAny().orElse(null);
+    }
+
     /**
      * 让假人诞生
      */
@@ -118,7 +127,7 @@ public class FakePlayer {
 
             {
                 Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(
-                        this.bukkitPlayer,
+                        bukkitPlayer,
                         fakeAddress.getHostName(),
                         fakeAddress
                 ));
@@ -152,6 +161,7 @@ public class FakePlayer {
             @Override
             public void run() {
                 if (!bukkitPlayer.isOnline()) {
+                    // not online
                     cancel();
                     return;
                 }
@@ -169,35 +179,71 @@ public class FakePlayer {
         }.runTaskTimer(Main.getInstance(), 0, 1);
 
         if (isOverworld(spawnAt.getWorld())) {
-            // 如果假人出生点是主世界
-            // 那么需要让他跨一次世界再传送过去
-            Tasker.nextTick(() -> {
-                var nether = Optional
-                        .ofNullable(Bukkit.getWorld(WORLD_NETHER))
-                        .orElseGet(() -> Bukkit.getWorld(WORLD_THE_END));
-                if (nether == null) {
-                    log.warning(String.format("由于缺少地狱世界: %s, 当前创建的假人 %s 可能无法刷新怪物, 需要玩家手动将他传送到其他世界后再传送回来", WORLD_NETHER, bukkitPlayer.getName()));
-                    return;
-                }
-                Tasker.nextTick(() -> Teleportor.teleportAndSound(bukkitPlayer, spawnAt));
-            });
+            teleportToGetMobSpawningAbility(spawnAt);
         } else {
             // 不是主世界直接传送即可
-            Teleportor.teleportAndSound(bukkitPlayer, spawnAt);
+            teleportToSpawnpoint(spawnAt);
         }
 
         // 防止别的插件把假人带走, 比如 multiverse
+        fixTeleport(spawnAt);
+    }
+
+    /**
+     * 延迟检测假人的位置是否是目标位置, 如果发生了变化则传送过去
+     *
+     * @param spawnpoint 目标位置
+     */
+    private void fixTeleport(@NotNull Location spawnpoint) {
         Tasker.later(() -> {
-            if (
-                    spawnAt.getWorld().equals(bukkitPlayer.getLocation().getWorld())
-                            && spawnAt.distance(bukkitPlayer.getLocation()) < 16
-            ) {
+            if (spawnpoint.getWorld().equals(bukkitPlayer.getLocation().getWorld()) && spawnpoint.distance(bukkitPlayer.getLocation()) < 16) {
                 return;
             }
 
-            bukkitPlayer.teleport(spawnAt.getWorld().getSpawnLocation());
-            Tasker.nextTick(() -> bukkitPlayer.teleport(spawnAt));
-        }, 3);
+            System.out.println("wrong location" + bukkitPlayer.getLocation());
+
+            bukkitPlayer.teleport(spawnpoint.getWorld().getSpawnLocation());
+            Tasker.nextTick(() -> bukkitPlayer.teleport(spawnpoint));
+        }, 4);
+    }
+
+    /**
+     * 让假人完成一次维度旅行, 只有跨越过维度的假人才有刷怪能力(bug)
+     *
+     * @param spawnpoint 最终目的地, 即出生点
+     */
+    private void teleportToGetMobSpawningAbility(@NotNull Location spawnpoint) {
+        Tasker.nextTick(() -> {
+            var world = getNonOverworld();
+            if (world == null || !bukkitPlayer.teleport(world.getSpawnLocation())) {
+                Optional.ofNullable(Bukkit.getPlayerExact(creator)).ifPresentOrElse(c -> {
+                    c.sendMessage(textOfChildren(
+                            text(bukkitPlayer.getName(), WHITE),
+                            text(" 需要你手动帮他跨越过一次世界才具有刷怪能力", GRAY)
+                    ));
+                }, () -> {
+                    log.warning(String.format("假人 %s 需要手动跨越一次世界才具有刷怪能力", bukkitPlayer.getName()));
+                });
+                return;
+            }
+
+            Tasker.nextTick(() -> {
+                teleportToSpawnpoint(spawnpoint);
+            });
+        });
+    }
+
+    private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
+        if (!Teleportor.teleportAndSound(bukkitPlayer, spawnpoint)) {
+            Optional.ofNullable(Bukkit.getPlayerExact(creator)).ifPresentOrElse(p -> {
+                p.sendMessage(textOfChildren(
+                        text(bukkitPlayer.getName(), WHITE),
+                        text(" 传送到你身边失败: 可能由于第三方插件", GRAY, ITALIC)
+                ));
+            }, () -> {
+                log.warning(String.format("假人 %s 可能由于第三方插件而传送到创建者身边失败", bukkitPlayer.getName()));
+            });
+        }
     }
 
 

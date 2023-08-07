@@ -16,6 +16,7 @@ public class NameManager {
     public final static NameManager instance = new NameManager();
     private final static Logger log = Main.getInstance().getLogger();
     private final static int MAX_LENGTH = 16;   // mojang required
+    private final static String FALLBACK_NAME = "_fp_";
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
     private final ConcurrentHashMap<String, NameSource> nameSources = new ConcurrentHashMap<>();
 
@@ -50,8 +51,7 @@ public class NameManager {
             );
         }
 
-        var name = "_fp_";
-        name = name + RandomStringUtils.random(MAX_LENGTH - name.length(), true, true);
+        var name = FALLBACK_NAME + RandomStringUtils.random(MAX_LENGTH - FALLBACK_NAME.length(), true, true);
         log.warning("Could not generate a name which is never used at this server after 10 tries, using random player name as fallback: " + name);
         return new SequenceName("random", 0, name);
     }
@@ -59,7 +59,6 @@ public class NameManager {
     public void giveback(@NotNull String source, @NotNull Integer sequence) {
         Optional.ofNullable(nameSources.get(source)).ifPresent(ns -> ns.push(sequence));
     }
-
 
     public record SequenceName(
             String source,

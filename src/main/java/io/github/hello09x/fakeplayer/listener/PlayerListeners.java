@@ -5,23 +5,20 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
-import net.kyori.adventure.text.format.Style;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.textOfChildren;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PlayerListeners implements Listener {
 
@@ -82,33 +79,4 @@ public class PlayerListeners implements Listener {
         }
     }
 
-    /**
-     * 检测传送失败
-     */
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onTeleport(@NotNull PlayerTeleportEvent event) {
-        if (!event.isCancelled()) {
-            return;
-        }
-
-        var player = event.getPlayer();
-        var creatorName = manager.getCreator(player);
-        if (creatorName == null) {
-            return;
-        }
-
-        if (creatorName.equals(Bukkit.getServer().getConsoleSender().getName())) {
-            log.info(String.format("假人 %s 传送失败: 可能由于第三方插件阻止", player.getName()));
-            return;
-        }
-
-        var creator = Bukkit.getServer().getPlayerExact(creatorName);
-        if (creator != null) {
-            creator.sendMessage(textOfChildren(
-                    text(player.getName(), WHITE),
-                    text(" 传送失败: ", GRAY),
-                    text("可能由于第三方插件阻止").style(Style.style(GRAY, ITALIC))
-            ));
-        }
-    }
 }

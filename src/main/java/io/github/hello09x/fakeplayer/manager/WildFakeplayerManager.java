@@ -42,6 +42,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
             return;
         }
 
+        @SuppressWarnings("UnstableApiUsage")
         var in = ByteStreams.newDataInput(message);
         if (!in.readUTF().equals("PlayerList")) {
             return;
@@ -107,6 +108,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
             return;
         }
 
+        @SuppressWarnings("UnstableApiUsage")
         var out = ByteStreams.newDataOutput();
         out.writeUTF("PlayerList");
         out.writeUTF("ALL");

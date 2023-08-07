@@ -91,7 +91,7 @@ public class FakeplayerManager {
      * @param creator 创建者
      * @param spawnAt 生成地点
      */
-    public synchronized @Nullable Player spawn(
+    public @Nullable Player spawn(
             @NotNull CommandSender creator,
             @NotNull Location spawnAt
     ) {

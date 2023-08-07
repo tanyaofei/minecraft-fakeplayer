@@ -59,9 +59,7 @@ public class PlayerActionManager {
             for (var manager : entry.getValue().values()) {
                 manager.tick();
             }
-
         }
-
     }
 
 }
