@@ -26,6 +26,8 @@ public interface NMS {
 
     void setPlayBefore(@NotNull Player player);
 
+    void unpersistAdvancements(@NotNull Player player);
+
     class InstanceHolder {
 
         private final static NMS instance;

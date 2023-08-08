@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.entity.action;
 
+
 import net.minecraft.server.level.ServerPlayer;
 
 public class ActionManager {
