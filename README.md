@@ -55,6 +55,21 @@
 | fakeplayer.admin               | `reload`                                                   |
 | 无                              | `config`                                                   |
 
+## 玩家个性化配置
+
+此项是每位玩家对自己创建假人的个性化配置, 修改完配置后下一次创建假人将会生效
+
+命令例子:
++ `/fp config get collidable`
++ `/fp config set collidable false` 
+
+| 配置项            | 备注                                    |
+|----------------|---------------------------------------|
+| collidable     | 是否开启碰撞箱                               |
+| invulnerable   | 是否无敌模式                                |
+| look_at_entity | 是否自动看向附近的实体(包括玩家), 可以配合 `attack` 自动打怪 |
+| pickup_items   | 是否能够拾取物品                              |
+
 ## 已知问题
 
 1. 与 `clearfog(清除迷雾)` 或者 `multiverse(多世界)` 可能存在不兼容, 会导致假人出生一刻被传送走, 但已针对这种情况特殊处理了
