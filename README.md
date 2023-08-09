@@ -42,18 +42,18 @@
 
 **_默认所有权限是 op 拥有，请通过权限管理插件来分配！_**
 
-| 节点                             | 指令                                                         |
-|--------------------------------|------------------------------------------------------------|
-| fakeplayer.spawn               | `spawn`, `list`, `kill`, `distance`                        |
-| fakeplayer.spawn.location      | `spawn` 可以指定出生点                                            |
-| fakeplayer.tp                  | `tp`, `tps`, `tphere`                                      |
-| fakeplayer.profile             | `exp`, `health`                                            |
-| fakeplayer.exp                 | `expme`                                                    |
-| fakeplayer.action              | `drop`, `dropinv`, `sneak`, `turn`, `jump`, `look`, `move` |
-| fakeplayer.experimental.action | `attack`, `use`                                            |
-| fakeplayer.cmd                 | `cmd`                                                      |
-| fakeplayer.admin               | `reload`                                                   |
-| 无                              | `config`                                                   |
+| 节点                        | 指令                                                                          |
+|---------------------------|-----------------------------------------------------------------------------|
+| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`                                         |
+| fakeplayer.spawn.location | `spawn` 可以指定出生点                                                             |
+| fakeplayer.spawn.name     | `spawn` 可以自定义名称                                                             |
+| fakeplayer.tp             | `tp`, `tps`, `tphere`                                                       |
+| fakeplayer.profile        | `exp`, `health`                                                             |
+| fakeplayer.exp            | `expme`                                                                     |
+| fakeplayer.action         | `drop`, `dropinv`, `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use` |
+| fakeplayer.cmd            | `cmd`                                                                       |
+| fakeplayer.admin          | `reload`                                                                    |
+| 无                         | `config`                                                                    |
 
 ## 玩家个性化配置
 

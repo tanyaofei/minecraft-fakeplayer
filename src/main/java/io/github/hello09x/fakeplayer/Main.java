@@ -6,11 +6,15 @@ import io.github.hello09x.fakeplayer.command.Commands;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.manager.WildFakeplayerManager;
+import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.util.nms.NMS;
+import io.github.hello09x.fakeplayer.util.update.UpdateChecker;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.CompletableFuture;
 
 public final class Main extends JavaPlugin {
 
@@ -52,6 +56,29 @@ public final class Main extends JavaPlugin {
             getServer().getPluginManager().registerEvents(PlayerListeners.instance, this);
         }
 
+        if (FakeplayerProperties.instance.isCheckForUpdates()) {
+            checkForUpdatesAsync();
+        }
+    }
+
+    public void checkForUpdatesAsync() {
+        CompletableFuture.runAsync(() -> {
+            var checker = new UpdateChecker("tanyaofei", "minecraft-fakeplayer");
+            try {
+                var release = checker.getLastRelease();
+                if (!release.getTagName().equals(getPluginMeta().getVersion())) {
+                    var log = getLogger();
+                    log.info("检测到新的版本: " + release.getTagName());
+                    log.info("前往此处下载 https://github.com/tanyaofei/minecraft-fakeplayer");
+                    log.info("更新日志");
+                    for (var line : release.getBody().split("\n")) {
+                        log.info("\t" + line);
+                    }
+                }
+            } catch (Throwable e) {
+                getLogger().warning("检测新版本发生异常: " + e.getMessage());
+            }
+        });
     }
 
     @Override

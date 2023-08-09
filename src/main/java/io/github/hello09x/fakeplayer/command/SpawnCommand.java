@@ -15,6 +15,7 @@ import org.joml.Math;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 import static net.kyori.adventure.text.Component.*;
@@ -36,6 +37,7 @@ public class SpawnCommand extends AbstractCommand {
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var world = (World) args.get("world");
+        var name = (String) args.get("name");
         var location = (Location) args.get("location");
         if (world == null || location == null) {
             if (sender instanceof Player p) {
@@ -48,13 +50,17 @@ public class SpawnCommand extends AbstractCommand {
             location.setWorld(world);
         }
 
-        var fakePlayer = fakeplayerManager.spawn(sender, location);
-        if (fakePlayer != null) {
+        var player = fakeplayerManager.spawn(
+                sender,
+                Optional.ofNullable(name).map(String::trim).orElse(null),
+                location
+        );
+        if (player != null) {
             sender.sendMessage(textOfChildren(
                     text("你创建了假人 ", GRAY),
-                    text(fakePlayer.getName()),
+                    text(player.getName()),
                     text(", 位于 ", GRAY),
-                    text(toLocationString(fakePlayer.getLocation()))
+                    text(toLocationString(player.getLocation()))
             ));
         }
     }

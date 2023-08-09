@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 public interface Permission {
 
+    String spawnName = "fakeplayer.spawn.name";
     String spawn = "fakeplayer.spawn";
     String spawnLocation = "fakeplayer.spawn.location";
     String profile = "fakeplayer.profile";

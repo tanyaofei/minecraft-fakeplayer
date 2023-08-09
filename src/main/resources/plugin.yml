@@ -23,6 +23,10 @@ permissions:
     description: '使用 spawn 命令时可以指定出生点'
     default: op
 
+  fakeplayer.spawn.name:
+    description: '使用 spawn 命令时可以指定假人名称'
+    default: op
+
   fakeplayer.tp:
     description: '拥有 tp, tphere, tps 命令权限'
     default: op

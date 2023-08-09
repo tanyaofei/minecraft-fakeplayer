@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 @Getter
 @ToString
@@ -19,13 +21,16 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
     public final static FakeplayerProperties instance;
     private final static Logger log;
 
+    private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";
+
     static {
         log = Main.getInstance().getLogger();
         instance = new FakeplayerProperties(
                 Main.getInstance(),
-                "9"
+                "10"
         );
     }
+
 
     /**
      * 每位玩家最多多少个假人
@@ -82,6 +87,16 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
      */
     private boolean dropInventoryOnQuiting;
 
+    /**
+     * 自定义名称规则
+     */
+    private Pattern customNamePattern;
+
+    /**
+     * 检测更新
+     */
+    private boolean checkForUpdates;
+
     public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
@@ -103,6 +118,13 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
+        this.checkForUpdates = file.getBoolean("check-for-updates", true);
+        try {
+            this.customNamePattern = Pattern.compile(file.getString("name-chars", defaultNameChars));
+        } catch (PatternSyntaxException e) {
+            log.warning("name-chars 不是一个合法的正则表达式, 该配置不会生效: " + file.getString("name-chars"));
+            this.customNamePattern = Pattern.compile(defaultNameChars);
+        }
 
         if (this.nameTemplate.startsWith("-")) {
             log.warning("假人名称模版不能以 - 开头, 该配置不会生效: " + this.nameTemplate);

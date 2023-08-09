@@ -11,6 +11,7 @@ import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.Tasker;
 import net.kyori.adventure.text.format.Style;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -94,6 +95,7 @@ public class FakeplayerManager {
      */
     public @Nullable Player spawn(
             @NotNull CommandSender creator,
+            @Nullable String name,
             @NotNull Location spawnAt
     ) {
         var playerLimit = properties.getPlayerLimit();
@@ -113,10 +115,15 @@ public class FakeplayerManager {
             return null;
         }
 
+        var sn = StringUtils.isBlank(name) ? nameManager.take(creator) : nameManager.custom(creator, name);
+        if (sn == null) {
+            return null;
+        }
+
         var player = new FakePlayer(
                 creator.getName(),
                 AddressUtils.getAddress(creator),
-                nameManager.take(creator)
+                sn
         );
 
         var bukkitPlayer = player.getBukkitPlayer();

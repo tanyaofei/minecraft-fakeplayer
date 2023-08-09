@@ -63,6 +63,7 @@ public class Commands {
                         newCommand("spawn")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
+                                        text("name").withPermission(Permission.spawnName),
                                         world("world").withPermission(Permission.spawnLocation),
                                         location("location").withPermission(Permission.spawnLocation))
                                 .executes(SpawnCommand.instance::spawn),
@@ -266,6 +267,10 @@ public class Commands {
 
     private static MultiLiteralArgument literals(@NotNull String nodeName, @NotNull String @NotNull ... literals) {
         return new MultiLiteralArgument(nodeName, Arrays.asList(literals));
+    }
+
+    private static TextArgument text(@NotNull String nodeName) {
+        return new TextArgument(nodeName);
     }
 
     private static CommandArgument command(@NotNull String nodeName) {

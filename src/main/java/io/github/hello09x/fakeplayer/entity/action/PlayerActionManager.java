@@ -16,7 +16,7 @@ public class PlayerActionManager {
 
     public final static PlayerActionManager instance = new PlayerActionManager();
 
-    private final ConcurrentMap<UUID, Map<Action, ActionManager>> MANAGERS = new ConcurrentHashMap<>();
+    private final ConcurrentMap<UUID, Map<Action, ActionTicker>> MANAGERS = new ConcurrentHashMap<>();
 
     public PlayerActionManager() {
         new BukkitRunnable() {
@@ -34,12 +34,12 @@ public class PlayerActionManager {
             @NotNull ActionSetting setting
     ) {
         var managers = MANAGERS.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
-        var manager = managers.computeIfAbsent(action, key -> new ActionManager(
+        var ticker = managers.computeIfAbsent(action, key -> new ActionTicker(
                 Main.getNms().getServerPlayer(player),
                 action,
                 setting
         ));
-        manager.setting = setting;
+        ticker.setting = setting;
     }
 
     public void tick() {
@@ -49,14 +49,14 @@ public class PlayerActionManager {
             var player = Bukkit.getPlayer(entry.getKey());
             if (player == null) {
                 itr.remove();
-                for (var manager : entry.getValue().values()) {
-                    manager.stop();
+                for (var ticker : entry.getValue().values()) {
+                    ticker.stop();
                 }
                 continue;
             }
 
-            for (var manager : entry.getValue().values()) {
-                manager.tick();
+            for (var ticker : entry.getValue().values()) {
+                ticker.tick();
             }
         }
     }
