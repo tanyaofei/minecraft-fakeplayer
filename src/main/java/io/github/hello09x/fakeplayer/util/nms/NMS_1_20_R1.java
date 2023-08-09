@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.util.nms;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
 import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
@@ -10,11 +11,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +48,11 @@ public class NMS_1_20_R1 implements NMS {
     @Override
     public @NotNull PlayerList getPlayerList(@NotNull Server server) {
         return ((CraftServer) server).getHandle();
+    }
+
+    @Override
+    public @NotNull BlockPos getBlockPos(@NotNull Location location) {
+        return CraftLocation.toBlockPosition(location);
     }
 
     @Override

@@ -10,7 +10,6 @@ import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.Tasker;
-import io.github.hello09x.fakeplayer.util.nms.NMS;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -232,7 +231,7 @@ public class FakeplayerManager {
         }
         nameManager.giveback(fakeplayer.getSequenceName());
         if (properties.isDropInventoryOnQuiting()) {
-            Action.dropInventory(NMS.getInstance().getServerPlayer(player));
+            Action.dropInventory(Main.getNms().getServerPlayer(player));
         }
     }
 
