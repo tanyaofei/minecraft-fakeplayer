@@ -7,7 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -47,23 +49,39 @@ public class NameManager {
             return new SequenceName(
                     source,
                     seq,
+                    uniqueIdFromName(name),
                     name
             );
         }
 
         var name = FALLBACK_NAME + RandomStringUtils.random(MAX_LENGTH - FALLBACK_NAME.length(), true, true);
         log.warning("Could not generate a name which is never used at this server after 10 tries, using random player name as fallback: " + name);
-        return new SequenceName("random", 0, name);
+        return new SequenceName("random", 0, uniqueIdFromName(name), name);
     }
 
     public void giveback(@NotNull String source, @NotNull Integer sequence) {
         Optional.ofNullable(nameSources.get(source)).ifPresent(ns -> ns.push(sequence));
     }
 
+    public void giveback(@NotNull SequenceName sequenceName) {
+        this.giveback(sequenceName.source, sequenceName.sequence);
+    }
+
+    private @NotNull UUID uniqueIdFromName(@NotNull String name) {
+        var uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
+        if (Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+            uuid = UUID.randomUUID();
+            log.warning(String.format("Could not generate a UUID bound with name '%s' which is never played at this server, using random UUID as fallback: %s", name, uuid));
+        }
+        return uuid;
+    }
+
     public record SequenceName(
             String source,
             Integer sequence,
+            UUID uniqueId,
             String name
+
     ) {
 
     }

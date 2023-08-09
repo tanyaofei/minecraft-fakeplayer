@@ -35,7 +35,7 @@ public interface NMS {
         static {
             instance = switch (Bukkit.getMinecraftVersion()) {
                 case "1.20.1" -> new NMS_1_20_R1();
-                default -> throw new ExceptionInInitializerError(String.format(
+                default -> throw new UnsupportedOperationException(String.format(
                         "Unsupported minecraft version: %s",
                         Bukkit.getMinecraftVersion()
                 ));

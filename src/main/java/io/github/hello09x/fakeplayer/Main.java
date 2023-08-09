@@ -17,6 +17,9 @@ public final class Main extends JavaPlugin {
     @Getter
     private static Main instance;
 
+    @Getter
+    private static NMS nms;
+
     @Override
     public void onLoad() {
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this).silentLogs(true));
@@ -25,14 +28,18 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        instance = this;
 
         try {
-            NMS.getInstance();
+            nms = NMS.getInstance();
         } catch (Throwable e) {
-            getLogger().warning(String.format("不支持的核心版本, minecraftVersion:%s, bukkitVersion: %s, version:%s", Bukkit.getMinecraftVersion(), Bukkit.getBukkitVersion(), Bukkit.getVersion()));
+            if (e instanceof UnsupportedOperationException) {
+                throw new ExceptionInInitializerError(String.format("不支持的核心版本, minecraftVersion:%s, bukkitVersion: %s, version:%s", Bukkit.getMinecraftVersion(), Bukkit.getBukkitVersion(), Bukkit.getVersion()));
+            } else {
+                throw new ExceptionInInitializerError(e);
+            }
         }
 
-        instance = this;
         Commands.register();
         CommandAPI.onEnable();
 

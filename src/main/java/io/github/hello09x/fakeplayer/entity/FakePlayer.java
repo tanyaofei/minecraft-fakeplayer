@@ -5,6 +5,7 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
+import io.github.hello09x.fakeplayer.manager.NameManager;
 import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.util.Tasker;
 import io.github.hello09x.fakeplayer.util.Teleportor;
@@ -43,7 +44,7 @@ public class FakePlayer {
 
     private final static Logger log = Main.getInstance().getLogger();
     private final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
-    private final static NMS nms = NMS.getInstance();
+    private final static NMS nms = Main.getNms();
 
     private final FakeplayerProperties properties = FakeplayerProperties.instance;
 
@@ -58,18 +59,29 @@ public class FakePlayer {
     @Getter
     private final Player bukkitPlayer;
 
+    @Getter
+    private final String creatorIp;
+
+    @Getter
+    private final NameManager.SequenceName sequenceName;
+
     public FakePlayer(
             @NotNull String creator,
-            @NotNull MinecraftServer server,
-            @NotNull UUID uniqueId,
-            @NotNull String name
+            @NotNull String creatorIp,
+            @NotNull NameManager.SequenceName sequenceName
     ) {
+        var uniqueId = sequenceName.uniqueId();
+        var name = sequenceName.name();
+
         this.creator = creator;
-        this.handle = new ServerPlayer(server, Objects.requireNonNull(server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
+        this.creatorIp = creatorIp;
+        this.sequenceName = sequenceName;
+        this.server = nms.getMinecraftServer(Bukkit.getServer());
+        this.handle = new ServerPlayer(this.server, Objects.requireNonNull(this.server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
         this.bukkitPlayer = this.handle.getBukkitEntity();
-        this.server = server;
 
         bukkitPlayer.setPersistent(false);
+        bukkitPlayer.setSleepingIgnored(true);
         nms.setPlayBefore(bukkitPlayer);
         nms.unpersistAdvancements(bukkitPlayer);
     }
@@ -85,7 +97,7 @@ public class FakePlayer {
     }
 
     private static @Nullable World getNonOverworld() {
-        return Bukkit.getWorlds().stream().filter(w -> !w.getName().equals("world")).findAny().orElse(null);
+        return Bukkit.getWorlds().stream().filter(w -> !w.getName().equals(WORLD_OVERWORLD)).findAny().orElse(null);
     }
 
     /**
@@ -164,7 +176,7 @@ public class FakePlayer {
 
         if (isOverworld(spawnAt.getWorld())) {
             // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
-            teleportToGetMobSpawningAbility(spawnAt);
+            teleportToSpawnpointAfterChangingDimension(spawnAt);
         } else {
             teleportToSpawnpoint(spawnAt);
         }
@@ -194,7 +206,7 @@ public class FakePlayer {
      *
      * @param spawnpoint 最终目的地, 即出生点
      */
-    private void teleportToGetMobSpawningAbility(@NotNull Location spawnpoint) {
+    private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
         Tasker.nextTick(() -> {
             var world = getNonOverworld();
             if (world == null || !bukkitPlayer.teleport(world.getSpawnLocation())) {
@@ -222,5 +234,16 @@ public class FakePlayer {
         }
     }
 
+    public @NotNull String getName() {
+        return this.bukkitPlayer.getName();
+    }
+
+    public @NotNull UUID getUniqueId() {
+        return this.bukkitPlayer.getUniqueId();
+    }
+
+    public boolean isOnline() {
+        return this.bukkitPlayer.isOnline();
+    }
 
 }
