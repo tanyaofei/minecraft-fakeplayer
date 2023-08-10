@@ -168,7 +168,9 @@ public class Commands {
                                         newCommand("at")
                                                 .withArguments(location("location"))
                                                 .withOptionalArguments(fakeplayer("target"))
-                                                .executes(ActionCommand.instance::lookAt)
+                                                .executes(ActionCommand.instance::lookAt),
+                                        newCommand("entity")
+                                                .withSubcommands(newActionCommands(Action.LOOK_AT_NEAREST_ENTITY))
                                 ),
                         newCommand("turn")
                                 .withPermission(Permission.action)

@@ -31,10 +31,9 @@ public class DebugServerPlayer extends ServerPlayer {
 
     @Override
     public void move(MoverType enummovetype, Vec3 vec3d) {
-        if (this.tickCount == 19) {
-            return;
-        }
+        System.out.println("y1: " + this.getY());
         super.move(enummovetype, vec3d);
+        System.out.println("y2: " + this.getY());
     }
 
     @Override

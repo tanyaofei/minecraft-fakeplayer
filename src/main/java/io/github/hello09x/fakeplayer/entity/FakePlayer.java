@@ -6,11 +6,13 @@ import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
+import io.github.hello09x.fakeplayer.manager.action.Action;
+import io.github.hello09x.fakeplayer.manager.action.ActionManager;
+import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
 import io.github.hello09x.fakeplayer.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.util.Tasker;
 import io.github.hello09x.fakeplayer.util.Teleportor;
 import io.github.hello09x.fakeplayer.util.nms.NMS;
-import io.papermc.paper.entity.LookAnchor;
 import lombok.Getter;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
@@ -65,6 +67,8 @@ public class FakePlayer {
     @Getter
     private final SequenceName sequenceName;
 
+    private final FakeplayerTicker ticker;
+
     public FakePlayer(
             @NotNull String creator,
             @NotNull String creatorIp,
@@ -79,6 +83,7 @@ public class FakePlayer {
         this.server = nms.getMinecraftServer(Bukkit.getServer());
         this.handle = new ServerPlayer(this.server, Objects.requireNonNull(this.server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
         this.bukkitPlayer = this.handle.getBukkitEntity();
+        this.ticker = new FakeplayerTicker(this);
 
         bukkitPlayer.setPersistent(false);
         bukkitPlayer.setSleepingIgnored(true);
@@ -149,31 +154,11 @@ public class FakePlayer {
         bukkitPlayer.setInvulnerable(option.invulnerable());
         bukkitPlayer.setCollidable(option.collidable());
         bukkitPlayer.setCanPickupItems(option.pickupItems());
+        if (option.lookAtEntity()) {
+            ActionManager.instance.setAction(bukkitPlayer, Action.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
+        }
+
         var spawnAt = option.spawnAt().clone();
-        var lookAtEntity = option.lookAtEntity();
-
-        new BukkitRunnable() {
-            @Override
-            @SuppressWarnings("UnstableApiUsage")
-            public void run() {
-                if (!bukkitPlayer.isOnline()) {
-                    // not online
-                    cancel();
-                    return;
-                }
-
-                // tick() 伤害计算
-                // doTick() 移动计算
-                handle.doTick();
-                if (lookAtEntity) {
-                    var entities = bukkitPlayer.getNearbyEntities(4.5, 4.5, 4.5);
-                    if (!entities.isEmpty()) {
-                        bukkitPlayer.lookAt(entities.get(0), LookAnchor.EYES, LookAnchor.EYES);
-                    }
-                }
-            }
-        }.runTaskTimer(Main.getInstance(), 0, 1);
-
         if (isOverworld(spawnAt.getWorld())) {
             // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
             teleportToSpawnpointAfterChangingDimension(spawnAt);
@@ -181,24 +166,7 @@ public class FakePlayer {
             teleportToSpawnpoint(spawnAt);
         }
 
-        // 防止别的插件把假人带走, 比如 multiverse, clearfog
-        fixPosition(spawnAt);
-    }
-
-    /**
-     * 延迟检测假人的位置是否是目标位置, 如果发生了变化则传送过去
-     *
-     * @param spawnpoint 目标位置
-     */
-    private void fixPosition(@NotNull Location spawnpoint) {
-        Tasker.later(() -> {
-            if (spawnpoint.getWorld().equals(bukkitPlayer.getLocation().getWorld()) && spawnpoint.distance(bukkitPlayer.getLocation()) < 16) {
-                return;
-            }
-
-            bukkitPlayer.teleport(spawnpoint.getWorld().getSpawnLocation());
-            Tasker.nextTick(() -> bukkitPlayer.teleport(spawnpoint));
-        }, 4);
+        ticker.runTaskTimer(Main.getInstance(), 0, 1);
     }
 
     /**
@@ -207,20 +175,18 @@ public class FakePlayer {
      * @param spawnpoint 最终目的地, 即出生点
      */
     private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
-        Tasker.nextTick(() -> {
-            var world = getNonOverworld();
-            if (world == null || !bukkitPlayer.teleport(world.getSpawnLocation())) {
-                Optional.ofNullable(Bukkit.getPlayerExact(creator)).ifPresentOrElse(
-                        c -> c.sendMessage(textOfChildren(
-                                text(bukkitPlayer.getName(), WHITE),
-                                text(" 需要你手动帮他跨越过一次世界才具有刷怪能力", GRAY)
-                        )),
-                        () -> log.warning(String.format("假人 %s 需要手动跨越一次世界才具有刷怪能力", bukkitPlayer.getName())));
-                return;
-            }
+        var world = getNonOverworld();
+        if (world == null || !bukkitPlayer.teleport(world.getSpawnLocation())) {
+            Optional.ofNullable(Bukkit.getPlayerExact(creator)).ifPresentOrElse(
+                    c -> c.sendMessage(textOfChildren(
+                            text(bukkitPlayer.getName(), WHITE),
+                            text(" 需要你手动帮他跨越过一次世界才具有刷怪能力", GRAY)
+                    )),
+                    () -> log.warning(String.format("假人 %s 需要手动跨越一次世界才具有刷怪能力", bukkitPlayer.getName())));
+            return;
+        }
 
-            Tasker.nextTick(() -> teleportToSpawnpoint(spawnpoint));
-        });
+        Tasker.nextTick(() -> teleportToSpawnpoint(spawnpoint));
     }
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
