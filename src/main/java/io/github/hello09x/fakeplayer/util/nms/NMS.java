@@ -32,7 +32,6 @@ public interface NMS {
 
     void unpersistAdvancements(@NotNull Player player);
 
-
     class InstanceHolder {
 
         private final static NMS instance;

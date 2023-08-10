@@ -18,7 +18,7 @@ public class FakeplayerList {
 
     public void add(@NotNull FakePlayer player) {
         this.playersByName.put(player.getName(), player);
-        this.playersByUUID.put(player.getUniqueId(), player);
+        this.playersByUUID.put(player.getUUID(), player);
         this.playersByCreator.computeIfAbsent(player.getCreator(), key -> new LinkedList<>());
         this.playersByCreator.get(player.getCreator()).add(player);
     }
@@ -37,7 +37,7 @@ public class FakeplayerList {
 
     public void remove(@NotNull FakePlayer player) {
         this.playersByName.remove(player.getName());
-        this.playersByUUID.remove(player.getUniqueId());
+        this.playersByUUID.remove(player.getUUID());
         Optional.ofNullable(this.playersByCreator.get(player.getCreator())).map(players -> players.remove(player));
     }
 
@@ -57,7 +57,7 @@ public class FakeplayerList {
     private @Nullable FakePlayer checkOnline(@NotNull FakePlayer player) {
         if (!player.isOnline()) {
             this.playersByName.remove(player.getName());
-            this.playersByUUID.remove(player.getUniqueId());
+            this.playersByUUID.remove(player.getUUID());
             return null;
         }
 

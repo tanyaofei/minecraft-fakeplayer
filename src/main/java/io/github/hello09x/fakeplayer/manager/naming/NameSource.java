@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.manager;
+package io.github.hello09x.fakeplayer.manager.naming;
 
 import java.util.LinkedList;
 

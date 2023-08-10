@@ -1,12 +1,12 @@
-package io.github.hello09x.fakeplayer.manager;
+package io.github.hello09x.fakeplayer.manager.naming;
 
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.manager.naming.exception.IllegalCustomNameException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -27,8 +27,24 @@ public class NameManager {
     private final static int MAX_LENGTH = 16;   // mojang required
     private final static int MIN_LENGTH = 3; // mojang required
     private final static String FALLBACK_NAME = "_fp_";
-    private final FakeplayerProperties properties = FakeplayerProperties.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final Map<String, NameSource> nameSources = new HashMap<>();
+
+    /**
+     * 通过名称生成 UUID
+     *
+     * @param name 名称
+     * @return UUID
+     */
+    private @NotNull
+    static UUID uuidFromName(@NotNull String name) {
+        var uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
+        if (Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+            uuid = UUID.randomUUID();
+            log.warning(String.format("Could not generate a UUID bound with name '%s' which is never played at this server, using random UUID as fallback: %s", name, uuid));
+        }
+        return uuid;
+    }
 
     /**
      * 通过自定义名称获取序列名
@@ -37,36 +53,31 @@ public class NameManager {
      * @param name    自定义名称
      * @return 序列名
      */
-    public @Nullable SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
+    public @NotNull SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
         if (name.startsWith("-")) {
-            creator.sendMessage(textOfChildren(text("名称不能以", GRAY), text(" - ", RED), text("开头", GRAY)));
-            return null;
+            throw new IllegalCustomNameException(textOfChildren(text("名称不能以", GRAY), text(" - ", RED), text("开头", GRAY)));
         }
 
         if (name.length() > MAX_LENGTH) {
-            creator.sendMessage(text(String.format("名称最多 %d 位字符", MAX_LENGTH), GRAY));
-            return null;
+            throw new IllegalCustomNameException(text(String.format("名称最多 %d 位字符", MAX_LENGTH), GRAY));
         }
 
         if (name.length() < MIN_LENGTH) {
-            creator.sendMessage(text(String.format("名称最少 %d 位字符", MIN_LENGTH), GRAY));
-            return null;
+            throw new IllegalCustomNameException(text(String.format("名称最少 %d 位字符", MIN_LENGTH), GRAY));
         }
 
-        if (!properties.getCustomNamePattern().asPredicate().test(name)) {
-            creator.sendMessage(text("名称不符合格式要求", GRAY));
-            return null;
+        if (!config.getNamePattern().asPredicate().test(name)) {
+            throw new IllegalCustomNameException(text("名称不符合格式要求", GRAY));
         }
 
         if (Bukkit.getPlayerExact(name) != null || Bukkit.getOfflinePlayer(name).hasPlayedBefore()) {
-            creator.sendMessage(text("名称已被使用", GRAY));
-            return null;
+            throw new IllegalCustomNameException(text("名称已被使用", GRAY));
         }
 
         return new SequenceName(
                 "custom",
                 0,
-                UUID.randomUUID(),
+                uuidFromName(creator.getName() + ":" + name),
                 name
         );
     }
@@ -77,8 +88,8 @@ public class NameManager {
      * @param creator 创建者
      * @return 序列名
      */
-    public @NotNull SequenceName take(@NotNull CommandSender creator) {
-        var source = properties.getNameTemplate();
+    public @NotNull SequenceName register(@NotNull CommandSender creator) {
+        var source = config.getNameTemplate();
         if (source.isBlank()) {
             source = creator.getName();
         }
@@ -86,7 +97,7 @@ public class NameManager {
 
         int tries = 10;
         while (tries != 0) {
-            var seq = nameSources.computeIfAbsent(source, key -> new NameSource(properties.getPlayerLimit())).pop();
+            var seq = nameSources.computeIfAbsent(source, key -> new NameSource(config.getPlayerLimit())).pop();
             var suffix = "_" + (seq + 1);
 
             String name;
@@ -118,11 +129,11 @@ public class NameManager {
     /**
      * 归还序列名
      *
-     * @param source   来源
+     * @param group    分组
      * @param sequence 序列
      */
-    public void giveback(@NotNull String source, @NotNull Integer sequence) {
-        Optional.ofNullable(nameSources.get(source)).ifPresent(ns -> ns.push(sequence));
+    public void unregister(@NotNull String group, @NotNull Integer sequence) {
+        Optional.ofNullable(nameSources.get(group)).ifPresent(ns -> ns.push(sequence));
     }
 
     /**
@@ -130,33 +141,8 @@ public class NameManager {
      *
      * @param sequenceName 序列名
      */
-    public void giveback(@NotNull SequenceName sequenceName) {
-        this.giveback(sequenceName.source, sequenceName.sequence);
-    }
-
-    /**
-     * 通过名称生成 UUID
-     *
-     * @param name 名称
-     * @return UUID
-     */
-    private @NotNull UUID uuidFromName(@NotNull String name) {
-        var uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
-        if (Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
-            uuid = UUID.randomUUID();
-            log.warning(String.format("Could not generate a UUID bound with name '%s' which is never played at this server, using random UUID as fallback: %s", name, uuid));
-        }
-        return uuid;
-    }
-
-    public record SequenceName(
-            String source,
-            Integer sequence,
-            UUID uniqueId,
-            String name
-
-    ) {
-
+    public void unregister(@NotNull SequenceName sequenceName) {
+        this.unregister(sequenceName.group(), sequenceName.sequence());
     }
 
 

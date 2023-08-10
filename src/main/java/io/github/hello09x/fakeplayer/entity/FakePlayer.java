@@ -2,11 +2,11 @@ package io.github.hello09x.fakeplayer.entity;
 
 import com.mojang.authlib.GameProfile;
 import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.EmptyConnection;
 import io.github.hello09x.fakeplayer.core.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.core.EmptyServerGamePacketListener;
-import io.github.hello09x.fakeplayer.manager.NameManager;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.util.Tasker;
 import io.github.hello09x.fakeplayer.util.Teleportor;
 import io.github.hello09x.fakeplayer.util.nms.NMS;
@@ -46,7 +46,7 @@ public class FakePlayer {
     private final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
     private final static NMS nms = Main.getNms();
 
-    private final FakeplayerProperties properties = FakeplayerProperties.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
 
     private final MinecraftServer server;
 
@@ -63,14 +63,14 @@ public class FakePlayer {
     private final String creatorIp;
 
     @Getter
-    private final NameManager.SequenceName sequenceName;
+    private final SequenceName sequenceName;
 
     public FakePlayer(
             @NotNull String creator,
             @NotNull String creatorIp,
-            @NotNull NameManager.SequenceName sequenceName
+            @NotNull SequenceName sequenceName
     ) {
-        var uniqueId = sequenceName.uniqueId();
+        var uniqueId = sequenceName.uuid();
         var name = sequenceName.name();
 
         this.creator = creator;
@@ -104,7 +104,7 @@ public class FakePlayer {
      * 让假人诞生
      */
     public void spawn(@NotNull SpawnOption option) {
-        if (properties.isSimulateLogin()) {
+        if (config.isSimulateLogin()) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -238,7 +238,7 @@ public class FakePlayer {
         return this.bukkitPlayer.getName();
     }
 
-    public @NotNull UUID getUniqueId() {
+    public @NotNull UUID getUUID() {
         return this.bukkitPlayer.getUniqueId();
     }
 

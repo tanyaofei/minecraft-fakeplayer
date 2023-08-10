@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.entity.action;
+package io.github.hello09x.fakeplayer.manager.action;
 
 import io.github.hello09x.fakeplayer.Main;
 import org.bukkit.Bukkit;
@@ -12,13 +12,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class PlayerActionManager {
+public class ActionManager {
 
-    public final static PlayerActionManager instance = new PlayerActionManager();
+    public final static ActionManager instance = new ActionManager();
 
     private final ConcurrentMap<UUID, Map<Action, ActionTicker>> MANAGERS = new ConcurrentHashMap<>();
 
-    public PlayerActionManager() {
+    public ActionManager() {
         new BukkitRunnable() {
             @Override
             public void run() {

@@ -1,17 +1,19 @@
 package io.github.hello09x.fakeplayer.manager;
 
 import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.entity.SpawnOption;
-import io.github.hello09x.fakeplayer.entity.action.Action;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.manager.action.Action;
+import io.github.hello09x.fakeplayer.manager.naming.NameManager;
+import io.github.hello09x.fakeplayer.manager.naming.SequenceName;
+import io.github.hello09x.fakeplayer.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
+import io.github.hello09x.fakeplayer.util.Commands;
 import io.github.hello09x.fakeplayer.util.Tasker;
-import net.kyori.adventure.text.format.Style;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -20,7 +22,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
@@ -41,7 +41,7 @@ public class FakeplayerManager {
 
     private final static Logger log = Main.getInstance().getLogger();
 
-    private final FakeplayerProperties properties = FakeplayerProperties.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
 
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
 
@@ -55,36 +55,18 @@ public class FakeplayerManager {
 
     private FakeplayerManager() {
         timer.scheduleAtFixedRate(() -> {
-            if (Bukkit.getServer().getTPS()[1] < properties.getKaleTps()) {
-                new BukkitRunnable() {
-                    @Override
+                    if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
+                        new BukkitRunnable() {
+                            @Override
                             public void run() {
                                 if (removeAll() > 0) {
-                                    Bukkit.getServer().broadcast(translatable("[服务器过于卡顿, 已移除所有假人]").style(Style.style(RED, ITALIC)));
+                                    Bukkit.broadcast(text("[服务器过于卡顿, 已移除所有假人]", RED, ITALIC));
                                 }
                             }
                         }.runTask(Main.getInstance());
                     }
                 }, 0, 60, TimeUnit.SECONDS
         );
-    }
-
-    private static List<String> standardCommands(List<String> commands) {
-        var ret = new ArrayList<String>(commands.size());
-        for (var cmd : commands) {
-            cmd = cmd.trim();
-            if (cmd.startsWith("/")) {
-                if (cmd.length() < 2) {
-                    continue;
-                }
-                cmd = cmd.substring(1);
-            }
-            if (cmd.isBlank()) {
-                continue;
-            }
-            ret.add(cmd);
-        }
-        return ret;
     }
 
     /**
@@ -95,28 +77,31 @@ public class FakeplayerManager {
      */
     public @Nullable Player spawn(
             @NotNull CommandSender creator,
-            @Nullable String name,
+            @NotNull String name,
             @NotNull Location spawnAt
     ) {
-        var playerLimit = properties.getPlayerLimit();
+        var playerLimit = config.getPlayerLimit();
         if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
             creator.sendMessage(text("你创建的假人数量已达到上限", GRAY));
             return null;
         }
 
-        var serverLimit = properties.getServerLimit();
+        var serverLimit = config.getServerLimit();
         if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getAll().size() >= serverLimit) {
             creator.sendMessage(text("服务器假人数量已达到上限", GRAY));
             return null;
         }
 
-        if (!creator.isOp() && properties.isDetectIp() && countByAddress(AddressUtils.getAddress(creator)) >= 1) {
+        if (!creator.isOp() && config.isDetectIp() && countByAddress(AddressUtils.getAddress(creator)) >= 1) {
             creator.sendMessage(text("你所在 IP 创建的假人数量已达到上限", GRAY));
             return null;
         }
 
-        var sn = StringUtils.isBlank(name) ? nameManager.take(creator) : nameManager.custom(creator, name);
-        if (sn == null) {
+        SequenceName sn;
+        try {
+            sn = name.isBlank() ? nameManager.register(creator) : nameManager.custom(creator, name);
+        } catch (IllegalCustomNameException e) {
+            creator.sendMessage(e.getMsg());
             return null;
         }
 
@@ -127,7 +112,7 @@ public class FakeplayerManager {
         );
 
         var bukkitPlayer = player.getBukkitPlayer();
-        bukkitPlayer.playerListName(text(bukkitPlayer.getName()).style(Style.style(GRAY, ITALIC)));
+        bukkitPlayer.playerListName(text(bukkitPlayer.getName(), GRAY, ITALIC));
 
         boolean invulnerable = true, lookAtEntity = true, collidable = true, pickupItems = true;
         if (creator instanceof Player p) {
@@ -149,8 +134,8 @@ public class FakeplayerManager {
         usedIdRepository.add(bukkitPlayer.getUniqueId());
 
         Tasker.later(() -> {
-            dispatchCommands(bukkitPlayer, properties.getPreparingCommands());
-            performCommands(bukkitPlayer, properties.getSelfCommands());
+            dispatchCommands(bukkitPlayer, config.getPreparingCommands());
+            performCommands(bukkitPlayer, config.getSelfCommands());
         }, 20);
 
         return bukkitPlayer;
@@ -236,8 +221,8 @@ public class FakeplayerManager {
         if (fakeplayer == null) {
             return;
         }
-        nameManager.giveback(fakeplayer.getSequenceName());
-        if (properties.isDropInventoryOnQuiting()) {
+        nameManager.unregister(fakeplayer.getSequenceName());
+        if (config.isDropInventoryOnQuiting()) {
             Action.dropInventory(Main.getNms().getServerPlayer(player));
         }
     }
@@ -290,7 +275,7 @@ public class FakeplayerManager {
             return;
         }
 
-        for (var cmd : standardCommands(commands)) {
+        for (var cmd : Commands.formatCommands(commands)) {
             if (!player.performCommand(cmd)) {
                 log.warning("执行命令失败: " + cmd);
             }
@@ -314,18 +299,12 @@ public class FakeplayerManager {
 
         var server = Bukkit.getServer();
         var sender = Bukkit.getConsoleSender();
-        for (var cmd : standardCommands(commands)) {
-            if (cmd.length() > 1) {
-                cmd = cmd
-                        .replace("%p", player.getName())
-                        .replace("%u", player.getUniqueId().toString())
-                        .replace("%c", Objects.requireNonNull(getCreator(player), "Missing creator id at fake player metadata"));
-            }
-
-            if (cmd.isBlank()) {
-                continue;
-            }
-
+        for (var cmd : Commands.formatCommands(
+                commands,
+                "%p", player.getName(),
+                "%u", player.getUniqueId().toString(),
+                "%c", Objects.requireNonNull(getCreator(player)))
+        ) {
             if (!server.dispatchCommand(sender, cmd)) {
                 log.warning("执行命令失败: " + cmd);
             }

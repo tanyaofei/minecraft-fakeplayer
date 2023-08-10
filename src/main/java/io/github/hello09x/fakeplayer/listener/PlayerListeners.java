@@ -2,8 +2,8 @@ package io.github.hello09x.fakeplayer.listener;
 
 import com.google.common.base.Throwables;
 import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +27,7 @@ public class PlayerListeners implements Listener {
     private final FakeplayerManager manager = FakeplayerManager.instance;
 
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
-    private final FakeplayerProperties properties = FakeplayerProperties.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
 
     /**
      * 拒绝假人用过的 ID 上线
@@ -71,7 +71,7 @@ public class PlayerListeners implements Listener {
         }
 
         try {
-            manager.dispatchCommands(player, properties.getDestroyCommands());
+            manager.dispatchCommands(player, config.getDestroyCommands());
         } catch (Throwable e) {
             log.warning("执行 destroy-commands 时发生错误: \n" + Throwables.getStackTraceAsString(e));
         } finally {

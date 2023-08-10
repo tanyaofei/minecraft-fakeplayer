@@ -3,10 +3,10 @@ package io.github.hello09x.fakeplayer;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.github.hello09x.fakeplayer.command.Commands;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.manager.WildFakeplayerManager;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.util.nms.NMS;
 import io.github.hello09x.fakeplayer.util.update.UpdateChecker;
@@ -56,7 +56,7 @@ public final class Main extends JavaPlugin {
             getServer().getPluginManager().registerEvents(PlayerListeners.instance, this);
         }
 
-        if (FakeplayerProperties.instance.isCheckForUpdates()) {
+        if (FakeplayerConfig.instance.isCheckForUpdates()) {
             checkForUpdatesAsync();
         }
     }

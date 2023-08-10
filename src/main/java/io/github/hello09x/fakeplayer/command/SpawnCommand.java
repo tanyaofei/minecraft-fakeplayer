@@ -36,24 +36,28 @@ public class SpawnCommand extends AbstractCommand {
     }
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        var world = (World) args.get("world");
         var name = (String) args.get("name");
+        var world = (World) args.get("world");
         var location = (Location) args.get("location");
+
+        Location spawnpoint;
         if (world == null || location == null) {
-            if (sender instanceof Player p) {
-                location = p.getLocation();
-            } else {
-                location = Bukkit.getServer().getWorlds().get(0).getSpawnLocation();
-            }
+            spawnpoint = sender instanceof Player p
+                    ? p.getLocation().clone()
+                    : Bukkit.getWorlds().get(0).getSpawnLocation().clone();
         } else {
-            location = location.clone();
-            location.setWorld(world);
+            spawnpoint = new Location(
+                    location.getWorld(),
+                    location.getX(),
+                    location.getY(),
+                    location.getZ()
+            );
         }
 
         var player = fakeplayerManager.spawn(
                 sender,
-                Optional.ofNullable(name).map(String::trim).orElse(null),
-                location
+                Optional.ofNullable(name).map(String::trim).orElse(""),
+                spawnpoint
         );
         if (player != null) {
             sender.sendMessage(textOfChildren(

@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.properties;
+package io.github.hello09x.fakeplayer.config;
 
 
 import io.github.hello09x.fakeplayer.Main;
@@ -16,16 +16,16 @@ import java.util.regex.PatternSyntaxException;
 
 @Getter
 @ToString
-public class FakeplayerProperties extends AbstractProperties<FakeplayerProperties> {
+public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
 
-    public final static FakeplayerProperties instance;
+    public final static FakeplayerConfig instance;
     private final static Logger log;
 
     private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";
 
     static {
         log = Main.getInstance().getLogger();
-        instance = new FakeplayerProperties(
+        instance = new FakeplayerConfig(
                 Main.getInstance(),
                 "10"
         );
@@ -90,14 +90,14 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
     /**
      * 自定义名称规则
      */
-    private Pattern customNamePattern;
+    private Pattern namePattern;
 
     /**
      * 检测更新
      */
     private boolean checkForUpdates;
 
-    public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
+    public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
 
@@ -119,17 +119,27 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.simulateLogin = file.getBoolean("simulate-login", false);
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
-        try {
-            this.customNamePattern = Pattern.compile(file.getString("name-chars", defaultNameChars));
-        } catch (PatternSyntaxException e) {
-            log.warning("name-chars 不是一个合法的正则表达式, 该配置不会生效: " + file.getString("name-chars"));
-            this.customNamePattern = Pattern.compile(defaultNameChars);
-        }
+        this.namePattern = getNamePattern(file);
+        this.nameTemplate = getNameTemplate(file);
+    }
 
-        if (this.nameTemplate.startsWith("-")) {
-            log.warning("假人名称模版不能以 - 开头, 该配置不会生效: " + this.nameTemplate);
-            this.nameTemplate = "";
+
+    private @NotNull Pattern getNamePattern(@NotNull FileConfiguration file) {
+       try {
+            return Pattern.compile(file.getString("name-pattern", defaultNameChars));
+        } catch (PatternSyntaxException e) {
+            log.warning("name-pattern 不是一个合法的正则表达式, 该配置不会生效: " + file.getString("name-chars"));
+            return Pattern.compile(defaultNameChars);
         }
+    }
+
+    private @NotNull String getNameTemplate(@NotNull FileConfiguration file) {
+        var tmpl = file.getString("name-template", "");
+        if (tmpl.startsWith("-") || tmpl.startsWith("@")) {
+           log.warning("name-template 不能以 - 和 @ 开头, 该配置不会生效: " + this.nameTemplate);
+            return "";
+        }
+        return tmpl;
     }
 
 }

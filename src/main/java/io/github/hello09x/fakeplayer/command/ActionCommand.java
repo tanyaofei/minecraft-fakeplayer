@@ -4,9 +4,9 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.wrappers.Rotation;
-import io.github.hello09x.fakeplayer.entity.action.Action;
-import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
-import io.github.hello09x.fakeplayer.entity.action.PlayerActionManager;
+import io.github.hello09x.fakeplayer.manager.action.Action;
+import io.github.hello09x.fakeplayer.manager.action.ActionManager;
+import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
 import io.github.hello09x.fakeplayer.util.MathUtils;
 import io.papermc.paper.entity.LookAnchor;
 import net.minecraft.core.Direction;
@@ -28,7 +28,7 @@ public class ActionCommand extends AbstractCommand {
 
     public final static ActionCommand instance = new ActionCommand();
 
-    private final PlayerActionManager actionManager = PlayerActionManager.instance;
+    private final ActionManager actionManager = ActionManager.instance;
 
     private static String toLocationString(@NotNull Location location) {
         return StringUtils.joinWith(", ",
