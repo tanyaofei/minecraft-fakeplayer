@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.util.nms;
 
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
-import io.github.hello09x.fakeplayer.util.ReflectionUtils;
+import io.github.hello09x.fakeplayer.util.Reflections;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
@@ -28,7 +28,7 @@ public class NMS_1_20_R1 implements NMS {
 
     private final static Logger log = Main.getInstance().getLogger();
 
-    private final static Field advancements = ReflectionUtils.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
+    private final static Field advancements = Reflections.getFirstFieldByType(ServerPlayer.class, PlayerAdvancements.class, false);
 
     @Override
     public @NotNull ServerPlayer getServerPlayer(@NotNull Player player) {

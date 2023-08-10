@@ -10,9 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Release {
 
+    /**
+     * GitHub tag name
+     */
     @SerializedName("tag_name")
     private String tagName;
 
+    /**
+     * GitHub release content
+     */
     private String body;
 
 }

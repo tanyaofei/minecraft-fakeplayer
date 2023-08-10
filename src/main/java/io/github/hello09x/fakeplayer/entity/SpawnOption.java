@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.entity;
 
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @param spawnAt      出生点
@@ -10,10 +11,16 @@ import org.bukkit.Location;
  * @param pickupItems  是否拾取物品
  */
 public record SpawnOption(
+        @NotNull
         Location spawnAt,
+
         boolean invulnerable,
+
         boolean collidable,
+
         boolean lookAtEntity,
+
         boolean pickupItems
+
 ) {
 }

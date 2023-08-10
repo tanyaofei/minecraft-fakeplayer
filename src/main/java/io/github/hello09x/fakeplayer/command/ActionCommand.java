@@ -7,7 +7,7 @@ import dev.jorel.commandapi.wrappers.Rotation;
 import io.github.hello09x.fakeplayer.manager.action.Action;
 import io.github.hello09x.fakeplayer.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
-import io.github.hello09x.fakeplayer.util.MathUtils;
+import io.github.hello09x.fakeplayer.util.Mth;
 import io.papermc.paper.entity.LookAnchor;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,9 +32,9 @@ public class ActionCommand extends AbstractCommand {
 
     private static String toLocationString(@NotNull Location location) {
         return StringUtils.joinWith(", ",
-                MathUtils.round(location.getX(), 0.5),
-                MathUtils.round(location.getY(), 0.5),
-                MathUtils.round(location.getZ(), 0.5));
+                Mth.round(location.getX(), 0.5),
+                Mth.round(location.getY(), 0.5),
+                Mth.round(location.getZ(), 0.5));
     }
 
     public CommandExecutor action(@NotNull Action action, @NotNull ActionSetting setting) {
@@ -131,7 +131,7 @@ public class ActionCommand extends AbstractCommand {
 
     private void look(@NotNull ServerPlayer player, float yaw, float pitch) {
         player.setYRot(yaw % 360);
-        player.setXRot(MathUtils.clamp(pitch, -90, 90));
+        player.setXRot(Mth.clamp(pitch, -90, 90));
     }
 
     public CommandExecutor move(float forward, float strafing) {

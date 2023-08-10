@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.command;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.util.Experience;
-import io.github.hello09x.fakeplayer.util.MathUtils;
+import io.github.hello09x.fakeplayer.util.Mth;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
@@ -60,7 +60,7 @@ public class ProfileCommand extends AbstractCommand {
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
                 text(" 当前生命值: ", GRAY),
-                text(MathUtils.round(health, 0.5), color),
+                text(Mth.round(health, 0.5), color),
                 text("/", color),
                 text(max, color)
         ));

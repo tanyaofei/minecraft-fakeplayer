@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.util.MathUtils;
+import io.github.hello09x.fakeplayer.util.Mth;
 import io.github.tanyaofei.plugin.toolkit.database.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -30,9 +30,9 @@ public class SpawnCommand extends AbstractCommand {
         return location.getWorld().getName()
                 + ": "
                 + StringUtils.joinWith(", ",
-                MathUtils.round(location.getX(), 0.5),
-                MathUtils.round(location.getY(), 0.5),
-                MathUtils.round(location.getZ(), 0.5));
+                Mth.round(location.getX(), 0.5),
+                Mth.round(location.getY(), 0.5),
+                Mth.round(location.getZ(), 0.5));
     }
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
@@ -148,7 +148,7 @@ public class SpawnCommand extends AbstractCommand {
             return;
         }
 
-        var euclidean = MathUtils.round(from.distance(to), 0.5);
+        var euclidean = Mth.round(from.distance(to), 0.5);
         var x = Math.abs(from.getBlockX() - to.getBlockX());
         var y = Math.abs(from.getBlockY() - to.getBlockY());
         var z = Math.abs(from.getBlockZ() - to.getBlockZ());
