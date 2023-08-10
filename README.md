@@ -14,26 +14,26 @@
 ## 命令
 
 + `/fp spawn [世界] [位置]` - 创建假人
-+ `/fp kill [假人]` - 移除假人
++ `/fp kill` - 移除假人
 + `/fp list [页码] [数量]` - 查看所有假人
 + `/fp distance` - 查看与假人的距离
-+ `/fp tp [假人]` - 传送到假人身边
-+ `/fp tphere [假人]` - 将假人传送到身边
-+ `/fp tps [假人]` - 与假人交换位置
++ `/fp tp` - 传送到假人身边
++ `/fp tphere` - 将假人传送到身边
++ `/fp tps` - 与假人交换位置
 + `/fp config get <配置项>` - 查看配置项
 + `/fp config set <配置项> <配置值>` - 设置配置项
-+ `/fp health [假人]` - 查看生命值
-+ `/fp exp [假人]` - 查看经验值
-+ `/fp expme [假人]` - 转移经验值
-+ `/fp attack (once | continuous | interval | stop) [假人]` - 攻击/破坏
-+ `/fp use (once | continuous | interval | stop) [假人]` - 使用/交互/放置
-+ `/fp jump (once | continuous | interval | stop) [假人]` - 跳跃
-+ `/fp drop [假人] [-a|--all]` - 丢弃手上物品
-+ `/fp dropinv [假人]` - 丢弃背包物品
-+ `/fp look (north | south | east| west | up | down | at) [假人]` - 看向指定位置
-+ `/fp turn (left | right | back | to) [假人]` - 转身到指定位置
-+ `/fp move (forward | backward | left | right) [假人]` - 移动假人
-+ `/fp cmd <假人>` - 执行命令
++ `/fp health` - 查看生命值
++ `/fp exp` - 查看经验值
++ `/fp expme` - 转移经验值
++ `/fp attack (once | continuous | interval | stop)` - 攻击/破坏
++ `/fp use (once | continuous | interval | stop)` - 使用/交互/放置
++ `/fp jump (once | continuous | interval | stop)` - 跳跃
++ `/fp drop [-a|--all]` - 丢弃手上物品
++ `/fp dropinv` - 丢弃背包物品
++ `/fp look (north | south | east| west | up | down | at | entity)` - 看向指定位置
++ `/fp turn (left | right | back | to)` - 转身到指定位置
++ `/fp move (forward | backward | left | right)` - 移动假人
++ `/fp cmd <假人> <命令>` - 执行命令
 + `/fp reload` - 重载配置文件
 
 此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等
@@ -60,8 +60,9 @@
 此项是每位玩家对自己创建假人的个性化配置, 修改完配置后下一次创建假人将会生效
 
 命令例子:
+
 + `/fp config get collidable`
-+ `/fp config set collidable false` 
++ `/fp config set collidable false`
 
 | 配置项            | 备注                                    |
 |----------------|---------------------------------------|
@@ -70,13 +71,15 @@
 | look_at_entity | 是否自动看向附近的实体(包括玩家), 可以配合 `attack` 自动打怪 |
 | pickup_items   | 是否能够拾取物品                              |
 
-## 已知问题
+# FAQ
 
-1. 与 `clearfog(清除迷雾)` 或者 `multiverse(多世界)` 可能存在不兼容, 会导致假人出生一刻被传送走, 但已针对这种情况特殊处理了
 
-## FAQ
+## 假人不吸引仇恨
 
-### 假人生成之后过了一会自动掉线
+默认情况下假人是开启无敌模式的, 需要玩家自行通过 `/fp config set invulnerable false` 关闭无敌模式才会吸引仇恨。
+关闭之后他会收到饥饿和生命值影响, 你可能需要使用 `res` 或者信标保证假人的`饥饿值`和`生命值`
+
+## 假人生成之后过了一会自动掉线
 
 这可能是由于类似 `AutheMe` 等登陆插件探测到假人长时间没有登陆, 可以在配置文件里的 `self-commands`
 里将注册登陆的指令放进去比如:
@@ -88,7 +91,7 @@ self-commands:
   - '/login abc123!'
 ```
 
-### 每次假人生成控制台有报错日志
+## 每次假人生成控制台有报错日志
 
 这可能是由于 `LuckPerm` 或者其他插件没有监测到假人登陆但检测到假人加入游戏而导致,
 你可以忽略它或者也修改配置文件开启模拟登陆:
@@ -97,7 +100,7 @@ self-commands:
 simulate-login: true
 ```
 
-### 用了假人之后 `ESS` 或者其他插件多了好多存档
+## 用了假人之后 `ESS` 或者其他插件多了好多存档
 
 由于假人确实是一个玩家, 因此他会触发第三方插件创建存档, 此插件暂时无法针对那么多插件逐个处理, 但是已经尽可能地减少多余的存档,
 具体的方案是：
@@ -108,12 +111,12 @@ simulate-login: true
 此外, `plugin/fakeplayer` 目录下有一份 `used-uuid.txt` 文件记录着假人使用过的
 UUID，你可以通过这份文件筛查来清理多余的第三方插件存档。这份文件会在服务器关闭时更新。
 
-### BungeeCord 玩家切换服务器假人会下线吗？
+## BungeeCord 玩家切换服务器假人会下线吗？
 
 如果你的服务器 `spigot.yml` 里的 `bungeecord` 设置值为 `true`, 那么此插件将会进行兼容,
 只要玩家在任意一个服务器里游玩，即使切换服务器他创建的假人都不会触发`跟随下线`。
 
-### 会支持 Folia 吗?
+## 会支持 Folia 吗?
 
 有计划，但可能比较久。之前尝试过但发现要兼容的内容有点多，持续关注一下～
 
@@ -126,7 +129,7 @@ UUID，你可以通过这份文件筛查来清理多余的第三方插件存档�
 ```yml
 # 配置文件版本
 # 不要修改这个值
-version: 9
+version: 10
 
 # 服务器最多存在多少个假人
 # 默认: 1000
@@ -136,19 +139,35 @@ server-limit: 1000
 # 默认: 1
 player-limit: 1
 
-# 假人名称模版
+# 假人默认名称模版
 # 如果为空, 则跟随创建者的名字并且加上后缀
 # 如果为其他值, 则使用该模版并且加上后缀
+# 这个值仅在使用 spawn 命令时没有自定义名称时生效
+# 占位符:
+#   %c: 创建者名称
 # 注意:
-#   1. 如果包含除 英文字母、数字、下划线以外的字符，原生自带命令将不被支持
+#   1. 如果包含除 英文字母、数字、下划线 以外的字符，将会导致原版及第三方的许多命令失效
 #   2. 长度超过 16 位将会被截取
 #   3. 不能以 - 开头
 name-template: ''
+
+# 假人自定义名称允许的字符
+#  格式: 正则表达式
+#  默认: '^[a-zA-Z0-9_]+$'
+# 注意:
+#   1. 如果允许了 英文字母、数字、下划线 以外的字符, 将会导致原版及第三方的许多命令失效
+#   2. 自定义名称需要玩家具有 `fakeplayer.spawn.name` 权限
+#   3. 如果你改了正则表达式, 请确保它以 `^` 开头并且以 `$` 结尾
+name-pattern: '^[a-zA-Z0-9_]+$'
 
 # 跟随下线
 # 假人创建者玩家下线时是否自动下线
 # 如果玩家只是切换服务器, 那么不会触发跟随下线
 follow-quiting: true
+
+# 退出时是否丢弃背包物品
+# 有跨服背包同步的谨慎开启, 需验证是否会导致物品复制
+drop-inventory-on-quiting: true
 
 # 如果启用, 则一个 IP 只能创建 `maximum` 个假人
 # 能够避免玩家开小号疯狂创建假人
@@ -195,4 +214,8 @@ destroy-commands:
 self-commands:
   - ''
   - ''
+
+# 检测更新
+check-for-updates: true
+
 ```
