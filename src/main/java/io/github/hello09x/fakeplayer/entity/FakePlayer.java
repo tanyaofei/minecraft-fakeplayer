@@ -10,26 +10,23 @@ import io.github.hello09x.fakeplayer.manager.action.Action;
 import io.github.hello09x.fakeplayer.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
 import io.github.hello09x.fakeplayer.manager.naming.SequenceName;
+import io.github.hello09x.fakeplayer.util.BK;
 import io.github.hello09x.fakeplayer.util.Tasker;
 import io.github.hello09x.fakeplayer.util.Teleportor;
 import io.github.hello09x.fakeplayer.util.nms.NMS;
 import lombok.Getter;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.InetAddress;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -41,8 +38,6 @@ import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
 public class FakePlayer {
-
-    private final static String WORLD_OVERWORLD = "world";
 
     private final static Logger log = Main.getInstance().getLogger();
     private final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
@@ -69,19 +64,28 @@ public class FakePlayer {
 
     private final FakeplayerTicker ticker;
 
+    @Getter
+    private final String name;
+
+    private final UUID uuid;
+
     public FakePlayer(
             @NotNull String creator,
             @NotNull String creatorIp,
             @NotNull SequenceName sequenceName
     ) {
-        var uniqueId = sequenceName.uuid();
-        var name = sequenceName.name();
+        this.name = sequenceName.name();
+        this.uuid = sequenceName.uuid();
 
         this.creator = creator;
         this.creatorIp = creatorIp;
         this.sequenceName = sequenceName;
         this.server = nms.getMinecraftServer(Bukkit.getServer());
-        this.handle = new ServerPlayer(this.server, Objects.requireNonNull(this.server.getLevel(ServerLevel.OVERWORLD), "缺少 overworld 世界"), new GameProfile(uniqueId, name));
+        this.handle = new ServerPlayer(
+                this.server,
+                nms.getOverworld(),
+                new GameProfile(uuid, name)
+        );
         this.bukkitPlayer = this.handle.getBukkitEntity();
         this.ticker = new FakeplayerTicker(this);
 
@@ -89,20 +93,6 @@ public class FakePlayer {
         bukkitPlayer.setSleepingIgnored(true);
         nms.setPlayBefore(bukkitPlayer);
         nms.unpersistAdvancements(bukkitPlayer);
-    }
-
-    /**
-     * 判断世界是否是主世界
-     *
-     * @param world 世界
-     * @return 该世界是否是主世界
-     */
-    private static boolean isOverworld(@NotNull World world) {
-        return world.getName().equals(WORLD_OVERWORLD);
-    }
-
-    private static @Nullable World getNonOverworld() {
-        return Bukkit.getWorlds().stream().filter(w -> !w.getName().equals(WORLD_OVERWORLD)).findAny().orElse(null);
     }
 
     /**
@@ -159,7 +149,7 @@ public class FakePlayer {
         }
 
         var spawnAt = option.spawnAt().clone();
-        if (isOverworld(spawnAt.getWorld())) {
+        if (BK.isOverworld(spawnAt.getWorld())) {
             // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
             teleportToSpawnpointAfterChangingDimension(spawnAt);
         } else {
@@ -175,14 +165,16 @@ public class FakePlayer {
      * @param spawnpoint 最终目的地, 即出生点
      */
     private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
-        var world = getNonOverworld();
+        var world = BK.getNonOverworld();
         if (world == null || !bukkitPlayer.teleport(world.getSpawnLocation())) {
-            Optional.ofNullable(Bukkit.getPlayerExact(creator)).ifPresentOrElse(
-                    c -> c.sendMessage(textOfChildren(
-                            text(bukkitPlayer.getName(), WHITE),
-                            text(" 需要你手动帮他跨越过一次世界才具有刷怪能力", GRAY)
-                    )),
-                    () -> log.warning(String.format("假人 %s 需要手动跨越一次世界才具有刷怪能力", bukkitPlayer.getName())));
+            Optional.ofNullable(Bukkit.getPlayerExact(creator))
+                    .ifPresentOrElse(
+                            c -> c.sendMessage(textOfChildren(
+                                    text(bukkitPlayer.getName(), WHITE),
+                                    text(" 需要你手动帮他跨越过一次世界才具有刷怪能力", GRAY)
+                            )),
+                            () -> log.warning(String.format("假人 %s 需要手动跨越一次世界才具有刷怪能力", bukkitPlayer.getName()))
+                    );
             return;
         }
 
@@ -191,21 +183,18 @@ public class FakePlayer {
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
         if (!Teleportor.teleportAndSound(bukkitPlayer, spawnpoint)) {
-            Optional.ofNullable(Bukkit.getPlayerExact(creator)).ifPresentOrElse(
-                    p -> p.sendMessage(textOfChildren(
-                            text(bukkitPlayer.getName(), WHITE),
-                            text(" 传送到你身边失败: 可能由于第三方插件影响", GRAY, ITALIC)
-                    )),
-                    () -> log.warning(String.format("假人 %s 可能由于第三方插件而传送到创建者身边失败", bukkitPlayer.getName())));
+            Optional.ofNullable(Bukkit.getPlayerExact(creator))
+                    .ifPresentOrElse(
+                            p -> p.sendMessage(textOfChildren(
+                                    text(bukkitPlayer.getName(), WHITE),
+                                    text(" 传送到你身边失败: 可能由于第三方插件影响", GRAY, ITALIC)
+                            )),
+                            () -> log.warning(String.format("假人 %s 可能由于第三方插件而传送到创建者身边失败", bukkitPlayer.getName())));
         }
     }
 
-    public @NotNull String getName() {
-        return this.bukkitPlayer.getName();
-    }
-
     public @NotNull UUID getUUID() {
-        return this.bukkitPlayer.getUniqueId();
+        return this.uuid;
     }
 
     public boolean isOnline() {

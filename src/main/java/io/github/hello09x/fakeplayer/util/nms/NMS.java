@@ -12,6 +12,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public interface NMS {
 
     static NMS getInstance() {
@@ -27,6 +29,10 @@ public interface NMS {
     @NotNull PlayerList getPlayerList(@NotNull Server server);
 
     @NotNull BlockPos getBlockPos(@NotNull Location location);
+
+    default @NotNull ServerLevel getOverworld() {
+        return Objects.requireNonNull(getMinecraftServer(Bukkit.getServer()).getLevel(ServerLevel.OVERWORLD));
+    }
 
     void setPlayBefore(@NotNull Player player);
 
