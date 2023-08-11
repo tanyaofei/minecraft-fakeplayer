@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.manager.naming;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.naming.exception.IllegalCustomNameException;
+import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,6 +28,8 @@ public class NameManager {
     private final static int MAX_LENGTH = 16;   // mojang required
     private final static int MIN_LENGTH = 3; // mojang required
     private final static String FALLBACK_NAME = "_fp_";
+
+    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
@@ -36,10 +39,9 @@ public class NameManager {
      * @param name 名称
      * @return UUID
      */
-    private @NotNull
-    static UUID uuidFromName(@NotNull String name) {
+    private @NotNull UUID uuidFromName(@NotNull String name) {
         var uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
-        if (Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+        if (!usedIdRepository.exists(uuid) && Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
             uuid = UUID.randomUUID();
             log.warning(String.format("Could not generate a UUID bound with name '%s' which is never played at this server, using random UUID as fallback: %s", name, uuid));
         }

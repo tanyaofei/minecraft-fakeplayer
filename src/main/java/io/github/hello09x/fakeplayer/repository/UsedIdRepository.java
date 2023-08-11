@@ -31,9 +31,11 @@ public class UsedIdRepository {
     }
 
     public void add(@NotNull UUID uuid) {
-        synchronized (UUIDS) {
-            UUIDS.add(uuid);
-        }
+        UUIDS.add(uuid);
+    }
+
+    public boolean exists(@NotNull UUID uuid) {
+        return UUIDS.contains(uuid);
     }
 
     public void load() {
