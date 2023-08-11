@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.util.MathUtils;
+import io.github.hello09x.fakeplayer.util.Mth;
 import io.github.tanyaofei.plugin.toolkit.database.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -13,9 +13,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.StringJoiner;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
@@ -29,32 +28,52 @@ public class SpawnCommand extends AbstractCommand {
         return location.getWorld().getName()
                 + ": "
                 + StringUtils.joinWith(", ",
-                MathUtils.round(location.getX(), 0.5),
-                MathUtils.round(location.getY(), 0.5),
-                MathUtils.round(location.getZ(), 0.5));
+                Mth.round(location.getX(), 0.5),
+                Mth.round(location.getY(), 0.5),
+                Mth.round(location.getZ(), 0.5));
     }
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
+        var name = (String) args.get("name");
         var world = (World) args.get("world");
         var location = (Location) args.get("location");
+
+        Location spawnpoint;
         if (world == null || location == null) {
-            if (sender instanceof Player p) {
-                location = p.getLocation();
-            } else {
-                location = Bukkit.getServer().getWorlds().get(0).getSpawnLocation();
-            }
+            spawnpoint = sender instanceof Player p
+                    ? p.getLocation().clone()
+                    : Bukkit.getWorlds().get(0).getSpawnLocation().clone();
         } else {
-            location = location.clone();
-            location.setWorld(world);
+            spawnpoint = new Location(
+                    location.getWorld(),
+                    location.getX(),
+                    location.getY(),
+                    location.getZ()
+            );
         }
 
-        var fakePlayer = fakeplayerManager.spawn(sender, location);
-        if (fakePlayer != null) {
+        var keepalive = Permission.Keepalive.of(sender, config.getDefaultKeepalive());
+        var player = fakeplayerManager.spawn(
+                sender,
+                Optional.ofNullable(name).map(String::trim).orElse(""),
+                spawnpoint,
+                keepalive == Permission.Keepalive.permanent ? null : LocalDateTime.now().plus(keepalive)
+        );
+        if (player != null) {
             sender.sendMessage(textOfChildren(
                     text("你创建了假人 ", GRAY),
-                    text(fakePlayer.getName()),
+                    text(player.getName()),
                     text(", 位于 ", GRAY),
-                    text(toLocationString(fakePlayer.getLocation()))
+                    text(toLocationString(player.getLocation())),
+                    keepalive == Permission.Keepalive.permanent
+                            ? empty()
+                            : textOfChildren(
+                                    text(", 存活时间 ", GRAY),
+                                    text(keepalive.toString()
+                                                 .substring(2)
+                                                 .replaceAll("(\\\\d[HMS])(?!$)", "$1")
+                                                 .toLowerCase(Locale.ROOT))
+                            )
             ));
         }
     }
@@ -138,7 +157,7 @@ public class SpawnCommand extends AbstractCommand {
             return;
         }
 
-        var euclidean = MathUtils.round(from.distance(to), 0.5);
+        var euclidean = Mth.round(from.distance(to), 0.5);
         var x = Math.abs(from.getBlockX() - to.getBlockX());
         var y = Math.abs(from.getBlockY() - to.getBlockY());
         var z = Math.abs(from.getBlockZ() - to.getBlockZ());

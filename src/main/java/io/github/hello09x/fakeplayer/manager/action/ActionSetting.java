@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.entity.action;
+package io.github.hello09x.fakeplayer.manager.action;
 
 import lombok.EqualsAndHashCode;
 

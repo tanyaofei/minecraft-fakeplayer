@@ -5,8 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public class ReflectionUtils {
-
+public class Reflections {
 
     public static @Nullable Field getFirstFieldByType(Class<?> clazz, Class<?> fieldType, boolean includeStatic) {
         for (var field : clazz.getDeclaredFields()) {

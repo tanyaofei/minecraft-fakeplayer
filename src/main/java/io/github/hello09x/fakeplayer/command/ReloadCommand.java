@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,10 +12,10 @@ public class ReloadCommand extends AbstractCommand {
 
     public final static ReloadCommand instance = new ReloadCommand();
 
-    private final FakeplayerProperties properties = FakeplayerProperties.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
 
     public void reload(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        properties.reload();
+        config.reload();
         sender.sendMessage(text("重载配置文件完成", GRAY));
     }
 

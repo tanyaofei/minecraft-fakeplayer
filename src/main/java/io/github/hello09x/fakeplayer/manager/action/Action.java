@@ -1,6 +1,7 @@
-package io.github.hello09x.fakeplayer.entity.action;
+package io.github.hello09x.fakeplayer.manager.action;
 
 import io.github.hello09x.fakeplayer.util.Tracer;
+import io.papermc.paper.entity.LookAnchor;
 import lombok.AllArgsConstructor;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.*;
@@ -224,6 +226,25 @@ public enum Action {
         }
     },
 
+    LOOK_AT_NEAREST_ENTITY("目视实体") {
+        @Override
+        @SuppressWarnings("UnstableApiUsage")
+        public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
+            var player = ap.player;
+            var bukkitPlayer = Bukkit.getPlayer(player.getUUID());
+            if (bukkitPlayer == null) {
+                return true;
+            }
+
+            var entities = bukkitPlayer.getNearbyEntities(4.5, 4.5, 4.5);
+            if (entities.isEmpty()) {
+                return false;
+            }
+
+            bukkitPlayer.lookAt(entities.get(0), LookAnchor.EYES, LookAnchor.EYES);
+            return true;
+        }
+    },
 
     DROP_ITEM("丢弃手上物品") {
         @Override

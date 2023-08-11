@@ -1,14 +1,15 @@
-package io.github.hello09x.fakeplayer.entity.action;
+package io.github.hello09x.fakeplayer.manager.action;
+
 
 import net.minecraft.server.level.ServerPlayer;
 
-public class ActionManager {
+public class ActionTicker {
 
     public final Action action;
     public final ActionPack actionPack;
     public ActionSetting setting;
 
-    public ActionManager(ServerPlayer player, Action action, ActionSetting setting) {
+    public ActionTicker(ServerPlayer player, Action action, ActionSetting setting) {
         this.action = action;
         this.setting = setting;
         this.actionPack = new ActionPack(player);

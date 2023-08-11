@@ -1,7 +1,6 @@
-package io.github.hello09x.fakeplayer.entity.action;
+package io.github.hello09x.fakeplayer.manager.action;
 
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.util.nms.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -13,13 +12,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class PlayerActionManager {
+public class ActionManager {
 
-    public final static PlayerActionManager instance = new PlayerActionManager();
+    public final static ActionManager instance = new ActionManager();
 
-    private final ConcurrentMap<UUID, Map<Action, ActionManager>> MANAGERS = new ConcurrentHashMap<>();
+    private final ConcurrentMap<UUID, Map<Action, ActionTicker>> MANAGERS = new ConcurrentHashMap<>();
 
-    public PlayerActionManager() {
+    public ActionManager() {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -35,12 +34,12 @@ public class PlayerActionManager {
             @NotNull ActionSetting setting
     ) {
         var managers = MANAGERS.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
-        var manager = managers.computeIfAbsent(action, key -> new ActionManager(
-                NMS.getInstance().getServerPlayer(player),
+        var ticker = managers.computeIfAbsent(action, key -> new ActionTicker(
+                Main.getNms().getServerPlayer(player),
                 action,
                 setting
         ));
-        manager.setting = setting;
+        ticker.setting = setting;
     }
 
     public void tick() {
@@ -50,18 +49,16 @@ public class PlayerActionManager {
             var player = Bukkit.getPlayer(entry.getKey());
             if (player == null) {
                 itr.remove();
-                for (var manager : entry.getValue().values()) {
-                    manager.stop();
+                for (var ticker : entry.getValue().values()) {
+                    ticker.stop();
                 }
                 continue;
             }
 
-            for (var manager : entry.getValue().values()) {
-                manager.tick();
+            for (var ticker : entry.getValue().values()) {
+                ticker.tick();
             }
-
         }
-
     }
 
 }

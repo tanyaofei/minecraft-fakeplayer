@@ -1,7 +1,8 @@
-package io.github.hello09x.fakeplayer.properties;
+package io.github.hello09x.fakeplayer.config;
 
 
 import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.command.Permission;
 import io.github.tanyaofei.plugin.toolkit.properties.AbstractProperties;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,23 +10,29 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 @Getter
 @ToString
-public class FakeplayerProperties extends AbstractProperties<FakeplayerProperties> {
+public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
 
-    public final static FakeplayerProperties instance;
+    public final static FakeplayerConfig instance;
     private final static Logger log;
+
+    private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";
 
     static {
         log = Main.getInstance().getLogger();
-        instance = new FakeplayerProperties(
+        instance = new FakeplayerConfig(
                 Main.getInstance(),
-                "9"
+                "10"
         );
     }
+
 
     /**
      * 每位玩家最多多少个假人
@@ -82,7 +89,22 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
      */
     private boolean dropInventoryOnQuiting;
 
-    public FakeplayerProperties(@NotNull JavaPlugin plugin, @NotNull String version) {
+    /**
+     * 自定义名称规则
+     */
+    private Pattern namePattern;
+
+    /**
+     * 检测更新
+     */
+    private boolean checkForUpdates;
+
+    /**
+     * 默认假人存活时间
+     */
+    private Duration defaultKeepalive;
+
+    public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
 
@@ -103,11 +125,37 @@ public class FakeplayerProperties extends AbstractProperties<FakeplayerPropertie
         this.nameTemplate = file.getString("name-template", "");
         this.simulateLogin = file.getBoolean("simulate-login", false);
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
+        this.checkForUpdates = file.getBoolean("check-for-updates", true);
+        this.namePattern = getNamePattern(file);
+        this.nameTemplate = getNameTemplate(file);
+        this.defaultKeepalive = getDefaultKeepalive(file);
+    }
 
-        if (this.nameTemplate.startsWith("-")) {
-            log.warning("假人名称模版不能以 - 开头, 该配置不会生效: " + this.nameTemplate);
-            this.nameTemplate = "";
+    private @NotNull Duration getDefaultKeepalive(@NotNull FileConfiguration file) {
+        var minutes = file.getLong("default-keepalive");
+        if (minutes <= 0) {
+            return Permission.Keepalive.permanent;
         }
+        return Duration.ofMinutes(minutes);
+    }
+
+
+    private @NotNull Pattern getNamePattern(@NotNull FileConfiguration file) {
+        try {
+            return Pattern.compile(file.getString("name-pattern", defaultNameChars));
+        } catch (PatternSyntaxException e) {
+            log.warning("name-pattern 不是一个合法的正则表达式, 该配置不会生效: " + file.getString("name-chars"));
+            return Pattern.compile(defaultNameChars);
+        }
+    }
+
+    private @NotNull String getNameTemplate(@NotNull FileConfiguration file) {
+        var tmpl = file.getString("name-template", "");
+        if (tmpl.startsWith("-") || tmpl.startsWith("@")) {
+           log.warning("name-template 不能以 - 和 @ 开头, 该配置不会生效: " + this.nameTemplate);
+            return "";
+        }
+        return tmpl;
     }
 
 }

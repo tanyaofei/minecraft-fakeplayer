@@ -6,6 +6,26 @@ author: hello09x
 
 permissions:
   fakeplayer.all:
+    description: '假人所有基础权限(即将删除, 请替换成 `fakeplayer.basic`)'
+    children:
+      - fakeplayer.spawn
+      - fakeplayer.tp
+      - fakeplayer.profile
+      - fakeplayer.exp
+      - fakeplayer.action
+
+  fakeplayer.*:
+    description: '假人所有玩家权限'
+    children:
+      - fakeplayer.spawn
+      - fakeplayer.spawn.name
+      - fakeplayer.tp
+      - fakeplayer.profile
+      - fakeplayer.exp
+      - fakeplayer.action
+      - fakeplayer.cmd
+
+  fakeplayer.basic:
     description: '假人所有基础权限'
     children:
       - fakeplayer.spawn
@@ -13,36 +33,60 @@ permissions:
       - fakeplayer.profile
       - fakeplayer.exp
       - fakeplayer.action
-    default: op
 
   fakeplayer.spawn:
     description: '拥有 spawn, kill, list 命令权限'
-    default: op
 
   fakeplayer.spawn.location:
     description: '使用 spawn 命令时可以指定出生点'
-    default: op
+
+  fakeplayer.spawn.name:
+    description: '使用 spawn 命令时可以指定假人名称'
 
   fakeplayer.tp:
     description: '拥有 tp, tphere, tps 命令权限'
-    default: op
 
   fakeplayer.profile:
     description: '拥有 health, exp 命令权限'
-    default: op
 
   fakeplayer.action:
     description: '拥有 drop, dropinv, sneak, look, move, jump, attack, use 命令权限'
-    default: op
 
   fakeplayer.exp:
     description: '拥有 expme 命令权限'
-    default: op
 
   fakeplayer.cmd:
     description: '拥有 cmd 命令权限'
-    default: op
 
   fakeplayer.admin:
     description: '假人管理员命令权限'
-    default: op
+
+  fakeplayer.alive.1min:
+    description: '假人存活 1 分钟权限(用于测试)'
+
+  fakeplayer.alive.15min:
+    description: '假人存活 15 分钟权限'
+
+  fakeplayer.alive.30min:
+    description: '假人存活 30 分钟权限'
+
+  fakeplayer.alive.1hour:
+    description: '假人存活 1 小时权限'
+
+  fakeplayer.alive.2hour:
+    description: '假人存活 2 小时权限'
+
+  fakeplayer.alive.4hour:
+    description: '假人存活 4 小时权限'
+
+  fakeplayer.alive.8hour:
+    description: '假人存活 8 小时权限'
+
+  fakeplayer.alive.12hour:
+    description: '假人存活 12 小时权限'
+
+  fakeplayer.alive.24hour:
+    description: '假人存活 24 小时权限'
+
+  fakeplayer.alive.permanent:
+    description: '假人永久存活权限'

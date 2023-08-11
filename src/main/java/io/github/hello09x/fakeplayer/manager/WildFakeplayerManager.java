@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.manager;
 
 import com.google.common.io.ByteStreams;
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.properties.FakeplayerProperties;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -25,8 +25,10 @@ public class WildFakeplayerManager implements PluginMessageListener {
     private final static Logger log = Main.getInstance().getLogger();
     private final ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
     private final FakeplayerManager manager = FakeplayerManager.instance;
-    private final FakeplayerProperties properties = FakeplayerProperties.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final Set<String> bungeePlayers = new HashSet<>();
+    private final static String CHANNEL = "BungeeCord";
+    private final static String SUB_CHANNEL = "PlayerList";
 
     public WildFakeplayerManager() {
         timer.scheduleAtFixedRate(this::preCleanup, 0, 5, TimeUnit.SECONDS);
@@ -38,12 +40,13 @@ public class WildFakeplayerManager implements PluginMessageListener {
             @NotNull Player player,
             byte @NotNull [] message
     ) {
-        if (!channel.equals("BungeeCord")) {
+        if (!channel.equals(CHANNEL)) {
             return;
         }
 
+        @SuppressWarnings("UnstableApiUsage")
         var in = ByteStreams.newDataInput(message);
-        if (!in.readUTF().equals("PlayerList")) {
+        if (!in.readUTF().equals(SUB_CHANNEL)) {
             return;
         }
 
@@ -86,7 +89,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
     }
 
     public void preCleanup() {
-        if (!properties.isFollowQuiting()) {
+        if (!config.isFollowQuiting()) {
             return;
         }
 
@@ -107,12 +110,13 @@ public class WildFakeplayerManager implements PluginMessageListener {
             return;
         }
 
+        @SuppressWarnings("UnstableApiUsage")
         var out = ByteStreams.newDataOutput();
-        out.writeUTF("PlayerList");
+        out.writeUTF(SUB_CHANNEL);
         out.writeUTF("ALL");
         recipient.sendPluginMessage(
                 Main.getInstance(),
-                "BungeeCord",
+                CHANNEL,
                 out.toByteArray()
         );
     }

@@ -4,11 +4,10 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.wrappers.Rotation;
-import io.github.hello09x.fakeplayer.entity.action.Action;
-import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
-import io.github.hello09x.fakeplayer.entity.action.PlayerActionManager;
-import io.github.hello09x.fakeplayer.util.MathUtils;
-import io.github.hello09x.fakeplayer.util.nms.NMS;
+import io.github.hello09x.fakeplayer.manager.action.Action;
+import io.github.hello09x.fakeplayer.manager.action.ActionManager;
+import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
+import io.github.hello09x.fakeplayer.util.Mth;
 import io.papermc.paper.entity.LookAnchor;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,13 +28,13 @@ public class ActionCommand extends AbstractCommand {
 
     public final static ActionCommand instance = new ActionCommand();
 
-    private final PlayerActionManager actionManager = PlayerActionManager.instance;
+    private final ActionManager actionManager = ActionManager.instance;
 
     private static String toLocationString(@NotNull Location location) {
         return StringUtils.joinWith(", ",
-                MathUtils.round(location.getX(), 0.5),
-                MathUtils.round(location.getY(), 0.5),
-                MathUtils.round(location.getZ(), 0.5));
+                Mth.round(location.getX(), 0.5),
+                Mth.round(location.getY(), 0.5),
+                Mth.round(location.getZ(), 0.5));
     }
 
     public CommandExecutor action(@NotNull Action action, @NotNull ActionSetting setting) {
@@ -84,9 +83,10 @@ public class ActionCommand extends AbstractCommand {
         ));
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     public void lookAt(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var location = (Location) args.get("location");
+        var location = Objects.requireNonNull((Location) args.get("location"));
         target.lookAt(location, LookAnchor.EYES);
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
@@ -118,7 +118,7 @@ public class ActionCommand extends AbstractCommand {
             @NotNull Player target,
             @NotNull Direction direction
     ) {
-        var player = NMS.getInstance().getServerPlayer(target);
+        var player = nms.getServerPlayer(target);
         switch (direction) {
             case NORTH -> look(player, 180, 0);
             case SOUTH -> look(player, 0, 0);
@@ -131,13 +131,13 @@ public class ActionCommand extends AbstractCommand {
 
     private void look(@NotNull ServerPlayer player, float yaw, float pitch) {
         player.setYRot(yaw % 360);
-        player.setXRot(MathUtils.clamp(pitch, -90, 90));
+        player.setXRot(Mth.clamp(pitch, -90, 90));
     }
 
     public CommandExecutor move(float forward, float strafing) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
-            var player = NMS.getInstance().getServerPlayer(target);
+            var player = nms.getServerPlayer(target);
             float vel = target.isSneaking() ? 0.3F : 1.0F;
             if (forward != 0.0F) {
                 player.zza = vel * forward;
@@ -155,7 +155,7 @@ public class ActionCommand extends AbstractCommand {
     public CommandExecutor turn(float yaw, float pitch) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
-            turn(NMS.getInstance().getServerPlayer(target), yaw, pitch);
+            turn(nms.getServerPlayer(target), yaw, pitch);
             sender.sendMessage(textOfChildren(
                     text(target.getName()),
                     text(" 动了一下身子", GRAY)
@@ -166,7 +166,7 @@ public class ActionCommand extends AbstractCommand {
     public void turnTo(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var rotation = Objects.requireNonNull((Rotation) args.get("rotation"));
-        turn(NMS.getInstance().getServerPlayer(target), rotation.getYaw(), rotation.getPitch());
+        turn(nms.getServerPlayer(target), rotation.getYaw(), rotation.getPitch());
         sender.sendMessage(textOfChildren(
                 text(target.getName()),
                 text(" 动了一下身子", GRAY)

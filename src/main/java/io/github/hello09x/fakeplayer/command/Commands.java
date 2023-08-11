@@ -3,9 +3,9 @@ package io.github.hello09x.fakeplayer.command;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
-import io.github.hello09x.fakeplayer.entity.action.Action;
-import io.github.hello09x.fakeplayer.entity.action.ActionSetting;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.manager.action.Action;
+import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
 import io.github.hello09x.fakeplayer.repository.model.Config;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import net.minecraft.core.Direction;
@@ -31,26 +31,26 @@ public class Commands {
                 )
                 .withUsage(
                         "§6/fp ? [页码] §7- §f查看帮助",
-                        "§6/fp spawn [世界] [位置] §7- §f创建假人",
-                        "§6/fp kill [假人] §7- §f移除假人",
+                        "§6/fp spawn [名称] [世界] [坐标] §7- §f创建假人",
+                        "§6/fp kill §7- §f移除假人",
                         "§6/fp list [页码] [数量] §7- §f查看所有假人",
                         "§6/fp distance §7- §f查看与假人的距离",
-                        "§6/fp tp [假人] §7- §f传送到假人身边",
-                        "§6/fp tphere [假人] §7- §f将假人传送到身边",
-                        "§6/fp tps [假人] §7- §f与假人交换位置",
+                        "§6/fp tp §7- §f传送到假人身边",
+                        "§6/fp tphere §7- §f将假人传送到身边",
+                        "§6/fp tps §7- §f与假人交换位置",
                         "§6/fp config get <配置项> §7- §f查看配置项",
                         "§6/fp config set <配置项> <配置值> §7- §f设置配置项",
-                        "§6/fp health [假人] §7- §f查看生命值",
-                        "§6/fp exp [假人] §7- §f查看经验值",
-                        "§6/fp expme [假人] §7- §f转移经验值",
-                        "§6/fp attack (once | continuous | interval | stop) [假人] §7- §f攻击/破坏",
-                        "§6/fp use (once | continuous | interval | stop) [假人] §7- §f使用/交互/放置",
-                        "§6/fp jump (once | continuous | interval | stop) [假人] §7- §f跳跃",
-                        "§6/fp drop [假人] [-a|--all] §7- §f丢弃手上物品",
-                        "§6/fp dropinv [假人] §7- §f丢弃背包物品",
-                        "§6/fp look (north | south | east | west | up | down | at) [假人] §7- §f看向指定位置",
-                        "§6/fp turn (left | right | back | to) [假人] §7- §f转身到指定位置",
-                        "§6/fp move (forward | backward | left | right) [假人] §7- §f移动",
+                        "§6/fp health §7- §f查看生命值",
+                        "§6/fp exp §7- §f查看经验值",
+                        "§6/fp expme §7- §f转移经验值",
+                        "§6/fp attack (once | continuous | interval | stop) §7- §f攻击/破坏",
+                        "§6/fp use (once | continuous | interval | stop) §7- §f使用/交互/放置",
+                        "§6/fp jump (once | continuous | interval | stop) §7- §f跳跃",
+                        "§6/fp drop [-a|--all] §7- §f丢弃手上物品",
+                        "§6/fp dropinv §7- §f丢弃背包物品",
+                        "§6/fp look (north | south | east | west | up | down | at | entity) §7- §f看向指定位置",
+                        "§6/fp turn (left | right | back | to) §7- §f转身到指定位置",
+                        "§6/fp move (forward | backward | left | right) §7- §f移动",
                         "§6/fp cmd <假人> <命令> §7- §f执行命令",
                         "§6/fp reload §7- §f重载配置文件"
                 )
@@ -63,6 +63,7 @@ public class Commands {
                         newCommand("spawn")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
+                                        text("name").withPermission(Permission.spawnName),
                                         world("world").withPermission(Permission.spawnLocation),
                                         location("location").withPermission(Permission.spawnLocation))
                                 .executes(SpawnCommand.instance::spawn),
@@ -147,38 +148,49 @@ public class Commands {
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         newCommand("north")
+                                                .withAliases("n")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.NORTH)),
                                         newCommand("south")
+                                                .withAliases("s")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.SOUTH)),
                                         newCommand("west")
+                                                .withAliases("w")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.WEST)),
                                         newCommand("east")
+                                                .withAliases("e")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.EAST)),
                                         newCommand("up")
+                                                .withAliases("u")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.UP)),
                                         newCommand("down")
+                                                .withAliases("d")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.DOWN)),
                                         newCommand("at")
                                                 .withArguments(location("location"))
                                                 .withOptionalArguments(fakeplayer("target"))
-                                                .executes(ActionCommand.instance::lookAt)
+                                                .executes(ActionCommand.instance::lookAt),
+                                        newCommand("entity")
+                                                .withSubcommands(newActionCommands(Action.LOOK_AT_NEAREST_ENTITY))
                                 ),
                         newCommand("turn")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         newCommand("left")
+                                                .withAliases("l")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.turn(-90, 0)),
                                         newCommand("right")
+                                                .withAliases("r")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.turn(90, 0)),
                                         newCommand("back")
+                                                .withAliases("b")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.turn(180, 0)),
                                         newCommand("to")
@@ -190,15 +202,19 @@ public class Commands {
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         newCommand("forward")
+                                                .withAliases("f")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(1, 0)),
                                         newCommand("backward")
+                                                .withAliases("b")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(-1, 0)),
                                         newCommand("left")
+                                                .withAliases("l")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(0, 1)),
                                         newCommand("right")
+                                                .withAliases("r")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(0, -1))
                                 ),
@@ -266,6 +282,10 @@ public class Commands {
 
     private static MultiLiteralArgument literals(@NotNull String nodeName, @NotNull String @NotNull ... literals) {
         return new MultiLiteralArgument(nodeName, Arrays.asList(literals));
+    }
+
+    private static TextArgument text(@NotNull String nodeName) {
+        return new TextArgument(nodeName);
     }
 
     private static CommandArgument command(@NotNull String nodeName) {
