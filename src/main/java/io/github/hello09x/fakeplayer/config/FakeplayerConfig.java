@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.config;
 
 
 import io.github.hello09x.fakeplayer.Main;
+import io.github.hello09x.fakeplayer.command.Permission;
 import io.github.tanyaofei.plugin.toolkit.properties.AbstractProperties;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -97,6 +99,11 @@ public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
      */
     private boolean checkForUpdates;
 
+    /**
+     * 默认假人存活时间
+     */
+    private Duration defaultKeepalive;
+
     public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
     }
@@ -121,11 +128,20 @@ public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);
         this.nameTemplate = getNameTemplate(file);
+        this.defaultKeepalive = getDefaultKeepalive(file);
+    }
+
+    private @NotNull Duration getDefaultKeepalive(@NotNull FileConfiguration file) {
+        var minutes = file.getLong("default-keepalive");
+        if (minutes <= 0) {
+            return Permission.Keepalive.permanent;
+        }
+        return Duration.ofMinutes(minutes);
     }
 
 
     private @NotNull Pattern getNamePattern(@NotNull FileConfiguration file) {
-       try {
+        try {
             return Pattern.compile(file.getString("name-pattern", defaultNameChars));
         } catch (PatternSyntaxException e) {
             log.warning("name-pattern 不是一个合法的正则表达式, 该配置不会生效: " + file.getString("name-chars"));

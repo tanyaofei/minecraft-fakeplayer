@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,7 +79,8 @@ public class FakeplayerManager {
     public @Nullable Player spawn(
             @NotNull CommandSender creator,
             @NotNull String name,
-            @NotNull Location spawnAt
+            @NotNull Location spawnAt,
+            @Nullable LocalDateTime removeAt
     ) {
         var playerLimit = config.getPlayerLimit();
         if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
@@ -108,7 +110,8 @@ public class FakeplayerManager {
         var player = new FakePlayer(
                 creator.getName(),
                 AddressUtils.getAddress(creator),
-                sn
+                sn,
+                removeAt
         );
 
         var bukkitPlayer = player.getBukkitPlayer();
@@ -181,7 +184,7 @@ public class FakeplayerManager {
             return false;
         }
 
-        player.kick();
+        player.kick(text("[fakeplayer] removed"));
         return true;
     }
 

@@ -25,8 +25,10 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.InetAddress;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -72,7 +74,8 @@ public class FakePlayer {
     public FakePlayer(
             @NotNull String creator,
             @NotNull String creatorIp,
-            @NotNull SequenceName sequenceName
+            @NotNull SequenceName sequenceName,
+            @Nullable LocalDateTime removeAt
     ) {
         this.name = sequenceName.name();
         this.uuid = sequenceName.uuid();
@@ -87,7 +90,7 @@ public class FakePlayer {
                 new GameProfile(uuid, name)
         );
         this.bukkitPlayer = this.handle.getBukkitEntity();
-        this.ticker = new FakeplayerTicker(this);
+        this.ticker = new FakeplayerTicker(this, removeAt);
 
         bukkitPlayer.setPersistent(false);
         bukkitPlayer.setSleepingIgnored(true);
@@ -199,6 +202,10 @@ public class FakePlayer {
 
     public boolean isOnline() {
         return this.bukkitPlayer.isOnline();
+    }
+
+    public @Nullable Player getCreatorPlayer() {
+        return Bukkit.getPlayerExact(this.creator);
     }
 
 }

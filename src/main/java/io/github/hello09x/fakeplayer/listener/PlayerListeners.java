@@ -51,13 +51,7 @@ public class PlayerListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onDead(@NotNull PlayerDeathEvent event) {
-        var player = event.getPlayer();
-        if (!manager.isFake(player)) {
-            return;
-        }
-
-        // 假人不会复活, 死掉了就踢掉
-        player.kick();
+        manager.remove(event.getPlayer().getName());
     }
 
     /**

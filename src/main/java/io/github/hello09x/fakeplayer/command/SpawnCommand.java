@@ -13,10 +13,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
@@ -54,17 +52,28 @@ public class SpawnCommand extends AbstractCommand {
             );
         }
 
+        var keepalive = Permission.Keepalive.of(sender, config.getDefaultKeepalive());
         var player = fakeplayerManager.spawn(
                 sender,
                 Optional.ofNullable(name).map(String::trim).orElse(""),
-                spawnpoint
+                spawnpoint,
+                keepalive == Permission.Keepalive.permanent ? null : LocalDateTime.now().plus(keepalive)
         );
         if (player != null) {
             sender.sendMessage(textOfChildren(
                     text("你创建了假人 ", GRAY),
                     text(player.getName()),
                     text(", 位于 ", GRAY),
-                    text(toLocationString(player.getLocation()))
+                    text(toLocationString(player.getLocation())),
+                    keepalive == Permission.Keepalive.permanent
+                            ? empty()
+                            : textOfChildren(
+                                    text(", 存活时间 ", GRAY),
+                                    text(keepalive.toString()
+                                                 .substring(2)
+                                                 .replaceAll("(\\\\d[HMS])(?!$)", "$1")
+                                                 .toLowerCase(Locale.ROOT))
+                            )
             ));
         }
     }
