@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.fakeplayer.command.Permission.Keepalive;
 import io.github.hello09x.fakeplayer.util.Mth;
 import io.github.tanyaofei.plugin.toolkit.database.Page;
 import org.apache.commons.lang3.StringUtils;
@@ -45,19 +46,19 @@ public class SpawnCommand extends AbstractCommand {
                     : Bukkit.getWorlds().get(0).getSpawnLocation().clone();
         } else {
             spawnpoint = new Location(
-                    location.getWorld(),
+                    world,
                     location.getX(),
                     location.getY(),
                     location.getZ()
             );
         }
 
-        var keepalive = Permission.Keepalive.of(sender, config.getDefaultKeepalive());
+        var keepalive = Keepalive.of(sender, config.getDefaultKeepalive());
         var player = fakeplayerManager.spawn(
                 sender,
                 Optional.ofNullable(name).map(String::trim).orElse(""),
                 spawnpoint,
-                keepalive == Permission.Keepalive.permanent ? null : LocalDateTime.now().plus(keepalive)
+                Keepalive.isPermanent(keepalive) ? null : LocalDateTime.now().plus(keepalive)
         );
         if (player != null) {
             sender.sendMessage(textOfChildren(
@@ -65,7 +66,7 @@ public class SpawnCommand extends AbstractCommand {
                     text(player.getName()),
                     text(", 位于 ", GRAY),
                     text(toLocationString(player.getLocation())),
-                    keepalive == Permission.Keepalive.permanent
+                    Keepalive.isPermanent(keepalive)
                             ? empty()
                             : textOfChildren(
                                     text(", 存活时间 ", GRAY),

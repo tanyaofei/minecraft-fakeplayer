@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.util.nms;
 
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.core.EmptyAdvancements;
+import io.github.hello09x.fakeplayer.network.EmptyAdvancements;
 import io.github.hello09x.fakeplayer.util.Reflections;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

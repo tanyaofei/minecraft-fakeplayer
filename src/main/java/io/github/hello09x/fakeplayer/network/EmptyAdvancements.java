@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core;
+package io.github.hello09x.fakeplayer.network;
 
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.advancements.Advancement;

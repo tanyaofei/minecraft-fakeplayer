@@ -152,7 +152,7 @@ public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
     private @NotNull String getNameTemplate(@NotNull FileConfiguration file) {
         var tmpl = file.getString("name-template", "");
         if (tmpl.startsWith("-") || tmpl.startsWith("@")) {
-           log.warning("name-template 不能以 - 和 @ 开头, 该配置不会生效: " + this.nameTemplate);
+            log.warning("name-template 不能以 - 和 @ 开头, 该配置不会生效: " + this.nameTemplate);
             return "";
         }
         return tmpl;

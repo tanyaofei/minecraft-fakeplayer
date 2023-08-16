@@ -38,6 +38,10 @@ public interface Permission {
             put("fakeplayer.alive.1min", Duration.ofMinutes(1));
         }};
 
+        static boolean isPermanent(@NotNull Duration duration) {
+            return permanent.equals(duration);
+        }
+
         static @Nullable Duration of(@NotNull CommandSender sender) {
             if (sender.isOp()) {
                 return permanent;

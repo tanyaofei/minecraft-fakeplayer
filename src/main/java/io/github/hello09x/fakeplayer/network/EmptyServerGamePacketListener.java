@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core;
+package io.github.hello09x.fakeplayer.network;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;

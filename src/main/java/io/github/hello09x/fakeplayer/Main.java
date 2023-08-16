@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import io.github.hello09x.fakeplayer.command.Commands;
+import io.github.hello09x.fakeplayer.command.CommandRegister;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
@@ -44,7 +44,7 @@ public final class Main extends JavaPlugin {
             }
         }
 
-        Commands.register();
+        CommandRegister.register();
         CommandAPI.onEnable();
 
         {

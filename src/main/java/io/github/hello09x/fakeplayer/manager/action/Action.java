@@ -278,7 +278,7 @@ public enum Action {
 
     public final String name;
 
-    static HitResult getTarget(ServerPlayer player) {
+    static @NotNull HitResult getTarget(@NotNull ServerPlayer player) {
         double reach = player.gameMode.isCreative() ? 5 : 4.5f;
         return Tracer.rayTrace(player, 1, reach, false);
     }

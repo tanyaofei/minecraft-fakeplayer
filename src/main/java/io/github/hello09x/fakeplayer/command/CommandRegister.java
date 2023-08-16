@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 
 @SuppressWarnings("SameParameterValue")
-public class Commands {
+public class CommandRegister {
 
     public static void register() {
         newCommand("fakeplayer")
@@ -30,29 +30,29 @@ public class Commands {
                         "可以创建模拟玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
                 )
                 .withUsage(
-                        "§6/fp ? [页码] §7- §f查看帮助",
-                        "§6/fp spawn [名称] [世界] [坐标] §7- §f创建假人",
-                        "§6/fp kill §7- §f移除假人",
-                        "§6/fp list [页码] [数量] §7- §f查看所有假人",
-                        "§6/fp distance §7- §f查看与假人的距离",
-                        "§6/fp tp §7- §f传送到假人身边",
-                        "§6/fp tphere §7- §f将假人传送到身边",
-                        "§6/fp tps §7- §f与假人交换位置",
-                        "§6/fp config get <配置项> §7- §f查看配置项",
-                        "§6/fp config set <配置项> <配置值> §7- §f设置配置项",
-                        "§6/fp health §7- §f查看生命值",
-                        "§6/fp exp §7- §f查看经验值",
-                        "§6/fp expme §7- §f转移经验值",
-                        "§6/fp attack (once | continuous | interval | stop) §7- §f攻击/破坏",
-                        "§6/fp use (once | continuous | interval | stop) §7- §f使用/交互/放置",
-                        "§6/fp jump (once | continuous | interval | stop) §7- §f跳跃",
-                        "§6/fp drop [-a|--all] §7- §f丢弃手上物品",
-                        "§6/fp dropinv §7- §f丢弃背包物品",
-                        "§6/fp look (north | south | east | west | up | down | at | entity) §7- §f看向指定位置",
-                        "§6/fp turn (left | right | back | to) §7- §f转身到指定位置",
-                        "§6/fp move (forward | backward | left | right) §7- §f移动",
-                        "§6/fp cmd <假人> <命令> §7- §f执行命令",
-                        "§6/fp reload §7- §f重载配置文件"
+                        "§6? [页码] §7- §f查看帮助",
+                        "§6spawn [名称] [世界] [坐标] §7- §f创建假人",
+                        "§6kill §7- §f移除假人",
+                        "§6list [页码] [数量] §7- §f查看所有假人",
+                        "§6distance §7- §f查看与假人的距离",
+                        "§6tp §7- §f传送到假人身边",
+                        "§6tphere §7- §f将假人传送到身边",
+                        "§6tps §7- §f与假人交换位置",
+                        "§6config get <配置项> §7- §f查看配置项",
+                        "§6config set <配置项> <配置值> §7- §f设置配置项",
+                        "§6health §7- §f查看生命值",
+                        "§6exp §7- §f查看经验值",
+                        "§6expme §7- §f转移经验值",
+                        "§6attack (once | continuous | interval | stop) §7- §f攻击/破坏",
+                        "§6use (once | continuous | interval | stop) §7- §f使用/交互/放置",
+                        "§6jump (once | continuous | interval | stop) §7- §f跳跃",
+                        "§6drop [-a|--all] §7- §f丢弃手上物品",
+                        "§6dropinv §7- §f丢弃背包物品",
+                        "§6look (north | south | east | west | up | down | at | entity) §7- §f看向指定位置",
+                        "§6turn (left | right | back | to) §7- §f转身到指定位置",
+                        "§6move (forward | backward | left | right) §7- §f移动",
+                        "§6cmd <假人> <命令> §7- §f执行命令",
+                        "§6reload §7- §f重载配置文件"
                 )
                 .withSubcommands(
                         newCommand("help")
@@ -260,39 +260,39 @@ public class Commands {
         };
     }
 
-    private static CommandAPICommand newCommand(@NotNull String name) {
+    private static @NotNull CommandAPICommand newCommand(@NotNull String name) {
         return new CommandAPICommand(name);
     }
 
-    private static IntegerArgument integer(@NotNull String nodeName, int min) {
+    private static @NotNull IntegerArgument integer(@NotNull String nodeName, int min) {
         return new IntegerArgument(nodeName, min);
     }
 
-    private static LocationArgument location(@NotNull String nodeName) {
+    private static @NotNull LocationArgument location(@NotNull String nodeName) {
         return new LocationArgument(nodeName);
     }
 
-    private static RotationArgument rotation(@NotNull String nodeName) {
+    private static @NotNull RotationArgument rotation(@NotNull String nodeName) {
         return new RotationArgument(nodeName);
     }
 
-    private static WorldArgument world(@NotNull String nodeName) {
+    private static @NotNull WorldArgument world(@NotNull String nodeName) {
         return new WorldArgument(nodeName);
     }
 
-    private static MultiLiteralArgument literals(@NotNull String nodeName, @NotNull String @NotNull ... literals) {
+    private static @NotNull MultiLiteralArgument literals(@NotNull String nodeName, @NotNull String @NotNull ... literals) {
         return new MultiLiteralArgument(nodeName, Arrays.asList(literals));
     }
 
-    private static TextArgument text(@NotNull String nodeName) {
+    private static @NotNull TextArgument text(@NotNull String nodeName) {
         return new TextArgument(nodeName);
     }
 
-    private static CommandArgument command(@NotNull String nodeName) {
+    private static @NotNull CommandArgument command(@NotNull String nodeName) {
         return new CommandArgument(nodeName);
     }
 
-    private static Argument<Player> fakeplayer(@NotNull String nodeName) {
+    private static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             return sender.isOp()
@@ -315,7 +315,7 @@ public class Commands {
         }));
     }
 
-    private static Argument<List<Player>> fakeplayers(@NotNull String nodeName) {
+    private static @NotNull Argument<List<Player>> fakeplayers(@NotNull String nodeName) {
         return new CustomArgument<List<Player>, String>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var arg = info.currentInput();
@@ -348,7 +348,7 @@ public class Commands {
         }));
     }
 
-    private static Argument<Config<Object>> config(@NotNull String nodeName) {
+    private static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
             try {
@@ -359,7 +359,7 @@ public class Commands {
         }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Configs.values()).map(Config::name).toList()));
     }
 
-    private static Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
+    private static @NotNull Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             @SuppressWarnings("unchecked")
             var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));

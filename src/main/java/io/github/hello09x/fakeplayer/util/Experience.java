@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.util;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class Experience {
 
@@ -14,7 +15,7 @@ public class Experience {
      * @return the amount of experience the Player has
      * @see <a href=http://minecraft.gamepedia.com/Experience#Leveling_up>Experience#Leveling_up</a>
      */
-    public static int getExp(Player player) {
+    public static int getExp(@NotNull Player player) {
         return getExpFromLevel(player.getLevel())
                 + Math.round(getExpToNext(player.getLevel()) * player.getExp());
     }
@@ -107,7 +108,7 @@ public class Experience {
      * @param player the Player affected
      * @param exp    the amount of experience to add or remove
      */
-    public static void changeExp(Player player, int exp) {
+    public static void changeExp(@NotNull Player player, int exp) {
         exp += getExp(player);
 
         if (exp < 0) {
@@ -118,6 +119,11 @@ public class Experience {
         int level = (int) levelAndExp;
         player.setLevel(level);
         player.setExp((float) (levelAndExp - level));
+    }
+
+    public static void clean(@NotNull Player player) {
+        player.setLevel(0);
+        player.setExp(0);
     }
 
 }

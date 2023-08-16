@@ -49,7 +49,7 @@ public class PlayerListeners implements Listener {
     /**
      * 死亡退出游戏
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onDead(@NotNull PlayerDeathEvent event) {
         manager.remove(event.getPlayer().getName());
     }

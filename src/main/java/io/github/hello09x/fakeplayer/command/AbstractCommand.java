@@ -24,7 +24,7 @@ public abstract class AbstractCommand {
         return Optional
                 .ofNullable((Player) args.get("target"))
                 .or(() -> {
-                    var all = FakeplayerManager.instance.getAll(sender);
+                    var all = fakeplayerManager.getAll(sender);
                     if (all.size() != 1) {
                         return Optional.empty();
                     }

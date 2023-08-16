@@ -42,6 +42,9 @@ public interface Configs {
             Boolean::valueOf
     );
 
+    /**
+     * 拾取物品
+     */
     Config<Boolean> pickup_items = build(
             "pickup_items",
             "拾取物品",

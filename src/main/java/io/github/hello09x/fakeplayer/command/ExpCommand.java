@@ -27,10 +27,9 @@ public class ExpCommand extends AbstractCommand {
             return;
         }
 
-        target.setLevel(0);
-        target.setExp(0);
-
+        Experience.clean(target);
         Experience.changeExp(sender, Experience.getExp(sender) + exp);
+
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
                 text(" 转移 ", GRAY),
