@@ -46,8 +46,8 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.tanyaofei</groupId>
-            <artifactId>plugintoolkit</artifactId>
+            <groupId>io.github.hello09x</groupId>
+            <artifactId>bedrock</artifactId>
             <version>0.0.1</version>
         </dependency>
 

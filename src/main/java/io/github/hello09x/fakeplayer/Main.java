@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import io.github.hello09x.fakeplayer.command.CommandRegister;
+import io.github.hello09x.fakeplayer.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
@@ -37,19 +37,25 @@ public final class Main extends JavaPlugin {
         try {
             nms = NMS.getInstance();
         } catch (Throwable e) {
-            if (e instanceof UnsupportedOperationException) {
-                throw new ExceptionInInitializerError(String.format("不支持的核心版本, minecraftVersion:%s, bukkitVersion: %s, version:%s", Bukkit.getMinecraftVersion(), Bukkit.getBukkitVersion(), Bukkit.getVersion()));
+            if (e instanceof NMS.UnsupportedVersionException) {
+                throw new ExceptionInInitializerError(String.format(
+                        "不支持的核心版本, minecraftVersion:%s, bukkitVersion: %s, version:%s",
+                        Bukkit.getMinecraftVersion(),
+                        Bukkit.getBukkitVersion(),
+                        Bukkit.getVersion())
+                );
             } else {
                 throw new ExceptionInInitializerError(e);
             }
         }
 
-        CommandRegister.register();
+        CommandRegistry.register();
         CommandAPI.onEnable();
 
         {
-            getServer().getMessenger().registerIncomingPluginChannel(Main.getInstance(), "BungeeCord", WildFakeplayerManager.instance);
-            getServer().getMessenger().registerOutgoingPluginChannel(Main.getInstance(), "BungeeCord");
+            var messenger = getServer().getMessenger();
+            messenger.registerIncomingPluginChannel(this, "BungeeCord", WildFakeplayerManager.instance);
+            messenger.registerOutgoingPluginChannel(this, "BungeeCord");
         }
 
         {
@@ -83,17 +89,17 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        CommandAPI.onDisable();
         FakeplayerManager.instance.removeAll();
         UsedIdRepository.instance.saveAll();
         FakeplayerManager.instance.onDisable();
         WildFakeplayerManager.instance.onDisable();
 
         {
-            getServer().getMessenger().unregisterIncomingPluginChannel(this);
-            getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+            var messenger = getServer().getMessenger();
+            messenger.unregisterIncomingPluginChannel(this);
+            messenger.unregisterOutgoingPluginChannel(this);
         }
-
-        CommandAPI.onDisable();
     }
 
 }

@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public interface NMS {
 
-    static NMS getInstance() {
+    static NMS getInstance() throws UnsupportedOperationException {
         return InstanceHolder.instance;
     }
 
@@ -45,12 +45,13 @@ public interface NMS {
         static {
             instance = switch (Bukkit.getMinecraftVersion()) {
                 case "1.20.1" -> new NMS_1_20_R1();
-                default -> throw new UnsupportedOperationException(String.format(
-                        "Unsupported minecraft version: %s",
-                        Bukkit.getMinecraftVersion()
-                ));
+                default -> throw new UnsupportedVersionException();
             };
         }
+    }
+
+    class UnsupportedVersionException extends RuntimeException {
+
     }
 
 }

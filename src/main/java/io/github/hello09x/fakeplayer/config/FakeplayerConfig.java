@@ -1,9 +1,9 @@
 package io.github.hello09x.fakeplayer.config;
 
 
+import io.github.hello09x.bedrock.config.Config;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.command.Permission;
-import io.github.tanyaofei.plugin.toolkit.properties.AbstractProperties;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,7 +18,7 @@ import java.util.regex.PatternSyntaxException;
 
 @Getter
 @ToString
-public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
+public class FakeplayerConfig extends Config<FakeplayerConfig> {
 
     public final static FakeplayerConfig instance;
     private final static Logger log;
@@ -106,6 +106,7 @@ public class FakeplayerConfig extends AbstractProperties<FakeplayerConfig> {
 
     public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
+        reload(false);
     }
 
     private static int maxIfZero(int value) {

@@ -12,6 +12,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.*;
 
@@ -33,6 +34,9 @@ public enum Action {
             }
 
             var hit = getTarget(player);
+            if (hit == null) {
+                return false;
+            }
             for (var hand : InteractionHand.values()) {
                 switch (hit.getType()) {
                     case BLOCK -> {
@@ -89,6 +93,9 @@ public enum Action {
         public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
             var player = ap.player;
             var hit = getTarget(player);
+            if (hit == null) {
+                return false;
+            }
             switch (hit.getType()) {
                 case ENTITY -> {
                     var entityHit = (EntityHitResult) hit;
@@ -278,7 +285,7 @@ public enum Action {
 
     public final String name;
 
-    static @NotNull HitResult getTarget(@NotNull ServerPlayer player) {
+    static @Nullable HitResult getTarget(@NotNull ServerPlayer player) {
         double reach = player.gameMode.isCreative() ? 5 : 4.5f;
         return Tracer.rayTrace(player, 1, reach, false);
     }
