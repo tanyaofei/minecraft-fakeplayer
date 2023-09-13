@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.entity;
 
 import com.mojang.authlib.GameProfile;
+import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.action.Action;
@@ -10,9 +11,8 @@ import io.github.hello09x.fakeplayer.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.network.EmptyConnection;
 import io.github.hello09x.fakeplayer.network.EmptyLoginPacketListener;
 import io.github.hello09x.fakeplayer.network.EmptyServerGamePacketListener;
-import io.github.hello09x.fakeplayer.util.BK;
-import io.github.hello09x.fakeplayer.util.Tasker;
 import io.github.hello09x.fakeplayer.util.Teleportor;
+import io.github.hello09x.fakeplayer.util.Worlds;
 import io.github.hello09x.fakeplayer.util.nms.NMS;
 import lombok.Getter;
 import net.minecraft.network.protocol.PacketFlow;
@@ -23,7 +23,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,28 +46,37 @@ public class FakePlayer {
 
     private final FakeplayerConfig config = FakeplayerConfig.instance;
 
+    @NotNull
     private final MinecraftServer server;
 
+    @NotNull
     @Getter
     private final String creator;
 
+    @NotNull
     @Getter
     private final ServerPlayer handle;
 
+    @NotNull
     @Getter
     private final Player bukkitPlayer;
 
+    @NotNull
     @Getter
     private final String creatorIp;
 
+    @NotNull
     @Getter
     private final SequenceName sequenceName;
 
+    @NotNull
     private final FakeplayerTicker ticker;
 
+    @NotNull
     @Getter
     private final String name;
 
+    @NotNull
     private final UUID uuid;
 
     public FakePlayer(
@@ -94,7 +102,7 @@ public class FakePlayer {
 
         bukkitPlayer.setPersistent(false);
         bukkitPlayer.setSleepingIgnored(true);
-        nms.setPlayBefore(bukkitPlayer);
+        nms.setPlayBefore(bukkitPlayer);    // 可避免一些插件的第一次入服欢迎信息
         nms.unpersistAdvancements(bukkitPlayer);
     }
 
@@ -103,28 +111,22 @@ public class FakePlayer {
      */
     public void spawn(@NotNull SpawnOption option) {
         if (config.isSimulateLogin()) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    var preLoginEvent = new AsyncPlayerPreLoginEvent(
-                            handle.getGameProfile().getName(),
-                            fakeAddress,
-                            fakeAddress,
-                            handle.getUUID(),
-                            bukkitPlayer.getPlayerProfile(),
-                            fakeAddress.getHostName()
-                    );
-                    Bukkit.getPluginManager().callEvent(preLoginEvent);
-                }
-            }.runTaskAsynchronously(Main.getInstance());
-
-            {
-                Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(
-                        bukkitPlayer,
-                        fakeAddress.getHostName(),
-                        fakeAddress
+            Tasks.runAsync(Main.getInstance(), () -> {
+                Bukkit.getPluginManager().callEvent(new AsyncPlayerPreLoginEvent(
+                        handle.getGameProfile().getName(),
+                        fakeAddress,
+                        fakeAddress,
+                        handle.getUUID(),
+                        bukkitPlayer.getPlayerProfile(),
+                        fakeAddress.getHostName()
                 ));
-            }
+            });
+
+            Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(
+                    bukkitPlayer,
+                    fakeAddress.getHostName(),
+                    fakeAddress
+            ));
         }
 
         {
@@ -144,6 +146,13 @@ public class FakePlayer {
             connection.setListener(listener);
         }
 
+        if (config.isDropInventoryOnQuiting()) {
+            // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
+            // 因此在生成的时候清空一次背包
+            // 但无法解决登陆后延迟同步背包的情况
+            bukkitPlayer.getInventory().clear();
+        }
+
         bukkitPlayer.setInvulnerable(option.invulnerable());
         bukkitPlayer.setCollidable(option.collidable());
         bukkitPlayer.setCanPickupItems(option.pickupItems());
@@ -152,7 +161,7 @@ public class FakePlayer {
         }
 
         var spawnAt = option.spawnAt().clone();
-        if (BK.isOverworld(spawnAt.getWorld())) {
+        if (Worlds.isOverworld(spawnAt.getWorld())) {
             // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
             teleportToSpawnpointAfterChangingDimension(spawnAt);
         } else {
@@ -168,7 +177,7 @@ public class FakePlayer {
      * @param spawnpoint 最终目的地, 即出生点
      */
     private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
-        var world = BK.getNonOverworld();
+        var world = Worlds.getNonOverworld();
         if (world == null || !bukkitPlayer.teleport(world.getSpawnLocation())) {
             Optional.ofNullable(Bukkit.getPlayerExact(creator))
                     .ifPresentOrElse(
@@ -181,7 +190,7 @@ public class FakePlayer {
             return;
         }
 
-        Tasker.nextTick(() -> teleportToSpawnpoint(spawnpoint));
+        Tasks.runNextTick(Main.getInstance(), () -> teleportToSpawnpoint(spawnpoint));
     }
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
@@ -206,6 +215,10 @@ public class FakePlayer {
 
     public @Nullable Player getCreatorPlayer() {
         return Bukkit.getPlayerExact(this.creator);
+    }
+
+    public int getTickCount() {
+        return this.handle.tickCount;
     }
 
 }

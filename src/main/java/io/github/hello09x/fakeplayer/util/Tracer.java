@@ -8,6 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
+/**
+ * copy from fabric carpet mod
+ */
 public class Tracer {
     public static @Nullable HitResult rayTrace(
             @NotNull Entity source,

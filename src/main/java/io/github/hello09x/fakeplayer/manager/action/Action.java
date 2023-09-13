@@ -11,6 +11,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -234,6 +235,7 @@ public enum Action {
     },
 
     LOOK_AT_NEAREST_ENTITY("目视实体") {
+
         @Override
         @SuppressWarnings("UnstableApiUsage")
         public boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
@@ -243,14 +245,21 @@ public enum Action {
                 return true;
             }
 
-            var entities = bukkitPlayer.getNearbyEntities(4.5, 4.5, 4.5);
-            if (entities.isEmpty()) {
+            var target = bukkitPlayer
+                    .getNearbyEntities(4.5, 4.5, 4.5)
+                    .stream()
+                    .filter(e -> e instanceof Damageable)
+                    .findAny()
+                    .orElse(null);
+
+            if (target == null) {
                 return false;
             }
 
-            bukkitPlayer.lookAt(entities.get(0), LookAnchor.EYES, LookAnchor.EYES);
+            bukkitPlayer.lookAt(target, LookAnchor.EYES, LookAnchor.EYES);
             return true;
         }
+
     },
 
     DROP_ITEM("丢弃手上物品") {
@@ -283,6 +292,7 @@ public enum Action {
     };
 
 
+    @NotNull
     public final String name;
 
     static @Nullable HitResult getTarget(@NotNull ServerPlayer player) {
@@ -300,10 +310,11 @@ public enum Action {
 
     public abstract boolean tick(@NotNull ActionPack ap, @NotNull ActionSetting setting);
 
-    public void stop(@NotNull ActionPack ap, @NotNull ActionSetting setting) {}
-
     public void inactiveTick(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
         this.stop(ap, setting);
+    }
+
+    public void stop(@NotNull ActionPack ap, @NotNull ActionSetting setting) {
     }
 
 

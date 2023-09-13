@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -7,7 +8,11 @@ import java.lang.reflect.Modifier;
 
 public class Reflections {
 
-    public static @Nullable Field getFirstFieldByType(Class<?> clazz, Class<?> fieldType, boolean includeStatic) {
+    public static @Nullable Field getFirstFieldByType(
+            @NotNull Class<?> clazz,
+            @NotNull Class<?> fieldType,
+            boolean includeStatic
+    ) {
         for (var field : clazz.getDeclaredFields()) {
             if (includeStatic ^ Modifier.isStatic(field.getModifiers())) {
                 continue;
@@ -20,7 +25,11 @@ public class Reflections {
         return null;
     }
 
-    public static @Nullable Field getFirstFieldByAssignFromType(Class<?> clazz, Class<?> fieldType, boolean includeStatic) {
+    public static @Nullable Field getFirstFieldByAssignFromType(
+            @NotNull Class<?> clazz,
+            @NotNull Class<?> fieldType,
+            boolean includeStatic
+    ) {
         for (var field : clazz.getDeclaredFields()) {
             if (includeStatic ^ Modifier.isStatic(field.getModifiers())) {
                 continue;

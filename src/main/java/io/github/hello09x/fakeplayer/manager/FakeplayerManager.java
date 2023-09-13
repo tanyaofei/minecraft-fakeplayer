@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.manager;
 
+import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
@@ -13,12 +14,10 @@ import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.Commands;
-import io.github.hello09x.fakeplayer.util.Tasker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,14 +56,11 @@ public class FakeplayerManager {
     private FakeplayerManager() {
         timer.scheduleAtFixedRate(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (removeAll() > 0) {
-                                    Bukkit.broadcast(text("[服务器过于卡顿, 已移除所有假人]", RED, ITALIC));
-                                }
+                        Tasks.runNextTick(Main.getInstance(), () -> {
+                            if (removeAll("low tps") > 0) {
+                                Bukkit.broadcast(text("[服务器过于卡顿, 已移除所有假人]", RED, ITALIC));
                             }
-                        }.runTask(Main.getInstance());
+                        });
                     }
                 }, 0, 60, TimeUnit.SECONDS
         );
@@ -103,19 +99,19 @@ public class FakeplayerManager {
         try {
             sn = name.isBlank() ? nameManager.register(creator) : nameManager.custom(creator, name);
         } catch (IllegalCustomNameException e) {
-            creator.sendMessage(e.getMsg());
+            creator.sendMessage(e.getText());
             return null;
         }
 
-        var player = new FakePlayer(
+        var fake = new FakePlayer(
                 creator.getName(),
                 AddressUtils.getAddress(creator),
                 sn,
                 removeAt
         );
 
-        var bukkitPlayer = player.getBukkitPlayer();
-        bukkitPlayer.playerListName(text(bukkitPlayer.getName(), GRAY, ITALIC));
+        var player = fake.getBukkitPlayer();
+        player.playerListName(text(player.getName(), GRAY, ITALIC));
 
         boolean invulnerable = true, lookAtEntity = true, collidable = true, pickupItems = true;
         if (creator instanceof Player p) {
@@ -125,7 +121,7 @@ public class FakeplayerManager {
             collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
             pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
         }
-        player.spawn(new SpawnOption(
+        fake.spawn(new SpawnOption(
                 spawnAt,
                 invulnerable,
                 collidable,
@@ -133,15 +129,15 @@ public class FakeplayerManager {
                 pickupItems
         ));
 
-        playerList.add(player);
-        usedIdRepository.add(bukkitPlayer.getUniqueId());
+        playerList.add(fake);
+        usedIdRepository.add(player.getUniqueId());
 
-        Tasker.later(() -> {
-            dispatchCommands(bukkitPlayer, config.getPreparingCommands());
-            performCommands(bukkitPlayer, config.getSelfCommands());
-        }, 20);
+        Tasks.runLater(Main.getInstance(), 20, () -> {
+            dispatchCommands(player, config.getPreparingCommands());
+            performCommands(player, config.getSelfCommands());
+        });
 
-        return bukkitPlayer;
+        return player;
     }
 
     /**
@@ -173,22 +169,6 @@ public class FakeplayerManager {
     }
 
     /**
-     * 根据名称删除假人
-     *
-     * @param name 名称
-     * @return 名称对应的玩家不在线或者不是假人
-     */
-    public boolean remove(@NotNull String name) {
-        var player = get(name);
-        if (player == null) {
-            return false;
-        }
-
-        player.kick(text("[fakeplayer] removed"));
-        return true;
-    }
-
-    /**
      * 获取一个假人的创建者, 如果这个玩家不是假人, 则为 {@code null}
      *
      * @param player 假人
@@ -202,13 +182,31 @@ public class FakeplayerManager {
     }
 
     /**
+     * 根据名称删除假人
+     *
+     * @param name 名称
+     * @return 名称对应的玩家不在线或者不是假人
+     */
+    public boolean remove(@NotNull String name, @Nullable String reason) {
+        var player = this.get(name);
+        if (player == null) {
+            return false;
+        }
+
+        player.kick(text("[fakeplayer] " + (reason == null ? "removed" : reason)));
+        return true;
+    }
+
+    /**
      * 移除所有假人
      *
      * @return 移除的假人数量
      */
-    public int removeAll() {
+    public int removeAll(@Nullable String reason) {
         var fakers = getAll();
-        fakers.forEach(Player::kick);
+        for (var f : fakers) {
+            f.kick(text("[fakeplayer] " + (reason == null ? "removed" : reason)));
+        }
         return fakers.size();
     }
 

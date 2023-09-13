@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x</groupId>
     <artifactId>fakeplayer</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <packaging>jar</packaging>
 
     <name>fakeplayer</name>
@@ -117,7 +117,7 @@
                     <relocations>
                         <relocation>
                             <pattern>dev.jorel.commandapi</pattern>
-                            <shadedPattern>io.github.hello09x.shaded.commandapi</shadedPattern>
+                            <shadedPattern>io.github.hello09x.fakeplayer.shaded.commandapi</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

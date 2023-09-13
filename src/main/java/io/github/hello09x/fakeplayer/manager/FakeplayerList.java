@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.manager;
 import io.github.hello09x.fakeplayer.entity.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
@@ -16,6 +17,11 @@ public class FakeplayerList {
 
     private final Map<String, List<FakePlayer>> playersByCreator = new HashMap<>();
 
+    /**
+     * 添加一个假人到假人清单
+     *
+     * @param player 假人
+     */
     public void add(@NotNull FakePlayer player) {
         this.playersByName.put(player.getName(), player);
         this.playersByUUID.put(player.getUUID(), player);
@@ -23,41 +29,80 @@ public class FakeplayerList {
         this.playersByCreator.get(player.getCreator()).add(player);
     }
 
+    /**
+     * 通过假人的名称获取假人
+     *
+     * @param name 名称
+     * @return 假人
+     */
     public @Nullable FakePlayer getByName(@NotNull String name) {
         return Optional.ofNullable(this.playersByName.get(name)).map(this::checkOnline).orElse(null);
     }
 
+    /**
+     * 通过 UUID 获取假人
+     *
+     * @param uuid UUID
+     * @return 假人
+     */
     public @Nullable FakePlayer getByUUID(@NotNull UUID uuid) {
         return Optional.ofNullable(this.playersByUUID.get(uuid)).map(this::checkOnline).orElse(null);
     }
 
-    public @NotNull List<FakePlayer> getByCreator(@NotNull String creator) {
+    /**
+     * 获取创建者创建的所有假人
+     *
+     * @param creator 创建者
+     * @return 假人
+     */
+    public @NotNull @Unmodifiable List<FakePlayer> getByCreator(@NotNull String creator) {
         return Optional.ofNullable(this.playersByCreator.get(creator)).map(Collections::unmodifiableList).orElse(Collections.emptyList());
     }
 
+    /**
+     * 移除一个假人
+     *
+     * @param player 假人
+     */
     public void remove(@NotNull FakePlayer player) {
         this.playersByName.remove(player.getName());
         this.playersByUUID.remove(player.getUUID());
         Optional.ofNullable(this.playersByCreator.get(player.getCreator())).map(players -> players.remove(player));
     }
 
-    public @Nullable FakePlayer removeByUUID(@NotNull UUID uniqueId) {
-        var player = getByUUID(uniqueId);
+    /**
+     * 通过 UUID 移除假人
+     *
+     * @param uuid UUID
+     * @return 被移除的假人
+     */
+    public @Nullable FakePlayer removeByUUID(@NotNull UUID uuid) {
+        var player = getByUUID(uuid);
         if (player == null) {
             return null;
         }
-        remove(player);
+        this.remove(player);
         return player;
     }
 
-    public List<FakePlayer> getAll() {
+    /**
+     * 获取所有假人
+     *
+     * @return 假人
+     */
+    public @NotNull @Unmodifiable List<FakePlayer> getAll() {
         return List.copyOf(this.playersByUUID.values());
     }
 
+    /**
+     * 检测假人是否在线, 如果不在线了则移除并返回 {@code null}
+     *
+     * @param player 假人
+     * @return 假人
+     */
     private @Nullable FakePlayer checkOnline(@NotNull FakePlayer player) {
         if (!player.isOnline()) {
-            this.playersByName.remove(player.getName());
-            this.playersByUUID.remove(player.getUUID());
+            this.remove(player);
             return null;
         }
 

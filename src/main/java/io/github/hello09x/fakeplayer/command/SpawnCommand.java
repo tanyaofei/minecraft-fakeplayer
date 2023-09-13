@@ -2,9 +2,9 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.fakeplayer.command.Permission.Keepalive;
 import io.github.hello09x.fakeplayer.util.Mth;
-import io.github.tanyaofei.plugin.toolkit.database.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,6 +20,7 @@ import java.util.*;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 public class SpawnCommand extends AbstractCommand {
 
@@ -29,9 +30,9 @@ public class SpawnCommand extends AbstractCommand {
         return location.getWorld().getName()
                 + ": "
                 + StringUtils.joinWith(", ",
-                Mth.round(location.getX(), 0.5),
-                Mth.round(location.getY(), 0.5),
-                Mth.round(location.getZ(), 0.5));
+                Mth.floor(location.getX(), 0.5),
+                Mth.floor(location.getY(), 0.5),
+                Mth.floor(location.getZ(), 0.5));
     }
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
@@ -65,7 +66,7 @@ public class SpawnCommand extends AbstractCommand {
                     text("你创建了假人 ", GRAY),
                     text(player.getName()),
                     text(", 位于 ", GRAY),
-                    text(toLocationString(player.getLocation())),
+                    text(toLocationString(spawnpoint)),
                     Keepalive.isPermanent(keepalive)
                             ? empty()
                             : textOfChildren(
@@ -98,7 +99,7 @@ public class SpawnCommand extends AbstractCommand {
 
         var names = new StringJoiner(", ");
         for (var target : targets) {
-            if (fakeplayerManager.remove(target.getName())) {
+            if (fakeplayerManager.remove(target.getName(), "command kill")) {
                 names.add(target.getName());
             }
         }
@@ -116,19 +117,11 @@ public class SpawnCommand extends AbstractCommand {
                 ? fakeplayerManager.getAll()
                 : fakeplayerManager.getAll(sender);
 
-        var total = fakers.size();
-        var pages = total == 0 ? 1 : (int) Math.ceil((double) total / size);
-        var p = new Page<>(
-                fakers.subList((page - 1) * size, Math.min(total, page * size)),
-                total,
-                pages,
-                page,
-                size
-        );
+        var p = Page.of(fakers, page, size);
 
         var canTp = sender instanceof Player && sender.hasPermission(Permission.tp);
-        sender.sendMessage(p.toComponent(
-                "假人",
+        sender.sendMessage(p.asComponent(
+                text("假人", AQUA, BOLD),
                 fakeplayer -> textOfChildren(
                         text(fakeplayer.getName() + " (" + fakeplayerManager.getCreator(fakeplayer) + ")", GOLD),
                         text(" - ", GRAY),
@@ -136,8 +129,7 @@ public class SpawnCommand extends AbstractCommand {
                         canTp ? text(" [<--传送]", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())) : empty(),
                         text(" [<--移除]", RED).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
                 ),
-                String.format("/fp list %d %d", page - 1, size),
-                String.format("/fp list %d %d", page + 1, size)
+                i -> "/fp list " + i + " " + size
         ));
     }
 
@@ -158,7 +150,7 @@ public class SpawnCommand extends AbstractCommand {
             return;
         }
 
-        var euclidean = Mth.round(from.distance(to), 0.5);
+        var euclidean = Mth.floor(from.distance(to), 0.5);
         var x = Math.abs(from.getBlockX() - to.getBlockX());
         var y = Math.abs(from.getBlockY() - to.getBlockY());
         var z = Math.abs(from.getBlockZ() - to.getBlockZ());

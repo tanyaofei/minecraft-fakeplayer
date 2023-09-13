@@ -21,6 +21,7 @@ import java.util.regex.PatternSyntaxException;
 public class FakeplayerConfig extends Config<FakeplayerConfig> {
 
     public final static FakeplayerConfig instance;
+
     private final static Logger log;
 
     private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";

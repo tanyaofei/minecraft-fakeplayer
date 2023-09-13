@@ -2,14 +2,29 @@ package io.github.hello09x.fakeplayer.manager.action;
 
 
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionTicker {
 
+    /**
+     * 行为类型
+     */
+    @NotNull
     public final Action action;
+
+    /**
+     * 行为数据
+     */
+    @NotNull
     public final ActionPack actionPack;
+
+    /**
+     * 行为设置
+     */
+    @NotNull
     public ActionSetting setting;
 
-    public ActionTicker(ServerPlayer player, Action action, ActionSetting setting) {
+    public ActionTicker(@NotNull ServerPlayer player, @NotNull Action action, @NotNull ActionSetting setting) {
         this.action = action;
         this.setting = setting;
         this.actionPack = new ActionPack(player);

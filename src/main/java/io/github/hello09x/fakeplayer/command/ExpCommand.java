@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.util.Experience;
+import io.github.hello09x.bedrock.io.Experiences;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class ExpCommand extends AbstractCommand {
 
     public void expme(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var exp = Experience.getExp(target);
+        var exp = Experiences.getExp(target);
 
         if (exp == 0) {
             sender.sendMessage(textOfChildren(
@@ -27,9 +27,8 @@ public class ExpCommand extends AbstractCommand {
             return;
         }
 
-        Experience.clean(target);
-        Experience.changeExp(sender, Experience.getExp(sender) + exp);
-
+        Experiences.clean(target);
+        sender.giveExp(exp, false);
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
                 text(" 转移 ", GRAY),

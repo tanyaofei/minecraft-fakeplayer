@@ -5,6 +5,8 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -13,6 +15,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
@@ -49,9 +52,20 @@ public class PlayerListeners implements Listener {
     /**
      * 死亡退出游戏
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onDead(@NotNull PlayerDeathEvent event) {
-        manager.remove(event.getPlayer().getName());
+        var player = event.getPlayer();
+        if (!manager.isFake(player)) {
+            return;
+        }
+
+        // 有一些跨服同步插件会退出时同步生命值, 假人重新生成的时候同步为 0
+        // 因此在死亡时将生命值设置恢复满血先
+        Optional.ofNullable(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                .map(AttributeInstance::getValue)
+                .ifPresent(player::setHealth);
+        event.setCancelled(true);
+        manager.remove(event.getPlayer().getName(), "dead");
     }
 
     /**

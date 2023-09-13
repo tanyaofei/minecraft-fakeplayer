@@ -5,7 +5,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BK {
+public class Worlds {
 
     private final static String WORLD_OVERWORLD = "world";
 

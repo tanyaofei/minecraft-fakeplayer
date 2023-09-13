@@ -4,11 +4,14 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +36,36 @@ public class NameManager {
     private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
+    private final String serverId;
+
+    public NameManager() {
+        var file = new File(Main.getInstance().getDataFolder(), "serverid");
+        serverId = Optional.ofNullable(readServerId(file)).orElseGet(() -> {
+            var uuid = UUID.randomUUID().toString();
+            try (var out = new FileWriter(file, StandardCharsets.UTF_8)) {
+                IOUtils.write(uuid, out);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            return uuid;
+        });
+    }
+
+    private static @Nullable String readServerId(@NotNull File file) {
+        if (!file.exists()) {
+            return null;
+        }
+
+        String serverId;
+        try(var in = new FileReader(file, StandardCharsets.UTF_8)) {
+            serverId = IOUtils.toString(in);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return serverId.isBlank() ? null : serverId;
+    }
+
     /**
      * 通过名称生成 UUID
      *
@@ -40,7 +73,8 @@ public class NameManager {
      * @return UUID
      */
     private @NotNull UUID uuidFromName(@NotNull String name) {
-        var uuid = UUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8));
+        var base = serverId + ":" + name;
+        var uuid = UUID.nameUUIDFromBytes(base.getBytes(StandardCharsets.UTF_8));
         if (!usedIdRepository.exists(uuid) && Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
             uuid = UUID.randomUUID();
             log.warning(String.format("Could not generate a UUID bound with name '%s' which is never played at this server, using random UUID as fallback: %s", name, uuid));
@@ -134,17 +168,17 @@ public class NameManager {
      * @param group    分组
      * @param sequence 序列
      */
-    public void unregister(@NotNull String group, @NotNull Integer sequence) {
+    public void unregister(@NotNull String group, int sequence) {
         Optional.ofNullable(nameSources.get(group)).ifPresent(ns -> ns.push(sequence));
     }
 
     /**
      * 归还序列名
      *
-     * @param sequenceName 序列名
+     * @param sn 序列名
      */
-    public void unregister(@NotNull SequenceName sequenceName) {
-        this.unregister(sequenceName.group(), sequenceName.sequence());
+    public void unregister(@NotNull SequenceName sn) {
+        this.unregister(sn.group(), sn.sequence());
     }
 
 

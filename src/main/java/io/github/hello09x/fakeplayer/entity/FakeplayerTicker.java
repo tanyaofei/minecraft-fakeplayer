@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.entity;
 
-import net.minecraft.server.level.ServerPlayer;
+import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,8 +17,16 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class FakeplayerTicker extends BukkitRunnable {
 
+    @NotNull
     private final FakePlayer player;
+
+    /**
+     * 移除时间
+     * <p>如果不需要定时移除则为 0</p>
+     */
     private final long removeAt;
+
+    private final FakeplayerManager manager = FakeplayerManager.instance;
 
     public FakeplayerTicker(
             @NotNull FakePlayer player,
@@ -30,15 +38,14 @@ public class FakeplayerTicker extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!getBukkitPlayer().isOnline()) {
+        if (!player.isOnline()) {
             cancel();
             return;
         }
 
-        var player = getServerPlayer();
-        if (removeAt != 0 && player.tickCount % 20 == 0 && System.currentTimeMillis() > removeAt) {
-            getBukkitPlayer().kick(text("[fakeplayer] 存活时间到期"));
-            Optional.ofNullable(this.player.getCreatorPlayer())
+        if (removeAt != 0 && player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
+            manager.remove(player.getName(), "存活时间到期");
+            Optional.ofNullable(player.getCreatorPlayer())
                     .ifPresent(p -> p.sendMessage(textOfChildren(
                             text("假人 ", GRAY),
                             text(this.player.getName()),
@@ -48,31 +55,31 @@ public class FakeplayerTicker extends BukkitRunnable {
             return;
         }
 
-        if (player.tickCount == 0) {
-            var x = player.getX();
-            var y = player.getY();
-            var z = player.getZ();
+        var handle = player.getHandle();
+
+        if (handle.tickCount == 0) {
+            // region 处理第一次生成时被别的插件干预然后随机传送
+            var x = handle.getX();
+            var y = handle.getY();
+            var z = handle.getZ();
 
             // 将本 tick 的移动取消
-            player.xo = x;
-            player.yo = y;
-            player.zo = z;
-            player.doTick();
+            handle.xo = x;
+            handle.yo = y;
+            handle.zo = z;
+            handle.doTick();
 
             // clearFog 插件会在第一次传送的时候改变了玩家的位置, 因此必须进行一次传送
-            getBukkitPlayer().teleport(new Location(getBukkitPlayer().getWorld(), x, y, z, player.getYRot(), player.getXRot()));
-            player.absMoveTo(x, y, z, player.getYRot(), player.getXRot());
+            getBukkitPlayer().teleport(new Location(getBukkitPlayer().getWorld(), x, y, z, handle.getYRot(), handle.getXRot()));
+            handle.absMoveTo(x, y, z, handle.getYRot(), handle.getXRot());
+            // endregion
         } else {
-            player.doTick();
+            handle.doTick();
         }
     }
 
     private @NotNull Player getBukkitPlayer() {
         return this.player.getBukkitPlayer();
-    }
-
-    private @NotNull ServerPlayer getServerPlayer() {
-        return this.player.getHandle();
     }
 
 }

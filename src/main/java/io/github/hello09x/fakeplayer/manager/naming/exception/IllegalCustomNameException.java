@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 public class IllegalCustomNameException extends IllegalArgumentException {
 
     @Getter
-    private final Component msg;
+    private final Component text;
 
     public IllegalCustomNameException(@NotNull TextComponent message) {
         super(message.content());
-        this.msg = message;
+        this.text = message;
     }
 
 }

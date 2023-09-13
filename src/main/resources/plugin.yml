@@ -3,6 +3,7 @@ version: '${project.version}'
 main: io.github.hello09x.fakeplayer.Main
 api-version: '1.20'
 author: hello09x
+website: 'https://github.com/tanyaofei/minecraft-fakeplayer'
 
 permissions:
   fakeplayer.all:

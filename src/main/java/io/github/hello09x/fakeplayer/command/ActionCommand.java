@@ -32,9 +32,9 @@ public class ActionCommand extends AbstractCommand {
 
     private static String toLocationString(@NotNull Location location) {
         return StringUtils.joinWith(", ",
-                Mth.round(location.getX(), 0.5),
-                Mth.round(location.getY(), 0.5),
-                Mth.round(location.getZ(), 0.5));
+                Mth.floor(location.getX(), 0.5),
+                Mth.floor(location.getY(), 0.5),
+                Mth.floor(location.getZ(), 0.5));
     }
 
     public CommandExecutor action(@NotNull Action action, @NotNull ActionSetting setting) {

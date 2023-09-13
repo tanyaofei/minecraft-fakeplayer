@@ -15,7 +15,7 @@ public class ReloadCommand extends AbstractCommand {
     private final FakeplayerConfig config = FakeplayerConfig.instance;
 
     public void reload(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        config.reload();
+        config.reload(true);
         sender.sendMessage(text("重载配置文件完成", GRAY));
     }
 

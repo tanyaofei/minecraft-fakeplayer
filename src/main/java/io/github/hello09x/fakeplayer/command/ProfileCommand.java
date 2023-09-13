@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.util.Experience;
+import io.github.hello09x.bedrock.io.Experiences;
 import io.github.hello09x.fakeplayer.util.Mth;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.attribute.AttributeInstance;
@@ -24,7 +24,7 @@ public class ProfileCommand extends AbstractCommand {
         var target = getTarget(sender, args);
 
         var level = target.getLevel();
-        var total = Experience.getExp(target);
+        var total = Experiences.getExp(target);
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
                 text(" 当前 ", GRAY),
@@ -60,7 +60,7 @@ public class ProfileCommand extends AbstractCommand {
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
                 text(" 当前生命值: ", GRAY),
-                text(Mth.round(health, 0.5), color),
+                text(Mth.floor(health, 0.5), color),
                 text("/", color),
                 text(max, color)
         ));

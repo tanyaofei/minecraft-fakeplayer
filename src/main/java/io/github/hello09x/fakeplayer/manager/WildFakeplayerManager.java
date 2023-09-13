@@ -79,7 +79,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
                 @Override
                 public void run() {
                     for (var target : targets) {
-                        manager.remove(target.getName());
+                        manager.remove(target.getName(), "creator offline");
                     }
                     log.info(String.format("玩家 %s 已不在线, 移除他创建的 %d 个假人", entry.getKey(), entry.getValue().size()));
                 }

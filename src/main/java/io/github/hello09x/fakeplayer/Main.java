@@ -69,18 +69,27 @@ public final class Main extends JavaPlugin {
 
     public void checkForUpdatesAsync() {
         CompletableFuture.runAsync(() -> {
+            var meta = getPluginMeta();
             var checker = new UpdateChecker("tanyaofei", "minecraft-fakeplayer");
             try {
                 var release = checker.getLastRelease();
-                if (!release.getTagName().equals(getPluginMeta().getVersion())) {
+
+                var current = meta.getVersion();
+                var other = release.getTagName();
+                if (other.charAt(0) == 'v') {
+                    other = other.substring(1);
+                }
+
+                if (UpdateChecker.isNew(current, other)) {
                     var log = getLogger();
                     log.info("检测到新的版本: " + release.getTagName());
-                    log.info("前往此处下载 https://github.com/tanyaofei/minecraft-fakeplayer");
+                    log.info("前往此处下载 " + meta.getWebsite());
                     log.info("更新日志");
                     for (var line : release.getBody().split("\n")) {
                         log.info("\t" + line);
                     }
                 }
+
             } catch (Throwable e) {
                 getLogger().warning("检测新版本发生异常: " + e.getMessage());
             }
@@ -90,7 +99,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         CommandAPI.onDisable();
-        FakeplayerManager.instance.removeAll();
+        FakeplayerManager.instance.removeAll("plugin disabled");
         UsedIdRepository.instance.saveAll();
         FakeplayerManager.instance.onDisable();
         WildFakeplayerManager.instance.onDisable();
