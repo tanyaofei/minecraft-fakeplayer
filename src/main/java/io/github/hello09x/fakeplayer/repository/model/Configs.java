@@ -53,6 +53,17 @@ public interface Configs {
             Boolean::valueOf
     );
 
+    /**
+     * 使用皮肤
+     */
+    Config<Boolean> skin = build(
+            "skin",
+            "使用皮肤",
+            true,
+            List.of("true", "false"),
+            Boolean::valueOf
+    );
+
     @SuppressWarnings("SameParameterValue")
     private static <T> Config<T> build(
             @NotNull String name,

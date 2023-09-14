@@ -21,7 +21,7 @@ public class UserConfigRepository extends Repository<UserConfig> {
         super(plugin);
     }
 
-    public <T> T selectOrDefault(@NotNull UUID playerId, @NotNull Config<T> config) {
+    public <T> @NotNull T selectOrDefault(@NotNull UUID playerId, @NotNull Config<T> config) {
         return Optional.ofNullable(select(playerId, config)).orElse(config.defaultValue());
     }
 

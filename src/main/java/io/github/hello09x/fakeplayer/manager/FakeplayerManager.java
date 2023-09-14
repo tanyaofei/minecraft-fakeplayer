@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.manager;
 
+import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
@@ -72,35 +73,31 @@ public class FakeplayerManager {
      * @param creator 创建者
      * @param spawnAt 生成地点
      */
-    public @Nullable Player spawn(
+    public @NotNull Player spawn(
             @NotNull CommandSender creator,
             @NotNull String name,
             @NotNull Location spawnAt,
             @Nullable LocalDateTime removeAt
-    ) {
+    ) throws MessageException  {
         var playerLimit = config.getPlayerLimit();
         if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
-            creator.sendMessage(text("你创建的假人数量已达到上限", GRAY));
-            return null;
+            throw new MessageException(text("你创建的假人数量已达到上限", GRAY));
         }
 
         var serverLimit = config.getServerLimit();
         if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getAll().size() >= serverLimit) {
-            creator.sendMessage(text("服务器假人数量已达到上限", GRAY));
-            return null;
+            throw new MessageException(text("服务器假人数量已达到上限", GRAY));
         }
 
         if (!creator.isOp() && config.isDetectIp() && countByAddress(AddressUtils.getAddress(creator)) >= 1) {
-            creator.sendMessage(text("你所在 IP 创建的假人数量已达到上限", GRAY));
-            return null;
+            throw new MessageException(text("你所在 IP 创建的假人数量已达到上限", GRAY));
         }
 
         SequenceName sn;
         try {
             sn = name.isBlank() ? nameManager.register(creator) : nameManager.custom(creator, name);
         } catch (IllegalCustomNameException e) {
-            creator.sendMessage(e.getText());
-            return null;
+            throw new MessageException(e.getText());
         }
 
         var fake = new FakePlayer(
@@ -113,20 +110,27 @@ public class FakeplayerManager {
         var player = fake.getBukkitPlayer();
         player.playerListName(text(player.getName(), GRAY, ITALIC));
 
-        boolean invulnerable = true, lookAtEntity = true, collidable = true, pickupItems = true;
+        boolean invulnerable = Configs.invulnerable.defaultValue(),
+                lookAtEntity = Configs.look_at_entity.defaultValue(),
+                collidable = Configs.collidable.defaultValue(),
+                pickupItems = Configs.pickup_items.defaultValue(),
+                skin = Configs.skin.defaultValue();
         if (creator instanceof Player p) {
             var creatorId = p.getUniqueId();
             invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
             lookAtEntity = userConfigRepository.selectOrDefault(creatorId, Configs.look_at_entity);
             collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
             pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
+            skin = userConfigRepository.selectOrDefault(creatorId, Configs.skin);
         }
+
         fake.spawn(new SpawnOption(
                 spawnAt,
                 invulnerable,
                 collidable,
                 lookAtEntity,
-                pickupItems
+                pickupItems,
+                skin
         ));
 
         playerList.add(fake);

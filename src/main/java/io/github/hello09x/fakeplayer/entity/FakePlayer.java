@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.entity;
 
+import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.Main;
@@ -110,6 +111,27 @@ public class FakePlayer {
      * 让假人诞生
      */
     public void spawn(@NotNull SpawnOption option) {
+        if (config.isDropInventoryOnQuiting()) {
+            // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
+            // 因此在生成的时候清空一次背包
+            // 但无法解决登陆后延迟同步背包的情况
+            bukkitPlayer.getInventory().clear();
+        }
+
+        bukkitPlayer.setInvulnerable(option.invulnerable());
+        bukkitPlayer.setCollidable(option.collidable());
+        bukkitPlayer.setCanPickupItems(option.pickupItems());
+        if (option.lookAtEntity()) {
+            ActionManager.instance.setAction(bukkitPlayer, Action.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
+        }
+        if (option.skin()) {
+            Optional.ofNullable(Bukkit.getPlayerExact(this.creator))
+                    .map(nms::getServerPlayer)
+                    .map(p -> p.getGameProfile().getProperties().get("textures"))
+                    .map(textures -> Iterables.getFirst(textures, null))
+                    .ifPresent(texture -> handle.getGameProfile().getProperties().put("textures", texture));
+        }
+
         if (config.isSimulateLogin()) {
             Tasks.runAsync(Main.getInstance(), () -> {
                 Bukkit.getPluginManager().callEvent(new AsyncPlayerPreLoginEvent(
@@ -144,20 +166,6 @@ public class FakePlayer {
                     handle
             );
             connection.setListener(listener);
-        }
-
-        if (config.isDropInventoryOnQuiting()) {
-            // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
-            // 因此在生成的时候清空一次背包
-            // 但无法解决登陆后延迟同步背包的情况
-            bukkitPlayer.getInventory().clear();
-        }
-
-        bukkitPlayer.setInvulnerable(option.invulnerable());
-        bukkitPlayer.setCollidable(option.collidable());
-        bukkitPlayer.setCanPickupItems(option.pickupItems());
-        if (option.lookAtEntity()) {
-            ActionManager.instance.setAction(bukkitPlayer, Action.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
         }
 
         var spawnAt = option.spawnAt().clone();

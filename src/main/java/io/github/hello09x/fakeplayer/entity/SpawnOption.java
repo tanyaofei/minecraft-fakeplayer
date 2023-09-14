@@ -20,7 +20,9 @@ public record SpawnOption(
 
         boolean lookAtEntity,
 
-        boolean pickupItems
+        boolean pickupItems,
+
+        boolean skin
 
 ) {
 }

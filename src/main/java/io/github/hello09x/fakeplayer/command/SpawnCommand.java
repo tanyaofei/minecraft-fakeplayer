@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.fakeplayer.command.Permission.Keepalive;
 import io.github.hello09x.fakeplayer.util.Mth;
@@ -53,31 +54,36 @@ public class SpawnCommand extends AbstractCommand {
                     location.getZ()
             );
         }
-
         var keepalive = Keepalive.of(sender, config.getDefaultKeepalive());
-        var player = fakeplayerManager.spawn(
-                sender,
-                Optional.ofNullable(name).map(String::trim).orElse(""),
-                spawnpoint,
-                Keepalive.isPermanent(keepalive) ? null : LocalDateTime.now().plus(keepalive)
-        );
-        if (player != null) {
-            sender.sendMessage(textOfChildren(
-                    text("你创建了假人 ", GRAY),
-                    text(player.getName()),
-                    text(", 位于 ", GRAY),
-                    text(toLocationString(spawnpoint)),
-                    Keepalive.isPermanent(keepalive)
-                            ? empty()
-                            : textOfChildren(
-                                    text(", 存活时间 ", GRAY),
-                                    text(keepalive.toString()
-                                                 .substring(2)
-                                                 .replaceAll("(\\\\d[HMS])(?!$)", "$1")
-                                                 .toLowerCase(Locale.ROOT))
-                            )
-            ));
+
+        Player player;
+        try {
+            player = fakeplayerManager.spawn(
+                    sender,
+                    Optional.ofNullable(name).map(String::trim).orElse(""),
+                    spawnpoint,
+                    Keepalive.isPermanent(keepalive) ? null : LocalDateTime.now().plus(keepalive)
+            );
+        } catch (MessageException e) {
+            sender.sendMessage(e.asComponent());
+            return;
         }
+
+        sender.sendMessage(textOfChildren(
+                text("你创建了假人 ", GRAY),
+                text(player.getName()),
+                text(", 位于 ", GRAY),
+                text(toLocationString(spawnpoint)),
+                Keepalive.isPermanent(keepalive)
+                        ? empty()
+                        : textOfChildren(
+                        text(", 存活时间 ", GRAY),
+                        text(keepalive.toString()
+                                .substring(2)
+                                .replaceAll("(\\\\d[HMS])(?!$)", "$1")
+                                .toLowerCase(Locale.ROOT))
+                )
+        ));
     }
 
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
