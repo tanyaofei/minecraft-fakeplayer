@@ -54,7 +54,7 @@ public class ActionCommand extends AbstractCommand {
         if (setting.equals(ActionSetting.stop())) {
             desc = " 已停止";
         } else if (setting.equals(ActionSetting.once())) {
-            desc = "";
+            desc = " ";
         } else {
             desc = " 开始";
         }

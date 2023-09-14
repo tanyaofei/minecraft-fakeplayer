@@ -37,9 +37,9 @@ public class SpawnCommand extends AbstractCommand {
     }
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        var name = (String) args.get("name");
-        var world = (World) args.get("world");
-        var location = (Location) args.get("location");
+        var name = (String) args.get("名称");
+        var world = (World) args.get("世界");
+        var location = (Location) args.get("坐标");
 
         Location spawnpoint;
         if (world == null || location == null) {
@@ -116,8 +116,8 @@ public class SpawnCommand extends AbstractCommand {
     }
 
     public void list(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        var page = (int) args.getOptional("page").orElse(1);
-        var size = (int) args.getOptional("size").orElse(10);
+        var page = (int) args.getOptional("页码").orElse(1);
+        var size = (int) args.getOptional("数量").orElse(10);
 
         var fakers = sender.isOp()
                 ? fakeplayerManager.getAll()
@@ -164,7 +164,7 @@ public class SpawnCommand extends AbstractCommand {
         sender.sendMessage(textOfChildren(
                 text("你与 ", GRAY),
                 text(target.getName(), WHITE),
-                text("的距离: ", GRAY),
+                text(" 的距离: ", GRAY),
                 newline(),
                 text("- 欧氏距离: ", GRAY), text(euclidean, WHITE),
                 newline(),

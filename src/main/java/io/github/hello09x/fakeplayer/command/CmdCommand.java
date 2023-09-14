@@ -22,7 +22,7 @@ public class CmdCommand extends AbstractCommand {
 
     public void cmd(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var cmd = Objects.requireNonNull((CommandResult) args.get("command"));
+        var cmd = Objects.requireNonNull((CommandResult) args.get("命令"));
 
         var cmdName = cmd.command().getName();
         if (cmdName.equals("fakeplayer") || cmdName.equals("fp")) {

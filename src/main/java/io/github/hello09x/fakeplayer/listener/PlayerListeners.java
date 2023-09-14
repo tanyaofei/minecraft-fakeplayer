@@ -65,7 +65,7 @@ public class PlayerListeners implements Listener {
                 .map(AttributeInstance::getValue)
                 .ifPresent(player::setHealth);
         event.setCancelled(true);
-        manager.remove(event.getPlayer().getName(), "dead");
+        manager.remove(event.getPlayer().getName(), event.deathMessage());
     }
 
     /**

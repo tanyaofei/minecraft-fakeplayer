@@ -69,9 +69,9 @@ public class CommandRegistry {
                         command("spawn")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
-                                        text("name").withPermission(Permission.spawnName),
-                                        world("world").withPermission(Permission.spawnLocation),
-                                        location("location").withPermission(Permission.spawnLocation))
+                                        text("名称").withPermission(Permission.spawnName),
+                                        world("世界").withPermission(Permission.spawnLocation),
+                                        location("坐标").withPermission(Permission.spawnLocation))
                                 .executes(SpawnCommand.instance::spawn),
                         command("kill")
                                 .withPermission(Permission.spawn)
@@ -80,8 +80,8 @@ public class CommandRegistry {
                         command("list")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
-                                        int32("page", 1),
-                                        int32("size", 1))
+                                        int32("页码", 1),
+                                        int32("数量", 1))
                                 .executes(SpawnCommand.instance::list),
                         command("distance")
                                 .withPermission(Permission.spawn)
@@ -127,12 +127,12 @@ public class CommandRegistry {
                         command("config")
                                 .withSubcommands(
                                         command("get")
-                                                .withArguments(config("config"))
+                                                .withArguments(config("配置项"))
                                                 .executesPlayer(ConfigCommand.instance::getConfig),
                                         command("set")
                                                 .withArguments(
-                                                        config("config"),
-                                                        configValue("config", "value"))
+                                                        config("配置项"),
+                                                        configValue("配置项", "值"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
 
@@ -248,7 +248,7 @@ public class CommandRegistry {
                                 .withPermission(Permission.cmd)
                                 .withArguments(
                                         fakeplayer("target"),
-                                        cmd("command"))
+                                        cmd("命令"))
                                 .executes(CmdCommand.instance::cmd),
 
                         command("reload")

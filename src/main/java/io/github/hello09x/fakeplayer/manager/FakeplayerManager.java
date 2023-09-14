@@ -15,6 +15,7 @@ import io.github.hello09x.fakeplayer.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import io.github.hello09x.fakeplayer.util.AddressUtils;
 import io.github.hello09x.fakeplayer.util.Commands;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
@@ -188,16 +190,31 @@ public class FakeplayerManager {
     /**
      * 根据名称删除假人
      *
-     * @param name 名称
-     * @return 名称对应的玩家不在线或者不是假人
+     * @param name   名称
+     * @param reason 原因
+     * @return 是否删除成功
      */
     public boolean remove(@NotNull String name, @Nullable String reason) {
+        return this.remove(name, reason == null ? null : text(reason));
+    }
+
+    /**
+     * 根据名称删除假人
+     *
+     * @param name   名称
+     * @param reason 原因
+     * @return 是否移除成功
+     */
+    public boolean remove(@NotNull String name, @Nullable Component reason) {
         var player = this.get(name);
         if (player == null) {
             return false;
         }
 
-        player.kick(text("[fakeplayer] " + (reason == null ? "removed" : reason)));
+        player.kick(textOfChildren(
+                text("[fakeplayer] "),
+                reason == null ? text("removed") : reason
+        ));
         return true;
     }
 
