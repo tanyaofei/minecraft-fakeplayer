@@ -36,7 +36,8 @@ public class CommandRegistry {
                         "可以创建模拟玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
                 )
                 .withUsage(
-                        "输入 /fp ? 查看命令帮助"
+                        "输入 /fp ? 查看命令帮助",
+                        "作者: hello09x [汤姆]"
                 )
                 .withSubcommands(
                         helpCommand("/fp",
@@ -60,7 +61,7 @@ public class CommandRegistry {
                                 Usage.of("look (north | south | east | west | up | down | at | entity)", "看向指定位置", Permission.action),
                                 Usage.of("turn (left | right | back | to)", "转身", Permission.action),
                                 Usage.of("move (forward | backward | left | right)", "移动", Permission.action),
-                                Usage.of("ride (me | anything | stop)", "骑", Permission.action),
+                                Usage.of("ride (me | anything | stop)", "骑乘", Permission.action),
                                 Usage.of("sneak [true | false]", "潜行", Permission.action),
                                 Usage.of("cmd <命令>", "执行命令", Permission.cmd),
                                 Usage.of("reload", "重新加载配置文件", Permission.admin)
@@ -155,27 +156,21 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("north")
-                                                .withAliases("n")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.NORTH)),
                                         command("south")
-                                                .withAliases("s")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.SOUTH)),
                                         command("west")
-                                                .withAliases("w")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.WEST)),
                                         command("east")
-                                                .withAliases("e")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.EAST)),
                                         command("up")
-                                                .withAliases("u")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.UP)),
                                         command("down")
-                                                .withAliases("d")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.look(Direction.DOWN)),
                                         command("at")
@@ -183,60 +178,94 @@ public class CommandRegistry {
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance::lookAt),
                                         command("entity")
-                                                .withSubcommands(newActionCommands(Action.LOOK_AT_NEAREST_ENTITY))
+                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withSubcommands(newActionCommands(Action.LOOK_AT_NEAREST_ENTITY)),
+                                        helpCommand(
+                                                "/fp look",
+                                                Usage.of("north", "向北看"),
+                                                Usage.of("south", "向南看"),
+                                                Usage.of("west", "向西看"),
+                                                Usage.of("east", "向东看"),
+                                                Usage.of("up", "向上看"),
+                                                Usage.of("down", "向下看"),
+                                                Usage.of("at", "向特定位置看"),
+                                                Usage.of("entity (once | continuous | interval | stop)", "看向附近实体")
+                                        )
                                 ),
                         command("turn")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("left")
-                                                .withAliases("l")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.turn(-90, 0)),
                                         command("right")
-                                                .withAliases("r")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.turn(90, 0)),
                                         command("back")
-                                                .withAliases("b")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.turn(180, 0)),
                                         command("to")
                                                 .withArguments(rotation("rotation"))
                                                 .withOptionalArguments(fakeplayer("target"))
-                                                .executes(ActionCommand.instance::turnTo)
+                                                .executes(ActionCommand.instance::turnTo),
+                                        helpCommand(
+                                                "/fp turn",
+                                                Usage.of("left", "向左转"),
+                                                Usage.of("right", "向右转"),
+                                                Usage.of("back", "向后转"),
+                                                Usage.of("to", "向特定方向转")
+                                        )
                                 ),
                         command("move")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("forward")
-                                                .withAliases("f")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(1, 0)),
                                         command("backward")
-                                                .withAliases("b")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(-1, 0)),
                                         command("left")
-                                                .withAliases("l")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(0, 1)),
                                         command("right")
-                                                .withAliases("r")
                                                 .withOptionalArguments(fakeplayer("target"))
-                                                .executes(ActionCommand.instance.move(0, -1))
+                                                .executes(ActionCommand.instance.move(0, -1)),
+                                        helpCommand(
+                                                "/fp move",
+                                                Usage.of("forward", "向前移动"),
+                                                Usage.of("backward", "向后移动"),
+                                                Usage.of("left", "向左移动"),
+                                                Usage.of("right", "向右移动")
+                                        )
                                 ),
 
                         command("ride")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("me")
+                                                .withOptionalArguments(fakeplayer("target"))
                                                 .executesPlayer(RideCommand.instance::rideMe),
+                                        command("target")
+                                                .withOptionalArguments(fakeplayer("target"))
+                                                .executes(RideCommand.instance::rideTarget),
                                         command("anything")
+                                                .withOptionalArguments(fakeplayer("target"))
                                                 .executes(RideCommand.instance::rideAnything),
                                         command("normal")
+                                                .withOptionalArguments(fakeplayer("target"))
                                                 .executes(RideCommand.instance::rideNormal),
                                         command("stop")
-                                                .executes(RideCommand.instance::stopRiding)
+                                                .withOptionalArguments(fakeplayer("target"))
+                                                .executes(RideCommand.instance::stopRiding),
+                                        helpCommand(
+                                                "/fp ride",
+                                                Usage.of("me", "骑你"),
+                                                Usage.of("target", "骑目光所指的实体"),
+                                                Usage.of("anything", "骑附近的实体"),
+                                                Usage.of("normal", "骑附近能骑的实体"),
+                                                Usage.of("stop", "下车")
+                                        )
                                 ),
 
                         command("expme")

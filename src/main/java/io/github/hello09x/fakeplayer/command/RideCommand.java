@@ -16,6 +16,9 @@ public class RideCommand extends AbstractCommand {
     public final static RideCommand instance = new RideCommand();
 
 
+    /**
+     * 骑最近的实体
+     */
     public void rideAnything(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var entities = target.getNearbyEntities(4.5, 4.5, 4.5);
@@ -26,6 +29,22 @@ public class RideCommand extends AbstractCommand {
         nms.getServerPlayer(target).startRiding(nms.getEntity(entities.get(0)), true);    // minecraft 会处理重复骑同一个实体
     }
 
+    /**
+     * 骑目标实体
+     */
+    public void rideTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        var target = getTarget(sender, args);
+        var entity = target.getTargetEntity(5);
+        if (entity == null) {
+            return;
+        }
+
+        nms.getServerPlayer(target).startRiding(nms.getEntity(entity), true);
+    }
+
+    /**
+     * 骑正常可以骑的附近实体
+     */
     public void rideNormal(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var entity = target.getNearbyEntities(4.5, 4.5, 4.5)
@@ -41,6 +60,9 @@ public class RideCommand extends AbstractCommand {
         nms.getServerPlayer(target).startRiding(nms.getEntity(entity), true);
     }
 
+    /**
+     * 骑创建者
+     */
     public void rideMe(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         if (!target.getWorld().equals(sender.getWorld())) {
