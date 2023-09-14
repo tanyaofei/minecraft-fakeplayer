@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.executors.CommandExecutor;
+import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.manager.action.Action;
 import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
@@ -35,35 +36,35 @@ public class CommandRegistry {
                         "可以创建模拟玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
                 )
                 .withUsage(
-                        usage("spawn [名称] [世界] [坐标]", "创建假人"),
-                        usage("kill", "移除假人"),
-                        usage("list [页码] [数量]", "查看所有假人"),
-                        usage("distance", "查看与假人的距离"),
-                        usage("tp", "传送到假人身边"),
-                        usage("tphere", "将假人传送到身边"),
-                        usage("tps", "与假人交换位置"),
-                        usage("config get <配置项>", "查看配置项"),
-                        usage("config set <配置项> <值>", "设置配置项"),
-                        usage("health", "查看生命值"),
-                        usage("exp", "查看经验值"),
-                        usage("expme", "转移经验值"),
-                        usage("attack (once | continuous | interval | stop)", "攻击/破坏"),
-                        usage("use (once | continuous | interval | stop)", "使用/交互/放置"),
-                        usage("jump (once | continuous | interval | stop)", "跳"),
-                        usage("drop [-a|--all]", "丢弃手上物品"),
-                        usage("dropinv", "丢弃背包物品"),
-                        usage("look (north | south | east | west | up | down | at | entity)", "看向指定位置"),
-                        usage("turn (left | right | back | to)", "转身"),
-                        usage("move (forward | backward | left |right)", "移动"),
-                        usage("ride (me | anything | stop)", "骑"),
-                        usage("cmd", "执行命令"),
-                        usage("reload", "重新加载配置文件")
+                        "输入 /fp ? 查看命令帮助"
                 )
                 .withSubcommands(
-                        command("help")
-                                .withAliases("?")
-                                .withOptionalArguments(int32("page", 1))
-                                .executesPlayer(HelpCommand.instance::help),
+                        helpCommand("/fp",
+                                Usage.of("spawn [名称] [世界] [坐标]", "创建假人", Permission.spawn),
+                                Usage.of("kill", "移除假人", Permission.spawn),
+                                Usage.of("list [页码] [数量]", "查看所有假人", Permission.spawn),
+                                Usage.of("distance", "查看与假人的距离", Permission.spawn),
+                                Usage.of("drop [-a|--all]", "丢弃手上物品", Permission.spawn),
+                                Usage.of("dropinv", "丢弃背包物品", Permission.spawn),
+                                Usage.of("tp", "传送到假人身边", Permission.tp),
+                                Usage.of("tphere", "将假人传送到身边", Permission.tp),
+                                Usage.of("tps", "与假人交换位置", Permission.tp),
+                                Usage.of("config get <配置项>", "设置个性化配置"),
+                                Usage.of("config set <配置项>", "查看个性化配置"),
+                                Usage.of("health", "查看生命值", Permission.profile),
+                                Usage.of("exp", "查看经验值", Permission.profile),
+                                Usage.of("expme", "转移经验值(补魔)", Permission.exp),
+                                Usage.of("attack (once | continuous | interval | stop)", "攻击/破坏", Permission.action),
+                                Usage.of("use (once | continuous | interval | stop)", "交互/放置", Permission.action),
+                                Usage.of("jump (once | continuous | interval | stop)", "跳", Permission.action),
+                                Usage.of("look (north | south | east | west | up | down | at | entity)", "看向指定位置", Permission.action),
+                                Usage.of("turn (left | right | back | to)", "转身", Permission.action),
+                                Usage.of("move (forward | backward | left | right)", "移动", Permission.action),
+                                Usage.of("ride (me | anything | stop)", "骑", Permission.action),
+                                Usage.of("sneak [true | false]", "潜行", Permission.action),
+                                Usage.of("cmd <命令>", "执行命令", Permission.cmd),
+                                Usage.of("reload", "重新加载配置文件", Permission.admin)
+                        ),
 
                         command("spawn")
                                 .withPermission(Permission.spawn)
@@ -86,6 +87,20 @@ public class CommandRegistry {
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("target"))
                                 .executesPlayer(SpawnCommand.instance::distance),
+                        command("drop")
+                                .withPermission(Permission.spawn)
+                                .withOptionalArguments(
+                                        fakeplayer("target"),
+                                        literals("all", List.of("-a", "--all")))
+                                .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(
+                                        sender,
+                                        args,
+                                        args.getOptional("all").isPresent() ? Action.DROP_STACK : Action.DROP_ITEM,
+                                        ActionSetting.once())),
+                        command("dropinv")
+                                .withPermission(Permission.spawn)
+                                .withOptionalArguments(fakeplayer("target"))
+                                .executes(ActionCommand.instance.action(Action.DROP_INVENTORY, ActionSetting.once())),
 
                         command("exp")
                                 .withPermission(Permission.profile)
@@ -120,6 +135,7 @@ public class CommandRegistry {
                                                         configValue("config", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
+
                         command("attack")
                                 .withPermission(Permission.action)
                                 .withSubcommands(newActionCommands(Action.ATTACK)),
@@ -129,20 +145,6 @@ public class CommandRegistry {
                         command("jump")
                                 .withPermission(Permission.action)
                                 .withSubcommands(newActionCommands(Action.JUMP)),
-                        command("drop")
-                                .withPermission(Permission.action)
-                                .withOptionalArguments(
-                                        fakeplayer("target"),
-                                        literals("all", List.of("-a", "--all")))
-                                .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(
-                                        sender,
-                                        args,
-                                        args.getOptional("all").isPresent() ? Action.DROP_STACK : Action.DROP_ITEM,
-                                        ActionSetting.once())),
-                        command("dropinv")
-                                .withPermission(Permission.action)
-                                .withOptionalArguments(fakeplayer("target"))
-                                .executes(ActionCommand.instance.action(Action.DROP_INVENTORY, ActionSetting.once())),
                         command("sneak")
                                 .withPermission(Permission.action)
                                 .withOptionalArguments(
