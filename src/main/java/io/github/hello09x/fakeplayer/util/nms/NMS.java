@@ -5,6 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -29,6 +30,8 @@ public interface NMS {
     @NotNull PlayerList getPlayerList(@NotNull Server server);
 
     @NotNull BlockPos getBlockPos(@NotNull Location location);
+
+    @NotNull Entity getEntity(@NotNull org.bukkit.entity.Entity entity);
 
     default @NotNull ServerLevel getOverworld() {
         return Objects.requireNonNull(getMinecraftServer(Bukkit.getServer()).getLevel(ServerLevel.OVERWORLD));

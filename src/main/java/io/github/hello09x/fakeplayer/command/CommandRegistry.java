@@ -55,6 +55,7 @@ public class CommandRegistry {
                         usage("look (north | south | east | west | up | down | at | entity)", "看向指定位置"),
                         usage("turn (left | right | back | to)", "转身"),
                         usage("move (forward | backward | left |right)", "移动"),
+                        usage("ride (me | anything | stop)", "骑"),
                         usage("cmd", "执行命令"),
                         usage("reload", "重新加载配置文件")
                 )
@@ -221,6 +222,19 @@ public class CommandRegistry {
                                                 .withAliases("r")
                                                 .withOptionalArguments(fakeplayer("target"))
                                                 .executes(ActionCommand.instance.move(0, -1))
+                                ),
+
+                        command("ride")
+                                .withPermission(Permission.action)
+                                .withSubcommands(
+                                        command("me")
+                                                .executesPlayer(RideCommand.instance::rideMe),
+                                        command("anything")
+                                                .executes(RideCommand.instance::rideAnything),
+                                        command("normal")
+                                                .executes(RideCommand.instance::rideNormal),
+                                        command("stop")
+                                                .executes(RideCommand.instance::stopRiding)
                                 ),
 
                         command("expme")

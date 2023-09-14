@@ -10,12 +10,14 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 import org.bukkit.entity.Player;
@@ -53,6 +55,11 @@ public class NMS_1_20_R1 implements NMS {
     @Override
     public @NotNull BlockPos getBlockPos(@NotNull Location location) {
         return CraftLocation.toBlockPosition(location);
+    }
+
+    @Override
+    public @NotNull Entity getEntity(org.bukkit.entity.@NotNull Entity entity) {
+        return ((CraftEntity) entity).getHandle();
     }
 
     @Override
