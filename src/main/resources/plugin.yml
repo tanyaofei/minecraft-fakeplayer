@@ -61,33 +61,3 @@ permissions:
 
   fakeplayer.admin:
     description: '假人管理员命令权限'
-
-  fakeplayer.alive.1min:
-    description: '假人存活 1 分钟权限(用于测试)'
-
-  fakeplayer.alive.15min:
-    description: '假人存活 15 分钟权限'
-
-  fakeplayer.alive.30min:
-    description: '假人存活 30 分钟权限'
-
-  fakeplayer.alive.1hour:
-    description: '假人存活 1 小时权限'
-
-  fakeplayer.alive.2hour:
-    description: '假人存活 2 小时权限'
-
-  fakeplayer.alive.4hour:
-    description: '假人存活 4 小时权限'
-
-  fakeplayer.alive.8hour:
-    description: '假人存活 8 小时权限'
-
-  fakeplayer.alive.12hour:
-    description: '假人存活 12 小时权限'
-
-  fakeplayer.alive.24hour:
-    description: '假人存活 24 小时权限'
-
-  fakeplayer.alive.permanent:
-    description: '假人永久存活权限'

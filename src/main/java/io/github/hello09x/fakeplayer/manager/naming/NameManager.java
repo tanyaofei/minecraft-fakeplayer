@@ -102,7 +102,7 @@ public class NameManager {
             throw new IllegalCustomNameException(text(String.format("名称最少 %d 位字符", MIN_LENGTH), GRAY));
         }
 
-        if (!config.getNamePattern().asPredicate().test(name)) {
+        if (!config.parseNamePattern().asPredicate().test(name)) {
             throw new IllegalCustomNameException(text("名称不符合格式要求", GRAY));
         }
 
@@ -125,7 +125,7 @@ public class NameManager {
      * @return 序列名
      */
     public @NotNull SequenceName register(@NotNull CommandSender creator) {
-        var source = config.getNameTemplate();
+        var source = config.parseNameTemplate();
         if (source.isBlank()) {
             source = creator.getName();
         }

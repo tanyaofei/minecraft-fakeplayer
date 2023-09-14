@@ -3,12 +3,12 @@ package io.github.hello09x.fakeplayer.config;
 
 import io.github.hello09x.bedrock.config.Config;
 import io.github.hello09x.fakeplayer.Main;
-import io.github.hello09x.fakeplayer.command.Permission;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
@@ -30,7 +30,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         log = Main.getInstance().getLogger();
         instance = new FakeplayerConfig(
                 Main.getInstance(),
-                "10"
+                "11"
         );
     }
 
@@ -103,7 +103,8 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     /**
      * 默认假人存活时间
      */
-    private Duration defaultKeepalive;
+    @Nullable
+    private Duration keepalive;
 
     public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
@@ -130,13 +131,13 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);
         this.nameTemplate = getNameTemplate(file);
-        this.defaultKeepalive = getDefaultKeepalive(file);
+        this.keepalive = getKeepAlive(file);
     }
 
-    private @NotNull Duration getDefaultKeepalive(@NotNull FileConfiguration file) {
-        var minutes = file.getLong("default-keepalive");
+    private @Nullable Duration getKeepAlive(@NotNull FileConfiguration file) {
+        var minutes = file.getLong("keepalive");
         if (minutes <= 0) {
-            return Permission.Keepalive.permanent;
+            return null;
         }
         return Duration.ofMinutes(minutes);
     }

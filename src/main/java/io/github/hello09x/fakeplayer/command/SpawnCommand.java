@@ -4,7 +4,6 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.page.Page;
-import io.github.hello09x.fakeplayer.command.Permission.Keepalive;
 import io.github.hello09x.fakeplayer.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -54,15 +53,15 @@ public class SpawnCommand extends AbstractCommand {
                     location.getZ()
             );
         }
-        var keepalive = Keepalive.of(sender, config.getDefaultKeepalive());
 
+        var keepalive = config.getKeepalive();
         Player player;
         try {
             player = fakeplayerManager.spawn(
                     sender,
                     Optional.ofNullable(name).map(String::trim).orElse(""),
                     spawnpoint,
-                    Keepalive.isPermanent(keepalive) ? null : LocalDateTime.now().plus(keepalive)
+                    keepalive == null ? null : LocalDateTime.now().plus(keepalive)
             );
         } catch (MessageException e) {
             sender.sendMessage(e.asComponent());
@@ -74,9 +73,7 @@ public class SpawnCommand extends AbstractCommand {
                 text(player.getName()),
                 text(", 位于 ", GRAY),
                 text(toLocationString(spawnpoint)),
-                Keepalive.isPermanent(keepalive)
-                        ? empty()
-                        : textOfChildren(
+                keepalive == null ? empty() : textOfChildren(
                         text(", 存活时间 ", GRAY),
                         text(keepalive.toString()
                                 .substring(2)
