@@ -54,7 +54,6 @@
 | fakeplayer.action         | `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`, `ride`                                                                                        |
 | fakeplayer.cmd            | `cmd`                                                                                                                                                   |
 | fakeplayer.admin          | `reload`                                                                                                                                                |
-| fakeplayer.alive._TIME_   | 假人存活时间。`TIME` 可以替换为 `15min`, `30min`, `1hour`, `2hour`, `4hour`, `8hour`, `12hour`, `24hour`, `permanent` 如 `fakeplayer.alive.1hour` 表示创建出来的假人存活 `1 小时` |
 | 无                         | `config`                                                                                                                                                |
 
 ## 玩家个性化配置
