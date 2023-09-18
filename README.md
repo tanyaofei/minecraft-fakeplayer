@@ -33,6 +33,7 @@
 + `/fp look (north | south | east| west | up | down | at | entity)` - 看向指定位置
 + `/fp turn (left | right | back | to)` - 转身到指定位置
 + `/fp move (forward | backward | left | right)` - 移动假人
++ `/fp ride (anything | normal | stop)` - 骑乘
 + `/fp cmd <假人> <命令>` - 执行命令
 + `/fp reload` - 重载配置文件
 
@@ -42,19 +43,19 @@
 
 **_默认所有权限是 op 拥有，请通过权限管理插件来分配！_**
 
-| 节点                      | 指令                                                                                                                                                      |
-|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| fakeplayer.spawn        | `spawn`, `list`, `kill`, `distance`                                                                                                                     |
+| 节点                        | 指令                                                                                                                                                      |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`, `dropinv`, `drop`                                                                                                  |
 | fakeplayer.spawn.location | `spawn` 可以指定出生点                                                                                                                                         |
-| fakeplayer.spawn.name   | `spawn` 可以自定义名称                                                                                                                                         |
-| fakeplayer.tp           | `tp`, `tps`, `tphere`                                                                                                                                   |
-| fakeplayer.profile      | `exp`, `health`                                                                                                                                         |
-| fakeplayer.exp          | `expme`                                                                                                                                                 |
-| fakeplayer.action       | `drop`, `dropinv`, `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`                                                                             |
-| fakeplayer.cmd          | `cmd`                                                                                                                                                   |
-| fakeplayer.admin        | `reload`                                                                                                                                                |
-| fakeplayer.alive._TIME_ | 假人存活时间。`TIME` 可以替换为 `15min`, `30min`, `1hour`, `2hour`, `4hour`, `8hour`, `12hour`, `24hour`, `permanent` 如 `fakeplayer.alive.1hour` 表示创建出来的假人存活 `1 小时` |
-| 无                       | `config`                                                                                                                                                |
+| fakeplayer.spawn.name     | `spawn` 可以自定义名称                                                                                                                                         |
+| fakeplayer.tp             | `tp`, `tps`, `tphere`                                                                                                                                   |
+| fakeplayer.profile        | `exp`, `health`                                                                                                                                         |
+| fakeplayer.exp            | `expme`                                                                                                                                                 |
+| fakeplayer.action         | `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`, `ride`                                                                                        |
+| fakeplayer.cmd            | `cmd`                                                                                                                                                   |
+| fakeplayer.admin          | `reload`                                                                                                                                                |
+| fakeplayer.alive._TIME_   | 假人存活时间。`TIME` 可以替换为 `15min`, `30min`, `1hour`, `2hour`, `4hour`, `8hour`, `12hour`, `24hour`, `permanent` 如 `fakeplayer.alive.1hour` 表示创建出来的假人存活 `1 小时` |
+| 无                         | `config`                                                                                                                                                |
 
 ## 玩家个性化配置
 
