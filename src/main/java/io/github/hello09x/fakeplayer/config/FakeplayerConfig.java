@@ -12,9 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -30,7 +32,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         log = Main.getInstance().getLogger();
         instance = new FakeplayerConfig(
                 Main.getInstance(),
-                "11"
+                "12"
         );
     }
 
@@ -101,6 +103,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private boolean checkForUpdates;
 
     /**
+     * 允许执行的命令
+     */
+    private Set<String> allowCommands;
+
+    /**
      * 默认假人存活时间
      */
     @Nullable
@@ -132,6 +139,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.namePattern = getNamePattern(file);
         this.nameTemplate = getNameTemplate(file);
         this.keepalive = getKeepAlive(file);
+        this.allowCommands = file.getStringList("allow-commands")
+                .stream()
+                .map(c -> c.startsWith("/") ? c.substring(1) : c)
+                .filter(c -> !c.isBlank())
+                .collect(Collectors.toSet());
     }
 
     private @Nullable Duration getKeepAlive(@NotNull FileConfiguration file) {

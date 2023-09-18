@@ -1,6 +1,6 @@
 # 配置文件版本
 # 不要修改这个值
-version: 11
+version: 12
 
 # 服务器最多存在多少个假人
 # 默认: 1000
@@ -96,3 +96,12 @@ self-commands:
 
 # 检测更新
 check-for-updates: true
+
+# 允许玩家让假人执行的命令
+# 在这里你可以放一些你服务器的命令，玩家就可以执行
+# 例如添加 /sit 之后, 玩家可以通过 '/fp cmd myfakeplayer sit' 让假人坐下来
+# ！！！注意: 在这里定义的命令, 不需要 fakeplayer.cmd 权限！！！
+# ！！！注意: 给了 fakeplayer.cmd 命令，玩家就能够控制假人执行所有(有权限的)命令！！！
+allow-commands:
+  - ''
+  - ''

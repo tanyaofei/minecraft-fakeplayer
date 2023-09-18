@@ -7,12 +7,14 @@ import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.bedrock.command.Usage;
+import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.manager.action.Action;
 import io.github.hello09x.fakeplayer.manager.action.ActionSetting;
 import io.github.hello09x.fakeplayer.repository.model.Config;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
 import net.minecraft.core.Direction;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +29,8 @@ import static io.github.hello09x.bedrock.command.Commands.*;
 
 @SuppressWarnings("SameParameterValue")
 public class CommandRegistry {
+
+    private final static ArgumentSuggestions<CommandSender> COMMAND_SUGGESTIONS = cmd("tmp").getOverriddenSuggestions().orElseThrow();
 
     public static void register() {
         command("fakeplayer")
@@ -274,10 +278,11 @@ public class CommandRegistry {
                                 .executesPlayer(ExpCommand.instance::expme),
 
                         command("cmd")
-                                .withPermission(Permission.cmd)
+                                .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
                                 .withArguments(
                                         fakeplayer("target"),
-                                        cmd("命令"))
+                                        cmd("命令")
+                                )
                                 .executes(CmdCommand.instance::cmd),
 
                         command("reload")

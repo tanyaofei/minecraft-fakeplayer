@@ -36,7 +36,7 @@ permissions:
       - fakeplayer.action
 
   fakeplayer.spawn:
-    description: '拥有 spawn, kill, list 命令权限'
+    description: '拥有 spawn, kill, list, drop, dropinv 命令权限'
 
   fakeplayer.spawn.location:
     description: '使用 spawn 命令时可以指定出生点'
@@ -51,13 +51,13 @@ permissions:
     description: '拥有 health, exp 命令权限'
 
   fakeplayer.action:
-    description: '拥有 drop, dropinv, sneak, look, move, jump, attack, use 命令权限'
+    description: '拥有 sneak, look, move, jump, attack, use, ride 命令权限'
 
   fakeplayer.exp:
     description: '拥有 expme 命令权限'
 
   fakeplayer.cmd:
-    description: '拥有 cmd 命令权限'
+    description: '拥有控制假人执行配置文件 `allow-commands` 以外命令的权限'
 
   fakeplayer.admin:
     description: '假人管理员命令权限'

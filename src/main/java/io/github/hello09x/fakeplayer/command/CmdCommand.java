@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.command;
 
+import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
@@ -22,19 +23,22 @@ public class CmdCommand extends AbstractCommand {
 
     public void cmd(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var cmd = Objects.requireNonNull((CommandResult) args.get("命令"));
+        var command = Objects.requireNonNull((CommandResult) args.get("命令"));
 
-        var cmdName = cmd.command().getName();
-        if (cmdName.equals("fakeplayer") || cmdName.equals("fp")) {
-            sender.sendMessage(text("禁止套娃!", RED));
-            return;
+        var name = command.command().getName();
+        if (!sender.hasPermission(Permission.cmd) && !config.getAllowCommands().contains(name)) {
+            throw CommandAPI.failWithString("没有权限执行此命令: " + name);
         }
 
-        if (!cmd.execute(target)) {
+        if (name.equals("fakeplayer") || name.equals("fp")) {
+            throw CommandAPI.failWithString("禁止套娃");
+        }
+
+        if (!command.execute(target)) {
             sender.sendMessage(textOfChildren(
                     text(target.getName(), WHITE),
                     text(" 执行命令失败: ", GRAY),
-                    text(toCommandString(cmd), RED),
+                    text(toCommandString(command), RED),
                     text(" , 请检查命令是否正确以及假人是否有权限", GRAY)
             ));
             return;
@@ -43,7 +47,7 @@ public class CmdCommand extends AbstractCommand {
         sender.sendMessage(textOfChildren(
                 text(target.getName(), WHITE),
                 text(" 成功执行了命令: ", GRAY),
-                text(toCommandString(cmd), YELLOW)
+                text(toCommandString(command), YELLOW)
         ));
     }
 
