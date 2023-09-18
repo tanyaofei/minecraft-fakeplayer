@@ -71,6 +71,7 @@
 | invulnerable   | 是否无敌模式                                |
 | look_at_entity | 是否自动看向附近的实体(包括玩家), 可以配合 `attack` 自动打怪 |
 | pickup_items   | 是否能够拾取物品                              |
+| skin           | 是否使用你的皮肤                              |
 
 # FAQ
 
