@@ -59,7 +59,8 @@ public class CommandRegistry {
                                 Usage.of("health", "查看生命值", Permission.profile),
                                 Usage.of("exp", "查看经验值", Permission.profile),
                                 Usage.of("expme", "转移经验值(补魔)", Permission.exp),
-                                Usage.of("attack (once | continuous | interval | stop)", "攻击/破坏", Permission.action),
+                                Usage.of("attack (once | continuous | interval | stop)", "攻击", Permission.action),
+                                Usage.of("mine (once | continuous | interval | stop)", "挖掘", Permission.action),
                                 Usage.of("use (once | continuous | interval | stop)", "交互/放置", Permission.action),
                                 Usage.of("jump (once | continuous | interval | stop)", "跳", Permission.action),
                                 Usage.of("look (north | south | east | west | up | down | at | entity)", "看向指定位置", Permission.action),
@@ -67,6 +68,7 @@ public class CommandRegistry {
                                 Usage.of("move (forward | backward | left | right)", "移动", Permission.action),
                                 Usage.of("ride (me | anything | stop)", "骑乘", Permission.action),
                                 Usage.of("sneak [true | false]", "潜行", Permission.action),
+                                Usage.of("swap", "交换主副手物品", Permission.spawn),
                                 Usage.of("cmd <命令>", "执行命令", Permission.cmd),
                                 Usage.of("reload", "重新加载配置文件", Permission.admin)
                         ),
@@ -144,6 +146,9 @@ public class CommandRegistry {
                         command("attack")
                                 .withPermission(Permission.action)
                                 .withSubcommands(newActionCommands(ActionType.ATTACK)),
+                        command("mine")
+                                .withPermission(Permission.action)
+                                .withSubcommands(newActionCommands(ActionType.MINE)),
                         command("use")
                                 .withPermission(Permission.action)
                                 .withSubcommands(newActionCommands(ActionType.USE)),
@@ -271,6 +276,11 @@ public class CommandRegistry {
                                                 Usage.of("stop", "下车")
                                         )
                                 ),
+                        command("swap")
+                                .withPermission(Permission.action)
+                                .withOptionalArguments(fakeplayer("target"))
+                                .executes(ActionCommand.instance::swap),
+
 
                         command("expme")
                                 .withPermission(Permission.exp)

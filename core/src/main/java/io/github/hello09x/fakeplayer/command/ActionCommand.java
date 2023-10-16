@@ -66,6 +66,20 @@ public class ActionCommand extends AbstractCommand {
         ));
     }
 
+    public void swap(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        var target = getTarget(sender, args);
+        var item1 = target.getInventory().getItemInMainHand();
+        var item2 = target.getInventory().getItemInOffHand();
+
+        target.getInventory().setItemInMainHand(item2);
+        target.getInventory().setItemInOffHand(item1);
+
+        sender.sendMessage(textOfChildren(
+                text(target.getName()),
+                text(" 交换手上物品", GRAY)
+        ));
+    }
+
     public void sneak(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var sneaking = args

@@ -1,9 +1,10 @@
 package io.github.hello09x.fakeplayer.x.action;
 
 
+import io.github.hello09x.fakeplayer.api.action.Action;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import io.github.hello09x.fakeplayer.x.nms.NMSServerPlayerImpl;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,11 +14,6 @@ public class ActionTicker implements io.github.hello09x.fakeplayer.api.action.Ac
      * 行为类型
      */
     public Action action;
-
-    /**
-     * 行为数据
-     */
-    public ActionPack actionPack;
 
     /**
      * 行为设置
@@ -37,7 +33,7 @@ public class ActionTicker implements io.github.hello09x.fakeplayer.api.action.Ac
             return;
         }
 
-        var done = action.tick(this.actionPack, this.setting);
+        var done = action.tick();
         if (done) {
             if (setting.times > 0) {
                 setting.times--;
@@ -48,27 +44,28 @@ public class ActionTicker implements io.github.hello09x.fakeplayer.api.action.Ac
 
     @Override
     public void inactiveTick() {
-        action.inactiveTick(this.actionPack, this.setting);
+        action.inactiveTick();
     }
 
     @Override
     public void stop() {
-        action.stop(this.actionPack, this.setting);
+        action.stop();
     }
 
     @Override
     public void init(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
+        var handle = new NMSServerPlayerImpl(player).getHandle();
         this.action = switch (action) {
-            case ATTACK -> Action.ATTACK;
-            case USE -> Action.USE;
-            case JUMP -> Action.JUMP;
-            case LOOK_AT_NEAREST_ENTITY -> Action.LOOK_AT_NEAREST_ENTITY;
-            case DROP_ITEM -> Action.DROP_ITEM;
-            case DROP_STACK -> Action.DROP_STACK;
-            case DROP_INVENTORY -> Action.DROP_INVENTORY;
+            case ATTACK -> new AttackAction(handle);
+            case MINE -> new MineAction(handle);
+            case USE -> new UseAction(handle);
+            case JUMP -> new JumpAction(handle);
+            case LOOK_AT_NEAREST_ENTITY -> new StareEntityAction(handle);
+            case DROP_ITEM -> new DropItemAction(handle);
+            case DROP_STACK -> new DropStackAction(handle);
+            case DROP_INVENTORY -> new DropInventoryAction(handle);
         };
 
-        this.actionPack = new ActionPack(((CraftPlayer) player).getHandle());
         this.setting = setting;
     }
 
