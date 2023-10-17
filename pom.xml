@@ -4,16 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.hello09x</groupId>
-    <artifactId>fakeplayer</artifactId>
+    <groupId>io.github.hello09x.fakeplayer</groupId>
+    <artifactId>fakeplayer-parent</artifactId>
     <version>0.1.9</version>
     <packaging>pom</packaging>
 
-    <name>fakeplayer</name>
+    <name>fakeplayer-parent</name>
     <modules>
-        <module>api</module>
-        <module>core</module>
-        <module>v1_20_R1</module>
+        <module>fakeplayer-api</module>
+        <module>fakeplayer-core</module>
+        <module>fakeplayer-v1_20_R1</module>
     </modules>
 
     <properties>
@@ -79,7 +79,5 @@
 
         </dependencies>
     </dependencyManagement>
-
-
 
 </project>
