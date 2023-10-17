@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x.fakeplayer</groupId>
     <artifactId>fakeplayer-parent</artifactId>
-    <version>0.1.9</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>fakeplayer-parent</name>
@@ -21,6 +21,7 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <plugin.version>0.2.0</plugin.version>
     </properties>
 
     <repositories>
@@ -76,6 +77,30 @@
                 <artifactId>commandapi-bukkit-core</artifactId>
                 <version>9.2.0</version>
                 <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x.fakeplayer</groupId>
+                <artifactId>fakeplayer-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x.fakeplayer</groupId>
+                <artifactId>fakeplayer-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x.fakeplayer</groupId>
+                <artifactId>fakeplayer-v1_20_R1</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x.fakeplayer</groupId>
+                <artifactId>fakeplayer-v1_20_R2</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
         </dependencies>

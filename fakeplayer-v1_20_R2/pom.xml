@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.hello09x.fakeplayer</groupId>
         <artifactId>fakeplayer-parent</artifactId>
-        <version>0.1.9</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>fakeplayer-v1_20_R2</artifactId>
@@ -28,13 +28,11 @@
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-core</artifactId>
-            <version>0.1.9</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-api</artifactId>
-            <version>0.1.9</version>
         </dependency>
 
         <dependency>
