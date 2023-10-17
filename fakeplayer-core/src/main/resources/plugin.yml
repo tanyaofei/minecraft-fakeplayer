@@ -1,9 +1,11 @@
 name: fakeplayer
 version: '${project.version}'
-main: io.github.hello09x.fakeplayer.Main
+main: io.github.hello09x.fakeplayer.core.Main
 api-version: '1.20'
 author: hello09x
 website: 'https://github.com/tanyaofei/minecraft-fakeplayer'
+depend:
+  - CommandAPI
 
 permissions:
   fakeplayer.all:

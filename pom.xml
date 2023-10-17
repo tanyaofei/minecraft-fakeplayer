@@ -14,6 +14,8 @@
         <module>fakeplayer-api</module>
         <module>fakeplayer-core</module>
         <module>fakeplayer-v1_20_R1</module>
+        <module>fakeplayer-v1_20_R2</module>
+        <module>fakeplayer-dist</module>
     </modules>
 
     <properties>
@@ -69,12 +71,11 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- shaded -->
-            <!-- https://github.com/JorelAli/CommandAPI -->
             <dependency>
                 <groupId>dev.jorel</groupId>
-                <artifactId>commandapi-bukkit-shade</artifactId>
-                <version>9.0.3</version>
+                <artifactId>commandapi-bukkit-core</artifactId>
+                <version>9.2.0</version>
+                <scope>provided</scope>
             </dependency>
 
         </dependencies>
