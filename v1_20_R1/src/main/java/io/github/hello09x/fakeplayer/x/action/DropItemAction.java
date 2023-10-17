@@ -17,6 +17,7 @@ public class DropItemAction implements Action {
     public boolean tick() {
         player.resetLastActionTime();
         player.drop(false);
+        player.resetLastActionTime();
         return true;
     }
 

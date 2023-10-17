@@ -35,6 +35,7 @@ public class StareEntityAction implements Action {
         }
 
         bukkitPlayer.lookAt(target, LookAnchor.EYES, LookAnchor.EYES);
+        player.resetLastActionTime();
         return true;
     }
 

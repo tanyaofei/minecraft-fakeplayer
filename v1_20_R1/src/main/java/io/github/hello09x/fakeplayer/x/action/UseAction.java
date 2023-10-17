@@ -69,6 +69,7 @@ public class UseAction extends TraceAction {
             }
             var handItem = player.getItemInHand(hand);
             if (player.gameMode.useItem(player, player.level(), handItem, hand).consumesAction()) {
+                player.resetLastActionTime();
                 current.freeze = 3;
                 return true;
             }
@@ -78,7 +79,7 @@ public class UseAction extends TraceAction {
 
     @Override
     public void inactiveTick() {
-        stop();
+        this.stop();
     }
 
     @Override

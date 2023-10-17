@@ -18,6 +18,7 @@ public class DropInventoryAction implements Action {
         for (int i = inventory.getContainerSize(); i >= 0; i--) {
             player.drop(inventory.removeItem(i, inventory.getItem(i).getCount()), false, true);
         }
+        player.resetLastActionTime();
         return true;
     }
 

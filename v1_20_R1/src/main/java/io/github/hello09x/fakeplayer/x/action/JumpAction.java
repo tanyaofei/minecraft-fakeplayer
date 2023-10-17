@@ -19,6 +19,7 @@ public class JumpAction implements Action {
         } else {
             player.setJumping(true);
         }
+        player.resetLastActionTime();
         return true;
     }
 

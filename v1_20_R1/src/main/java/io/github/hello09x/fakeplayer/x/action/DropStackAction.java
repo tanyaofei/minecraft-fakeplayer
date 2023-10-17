@@ -17,6 +17,7 @@ public class DropStackAction implements Action {
     public boolean tick() {
         player.resetLastActionTime();
         player.drop(true);
+        player.resetLastActionTime();
         return true;
     }
 
