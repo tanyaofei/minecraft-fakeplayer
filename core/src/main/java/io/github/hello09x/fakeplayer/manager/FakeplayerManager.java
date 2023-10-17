@@ -83,19 +83,7 @@ public class FakeplayerManager {
             @NotNull Location spawnAt,
             @Nullable LocalDateTime removeAt
     ) throws MessageException  {
-        var playerLimit = config.getPlayerLimit();
-        if (!creator.isOp() && playerLimit != Integer.MAX_VALUE && getAll(creator).size() >= playerLimit) {
-            throw new MessageException(text("你创建的假人数量已达到上限", GRAY));
-        }
-
-        var serverLimit = config.getServerLimit();
-        if (!creator.isOp() && serverLimit != Integer.MAX_VALUE && getAll().size() >= serverLimit) {
-            throw new MessageException(text("服务器假人数量已达到上限", GRAY));
-        }
-
-        if (!creator.isOp() && config.isDetectIp() && countByAddress(AddressUtils.getAddress(creator)) >= 1) {
-            throw new MessageException(text("你所在 IP 创建的假人数量已达到上限", GRAY));
-        }
+        this.checkLimit(creator);
 
         SequenceName sn;
         try {
@@ -119,6 +107,7 @@ public class FakeplayerManager {
                 collidable = Configs.collidable.defaultValue(),
                 pickupItems = Configs.pickup_items.defaultValue(),
                 skin = Configs.skin.defaultValue();
+
         if (creator instanceof Player p) {
             var creatorId = p.getUniqueId();
             invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
@@ -240,6 +229,11 @@ public class FakeplayerManager {
         return playerList.getAll().stream().map(FakePlayer::getPlayer).toList();
     }
 
+    /**
+     * 清理假人
+     *
+     * @param player 假人
+     */
     public void cleanup(@NotNull Player player) {
         var fakeplayer = playerList.removeByUUID(player.getUniqueId());
         if (fakeplayer == null) {
@@ -279,7 +273,6 @@ public class FakeplayerManager {
      */
     public long countByAddress(@NotNull String address) {
         return playerList
-                .getAll()
                 .stream()
                 .filter(p -> p.getCreatorIp().equals(address))
                 .count();
@@ -337,6 +330,24 @@ public class FakeplayerManager {
 
     public void onDisable() {
         this.timer.shutdown();
+    }
+
+    private void checkLimit(@NotNull CommandSender creator) throws MessageException {
+        if (creator.isOp()) {
+            return;
+        }
+
+        if (this.playerList.count() >= config.getServerLimit()) {
+            throw new MessageException("服务器假人数量已达上限");
+        }
+
+        if (this.playerList.getByCreator(creator.getName()).size() >= config.getPlayerLimit()) {
+            throw new MessageException("你创建的假人数量已达上限");
+        }
+
+        if (config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= config.getPlayerLimit()) {
+            throw new MessageException("你所在 IP 创建的假人已达上限");
+        }
     }
 
 }

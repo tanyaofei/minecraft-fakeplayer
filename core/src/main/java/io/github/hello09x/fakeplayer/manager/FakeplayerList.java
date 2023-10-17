@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class FakeplayerList {
 
@@ -107,6 +108,14 @@ public class FakeplayerList {
         }
 
         return player;
+    }
+
+    public @NotNull Stream<FakePlayer> stream() {
+        return this.playersByUUID.values().stream();
+    }
+
+    public int count() {
+        return this.playersByUUID.size();
     }
 
 }

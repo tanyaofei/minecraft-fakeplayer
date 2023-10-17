@@ -14,7 +14,6 @@ import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.repository.model.Config;
 import io.github.hello09x.fakeplayer.repository.model.Configs;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,8 +28,6 @@ import static io.github.hello09x.bedrock.command.Commands.*;
 
 @SuppressWarnings("SameParameterValue")
 public class CommandRegistry {
-
-    private final static ArgumentSuggestions<CommandSender> COMMAND_SUGGESTIONS = cmd("tmp").getOverriddenSuggestions().orElseThrow();
 
     public static void register() {
         command("fakeplayer")
@@ -280,7 +277,6 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withOptionalArguments(fakeplayer("target"))
                                 .executes(ActionCommand.instance::swap),
-
 
                         command("expme")
                                 .withPermission(Permission.exp)

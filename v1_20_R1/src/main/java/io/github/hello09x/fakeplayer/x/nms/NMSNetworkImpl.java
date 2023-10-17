@@ -11,11 +11,13 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.InetAddress;
+
 public class NMSNetworkImpl implements NMSNetwork {
 
     @Override
-    public void bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player) {
-        var connect = new EmptyConnection(PacketFlow.CLIENTBOUND);
+    public void bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address) {
+        var connect = new EmptyConnection(PacketFlow.CLIENTBOUND, address);
         var listener = new EmptyServerGamePacketListener(
                 ((CraftServer) server).getServer(),
                 connect,
@@ -25,8 +27,8 @@ public class NMSNetworkImpl implements NMSNetwork {
     }
 
     @Override
-    public void bindEmptyLoginPacketListener(@NotNull Server server, @NotNull Player player) {
-        var connect = new EmptyConnection(PacketFlow.CLIENTBOUND);
+    public void bindEmptyLoginPacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address) {
+        var connect = new EmptyConnection(PacketFlow.CLIENTBOUND, address);
         var listener = new EmptyLoginPacketListener(
                 ((CraftServer) server).getServer(),
                 connect

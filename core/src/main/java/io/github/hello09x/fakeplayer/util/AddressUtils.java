@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public class AddressUtils {
 
+
     public static String getAddress(@NotNull CommandSender sender) {
         if (sender instanceof Player p) {
             return Optional.ofNullable(p.getAddress()).map(InetSocketAddress::getHostString).orElse("<unknown>");

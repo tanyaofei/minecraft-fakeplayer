@@ -9,6 +9,7 @@ import io.github.hello09x.fakeplayer.api.nms.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.manager.naming.SequenceName;
+import io.github.hello09x.fakeplayer.util.InternalAddressGenerator;
 import io.github.hello09x.fakeplayer.util.Teleportor;
 import io.github.hello09x.fakeplayer.util.Worlds;
 import lombok.Getter;
@@ -20,7 +21,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +35,7 @@ import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 public class FakePlayer {
 
     private final static Logger log = Main.getInstance().getLogger();
-    private final static InetAddress fakeAddress = InetAddress.getLoopbackAddress();
+    private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
     private final FakeplayerConfig config = FakeplayerConfig.instance;
 
@@ -113,28 +113,29 @@ public class FakePlayer {
                     .ifPresent(handle::copyTexture);
         }
 
+        var address = ipGen.next();
         if (config.isSimulateLogin()) {
             Tasks.runAsync(() -> {
                 Bukkit.getPluginManager().callEvent(new AsyncPlayerPreLoginEvent(
                         this.name,
-                        fakeAddress,
-                        fakeAddress,
+                        address,
+                        address,
                         this.uuid,
                         player.getPlayerProfile(),
-                        fakeAddress.getHostName()
+                        address.getHostName()
                 ));
             }, Main.getInstance());
 
             Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(
                     player,
-                    fakeAddress.getHostName(),
-                    fakeAddress
+                    address.getHostName(),
+                    address
             ));
         }
 
         var network = NMSFactory.getInstance().network();
-        network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player);
-        network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player);
+        network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
+        network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
 
         var spawnAt = option.spawnAt().clone();
         if (Worlds.isOverworld(spawnAt.getWorld())) {

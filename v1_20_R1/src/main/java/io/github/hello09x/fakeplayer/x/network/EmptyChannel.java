@@ -1,6 +1,8 @@
 package io.github.hello09x.fakeplayer.x.network;
 
 import io.netty.channel.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -10,9 +12,11 @@ public class EmptyChannel extends AbstractChannel {
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
     private final static EventLoop EVENT_LOOP = new DefaultEventLoop();
+    private final InetAddress address;
 
-    public EmptyChannel(Channel parent) {
+    public EmptyChannel(@Nullable Channel parent, @NotNull InetAddress address) {
         super(parent);
+        this.address = address;
     }
 
     @Override
@@ -58,7 +62,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     protected SocketAddress localAddress0() {
-        return new InetSocketAddress(InetAddress.getLoopbackAddress().getHostName(), 25565);
+        return new InetSocketAddress(address, 25565);
     }
 
     @Override
@@ -78,7 +82,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     protected SocketAddress remoteAddress0() {
-        return new InetSocketAddress(InetAddress.getLoopbackAddress().getHostName(), 25565);
+        return new InetSocketAddress(address, 25565);
     }
 
     @Override

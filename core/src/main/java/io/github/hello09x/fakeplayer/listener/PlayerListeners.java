@@ -5,6 +5,7 @@ import io.github.hello09x.fakeplayer.Main;
 import io.github.hello09x.fakeplayer.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.repository.UsedIdRepository;
+import io.github.hello09x.fakeplayer.util.InternalAddressGenerator;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.event.EventHandler;
@@ -41,11 +42,17 @@ public class PlayerListeners implements Listener {
             return;
         }
 
+        if (InternalAddressGenerator.canBeGenerate(event.getAddress())) {
+            // 假人模拟登陆的 ip 地址
+            return;
+        }
+
         if (usedIdRepository.contains(event.getUniqueId())) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, textOfChildren(
                     text("你的 UUID 被使用过, 不能登陆到服务器\n\n", RED),
                     text("<<---- fakeplayer ---->>", GRAY)
             ));
+            log.info("玩家 %s '%s' 被假人使用过, 拒绝连接服务器".formatted(event.getName(), event.getUniqueId()));
         }
     }
 
