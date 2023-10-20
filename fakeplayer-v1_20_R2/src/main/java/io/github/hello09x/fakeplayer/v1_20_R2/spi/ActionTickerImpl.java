@@ -4,12 +4,13 @@ package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
 import io.github.hello09x.fakeplayer.v1_20_R2.action.*;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionTickerImpl implements io.github.hello09x.fakeplayer.api.spi.ActionTicker {
+public class ActionTickerImpl implements ActionTicker {
 
     /**
      * 行为类型
@@ -45,22 +46,22 @@ public class ActionTickerImpl implements io.github.hello09x.fakeplayer.api.spi.A
             return;
         }
 
-        if (setting.times == 0) {
+        if (setting.ticket == 0) {
             inactiveTick();
             return;
         }
 
-        var valid = action.tick();
-        if (valid) {
-            if (setting.times > 0) {
-                setting.times--;
+        var effected = action.tick();
+        if (effected) {
+            if (setting.ticket > 0) {
+                setting.ticket--;
             }
             setting.wait = setting.interval;
         }
     }
 
     public boolean isDone() {
-        return setting.times <= 0;
+        return setting.ticket <= 0;
     }
 
     @Override

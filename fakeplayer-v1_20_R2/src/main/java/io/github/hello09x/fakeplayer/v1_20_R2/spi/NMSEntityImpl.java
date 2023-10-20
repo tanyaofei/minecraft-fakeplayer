@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class NMSEntityImpl implements NMSEntity {
 
     @Getter
-    private Entity handle;
+    private final Entity handle;
 
     public NMSEntityImpl(@NotNull org.bukkit.entity.@NotNull Entity entity) {
         this.handle = ((CraftEntity) entity).getHandle();

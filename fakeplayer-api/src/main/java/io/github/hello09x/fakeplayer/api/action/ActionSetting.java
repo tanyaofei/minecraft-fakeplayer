@@ -13,7 +13,7 @@ public class ActionSetting implements Cloneable {
     /**
      * 剩余次数
      */
-    public int times;
+    public int ticket;
 
     /**
      * 间隔
@@ -25,13 +25,13 @@ public class ActionSetting implements Cloneable {
      */
     public int wait;
 
-    public ActionSetting(int times, int interval) {
-        this(times, interval, 0);
+    public ActionSetting(int ticket, int interval) {
+        this(ticket, interval, 0);
     }
 
-    public ActionSetting(int times, int interval, int wait) {
-        this.limit = times;
-        this.times = times;
+    public ActionSetting(int ticket, int interval, int wait) {
+        this.limit = ticket;
+        this.ticket = ticket;
         this.interval = interval;
         this.wait = wait;
     }
@@ -54,10 +54,10 @@ public class ActionSetting implements Cloneable {
 
     @Override
     public ActionSetting clone() {
-        return new ActionSetting(
-                this.times,
-                this.interval,
-                this.wait
-        );
+        try {
+            return (ActionSetting) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 }
