@@ -46,22 +46,18 @@ public class ActionTickerImpl implements ActionTicker {
             return;
         }
 
-        if (setting.ticket == 0) {
+        if (setting.remains == 0) {
             inactiveTick();
             return;
         }
 
         var effected = action.tick();
         if (effected) {
-            if (setting.ticket > 0) {
-                setting.ticket--;
+            if (setting.remains > 0) {
+                setting.remains--;
             }
             setting.wait = setting.interval;
         }
-    }
-
-    public boolean isDone() {
-        return setting.ticket <= 0;
     }
 
     @Override

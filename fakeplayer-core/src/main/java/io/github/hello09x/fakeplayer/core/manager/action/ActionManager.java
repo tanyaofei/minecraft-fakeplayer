@@ -37,7 +37,7 @@ public class ActionManager {
             @NotNull ActionSetting setting
     ) {
         var managers = this.managers.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
-        managers.computeIfAbsent(action, key -> Main.getVersionSupport().createAction(player, action, setting));
+        managers.put(action, Main.getVersionSupport().createAction(player, action, setting));
     }
 
     public void tick() {
@@ -56,13 +56,8 @@ public class ActionManager {
             }
 
             // do tick
-            var tickerItr = entry.getValue().values().iterator();
-            while (tickerItr.hasNext()) {
-                var ticker = tickerItr.next();
+            for (var ticker : entry.getValue().values()) {
                 ticker.tick();
-                if (ticker.isDone()) {
-                    tickerItr.remove();
-                }
             }
         }
     }

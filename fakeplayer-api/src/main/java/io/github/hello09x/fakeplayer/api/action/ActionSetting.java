@@ -8,12 +8,12 @@ public class ActionSetting implements Cloneable {
     /**
      * 总次数
      */
-    public final int limit;
+    public final int maximum;
 
     /**
      * 剩余次数
      */
-    public int ticket;
+    public int remains;
 
     /**
      * 间隔
@@ -25,13 +25,13 @@ public class ActionSetting implements Cloneable {
      */
     public int wait;
 
-    public ActionSetting(int ticket, int interval) {
-        this(ticket, interval, 0);
+    public ActionSetting(int maximum, int interval) {
+        this(maximum, interval, 0);
     }
 
-    public ActionSetting(int ticket, int interval, int wait) {
-        this.limit = ticket;
-        this.ticket = ticket;
+    public ActionSetting(int maximum, int interval, int wait) {
+        this.maximum = maximum;
+        this.remains = maximum;
         this.interval = interval;
         this.wait = wait;
     }

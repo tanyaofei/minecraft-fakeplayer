@@ -8,6 +8,4 @@ public interface ActionTicker {
 
     void stop();
 
-    boolean isDone();
-
 }
