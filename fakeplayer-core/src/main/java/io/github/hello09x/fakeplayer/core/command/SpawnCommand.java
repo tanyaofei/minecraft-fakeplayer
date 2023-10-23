@@ -1,9 +1,12 @@
 package io.github.hello09x.fakeplayer.core.command;
 
+import com.google.common.base.Throwables;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.page.Page;
+import io.github.hello09x.bedrock.task.Tasks;
+import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -16,6 +19,7 @@ import org.joml.Math;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
@@ -25,6 +29,7 @@ import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 public class SpawnCommand extends AbstractCommand {
 
     public final static SpawnCommand instance = new SpawnCommand();
+    private final static Logger log = Main.getInstance().getLogger();
 
     private static String toLocationString(@NotNull Location location) {
         return location.getWorld().getName()
@@ -55,32 +60,43 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         var keepalive = config.getKeepalive();
-        Player player;
-        try {
-            player = fakeplayerManager.spawn(
-                    sender,
-                    Optional.ofNullable(name).map(String::trim).orElse(""),
-                    spawnpoint,
-                    keepalive == null ? null : LocalDateTime.now().plus(keepalive)
-            );
-        } catch (MessageException e) {
-            sender.sendMessage(e.asComponent());
-            return;
-        }
-
-        sender.sendMessage(textOfChildren(
-                text("你创建了假人 ", GRAY),
-                text(player.getName()),
-                text(", 位于 ", GRAY),
-                text(toLocationString(spawnpoint)),
-                keepalive == null ? empty() : textOfChildren(
-                        text(", 存活时间 ", GRAY),
-                        text(keepalive.toString()
-                                .substring(2)
-                                .replaceAll("(\\\\d[HMS])(?!$)", "$1")
-                                .toLowerCase(Locale.ROOT))
+        fakeplayerManager.spawnAsync(
+                        sender,
+                        Optional.ofNullable(name).map(String::trim).orElse(""),
+                        spawnpoint,
+                        keepalive == null ? null : LocalDateTime.now().plus(keepalive)
                 )
-        ));
+                .thenAccept(player -> Tasks.run(() -> {
+                    sender.sendMessage(textOfChildren(
+                            text("你创建了假人 ", GRAY),
+                            text(player.getName()),
+                            text(", 位于 ", GRAY),
+                            text(toLocationString(spawnpoint)),
+                            keepalive == null ? empty() : textOfChildren(
+                                    text(", 存活时间 ", GRAY),
+                                    text(keepalive.toString()
+                                            .substring(2)
+                                            .replaceAll("(\\\\d[HMS])(?!$)", "$1")
+                                            .toLowerCase(Locale.ROOT))
+                            )
+                    ));
+                }, Main.getInstance()))
+                .exceptionally(e -> {
+                    var message = Optional.ofNullable(e.getCause())
+                            .filter(cause -> cause instanceof MessageException)
+                            .map(MessageException.class::cast)
+                            .map(MessageException::asComponent)
+                            .orElse(null);
+
+                    if (message != null) {
+                        Tasks.run(() -> sender.sendMessage(message), Main.getInstance());
+                    } else {
+                        Tasks.run(() -> sender.sendMessage(text("召唤假人时发生错误", RED)), Main.getInstance());
+                        log.severe(Throwables.getStackTraceAsString(e));
+                    }
+
+                    return null;
+                });
     }
 
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
@@ -126,7 +142,7 @@ public class SpawnCommand extends AbstractCommand {
         sender.sendMessage(p.asComponent(
                 text("假人", AQUA, BOLD),
                 fakeplayer -> textOfChildren(
-                        text(fakeplayer.getName() + " (" + fakeplayerManager.getCreator(fakeplayer) + ")", GOLD),
+                        text(fakeplayer.getName() + " (" + fakeplayerManager.getCreatorName(fakeplayer) + ")", GOLD),
                         text(" - ", GRAY),
                         text(toLocationString(fakeplayer.getLocation()), WHITE),
                         canTp ? text(" [<--传送]", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())) : empty(),

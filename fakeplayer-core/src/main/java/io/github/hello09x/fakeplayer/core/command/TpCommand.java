@@ -3,8 +3,12 @@ package io.github.hello09x.fakeplayer.core.command;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.util.Teleportor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class TpCommand extends AbstractCommand {
 
@@ -12,12 +16,12 @@ public class TpCommand extends AbstractCommand {
 
     public void tp(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        this.teleport(sender, target);
+        this.teleport(sender, sender, target);
     }
 
     public void tphere(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        this.teleport(target, sender);
+        this.teleport(sender, target, sender);
     }
 
     public void tps(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
@@ -30,9 +34,10 @@ public class TpCommand extends AbstractCommand {
         Teleportor.teleportAndSound(sender, l2);
     }
 
-    private void teleport(@NotNull Player from, @NotNull Player to) {
-        Teleportor.teleportAndSound(from, to.getLocation());
+    private void teleport(@NotNull CommandSender sender, @NotNull Player from, @NotNull Player to) {
+        if (!Teleportor.teleportAndSound(from, to.getLocation())) {
+            sender.sendMessage(text("传送失败: 可能由于第三方插件影响", GRAY));
+        }
     }
-
 
 }

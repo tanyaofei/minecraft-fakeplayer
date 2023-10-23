@@ -66,7 +66,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
         @SuppressWarnings("all")
         var group = manager.getAll()
                 .stream()
-                .collect(Collectors.groupingBy(manager::getCreator));
+                .collect(Collectors.groupingBy(manager::getCreatorName));
 
         for (var entry : group.entrySet()) {
             var creator = entry.getKey();

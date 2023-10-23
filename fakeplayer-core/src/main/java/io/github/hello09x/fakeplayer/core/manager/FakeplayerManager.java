@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -77,12 +78,12 @@ public class FakeplayerManager {
      * @param creator 创建者
      * @param spawnAt 生成地点
      */
-    public @NotNull Player spawn(
+    public @NotNull CompletableFuture<Player> spawnAsync(
             @NotNull CommandSender creator,
             @NotNull String name,
             @NotNull Location spawnAt,
             @Nullable LocalDateTime removeAt
-    ) throws MessageException  {
+    ) {
         this.checkLimit(creator);
 
         SequenceName sn;
@@ -92,49 +93,54 @@ public class FakeplayerManager {
             throw new MessageException(e.getText());
         }
 
-        var fake = new FakePlayer(
-                creator.getName(),
+        var fp = new FakePlayer(
+                creator,
                 AddressUtils.getAddress(creator),
                 sn,
                 removeAt
         );
 
-        var player = fake.getPlayer();
+        var player = fp.getPlayer();
         player.playerListName(text(player.getName(), GRAY, ITALIC));
 
-        boolean invulnerable = Configs.invulnerable.defaultValue(),
-                lookAtEntity = Configs.look_at_entity.defaultValue(),
-                collidable = Configs.collidable.defaultValue(),
-                pickupItems = Configs.pickup_items.defaultValue(),
-                skin = Configs.skin.defaultValue();
+        return CompletableFuture
+                .supplyAsync(() -> {
+                    boolean invulnerable = Configs.invulnerable.defaultValue(),
+                            lookAtEntity = Configs.look_at_entity.defaultValue(),
+                            collidable = Configs.collidable.defaultValue(),
+                            pickupItems = Configs.pickup_items.defaultValue(),
+                            skin = Configs.skin.defaultValue();
 
-        if (creator instanceof Player p) {
-            var creatorId = p.getUniqueId();
-            invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
-            lookAtEntity = userConfigRepository.selectOrDefault(creatorId, Configs.look_at_entity);
-            collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
-            pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
-            skin = userConfigRepository.selectOrDefault(creatorId, Configs.skin);
-        }
+                    if (creator instanceof Player p) {
+                        var creatorId = p.getUniqueId();
+                        invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
+                        lookAtEntity = userConfigRepository.selectOrDefault(creatorId, Configs.look_at_entity);
+                        collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
+                        pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
+                        skin = userConfigRepository.selectOrDefault(creatorId, Configs.skin);
+                    }
 
-        fake.spawn(new SpawnOption(
-                spawnAt,
-                invulnerable,
-                collidable,
-                lookAtEntity,
-                pickupItems,
-                skin
-        ));
+                    return new SpawnOption(
+                            spawnAt,
+                            invulnerable,
+                            collidable,
+                            lookAtEntity,
+                            pickupItems,
+                            skin
+                    );
+                })
+                .thenApply(option -> fp.spawnAsync(option).join())
+                .thenRunAsync(() -> {
+                    Tasks.run(() -> {
+                        playerList.add(fp);
+                        usedIdRepository.add(player.getUniqueId());
+                    }, Main.getInstance());
 
-        playerList.add(fake);
-        usedIdRepository.add(player.getUniqueId());
-
-        Tasks.run(() -> {
-            dispatchCommands(player, config.getPreparingCommands());
-            performCommands(player, config.getSelfCommands());
-        }, Main.getInstance(), 20);
-
-        return player;
+                    Tasks.run(() -> {
+                        dispatchCommands(player, config.getPreparingCommands());
+                        performCommands(player, config.getSelfCommands());
+                    }, Main.getInstance(), 20);
+                }).thenApply(ignored -> player);
     }
 
     /**
@@ -147,7 +153,7 @@ public class FakeplayerManager {
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
         return Optional
                 .ofNullable(playerList.getByName(name))
-                .filter(p -> p.getCreator().equals(creator.getName()))
+                .filter(p -> p.getCreator().equals(creator))
                 .map(FakePlayer::getPlayer)
                 .orElse(null);
     }
@@ -171,10 +177,11 @@ public class FakeplayerManager {
      * @param player 假人
      * @return 假人的创建者
      */
-    public @Nullable String getCreator(@NotNull Player player) {
+    public @Nullable String getCreatorName(@NotNull Player player) {
         return Optional
                 .ofNullable(playerList.getByUUID(player.getUniqueId()))
                 .map(FakePlayer::getCreator)
+                .map(CommandSender::getName)
                 .orElse(null);
     }
 
@@ -320,7 +327,7 @@ public class FakeplayerManager {
                 commands,
                 "%p", player.getName(),
                 "%u", player.getUniqueId().toString(),
-                "%c", Objects.requireNonNull(getCreator(player)))
+                "%c", Objects.requireNonNull(getCreatorName(player)))
         ) {
             if (!server.dispatchCommand(sender, cmd)) {
                 log.warning("执行命令失败: " + cmd);

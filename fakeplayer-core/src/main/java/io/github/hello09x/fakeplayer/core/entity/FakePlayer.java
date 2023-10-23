@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
+import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
@@ -14,22 +15,22 @@ import io.github.hello09x.fakeplayer.core.util.Worlds;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.InetAddress;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.textOfChildren;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
-import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class FakePlayer {
 
@@ -40,7 +41,7 @@ public class FakePlayer {
 
     @NotNull
     @Getter
-    private final String creator;
+    private CommandSender creator;
 
     @NotNull
     @Getter
@@ -69,7 +70,7 @@ public class FakePlayer {
     private final UUID uuid;
 
     public FakePlayer(
-            @NotNull String creator,
+            @NotNull CommandSender creator,
             @NotNull String creatorIp,
             @NotNull SequenceName sequenceName,
             @Nullable LocalDateTime removeAt
@@ -93,58 +94,66 @@ public class FakePlayer {
     /**
      * 让假人诞生
      */
-    public void spawn(@NotNull SpawnOption option) {
-        if (config.isDropInventoryOnQuiting()) {
-            // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
-            // 因此在生成的时候清空一次背包
-            // 但无法解决登陆后延迟同步背包的情况
-            player.getInventory().clear();
-        }
+    public CompletableFuture<Void> spawnAsync(@NotNull SpawnOption option) {
+        return CompletableFuture.runAsync(() -> {
+            var address = ipGen.next();
+            try {
+                Tasks.joinAsync(() -> {
+                    var event = this.preLogin(address);
+                    if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+                        throw new MessageException(textOfChildren(
+                                text("创建假人失败, 无法登陆(preLogin): ", RED), event.kickMessage()
+                        ));
+                    }
+                }, Main.getInstance());
+            } catch (Throwable e) {
+                throw MessageException.tryCast(e);
+            }
 
-        player.setInvulnerable(option.invulnerable());
-        player.setCollidable(option.collidable());
-        player.setCanPickupItems(option.pickupItems());
-        if (option.lookAtEntity()) {
-            ActionManager.instance.setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
-        }
-        if (option.skin()) {
-            Optional.ofNullable(Bukkit.getPlayerExact(this.creator))
-                    .ifPresent(handle::copyTexture);
-        }
+            try {
+                Tasks.join(() -> {
+                    var login = this.login(address);
+                    if (login.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+                        throw new MessageException(textOfChildren(
+                                text("创建假人失败, 无法登陆(login): ", RED), login.kickMessage()
+                        ));
+                    }
 
-        var address = ipGen.next();
-        if (config.isSimulateLogin()) {
-            Tasks.runAsync(() -> {
-                Bukkit.getPluginManager().callEvent(new AsyncPlayerPreLoginEvent(
-                        this.name,
-                        address,
-                        address,
-                        this.uuid,
-                        player.getPlayerProfile(),
-                        address.getHostName()
-                ));
-            }, Main.getInstance());
+                    if (config.isDropInventoryOnQuiting()) {
+                        // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
+                        // 因此在生成的时候清空一次背包
+                        // 但无法解决登陆后延迟同步背包的情况
+                        player.getInventory().clear();
+                    }
 
-            Bukkit.getPluginManager().callEvent(new PlayerLoginEvent(
-                    player,
-                    address.getHostName(),
-                    address
-            ));
-        }
+                    player.setInvulnerable(option.invulnerable());
+                    player.setCollidable(option.collidable());
+                    player.setCanPickupItems(option.pickupItems());
+                    if (option.lookAtEntity()) {
+                        ActionManager.instance.setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
+                    }
+                    if (option.skin() && this.creator instanceof Player playerCreator) {
+                        handle.copyTexture(playerCreator);
+                    }
 
-        var network = Main.getVersionSupport().network();
-        network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
-        network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
+                    var network = Main.getVersionSupport().network();
+                    network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
+                    network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
 
-        var spawnAt = option.spawnAt().clone();
-        if (Worlds.isOverworld(spawnAt.getWorld())) {
-            // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
-            teleportToSpawnpointAfterChangingDimension(spawnAt);
-        } else {
-            teleportToSpawnpoint(spawnAt);
-        }
+                    var spawnAt = option.spawnAt().clone();
+                    if (Worlds.isOverworld(spawnAt.getWorld())) {
+                        // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
+                        teleportToSpawnpointAfterChangingDimension(spawnAt);
+                    } else {
+                        teleportToSpawnpoint(spawnAt);
+                    }
 
-        ticker.runTaskTimer(Main.getInstance(), 0, 1);
+                    ticker.runTaskTimer(Main.getInstance(), 0, 1);
+                }, Main.getInstance());
+            } catch (Throwable e) {
+                throw MessageException.tryCast(e);
+            }
+        });
     }
 
     /**
@@ -155,14 +164,12 @@ public class FakePlayer {
     private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
         var world = Worlds.getNonOverworld();
         if (world == null || !player.teleport(world.getSpawnLocation())) {
-            Optional.ofNullable(Bukkit.getPlayerExact(creator))
-                    .ifPresentOrElse(
-                            c -> c.sendMessage(textOfChildren(
-                                    text(player.getName(), WHITE),
-                                    text(" 需要你手动帮他跨越过一次世界才具有刷怪能力", GRAY)
-                            )),
-                            () -> log.warning(String.format("假人 %s 需要手动跨越一次世界才具有刷怪能力", player.getName()))
-                    );
+            this.creator.sendMessage(
+                    textOfChildren(
+                            text(player.getName(), WHITE),
+                            text(" 无法获取刷怪能力, 需要你帮他完成一次世界间传送, 你可以使用 tphere 命令传送到地狱再传送回来", GRAY)
+                    )
+            );
             return;
         }
 
@@ -171,13 +178,10 @@ public class FakePlayer {
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
         if (!Teleportor.teleportAndSound(player, spawnpoint)) {
-            Optional.ofNullable(Bukkit.getPlayerExact(creator))
-                    .ifPresentOrElse(
-                            p -> p.sendMessage(textOfChildren(
-                                    text(player.getName(), WHITE),
-                                    text(" 传送到你身边失败: 可能由于第三方插件影响", GRAY, ITALIC)
-                            )),
-                            () -> log.warning(String.format("假人 %s 可能由于第三方插件而传送到创建者身边失败", player.getName())));
+            this.creator.sendMessage(textOfChildren(
+                    text(player.getName(), WHITE),
+                    text(" 传送到你身边失败: 可能由于第三方插件影响", GRAY)
+            ));
         }
     }
 
@@ -189,12 +193,31 @@ public class FakePlayer {
         return this.player.isOnline();
     }
 
-    public @Nullable Player getCreatorPlayer() {
-        return Bukkit.getPlayerExact(this.creator);
-    }
-
     public int getTickCount() {
         return handle.getTickCount();
+    }
+
+    private @NotNull AsyncPlayerPreLoginEvent preLogin(@NotNull InetAddress address) {
+        var event = new AsyncPlayerPreLoginEvent(
+                this.name,
+                address,
+                address,
+                this.uuid,
+                player.getPlayerProfile(),
+                address.getHostName()
+        );
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    private @NotNull PlayerLoginEvent login(@NotNull InetAddress address) {
+        var event = new PlayerLoginEvent(
+                player,
+                address.getHostName(),
+                address
+        );
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
 }

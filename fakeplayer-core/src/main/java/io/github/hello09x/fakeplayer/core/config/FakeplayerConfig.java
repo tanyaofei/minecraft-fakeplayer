@@ -32,7 +32,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         log = Main.getInstance().getLogger();
         instance = new FakeplayerConfig(
                 Main.getInstance(),
-                "12"
+                "13"
         );
     }
 
@@ -83,11 +83,6 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private List<String> destroyCommands;
 
     /**
-     * 模拟登陆
-     */
-    private boolean simulateLogin;
-
-    /**
      * 退出时是否丢弃背包物品
      */
     private boolean dropInventoryOnQuiting;
@@ -133,7 +128,6 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.preparingCommands = file.getStringList("preparing-commands");
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
-        this.simulateLogin = file.getBoolean("simulate-login", false);
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);

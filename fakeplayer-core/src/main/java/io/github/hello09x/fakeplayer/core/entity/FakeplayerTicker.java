@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.textOfChildren;
@@ -39,19 +38,20 @@ public class FakeplayerTicker extends BukkitRunnable {
     @Override
     public void run() {
         if (!player.isOnline()) {
-            cancel();
+            super.cancel();
             return;
         }
 
         if (removeAt != 0 && player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
             manager.remove(player.getName(), "存活时间到期");
-            Optional.ofNullable(player.getCreatorPlayer())
-                    .ifPresent(p -> p.sendMessage(textOfChildren(
+            player.getCreator().sendMessage(
+                   textOfChildren(
                             text("假人 ", GRAY),
                             text(this.player.getName()),
                             text(" 存活时间到期, 已移除", GRAY)
-                    )));
-            cancel();
+                    )
+            );
+            super.cancel();
             return;
         }
 
