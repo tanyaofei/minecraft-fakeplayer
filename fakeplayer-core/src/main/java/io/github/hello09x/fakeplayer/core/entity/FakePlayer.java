@@ -99,7 +99,7 @@ public class FakePlayer {
             var address = ipGen.next();
             try {
                 Tasks.joinAsync(() -> {
-                    var event = this.preLogin(address);
+                    var event = this.preLogin(InetAddress.getLoopbackAddress());
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
                         throw new MessageException(textOfChildren(
                                 text("创建假人失败, 无法登陆(preLogin): ", RED), event.kickMessage()
@@ -112,7 +112,7 @@ public class FakePlayer {
 
             try {
                 Tasks.join(() -> {
-                    var login = this.login(address);
+                    var login = this.login(InetAddress.getLoopbackAddress());
                     if (login.getResult() != PlayerLoginEvent.Result.ALLOWED) {
                         throw new MessageException(textOfChildren(
                                 text("创建假人失败, 无法登陆(login): ", RED), login.kickMessage()
@@ -213,7 +213,7 @@ public class FakePlayer {
     private @NotNull PlayerLoginEvent login(@NotNull InetAddress address) {
         var event = new PlayerLoginEvent(
                 player,
-                address.getHostName(),
+                address.getHostAddress(),
                 address
         );
         Bukkit.getPluginManager().callEvent(event);
