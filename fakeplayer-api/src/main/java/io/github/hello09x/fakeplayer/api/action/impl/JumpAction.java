@@ -1,16 +1,19 @@
-package io.github.hello09x.fakeplayer.v1_20_R2.action;
+package io.github.hello09x.fakeplayer.api.action.impl;
 
 import io.github.hello09x.fakeplayer.api.spi.Action;
-import net.minecraft.server.level.ServerPlayer;
+import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
+import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class JumpAction implements Action {
 
-    private final ServerPlayer player;
+    @NotNull
+    private final NMSServerPlayer player;
 
-    public JumpAction(@NotNull ServerPlayer player) {
+    public JumpAction(@NotNull NMSServerPlayer player) {
         this.player = player;
     }
+
 
     @Override
     public boolean tick() {
@@ -25,12 +28,11 @@ public class JumpAction implements Action {
 
     @Override
     public void inactiveTick() {
-        player.setJumping(false);
+
     }
 
     @Override
     public void stop() {
 
     }
-
 }

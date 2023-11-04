@@ -18,7 +18,7 @@ public interface VersionSupport {
                 .load(VersionSupport.class, VersionSupport.class.getClassLoader())
                 .stream()
                 .map(ServiceLoader.Provider::get)
-                .filter(v -> v.isSupported())
+                .filter(VersionSupport::isSupported)
                 .findAny()
                 .orElse(null);
     }

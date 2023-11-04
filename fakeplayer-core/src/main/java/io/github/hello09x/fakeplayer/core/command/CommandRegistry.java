@@ -7,9 +7,10 @@ import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.bedrock.command.Usage;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.core.command.support.Direction;
+import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
@@ -33,49 +34,49 @@ public class CommandRegistry {
         command("fakeplayer")
                 .withAliases("fp")
                 .withHelp(
-                        "假人",
-                        "可以创建模拟玩家的假人, 能保持附近区块的刷新、触发怪物生成。同时还提供了一些操作命令让你控制假人的物品、动作等等。"
+                        I18n.asString("command.help.fp.short-description"),
+                          I18n.asString("command.help.fp.full-description")
                 )
                 .withUsage(
-                        "输入 /fp ? 查看命令帮助",
-                        "作者: hello09x [汤姆]"
+                        "fp ? to get more usage",
+                        "hello09x [汤姆]"
                 )
                 .withSubcommands(
                         helpCommand("/fp",
-                                Usage.of("spawn [名称] [世界] [坐标]", "创建假人", Permission.spawn),
-                                Usage.of("kill", "移除假人", Permission.spawn),
-                                Usage.of("list [页码] [数量]", "查看所有假人", Permission.spawn),
-                                Usage.of("distance", "查看与假人的距离", Permission.spawn),
-                                Usage.of("drop [-a|--all]", "丢弃手上物品", Permission.spawn),
-                                Usage.of("dropinv", "丢弃背包物品", Permission.spawn),
-                                Usage.of("tp", "传送到假人身边", Permission.tp),
-                                Usage.of("tphere", "将假人传送到身边", Permission.tp),
-                                Usage.of("tps", "与假人交换位置", Permission.tp),
-                                Usage.of("config get <配置项>", "设置个性化配置"),
-                                Usage.of("config set <配置项>", "查看个性化配置"),
-                                Usage.of("health", "查看生命值", Permission.profile),
-                                Usage.of("exp", "查看经验值", Permission.profile),
-                                Usage.of("expme", "转移经验值(补魔)", Permission.exp),
-                                Usage.of("attack (once | continuous | interval | stop)", "攻击", Permission.action),
-                                Usage.of("mine (once | continuous | interval | stop)", "挖掘", Permission.action),
-                                Usage.of("use (once | continuous | interval | stop)", "交互/放置", Permission.action),
-                                Usage.of("jump (once | continuous | interval | stop)", "跳", Permission.action),
-                                Usage.of("look (north | south | east | west | up | down | at | entity)", "看向指定位置", Permission.action),
-                                Usage.of("turn (left | right | back | to)", "转身", Permission.action),
-                                Usage.of("move (forward | backward | left | right)", "移动", Permission.action),
-                                Usage.of("ride (me | anything | stop)", "骑乘", Permission.action),
-                                Usage.of("sneak [true | false]", "潜行", Permission.action),
-                                Usage.of("swap", "交换主副手物品", Permission.spawn),
-                                Usage.of("cmd <命令>", "执行命令", Permission.cmd),
-                                Usage.of("reload", "重新加载配置文件", Permission.admin)
+                                Usage.of("spawn", I18n.asString("command.help.spawn.description"), Permission.spawn),
+                                Usage.of("kill", I18n.asString("command.help.kill.description"), Permission.spawn),
+                                Usage.of("list", I18n.asString("command.help.list.description"), Permission.spawn),
+                                Usage.of("distance", I18n.asString("command.help.distance.description"), Permission.spawn),
+                                Usage.of("drop", I18n.asString("command.help.drop.description"), Permission.spawn),
+                                Usage.of("dropinv", I18n.asString("command.help.dropinv.description"), Permission.spawn),
+                                Usage.of("tp", I18n.asString("command.help.tp.description"), Permission.tp),
+                                Usage.of("tphere", I18n.asString("command.help.tphere.description"), Permission.tp),
+                                Usage.of("tps", I18n.asString("command.help.tps.description"), Permission.tp),
+                                Usage.of("config get", I18n.asString("command.help.config.get.description")),
+                                Usage.of("config set", I18n.asString("command.help.config.set.description")),
+                                Usage.of("health", I18n.asString("command.help.health.description"), Permission.profile),
+                                Usage.of("exp", I18n.asString("command.help.exp.description"), Permission.profile),
+                                Usage.of("expme", I18n.asString("command.help.expme.description"), Permission.exp),
+                                Usage.of("attack", I18n.asString("command.help.attack.description"), Permission.action),
+                                Usage.of("mine", I18n.asString("command.help.mine.description"), Permission.action),
+                                Usage.of("use", I18n.asString("command.help.use.description"), Permission.action),
+                                Usage.of("jump", I18n.asString("command.help.jump.description"), Permission.action),
+                                Usage.of("look", I18n.asString("command.help.look.description"), Permission.action),
+                                Usage.of("turn", I18n.asString("command.help.turn.description"), Permission.action),
+                                Usage.of("move", I18n.asString("command.help.move.description"), Permission.action),
+                                Usage.of("ride", I18n.asString("command.help.ride.description"), Permission.action),
+                                Usage.of("sneak", I18n.asString("command.help.sneak.description"), Permission.action),
+                                Usage.of("swap", I18n.asString("command.help.swap.description"), Permission.spawn),
+                                Usage.of("cmd", I18n.asString("command.help.cmd.description"), Permission.cmd),
+                                Usage.of("reload", I18n.asString("command.help.reload.description"), Permission.admin)
                         ),
 
                         command("spawn")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
-                                        text("名称").withPermission(Permission.spawnName),
-                                        world("世界").withPermission(Permission.spawnLocation),
-                                        location("坐标").withPermission(Permission.spawnLocation))
+                                        text("name").withPermission(Permission.spawnName),
+                                        world("world").withPermission(Permission.spawnLocation),
+                                        location("location").withPermission(Permission.spawnLocation))
                                 .executes(SpawnCommand.instance::spawn),
                         command("kill")
                                 .withPermission(Permission.spawn)
@@ -84,8 +85,8 @@ public class CommandRegistry {
                         command("list")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
-                                        int32("页码", 1),
-                                        int32("数量", 1))
+                                        int32("page", 1),
+                                        int32("size", 1))
                                 .executes(SpawnCommand.instance::list),
                         command("distance")
                                 .withPermission(Permission.spawn)
@@ -131,12 +132,12 @@ public class CommandRegistry {
                         command("config")
                                 .withSubcommands(
                                         command("get")
-                                                .withArguments(config("配置项"))
+                                                .withArguments(config("config"))
                                                 .executesPlayer(ConfigCommand.instance::getConfig),
                                         command("set")
                                                 .withArguments(
-                                                        config("配置项"),
-                                                        configValue("配置项", "值"))
+                                                        config("config"),
+                                                        configValue("config", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
 
@@ -188,14 +189,14 @@ public class CommandRegistry {
                                                 .withSubcommands(newActionCommands(ActionType.LOOK_AT_NEAREST_ENTITY)),
                                         helpCommand(
                                                 "/fp look",
-                                                Usage.of("north", "向北看"),
-                                                Usage.of("south", "向南看"),
-                                                Usage.of("west", "向西看"),
-                                                Usage.of("east", "向东看"),
-                                                Usage.of("up", "向上看"),
-                                                Usage.of("down", "向下看"),
-                                                Usage.of("at", "向特定位置看"),
-                                                Usage.of("entity (once | continuous | interval | stop)", "看向附近实体")
+                                                Usage.of("north", I18n.asString("command.help.look.north.description")),
+                                                Usage.of("south", I18n.asString("command.help.look.south.description")),
+                                                Usage.of("west", I18n.asString("command.help.look.west.description")),
+                                                Usage.of("east", I18n.asString("command.help.look.east.description")),
+                                                Usage.of("up", I18n.asString("command.help.look.up.description")),
+                                                Usage.of("down", I18n.asString("command.help.look.down.description")),
+                                                Usage.of("at", I18n.asString("command.help.look.at.description")),
+                                                Usage.of("entity (once | continuous | interval | stop)", I18n.asString("command.help.look.entity.description"))
                                         )
                                 ),
                         command("turn")
@@ -216,10 +217,10 @@ public class CommandRegistry {
                                                 .executes(ActionCommand.instance::turnTo),
                                         helpCommand(
                                                 "/fp turn",
-                                                Usage.of("left", "向左转"),
-                                                Usage.of("right", "向右转"),
-                                                Usage.of("back", "向后转"),
-                                                Usage.of("to", "向特定方向转")
+                                                Usage.of("left", I18n.asString("command.help.turn.left.description")),
+                                                Usage.of("right",  I18n.asString("command.help.turn.right.description")),
+                                                Usage.of("back",  I18n.asString("command.help.turn.back.description")),
+                                                Usage.of("to",  I18n.asString("command.help.turn.to.description"))
                                         )
                                 ),
                         command("move")
@@ -239,10 +240,10 @@ public class CommandRegistry {
                                                 .executes(ActionCommand.instance.move(0, -1)),
                                         helpCommand(
                                                 "/fp move",
-                                                Usage.of("forward", "向前移动"),
-                                                Usage.of("backward", "向后移动"),
-                                                Usage.of("left", "向左移动"),
-                                                Usage.of("right", "向右移动")
+                                                Usage.of("forward",  I18n.asString("command.help.move.forward.description")),
+                                                Usage.of("backward", I18n.asString("command.help.move.backward.description")),
+                                                Usage.of("left", I18n.asString("command.help.move.left.description")),
+                                                Usage.of("right", I18n.asString("command.help.move.right.description"))
                                         )
                                 ),
 
@@ -266,11 +267,11 @@ public class CommandRegistry {
                                                 .executes(RideCommand.instance::stopRiding),
                                         helpCommand(
                                                 "/fp ride",
-                                                Usage.of("me", "骑你"),
-                                                Usage.of("target", "骑目光所指的实体"),
-                                                Usage.of("anything", "骑附近的实体"),
-                                                Usage.of("normal", "骑附近能骑的实体"),
-                                                Usage.of("stop", "下车")
+                                                Usage.of("me", I18n.asString("command.help.ride.me.description")),
+                                                Usage.of("target", I18n.asString("command.help.ride.target.description")),
+                                                Usage.of("anything", I18n.asString("command.help.ride.anything.description")),
+                                                Usage.of("normal", I18n.asString("command.help.ride.normal.description")),
+                                                Usage.of("stop", I18n.asString("command.help.ride.stop.description"))
                                         )
                                 ),
                         command("swap")
@@ -287,7 +288,7 @@ public class CommandRegistry {
                                 .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
                                 .withArguments(
                                         fakeplayer("target"),
-                                        cmd("命令")
+                                        cmd("command")
                                 )
                                 .executes(CmdCommand.instance::cmd),
 

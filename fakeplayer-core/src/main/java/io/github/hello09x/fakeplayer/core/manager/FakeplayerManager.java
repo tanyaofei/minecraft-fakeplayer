@@ -70,6 +70,9 @@ public class FakeplayerManager {
                     }
                 }, 0, 60, TimeUnit.SECONDS
         );
+
+        Main.getInstance().registerOnDisable(() -> this.removeAll("Plugin disabled"));
+        Main.getInstance().registerOnDisable(timer::shutdown);
     }
 
     /**
@@ -333,10 +336,6 @@ public class FakeplayerManager {
                 log.warning("执行命令失败: " + cmd);
             }
         }
-    }
-
-    public void onDisable() {
-        this.timer.shutdown();
     }
 
     private void checkLimit(@NotNull CommandSender creator) throws MessageException {

@@ -7,7 +7,7 @@ import dev.jorel.commandapi.wrappers.Rotation;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.command.support.Direction;
+import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import io.papermc.paper.entity.LookAnchor;

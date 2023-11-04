@@ -1,22 +1,22 @@
-package io.github.hello09x.fakeplayer.v1_20_R2.action;
+package io.github.hello09x.fakeplayer.api.action.impl;
 
 import io.github.hello09x.fakeplayer.api.spi.Action;
-import net.minecraft.server.level.ServerPlayer;
+import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class DropItemAction implements Action {
+public class DropStackAction implements Action {
 
-    private final ServerPlayer player;
+    @NotNull
+    private final NMSServerPlayer player;
 
-    public DropItemAction(@NotNull ServerPlayer player) {
+    public DropStackAction(@NotNull NMSServerPlayer player) {
         this.player = player;
     }
 
 
     @Override
     public boolean tick() {
-        player.resetLastActionTime();
-        player.drop(false);
+        player.drop(true);
         player.resetLastActionTime();
         return true;
     }
@@ -30,4 +30,5 @@ public class DropItemAction implements Action {
     public void stop() {
 
     }
+
 }

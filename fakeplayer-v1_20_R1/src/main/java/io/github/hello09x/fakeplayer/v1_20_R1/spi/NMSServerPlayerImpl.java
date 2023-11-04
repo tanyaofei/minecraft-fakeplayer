@@ -109,8 +109,8 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     }
 
     @Override
-    public boolean startRiding(@NotNull Entity entity, boolean flag) {
-        return handle.startRiding(new NMSEntityImpl(entity).getHandle(), flag);
+    public boolean startRiding(@NotNull Entity entity, boolean force) {
+        return handle.startRiding(new NMSEntityImpl(entity).getHandle(), force);
     }
 
     @Override
@@ -125,8 +125,8 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     }
 
     @Override
-    public void drop(boolean all) {
-        handle.drop(all);
+    public void drop(boolean allStack) {
+        handle.drop(allStack);
     }
 
     @Override
@@ -187,9 +187,9 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
 
 
     @Override
-    public void drop(int slot, boolean flat, boolean flat1) {
+    public void drop(int slot, boolean flag, boolean flag1) {
         var inventory = handle.getInventory();
-        handle.drop(inventory.removeItem(slot, inventory.getItem(slot).getCount()), flat, flat1);
+        handle.drop(inventory.removeItem(slot, inventory.getItem(slot).getCount()), flag, flag1);
     }
 
     @Override

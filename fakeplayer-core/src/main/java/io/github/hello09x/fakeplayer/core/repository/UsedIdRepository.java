@@ -24,6 +24,7 @@ public class UsedIdRepository {
 
     public UsedIdRepository() {
         this.load();
+        Main.getInstance().registerOnDisable(this::saveAll);
     }
 
     public boolean contains(@NotNull UUID uuid) {
@@ -33,6 +34,8 @@ public class UsedIdRepository {
     public void add(@NotNull UUID uuid) {
         UUIDS.add(uuid);
     }
+
+
 
     public boolean exists(@NotNull UUID uuid) {
         return UUIDS.contains(uuid);

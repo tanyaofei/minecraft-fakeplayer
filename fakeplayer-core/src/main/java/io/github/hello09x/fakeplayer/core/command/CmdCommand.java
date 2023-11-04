@@ -23,7 +23,7 @@ public class CmdCommand extends AbstractCommand {
 
     public void cmd(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var command = Objects.requireNonNull((CommandResult) args.get("命令"));
+        var command = Objects.requireNonNull((CommandResult) args.get("command"));
 
         var name = command.command().getName();
         if (!sender.hasPermission(Permission.cmd) && !config.getAllowCommands().contains(name)) {

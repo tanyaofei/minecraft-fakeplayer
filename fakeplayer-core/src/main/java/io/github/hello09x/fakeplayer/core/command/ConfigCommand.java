@@ -20,7 +20,7 @@ public class ConfigCommand extends AbstractCommand {
 
     public void getConfig(@NotNull Player sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
-        var config = (Config<Object>) Objects.requireNonNull(args.get("配置项"));
+        var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
         var value = String.valueOf(repository.selectOrDefault(sender.getUniqueId(), config));
         sender.sendMessage(
                 textOfChildren(
@@ -33,8 +33,8 @@ public class ConfigCommand extends AbstractCommand {
 
     public void setConfig(@NotNull Player sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
-        var config = (Config<Object>) Objects.requireNonNull(args.get("配置项"));
-        var value = Objects.requireNonNull(args.get("值"));
+        var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
+        var value = Objects.requireNonNull(args.get("value"));
         repository.saveOrUpdate(sender.getUniqueId(), config, value);
         sender.sendMessage(textOfChildren(
                 text(config.label(), GOLD),

@@ -1,5 +1,8 @@
 package io.github.hello09x.fakeplayer.core;
 
+import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.bedrock.i18n.I18nSupported;
+import io.github.hello09x.bedrock.util.RegistrablePlugin;
 import io.github.hello09x.fakeplayer.api.spi.VersionSupport;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -11,10 +14,11 @@ import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class Main extends JavaPlugin {
+public final class Main extends RegistrablePlugin implements I18nSupported {
 
     @Getter
     private static Main instance;
@@ -28,6 +32,7 @@ public final class Main extends JavaPlugin {
         if (versionSupport == null) {
             throw new ExceptionInInitializerError("不支持当前 minecraft 版本: " + Bukkit.getMinecraftVersion());
         }
+        I18n.register(this, "message/message");
     }
 
     @Override
@@ -82,11 +87,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        FakeplayerManager.instance.removeAll("plugin disabled");
-        UsedIdRepository.instance.saveAll();
-        FakeplayerManager.instance.onDisable();
-        WildFakeplayerManager.instance.onDisable();
-
         {
             var messenger = getServer().getMessenger();
             messenger.unregisterIncomingPluginChannel(this);
@@ -94,4 +94,13 @@ public final class Main extends JavaPlugin {
         }
     }
 
+    @Override
+    public @NotNull ClassLoader classLoader() {
+        return getClassLoader();
+    }
+
+    @Override
+    public @NotNull String identifier() {
+        return "fakeplayer";
+    }
 }

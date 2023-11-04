@@ -32,6 +32,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
 
     public WildFakeplayerManager() {
         timer.scheduleAtFixedRate(this::preCleanup, 0, 5, TimeUnit.SECONDS);
+        Main.getInstance().registerOnDisable(timer::shutdown);
     }
 
     @Override
@@ -119,10 +120,6 @@ public class WildFakeplayerManager implements PluginMessageListener {
                 CHANNEL,
                 out.toByteArray()
         );
-    }
-
-    public void onDisable() {
-        this.timer.shutdown();
     }
 
     private boolean isPlayerOnline(@NotNull String name) {

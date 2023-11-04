@@ -2,6 +2,11 @@
 # 不要修改这个值
 version: 13
 
+i18n:
+  locales:
+    - zh
+    - en
+
 # 服务器最多存在多少个假人
 # 默认: 1000
 server-limit: 1000

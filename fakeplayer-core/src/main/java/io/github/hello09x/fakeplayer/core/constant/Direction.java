@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core.command.support;
+package io.github.hello09x.fakeplayer.core.constant;
 
 public enum Direction {
 
