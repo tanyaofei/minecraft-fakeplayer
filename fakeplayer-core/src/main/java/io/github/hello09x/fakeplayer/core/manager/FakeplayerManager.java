@@ -58,9 +58,8 @@ public class FakeplayerManager {
 
     private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
-    private final ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
-
     private FakeplayerManager() {
+        var timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleAtFixedRate(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Tasks.run(() -> {
