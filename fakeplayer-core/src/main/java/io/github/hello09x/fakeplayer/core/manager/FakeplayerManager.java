@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager;
 
 import io.github.hello09x.bedrock.command.MessageException;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
@@ -344,15 +345,15 @@ public class FakeplayerManager {
         }
 
         if (this.playerList.count() >= config.getServerLimit()) {
-            throw new MessageException("服务器假人数量已达上限");
+            throw new MessageException(I18n.asString("command.spawn.error.server-limit"));
         }
 
         if (this.playerList.getByCreator(creator.getName()).size() >= config.getPlayerLimit()) {
-            throw new MessageException("你创建的假人数量已达上限");
+            throw new MessageException(I18n.asString("command.spawn.error.player-limit"));
         }
 
         if (config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= config.getPlayerLimit()) {
-            throw new MessageException("你所在 IP 创建的假人已达上限");
+            throw new MessageException(I18n.asString("command.spawn.error.ip-limit"));
         }
     }
 

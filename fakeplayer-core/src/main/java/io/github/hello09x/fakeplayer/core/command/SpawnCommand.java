@@ -9,6 +9,9 @@ import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,6 +34,8 @@ public class SpawnCommand extends AbstractCommand {
 
     public final static SpawnCommand instance = new SpawnCommand();
     private final static Logger log = Main.getInstance().getLogger();
+
+    private final static MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private static String toLocationString(@NotNull Location location) {
         return location.getWorld().getName()
@@ -67,21 +72,6 @@ public class SpawnCommand extends AbstractCommand {
                         spawnpoint,
                         keepalive == null ? null : LocalDateTime.now().plus(keepalive)
                 )
-                .thenAccept(player -> Tasks.run(() -> {
-                    sender.sendMessage(textOfChildren(
-                            text("你创建了假人 ", GRAY),
-                            text(player.getName()),
-                            text(", 位于 ", GRAY),
-                            text(toLocationString(spawnpoint)),
-                            keepalive == null ? empty() : textOfChildren(
-                                    text(", 存活时间 ", GRAY),
-                                    text(keepalive.toString()
-                                            .substring(2)
-                                            .replaceAll("(\\\\d[HMS])(?!$)", "$1")
-                                            .toLowerCase(Locale.ROOT))
-                            )
-                    ));
-                }, Main.getInstance()))
                 .exceptionally(e -> {
                     var message = Optional.ofNullable(e.getCause())
                             .filter(cause -> cause instanceof MessageException)
@@ -92,12 +82,38 @@ public class SpawnCommand extends AbstractCommand {
                     if (message != null) {
                         Tasks.run(() -> sender.sendMessage(message), Main.getInstance());
                     } else {
-                        Tasks.run(() -> sender.sendMessage(text("召唤假人时发生错误", RED)), Main.getInstance());
+                        Tasks.run(() -> sender.sendMessage(I18n.translate(translatable("command.spawn.error.unknown", RED))), Main.getInstance());
                         log.severe(Throwables.getStackTraceAsString(e));
                     }
-
                     return null;
+                })
+                .thenAccept(player -> {
+                    if (player == null) {
+                        return;
+                    }
+                    Tasks.run(() -> {
+                        Component message;
+                        if (keepalive == null) {
+                            message = MINI_MESSAGE.deserialize(
+                                    "<gray>" + I18n.asString("command.spawn.success.without-keepalive") + "</gray>",
+                                    Placeholder.component("name", text(player.getName(), WHITE)),
+                                    Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
+                            );
+                        } else {
+                            message = MINI_MESSAGE.deserialize(
+                                    "<gray>" + I18n.asString("command.spawn.success.with-keepalive") + "</gray>",
+                                    Placeholder.component("name", text(player.getName(), WHITE)),
+                                    Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
+                                    Placeholder.component("remove-at", text(keepalive.toString()
+                                            .substring(2)
+                                            .replaceAll("(\\\\d[HMS])(?!$)", "$1")
+                                            .toLowerCase(Locale.ROOT)))
+                            );
+                        }
+                        sender.sendMessage(textOfChildren(message));
+                    }, Main.getInstance());
                 });
+
     }
 
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
