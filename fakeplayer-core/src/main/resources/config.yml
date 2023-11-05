@@ -42,7 +42,7 @@ keepalive: 0
 # placeholder:
 #   %c: the name of the creator
 # tips:
-#   1. If this value contains characters other than English, numbers, and underscores, many vanilla commands will not be usable on them.
+#   1. If this value contains characters other than alphabetic, numbers, and underscores, many vanilla commands will not be usable on them.
 #   2. Characters longer than 16 characters will be truncated
 #   3. Can not start with '-'
 name-template: ''
