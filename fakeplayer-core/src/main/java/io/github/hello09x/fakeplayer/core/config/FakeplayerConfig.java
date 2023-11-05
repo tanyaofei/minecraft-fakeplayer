@@ -153,7 +153,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         try {
             return Pattern.compile(file.getString("name-pattern", defaultNameChars));
         } catch (PatternSyntaxException e) {
-            log.warning("name-pattern 不是一个合法的正则表达式, 该配置不会生效: " + file.getString("name-chars"));
+            log.warning("Invalid name-pattern: " + file.getString("name-chars"));
             return Pattern.compile(defaultNameChars);
         }
     }
@@ -161,7 +161,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private @NotNull String getNameTemplate(@NotNull FileConfiguration file) {
         var tmpl = file.getString("name-template", "");
         if (tmpl.startsWith("-") || tmpl.startsWith("@")) {
-            log.warning("name-template 不能以 - 和 @ 开头, 该配置不会生效: " + this.nameTemplate);
+            log.warning("Invalid name template: " + this.nameTemplate);
             return "";
         }
         return tmpl;
