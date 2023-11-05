@@ -193,4 +193,9 @@ public interface NMSServerPlayer {
      */
     void setPlayBefore();
 
+    /**
+     * 设置客户端选项
+     */
+    void configClientOptions();
+
 }

@@ -6,8 +6,11 @@ import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyAdvancements;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.ChatVisiblity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -195,6 +198,21 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     @Override
     public void setPlayBefore() {
         player.readExtraData(new CompoundTag());
+    }
+
+    @Override
+    public void configClientOptions() {
+        var option = new ServerboundClientInformationPacket(
+                "en_us",
+                Bukkit.getViewDistance(),
+                ChatVisiblity.FULL,
+                false,
+                (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40),
+                HumanoidArm.RIGHT,
+                false,
+                true
+        );
+        handle.updateOptions(option);
     }
 
 }

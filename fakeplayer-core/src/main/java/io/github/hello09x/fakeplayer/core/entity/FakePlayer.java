@@ -139,6 +139,7 @@ public class FakePlayer {
                     var network = Main.getVersionSupport().network();
                     network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
                     network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
+                    handle.configClientOptions();   // 处理皮肤设置问题
 
                     var spawnAt = option.spawnAt().clone();
                     if (Worlds.isOverworld(spawnAt.getWorld())) {
