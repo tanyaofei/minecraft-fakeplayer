@@ -1,7 +1,5 @@
 package io.github.hello09x.fakeplayer.core.repository.model;
 
-import io.github.hello09x.bedrock.i18n.I18n;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -16,7 +14,7 @@ public interface Configs {
      */
     Config<Boolean> collidable = build(
             "collidable",
-            "config.collidable",
+            "fakeplayer.config.collidable",
             true,
             List.of("true", "false"),
             Boolean::valueOf
@@ -27,7 +25,7 @@ public interface Configs {
      */
     Config<Boolean> invulnerable = build(
             "invulnerable",
-            "config.invulnerable",
+            "fakeplayer.config.invulnerable",
             true,
             List.of("true", "false"),
             Boolean::valueOf
@@ -38,7 +36,7 @@ public interface Configs {
      */
     Config<Boolean> look_at_entity = build(
             "look_at_entity",
-            "config.look_at_entity",
+            "fakeplayer.config.look_at_entity",
             true,
             List.of("true", "false"),
             Boolean::valueOf
@@ -49,7 +47,7 @@ public interface Configs {
      */
     Config<Boolean> pickup_items = build(
             "pickup_items",
-            "config.pickup_items",
+            "fakeplayer.config.pickup_items",
             true,
             List.of("true", "false"),
             Boolean::valueOf
@@ -60,7 +58,7 @@ public interface Configs {
      */
     Config<Boolean> skin = build(
             "skin",
-            "config.skin",
+            "fakeplayer.config.skin",
             true,
             List.of("true", "false"),
             Boolean::valueOf

@@ -345,15 +345,15 @@ public class FakeplayerManager {
         }
 
         if (this.playerList.count() >= config.getServerLimit()) {
-            throw new MessageException(I18n.asString("command.spawn.error.server-limit"));
+            throw new MessageException(I18n.asString("fakeplayer.command.spawn.error.server-limit"));
         }
 
         if (this.playerList.getByCreator(creator.getName()).size() >= config.getPlayerLimit()) {
-            throw new MessageException(I18n.asString("command.spawn.error.player-limit"));
+            throw new MessageException(I18n.asString("fakeplayer.command.spawn.error.player-limit"));
         }
 
         if (config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= config.getPlayerLimit()) {
-            throw new MessageException(I18n.asString("command.spawn.error.ip-limit"));
+            throw new MessageException(I18n.asString("fakeplayer.command.spawn.error.ip-limit"));
         }
     }
 

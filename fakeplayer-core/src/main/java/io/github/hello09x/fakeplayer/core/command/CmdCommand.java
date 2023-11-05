@@ -23,19 +23,19 @@ public class CmdCommand extends AbstractCommand {
 
         var name = command.command().getName();
         if (!sender.hasPermission(Permission.cmd) && !config.getAllowCommands().contains(name)) {
-            throw CommandAPI.failWithString(I18n.asString("command.cmd.error.no-permission"));
+            throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.cmd.error.no-permission"));
         }
 
         if (name.equals("fakeplayer") || name.equals("fp")) {
-            throw CommandAPI.failWithString(I18n.asString("command.cmd.error.no-permission"));
+            throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.cmd.error.no-permission"));
         }
 
         if (!command.execute(target)) {
-            sender.sendMessage(I18n.translate(translatable("command.cmd.error.execute-failed", RED)));
+            sender.sendMessage(I18n.translate(translatable("fakeplayer.command.cmd.error.execute-failed", RED)));
             return;
         }
 
-        sender.sendMessage(I18n.translate(translatable("command.cmd.success.execute", GRAY)));
+        sender.sendMessage(I18n.translate(translatable("fakeplayer.command.cmd.success.execute", GRAY)));
     }
 
 }

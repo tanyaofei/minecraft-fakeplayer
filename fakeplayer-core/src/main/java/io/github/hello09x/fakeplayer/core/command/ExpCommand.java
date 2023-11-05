@@ -3,15 +3,17 @@ package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.io.Experiences;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class ExpCommand extends AbstractCommand {
+
 
     public final static ExpCommand instance = new ExpCommand();
 
@@ -20,20 +22,19 @@ public class ExpCommand extends AbstractCommand {
         var exp = Experiences.getExp(target);
 
         if (exp == 0) {
-            sender.sendMessage(textOfChildren(
-                    text(target.getName(), WHITE),
-                    text(" 已经没有经验啦", GRAY)
+            sender.sendMessage(miniMessage.deserialize(
+                    "<gray>" + I18n.asString("fakeplayer.command.expme.error.non-experience") + "</gray>",
+                    Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;
         }
 
         Experiences.clean(target);
         sender.giveExp(exp, false);
-        sender.sendMessage(textOfChildren(
-                text(target.getName(), WHITE),
-                text(" 转移 ", GRAY),
-                text(exp, DARK_GREEN),
-                text(" 点经验给你", GRAY)
+        sender.sendMessage(miniMessage.deserialize(
+                "<gray>" + I18n.asString("fakeplayer.command.expme.success") + "</gray>",
+                Placeholder.component("name", text(target.getName(), WHITE)),
+                Placeholder.component("experience", text(exp, DARK_GREEN))
         ));
     }
 

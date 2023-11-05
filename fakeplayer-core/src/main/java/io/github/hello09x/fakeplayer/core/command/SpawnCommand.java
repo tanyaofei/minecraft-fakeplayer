@@ -82,7 +82,7 @@ public class SpawnCommand extends AbstractCommand {
                     if (message != null) {
                         Tasks.run(() -> sender.sendMessage(message), Main.getInstance());
                     } else {
-                        Tasks.run(() -> sender.sendMessage(I18n.translate(translatable("command.spawn.error.unknown", RED))), Main.getInstance());
+                        Tasks.run(() -> sender.sendMessage(I18n.translate(translatable("fakeplayer.command.spawn.error.unknown", RED))), Main.getInstance());
                         log.severe(Throwables.getStackTraceAsString(e));
                     }
                     return null;
@@ -95,13 +95,13 @@ public class SpawnCommand extends AbstractCommand {
                         Component message;
                         if (keepalive == null) {
                             message = MINI_MESSAGE.deserialize(
-                                    "<gray>" + I18n.asString("command.spawn.success.without-keepalive") + "</gray>",
+                                    "<gray>" + I18n.asString("fakeplayer.command.spawn.success.without-keepalive") + "</gray>",
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
                             );
                         } else {
                             message = MINI_MESSAGE.deserialize(
-                                    "<gray>" + I18n.asString("command.spawn.success.with-keepalive") + "</gray>",
+                                    "<gray>" + I18n.asString("fakeplayer.command.spawn.success.with-keepalive") + "</gray>",
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
                                     Placeholder.component("remove-at", text(keepalive.toString()
@@ -129,7 +129,7 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         if (targets.isEmpty()) {
-            sender.sendMessage(I18n.translate(translatable("command.kill.error.non-removed", GRAY)));
+            sender.sendMessage(I18n.translate(translatable("fakeplayer.command.kill.error.non-removed", GRAY)));
             return;
         }
 
@@ -140,7 +140,7 @@ public class SpawnCommand extends AbstractCommand {
             }
         }
         sender.sendMessage(textOfChildren(
-                I18n.translate(translatable("command.kill.success.removed", GRAY)),
+                I18n.translate(translatable("fakeplayer.command.kill.success.removed", GRAY)),
                 text(names.toString())
         ));
     }
