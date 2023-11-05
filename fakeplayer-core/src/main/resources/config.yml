@@ -1,20 +1,29 @@
 # 配置文件版本
 # 不要修改这个值
+# THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT
 version: 13
 
+# 多国语言配置
+# language
 i18n:
-  locale: en
+  locale: zh
 
 # 服务器最多存在多少个假人
 # 默认: 1000
+# How many fake players can be spawned at most on the server
+# default: 1000
 server-limit: 1000
 
 # 每个玩家最多创建多少个假人
 # 默认: 1
+# How many fake players can a player spawn at the same time
+# default: 1
 player-limit: 1
 
 # 假人存活时间, 0 表示永久
 # 单位: 分钟
+# The longest alive time of fake players, 0 means permanently
+# unit: minute
 keepalive: 0
 
 # 假人默认名称模版
@@ -27,6 +36,15 @@ keepalive: 0
 #   1. 如果包含除 英文字母、数字、下划线 以外的字符，将会导致原版及第三方的许多命令失效
 #   2. 长度超过 16 位将会被截取
 #   3. 不能以 - 开头
+# Name template of fake players
+# If this value is empty, then the fake player will use the name of creator and add a suffix
+# If this value is NOT empty, then the fake player will use this value as name and add a suffix
+# placeholder:
+#   %c: the name of the creator
+# tips:
+#   1. If this value contains characters which is not alphabet, numbers, underline '_', then a lots of commands can not be used to him
+#   2. Characters longer than 16 characters will be truncated
+#   3. Can not start with '-'
 name-template: ''
 
 # 假人自定义名称允许的字符
@@ -53,11 +71,16 @@ drop-inventory-on-quiting: true
 
 # 如果启用, 则一个 IP 只能创建 `maximum` 个假人
 # 能够避免玩家开小号疯狂创建假人
+# if this option is enabled, `player-limit` fake player can be spawned per IP
 detect-ip: true
 
 # 服务器最近 5 分钟平均 TPS 低于这个值清除所有假人
 # 每 60 秒检测一次
 # 默认: 0, 即不开启, 因为移除假人可能导致玩家红石机器出问题, 按需开启吧
+# Server will detect tps every 5 minutes, if the average tps is lower than this value, all fake players will be removed
+# default: 0, means disabled
+# Tips:
+#    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
 
 # 预准备命令
@@ -68,6 +91,12 @@ kale-tps: 0
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
+# Server will execute the following commands after the fake player was spawned
+# you can add some commands to give them permission
+# placeholder:
+#    %p: the name of the fake player
+#    %u: the uuid of the fake player
+#    %c: the name of creator
 preparing-commands:
   - ''
   - ''
@@ -79,6 +108,12 @@ preparing-commands:
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
+# Server will execute the following commands after the fake player was removed
+# you can add some commands to clean up data
+# placeholder:
+#    %p: the name of the fake player
+#    %u: the uuid of the fake player
+#    %c: the name of creator
 destroy-commands:
   - ''
   - ''
@@ -86,6 +121,10 @@ destroy-commands:
 # 自执行命令
 # 假人在诞生时会以自己的身份按顺序执行命令
 # 你可以在这里做添加 /register 和 /login 命令来防止 `AuthMe` 等插件踢掉超时未登陆的玩家
+# The fake player will execute the following commands
+# You can add some command to make him to login
+# - '/register ANY_PASSWORD'
+# - '/login ANY_PASSWORD'
 self-commands:
   - ''
   - ''
@@ -98,6 +137,7 @@ check-for-updates: true
 # 例如添加 /sit 之后, 玩家可以通过 '/fp cmd myfakeplayer sit' 让假人坐下来
 # ！！！注意: 在这里定义的命令, 不需要 fakeplayer.cmd 权限！！！
 # ！！！注意: 给了 fakeplayer.cmd 命令，玩家就能够控制假人执行所有(有权限的)命令！！！
+# Define which commands can be executed by `/fp cmd` without 'fakeplayer.cmd' permission
 allow-commands:
   - ''
   - ''
