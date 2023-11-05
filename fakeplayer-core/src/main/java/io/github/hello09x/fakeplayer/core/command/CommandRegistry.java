@@ -10,8 +10,8 @@ import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.repository.model.Configs;
@@ -35,10 +35,10 @@ public class CommandRegistry {
                 .withAliases("fp")
                 .withHelp(
                         I18n.asString("fakeplayer.command.fp.short-description"),
-                          I18n.asString("fakeplayer.command.fp.full-description")
+                        I18n.asString("fakeplayer.command.fp.full-description")
                 )
                 .withUsage(
-                        "fp ? to get more usage",
+                        "type fp ? for more usage",
                         "hello09x [汤姆]"
                 )
                 .withSubcommands(
@@ -80,7 +80,7 @@ public class CommandRegistry {
                                 .executes(SpawnCommand.instance::spawn),
                         command("kill")
                                 .withPermission(Permission.spawn)
-                                .withOptionalArguments(fakeplayers("targets"))
+                                .withOptionalArguments(fakeplayers("names"))
                                 .executes(SpawnCommand.instance::kill),
                         command("list")
                                 .withPermission(Permission.spawn)
@@ -90,12 +90,12 @@ public class CommandRegistry {
                                 .executes(SpawnCommand.instance::list),
                         command("distance")
                                 .withPermission(Permission.spawn)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(SpawnCommand.instance::distance),
                         command("drop")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
-                                        fakeplayer("target"),
+                                        fakeplayer("name"),
                                         literals("all", List.of("-a", "--all")))
                                 .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(
                                         sender,
@@ -104,40 +104,40 @@ public class CommandRegistry {
                                         ActionSetting.once())),
                         command("dropinv")
                                 .withPermission(Permission.spawn)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance.action(ActionType.DROP_INVENTORY, ActionSetting.once())),
 
                         command("exp")
                                 .withPermission(Permission.profile)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executes(ProfileCommand.instance::exp),
                         command("health")
                                 .withPermission(Permission.profile)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executes(ProfileCommand.instance::health),
 
                         command("tp")
                                 .withPermission(Permission.tp)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(TpCommand.instance::tp),
                         command("tphere")
                                 .withPermission(Permission.tp)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(TpCommand.instance::tphere),
                         command("tps")
                                 .withPermission(Permission.tp)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(TpCommand.instance::tps),
 
                         command("config")
                                 .withSubcommands(
                                         command("get")
-                                                .withArguments(config("config"))
+                                                .withArguments(config("option"))
                                                 .executesPlayer(ConfigCommand.instance::getConfig),
                                         command("set")
                                                 .withArguments(
-                                                        config("config"),
-                                                        configValue("config", "value"))
+                                                        config("option"),
+                                                        configValue("option", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig)
                                 ),
 
@@ -157,35 +157,35 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withOptionalArguments(
                                         literals("sneaking", List.of("true", "false")),
-                                        fakeplayer("target"))
+                                        fakeplayer("name"))
                                 .executes(ActionCommand.instance::sneak),
                         command("look")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("north")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.look(Direction.NORTH)),
                                         command("south")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.look(Direction.SOUTH)),
                                         command("west")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.look(Direction.WEST)),
                                         command("east")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.look(Direction.EAST)),
                                         command("up")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.look(Direction.UP)),
                                         command("down")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.look(Direction.DOWN)),
                                         command("at")
                                                 .withArguments(location("location"))
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance::lookAt),
                                         command("entity")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .withSubcommands(newActionCommands(ActionType.LOOK_AT_NEAREST_ENTITY)),
                                         helpCommand(
                                                 "/fp look",
@@ -203,44 +203,44 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("left")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.turn(-90, 0)),
                                         command("right")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.turn(90, 0)),
                                         command("back")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.turn(180, 0)),
                                         command("to")
                                                 .withArguments(rotation("rotation"))
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance::turnTo),
                                         helpCommand(
                                                 "/fp turn",
                                                 Usage.of("left", I18n.asString("fakeplayer.command.turn.left.description")),
-                                                Usage.of("right",  I18n.asString("fakeplayer.command.turn.right.description")),
-                                                Usage.of("back",  I18n.asString("fakeplayer.command.turn.back.description")),
-                                                Usage.of("to",  I18n.asString("fakeplayer.command.turn.to.description"))
+                                                Usage.of("right", I18n.asString("fakeplayer.command.turn.right.description")),
+                                                Usage.of("back", I18n.asString("fakeplayer.command.turn.back.description")),
+                                                Usage.of("to", I18n.asString("fakeplayer.command.turn.to.description"))
                                         )
                                 ),
                         command("move")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("forward")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.move(1, 0)),
                                         command("backward")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.move(-1, 0)),
                                         command("left")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.move(0, 1)),
                                         command("right")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(ActionCommand.instance.move(0, -1)),
                                         helpCommand(
                                                 "/fp move",
-                                                Usage.of("forward",  I18n.asString("fakeplayer.command.move.forward.description")),
+                                                Usage.of("forward", I18n.asString("fakeplayer.command.move.forward.description")),
                                                 Usage.of("backward", I18n.asString("fakeplayer.command.move.backward.description")),
                                                 Usage.of("left", I18n.asString("fakeplayer.command.move.left.description")),
                                                 Usage.of("right", I18n.asString("fakeplayer.command.move.right.description"))
@@ -251,43 +251,43 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("me")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executesPlayer(RideCommand.instance::rideMe),
                                         command("target")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(RideCommand.instance::rideTarget),
                                         command("anything")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(RideCommand.instance::rideAnything),
-                                        command("normal")
-                                                .withOptionalArguments(fakeplayer("target"))
-                                                .executes(RideCommand.instance::rideNormal),
+                                        command("vehicle")
+                                                .withOptionalArguments(fakeplayer("name"))
+                                                .executes(RideCommand.instance::rideVehicle),
                                         command("stop")
-                                                .withOptionalArguments(fakeplayer("target"))
+                                                .withOptionalArguments(fakeplayer("name"))
                                                 .executes(RideCommand.instance::stopRiding),
                                         helpCommand(
                                                 "/fp ride",
                                                 Usage.of("me", I18n.asString("fakeplayer.command.ride.me.description")),
                                                 Usage.of("target", I18n.asString("fakeplayer.command.ride.target.description")),
                                                 Usage.of("anything", I18n.asString("fakeplayer.command.ride.anything.description")),
-                                                Usage.of("normal", I18n.asString("fakeplayer.command.ride.normal.description")),
+                                                Usage.of("vehicle", I18n.asString("fakeplayer.command.ride.vehicle.description")),
                                                 Usage.of("stop", I18n.asString("fakeplayer.command.ride.stop.description"))
                                         )
                                 ),
                         command("swap")
                                 .withPermission(Permission.action)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance::swap),
 
                         command("expme")
                                 .withPermission(Permission.exp)
-                                .withOptionalArguments(fakeplayer("target"))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(ExpCommand.instance::expme),
 
                         command("cmd")
                                 .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
                                 .withArguments(
-                                        fakeplayer("target"),
+                                        fakeplayer("name"),
                                         cmd("command")
                                 )
                                 .executes(CmdCommand.instance::cmd),
@@ -302,18 +302,18 @@ public class CommandRegistry {
     private static CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
-                        .withOptionalArguments(fakeplayer("target"))
+                        .withOptionalArguments(fakeplayer("name"))
                         .executes(ActionCommand.instance.action(action, ActionSetting.once())),
                 command("continuous")
-                        .withOptionalArguments(fakeplayer("target"))
+                        .withOptionalArguments(fakeplayer("name"))
                         .executes(ActionCommand.instance.action(action, ActionSetting.continuous())),
                 command("stop")
-                        .withOptionalArguments(fakeplayer("target"))
+                        .withOptionalArguments(fakeplayer("name"))
                         .executes(ActionCommand.instance.action(action, ActionSetting.stop())),
                 command("interval")
                         .withOptionalArguments(
                                 int32("interval", 1),
-                                fakeplayer("target"))
+                                fakeplayer("name"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
                     ActionCommand.instance.action(sender, args, action, ActionSetting.interval(interval));
@@ -384,7 +384,7 @@ public class CommandRegistry {
             try {
                 return Configs.valueOf(arg);
             } catch (Exception e) {
-                throw CustomArgument.CustomArgumentException.fromMessageBuilder(new CustomArgument.MessageBuilder("未知的配置项: ").appendArgInput());
+                throw CustomArgument.CustomArgumentException.fromMessageBuilder(new CustomArgument.MessageBuilder(I18n.asString("fakeplayer.command.config.set.error.invalid-option")));
             }
         }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Configs.values()).map(Config::name).toList()));
     }
@@ -395,7 +395,7 @@ public class CommandRegistry {
             var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));
             var arg = info.currentInput();
             if (!config.options().contains(arg)) {
-                throw CustomArgument.CustomArgumentException.fromMessageBuilder(new CustomArgument.MessageBuilder("未知的配置值: ").appendArgInput());
+                throw CustomArgument.CustomArgumentException.fromMessageBuilder(new CustomArgument.MessageBuilder(I18n.asString("fakeplayer.command.config.set.error.invalid-value")));
             }
             return config.mapper().apply(arg);
         }).replaceSuggestions(ArgumentSuggestions.strings(info -> {

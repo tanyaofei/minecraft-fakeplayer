@@ -21,7 +21,7 @@ public class ConfigCommand extends AbstractCommand {
 
     public void getConfig(@NotNull Player sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
-        var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
+        var config = (Config<Object>) Objects.requireNonNull(args.get("option"));
         var value = String.valueOf(repository.selectOrDefault(sender.getUniqueId(), config));
         sender.sendMessage(
                 textOfChildren(
@@ -34,12 +34,12 @@ public class ConfigCommand extends AbstractCommand {
 
     public void setConfig(@NotNull Player sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
-        var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
+        var config = (Config<Object>) Objects.requireNonNull(args.get("option"));
         var value = Objects.requireNonNull(args.get("value"));
         repository.saveOrUpdate(sender.getUniqueId(), config, value);
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + I18n.asString("fakeplayer.command.config.set.success") + "</gray>",
-                Placeholder.component("config", I18n.translate(translatable(config.translateKey(), GOLD))),
+                Placeholder.component("option", I18n.translate(translatable(config.translateKey(), GOLD))),
                 Placeholder.component("value", text(value.toString(), WHITE))
         ));
     }

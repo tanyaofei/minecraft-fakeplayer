@@ -65,13 +65,13 @@ public class SpawnCommand extends AbstractCommand {
             );
         }
 
-        var keepalive = config.getKeepalive();
+        var lifespan = config.getKeepalive();
         try {
             fakeplayerManager.spawnAsync(
                             sender,
                             Optional.ofNullable(name).map(String::trim).orElse(""),
                             spawnpoint,
-                            keepalive == null ? null : LocalDateTime.now().plus(keepalive)
+                            lifespan == null ? null : LocalDateTime.now().plus(lifespan)
                     )
                     .thenAccept(player -> {
                         if (player == null) {
@@ -79,18 +79,18 @@ public class SpawnCommand extends AbstractCommand {
                         }
                         Tasks.run(() -> {
                             Component message;
-                            if (keepalive == null) {
+                            if (lifespan == null) {
                                 message = MINI_MESSAGE.deserialize(
-                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.without-keepalive") + "</gray>",
+                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.without-lifespan") + "</gray>",
                                         Placeholder.component("name", text(player.getName(), WHITE)),
                                         Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
                                 );
                             } else {
                                 message = MINI_MESSAGE.deserialize(
-                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.with-keepalive") + "</gray>",
+                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.with-lifespan") + "</gray>",
                                         Placeholder.component("name", text(player.getName(), WHITE)),
                                         Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
-                                        Placeholder.component("remove-at", text(keepalive.toString()
+                                        Placeholder.component("remove-at", text(lifespan.toString()
                                                 .substring(2)
                                                 .replaceAll("(\\\\d[HMS])(?!$)", "$1")
                                                 .toLowerCase(Locale.ROOT)))
@@ -118,7 +118,7 @@ public class SpawnCommand extends AbstractCommand {
 
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
-        var targets = (List<Player>) args.get("targets");
+        var targets = (List<Player>) args.get("names");
         if (targets == null) {
             var reserved = fakeplayerManager.getAll(sender);
             if (reserved.size() == 1) {

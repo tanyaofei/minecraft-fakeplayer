@@ -11,8 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public abstract class AbstractCommand {
 
     protected final FakeplayerManager fakeplayerManager = FakeplayerManager.instance;
@@ -21,16 +19,18 @@ public abstract class AbstractCommand {
 
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        return Optional
-                .ofNullable((Player) args.get("target"))
-                .or(() -> {
-                    var all = fakeplayerManager.getAll(sender);
-                    if (all.size() != 1) {
-                        return Optional.empty();
-                    }
-                    return Optional.of(all.get(0));
-                })
-                .orElseThrow(() -> CommandAPI.failWithString(I18n.asString("fakeplayer.command.generic.error.name-required")));
+        var player = (Player) args.get("name");
+        if (player != null) {
+            return player;
+        }
+
+        var all = fakeplayerManager.getAll(sender);
+        var count = all.size();
+        return switch (count) {
+            case 1 -> all.get(0);
+            case 0 -> throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.generic.error.non-fake-player"));
+            default -> throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.generic.error.name-required"));
+        };
     }
 
 }

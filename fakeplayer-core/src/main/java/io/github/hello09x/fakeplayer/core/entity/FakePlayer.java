@@ -45,7 +45,7 @@ public class FakePlayer {
 
     @NotNull
     @Getter
-    private CommandSender creator;
+    private final CommandSender creator;
 
     @NotNull
     @Getter

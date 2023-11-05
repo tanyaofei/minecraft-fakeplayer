@@ -49,7 +49,7 @@ public class RideCommand extends AbstractCommand {
     /**
      * 骑正常可以骑的附近实体
      */
-    public void rideNormal(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+    public void rideVehicle(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var entity = target.getNearbyEntities(4.5, 4.5, 4.5)
                 .stream()
