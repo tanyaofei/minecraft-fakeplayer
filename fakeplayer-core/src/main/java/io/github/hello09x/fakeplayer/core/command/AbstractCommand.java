@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.command;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,7 @@ public abstract class AbstractCommand {
                     }
                     return Optional.of(all.get(0));
                 })
-                .orElseThrow(() -> CommandAPI.failWithString("你需要指定假人"));
+                .orElseThrow(() -> CommandAPI.failWithString(I18n.asString("command.generic.error.requires-name")));
     }
 
 }

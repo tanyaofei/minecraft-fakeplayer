@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class ConfigCommand extends AbstractCommand {
         var value = String.valueOf(repository.selectOrDefault(sender.getUniqueId(), config));
         sender.sendMessage(
                 textOfChildren(
-                        text(config.label(), GOLD),
+                        I18n.translate(config).color(GOLD),
                         text(": ", GRAY),
                         text(value, WHITE)
                 )
@@ -37,7 +38,7 @@ public class ConfigCommand extends AbstractCommand {
         var value = Objects.requireNonNull(args.get("value"));
         repository.saveOrUpdate(sender.getUniqueId(), config, value);
         sender.sendMessage(textOfChildren(
-                text(config.label(), GOLD),
+                I18n.translate(config).color(GOLD),
                 text("变更为 ", GRAY),
                 text(value.toString(), WHITE),
                 text(" , 下次创建假人时生效", GRAY)

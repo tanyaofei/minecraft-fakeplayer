@@ -34,8 +34,8 @@ public class CommandRegistry {
         command("fakeplayer")
                 .withAliases("fp")
                 .withHelp(
-                        I18n.asString("command.help.fp.short-description"),
-                          I18n.asString("command.help.fp.full-description")
+                        I18n.asString("command.fp.short-description"),
+                          I18n.asString("command.fp.full-description")
                 )
                 .withUsage(
                         "fp ? to get more usage",
@@ -43,32 +43,32 @@ public class CommandRegistry {
                 )
                 .withSubcommands(
                         helpCommand("/fp",
-                                Usage.of("spawn", I18n.asString("command.help.spawn.description"), Permission.spawn),
-                                Usage.of("kill", I18n.asString("command.help.kill.description"), Permission.spawn),
-                                Usage.of("list", I18n.asString("command.help.list.description"), Permission.spawn),
-                                Usage.of("distance", I18n.asString("command.help.distance.description"), Permission.spawn),
-                                Usage.of("drop", I18n.asString("command.help.drop.description"), Permission.spawn),
-                                Usage.of("dropinv", I18n.asString("command.help.dropinv.description"), Permission.spawn),
-                                Usage.of("tp", I18n.asString("command.help.tp.description"), Permission.tp),
-                                Usage.of("tphere", I18n.asString("command.help.tphere.description"), Permission.tp),
-                                Usage.of("tps", I18n.asString("command.help.tps.description"), Permission.tp),
-                                Usage.of("config get", I18n.asString("command.help.config.get.description")),
-                                Usage.of("config set", I18n.asString("command.help.config.set.description")),
-                                Usage.of("health", I18n.asString("command.help.health.description"), Permission.profile),
-                                Usage.of("exp", I18n.asString("command.help.exp.description"), Permission.profile),
-                                Usage.of("expme", I18n.asString("command.help.expme.description"), Permission.exp),
-                                Usage.of("attack", I18n.asString("command.help.attack.description"), Permission.action),
-                                Usage.of("mine", I18n.asString("command.help.mine.description"), Permission.action),
-                                Usage.of("use", I18n.asString("command.help.use.description"), Permission.action),
-                                Usage.of("jump", I18n.asString("command.help.jump.description"), Permission.action),
-                                Usage.of("look", I18n.asString("command.help.look.description"), Permission.action),
-                                Usage.of("turn", I18n.asString("command.help.turn.description"), Permission.action),
-                                Usage.of("move", I18n.asString("command.help.move.description"), Permission.action),
-                                Usage.of("ride", I18n.asString("command.help.ride.description"), Permission.action),
-                                Usage.of("sneak", I18n.asString("command.help.sneak.description"), Permission.action),
-                                Usage.of("swap", I18n.asString("command.help.swap.description"), Permission.spawn),
-                                Usage.of("cmd", I18n.asString("command.help.cmd.description"), Permission.cmd),
-                                Usage.of("reload", I18n.asString("command.help.reload.description"), Permission.admin)
+                                Usage.of("spawn", I18n.asString("command.spawn.description"), Permission.spawn),
+                                Usage.of("kill", I18n.asString("command.kill.description"), Permission.spawn),
+                                Usage.of("list", I18n.asString("command.list.description"), Permission.spawn),
+                                Usage.of("distance", I18n.asString("command.distance.description"), Permission.spawn),
+                                Usage.of("drop", I18n.asString("command.drop.description"), Permission.spawn),
+                                Usage.of("dropinv", I18n.asString("command.dropinv.description"), Permission.spawn),
+                                Usage.of("tp", I18n.asString("command.tp.description"), Permission.tp),
+                                Usage.of("tphere", I18n.asString("command.tphere.description"), Permission.tp),
+                                Usage.of("tps", I18n.asString("command.tps.description"), Permission.tp),
+                                Usage.of("config get", I18n.asString("command.config.get.description")),
+                                Usage.of("config set", I18n.asString("command.config.set.description")),
+                                Usage.of("health", I18n.asString("command.health.description"), Permission.profile),
+                                Usage.of("exp", I18n.asString("command.exp.description"), Permission.profile),
+                                Usage.of("expme", I18n.asString("command.expme.description"), Permission.exp),
+                                Usage.of("attack", I18n.asString("command.attack.description"), Permission.action),
+                                Usage.of("mine", I18n.asString("command.mine.description"), Permission.action),
+                                Usage.of("use", I18n.asString("command.use.description"), Permission.action),
+                                Usage.of("jump", I18n.asString("command.jump.description"), Permission.action),
+                                Usage.of("look", I18n.asString("command.look.description"), Permission.action),
+                                Usage.of("turn", I18n.asString("command.turn.description"), Permission.action),
+                                Usage.of("move", I18n.asString("command.move.description"), Permission.action),
+                                Usage.of("ride", I18n.asString("command.ride.description"), Permission.action),
+                                Usage.of("sneak", I18n.asString("command.sneak.description"), Permission.action),
+                                Usage.of("swap", I18n.asString("command.swap.description"), Permission.spawn),
+                                Usage.of("cmd", I18n.asString("command.cmd.description"), Permission.cmd),
+                                Usage.of("reload", I18n.asString("command.reload.description"), Permission.admin)
                         ),
 
                         command("spawn")
@@ -189,14 +189,14 @@ public class CommandRegistry {
                                                 .withSubcommands(newActionCommands(ActionType.LOOK_AT_NEAREST_ENTITY)),
                                         helpCommand(
                                                 "/fp look",
-                                                Usage.of("north", I18n.asString("command.help.look.north.description")),
-                                                Usage.of("south", I18n.asString("command.help.look.south.description")),
-                                                Usage.of("west", I18n.asString("command.help.look.west.description")),
-                                                Usage.of("east", I18n.asString("command.help.look.east.description")),
-                                                Usage.of("up", I18n.asString("command.help.look.up.description")),
-                                                Usage.of("down", I18n.asString("command.help.look.down.description")),
-                                                Usage.of("at", I18n.asString("command.help.look.at.description")),
-                                                Usage.of("entity (once | continuous | interval | stop)", I18n.asString("command.help.look.entity.description"))
+                                                Usage.of("north", I18n.asString("command.look.north.description")),
+                                                Usage.of("south", I18n.asString("command.look.south.description")),
+                                                Usage.of("west", I18n.asString("command.look.west.description")),
+                                                Usage.of("east", I18n.asString("command.look.east.description")),
+                                                Usage.of("up", I18n.asString("command.look.up.description")),
+                                                Usage.of("down", I18n.asString("command.look.down.description")),
+                                                Usage.of("at", I18n.asString("command.look.at.description")),
+                                                Usage.of("entity (once | continuous | interval | stop)", I18n.asString("command.look.entity.description"))
                                         )
                                 ),
                         command("turn")
@@ -217,10 +217,10 @@ public class CommandRegistry {
                                                 .executes(ActionCommand.instance::turnTo),
                                         helpCommand(
                                                 "/fp turn",
-                                                Usage.of("left", I18n.asString("command.help.turn.left.description")),
-                                                Usage.of("right",  I18n.asString("command.help.turn.right.description")),
-                                                Usage.of("back",  I18n.asString("command.help.turn.back.description")),
-                                                Usage.of("to",  I18n.asString("command.help.turn.to.description"))
+                                                Usage.of("left", I18n.asString("command.turn.left.description")),
+                                                Usage.of("right",  I18n.asString("command.turn.right.description")),
+                                                Usage.of("back",  I18n.asString("command.turn.back.description")),
+                                                Usage.of("to",  I18n.asString("command.turn.to.description"))
                                         )
                                 ),
                         command("move")
@@ -240,10 +240,10 @@ public class CommandRegistry {
                                                 .executes(ActionCommand.instance.move(0, -1)),
                                         helpCommand(
                                                 "/fp move",
-                                                Usage.of("forward",  I18n.asString("command.help.move.forward.description")),
-                                                Usage.of("backward", I18n.asString("command.help.move.backward.description")),
-                                                Usage.of("left", I18n.asString("command.help.move.left.description")),
-                                                Usage.of("right", I18n.asString("command.help.move.right.description"))
+                                                Usage.of("forward",  I18n.asString("command.move.forward.description")),
+                                                Usage.of("backward", I18n.asString("command.move.backward.description")),
+                                                Usage.of("left", I18n.asString("command.move.left.description")),
+                                                Usage.of("right", I18n.asString("command.move.right.description"))
                                         )
                                 ),
 
@@ -267,11 +267,11 @@ public class CommandRegistry {
                                                 .executes(RideCommand.instance::stopRiding),
                                         helpCommand(
                                                 "/fp ride",
-                                                Usage.of("me", I18n.asString("command.help.ride.me.description")),
-                                                Usage.of("target", I18n.asString("command.help.ride.target.description")),
-                                                Usage.of("anything", I18n.asString("command.help.ride.anything.description")),
-                                                Usage.of("normal", I18n.asString("command.help.ride.normal.description")),
-                                                Usage.of("stop", I18n.asString("command.help.ride.stop.description"))
+                                                Usage.of("me", I18n.asString("command.ride.me.description")),
+                                                Usage.of("target", I18n.asString("command.ride.target.description")),
+                                                Usage.of("anything", I18n.asString("command.ride.anything.description")),
+                                                Usage.of("normal", I18n.asString("command.ride.normal.description")),
+                                                Usage.of("stop", I18n.asString("command.ride.stop.description"))
                                         )
                                 ),
                         command("swap")
