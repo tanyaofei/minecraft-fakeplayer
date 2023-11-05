@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -112,7 +113,7 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         if (targets.isEmpty()) {
-            sender.sendMessage(text("没有移除任何假人", GRAY));
+            sender.sendMessage(I18n.translate(translatable("command.kill.error.non-removed", GRAY)));
             return;
         }
 
@@ -123,7 +124,7 @@ public class SpawnCommand extends AbstractCommand {
             }
         }
         sender.sendMessage(textOfChildren(
-                text("你移除了假人: ", GRAY),
+                I18n.translate(translatable("command.kill.success.removed", GRAY)),
                 text(names.toString())
         ));
     }

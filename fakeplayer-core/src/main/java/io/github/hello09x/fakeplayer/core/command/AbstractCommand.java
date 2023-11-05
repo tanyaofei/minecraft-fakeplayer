@@ -28,7 +28,7 @@ public abstract class AbstractCommand {
                     }
                     return Optional.of(all.get(0));
                 })
-                .orElseThrow(() -> CommandAPI.failWithString(I18n.asString("command.generic.error.requires-name")));
+                .orElseThrow(() -> CommandAPI.failWithString(I18n.asString("command.generic.error.name-required")));
     }
 
 }
