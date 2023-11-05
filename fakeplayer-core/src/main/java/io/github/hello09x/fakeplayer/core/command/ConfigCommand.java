@@ -4,13 +4,13 @@ import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class ConfigCommand extends AbstractCommand {
@@ -37,11 +37,10 @@ public class ConfigCommand extends AbstractCommand {
         var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
         var value = Objects.requireNonNull(args.get("value"));
         repository.saveOrUpdate(sender.getUniqueId(), config, value);
-        sender.sendMessage(textOfChildren(
-                I18n.translate(config).color(GOLD),
-                text("变更为 ", GRAY),
-                text(value.toString(), WHITE),
-                text(" , 下次创建假人时生效", GRAY)
+        sender.sendMessage(miniMessage.deserialize(
+                "<gray>" + I18n.asString("fakeplayer.command.config.set.success") + "</gray>",
+                Placeholder.component("config", translatable(config.translateKey(), GOLD)),
+                Placeholder.component("value", text(value.toString(), WHITE))
         ));
     }
 
