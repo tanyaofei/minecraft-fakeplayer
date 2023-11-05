@@ -106,7 +106,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
      * 默认假人存活时间
      */
     @Nullable
-    private Duration keepalive;
+    private Duration lifespan;
 
     public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
@@ -132,7 +132,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);
         this.nameTemplate = getNameTemplate(file);
-        this.keepalive = getKeepAlive(file);
+        this.lifespan = getLifespan(file);
         this.allowCommands = file.getStringList("allow-commands")
                 .stream()
                 .map(c -> c.startsWith("/") ? c.substring(1) : c)
@@ -140,8 +140,8 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
                 .collect(Collectors.toSet());
     }
 
-    private @Nullable Duration getKeepAlive(@NotNull FileConfiguration file) {
-        var minutes = file.getLong("keepalive");
+    private @Nullable Duration getLifespan(@NotNull FileConfiguration file) {
+        var minutes = file.getLong("lifespan");
         if (minutes <= 0) {
             return null;
         }

@@ -24,7 +24,7 @@ player-limit: 1
 # 单位: 分钟
 # Define the maximum lifespan of fake players
 # Unit: minute, `0` represents permanent
-keepalive: 0
+lifespan: 0
 
 # 假人默认名称模版
 # 如果为空, 则跟随创建者的名字并且加上后缀

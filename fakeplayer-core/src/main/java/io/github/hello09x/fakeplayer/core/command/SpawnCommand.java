@@ -65,7 +65,7 @@ public class SpawnCommand extends AbstractCommand {
             );
         }
 
-        var lifespan = config.getKeepalive();
+        var lifespan = config.getLifespan();
         try {
             fakeplayerManager.spawnAsync(
                             sender,
