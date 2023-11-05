@@ -129,7 +129,7 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         if (targets.isEmpty()) {
-            sender.sendMessage(I18n.translate(translatable("fakeplayer.command.kill.error.non-removed", GRAY)));
+            sender.sendMessage(text(I18n.asString("fakeplayer.command.kill.error.non-removed"), GRAY));
             return;
         }
 
@@ -141,6 +141,7 @@ public class SpawnCommand extends AbstractCommand {
         }
         sender.sendMessage(textOfChildren(
                 I18n.translate(translatable("fakeplayer.command.kill.success.removed", GRAY)),
+                space(),
                 text(names.toString())
         ));
     }

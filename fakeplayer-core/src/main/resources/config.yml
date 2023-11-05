@@ -3,10 +3,7 @@
 version: 13
 
 i18n:
-  locales:
-    - zh
-    - en
-  default-locale: zh
+  locale: en
 
 # 服务器最多存在多少个假人
 # 默认: 1000

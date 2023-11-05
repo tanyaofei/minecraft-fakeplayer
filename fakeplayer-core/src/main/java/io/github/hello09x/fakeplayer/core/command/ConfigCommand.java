@@ -39,7 +39,7 @@ public class ConfigCommand extends AbstractCommand {
         repository.saveOrUpdate(sender.getUniqueId(), config, value);
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + I18n.asString("fakeplayer.command.config.set.success") + "</gray>",
-                Placeholder.component("config", translatable(config.translateKey(), GOLD)),
+                Placeholder.component("config", I18n.translate(translatable(config.translateKey(), GOLD))),
                 Placeholder.component("value", text(value.toString(), WHITE))
         ));
     }

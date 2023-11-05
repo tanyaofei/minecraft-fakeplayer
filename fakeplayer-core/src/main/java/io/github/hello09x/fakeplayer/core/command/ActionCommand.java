@@ -63,7 +63,7 @@ public class ActionCommand extends AbstractCommand {
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + baseline + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("action", translatable(action.translateKey(), WHITE))
+                Placeholder.component("action", I18n.translate(translatable(action.translateKey(), WHITE)))
         ));
     }
 
@@ -124,7 +124,7 @@ public class ActionCommand extends AbstractCommand {
             sender.sendMessage(miniMessage.deserialize(
                     "<gray>" + I18n.asString("fakeplayer.command.look.success") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE)),
-                    Placeholder.component("direction", translatable(direction.translateKey(), WHITE))
+                    Placeholder.component("direction", I18n.translate(translatable(direction.translateKey(), WHITE)))
             ));
         };
     }
