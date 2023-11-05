@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.bedrock.command.MessageException;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
@@ -13,6 +14,8 @@ import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import io.github.hello09x.fakeplayer.core.util.Teleportor;
 import io.github.hello09x.fakeplayer.core.util.Worlds;
 import lombok.Getter;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -29,8 +32,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public class FakePlayer {
 
@@ -38,6 +40,8 @@ public class FakePlayer {
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
     private final FakeplayerConfig config = FakeplayerConfig.instance;
+
+    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @NotNull
     @Getter
@@ -101,8 +105,10 @@ public class FakePlayer {
                 Tasks.joinAsync(() -> {
                     var event = this.preLogin(InetAddress.getLoopbackAddress());
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(textOfChildren(
-                                text("创建假人失败, 无法登陆(preLogin): ", RED), event.kickMessage()
+                        throw new MessageException(miniMessage.deserialize(
+                                "<red>" + I18n.asString("fakeplayer.command.spawn.error.prelogin-failed") + "</red>",
+                                Placeholder.component("name", text(player.getName(), WHITE)),
+                                Placeholder.component("reason", event.kickMessage())
                         ));
                     }
                 }, Main.getInstance());
@@ -112,10 +118,12 @@ public class FakePlayer {
 
             try {
                 Tasks.join(() -> {
-                    var login = this.login(InetAddress.getLoopbackAddress());
-                    if (login.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(textOfChildren(
-                                text("创建假人失败, 无法登陆(login): ", RED), login.kickMessage()
+                    var event = this.login(InetAddress.getLoopbackAddress());
+                    if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+                        throw new MessageException(miniMessage.deserialize(
+                                "<red>" + I18n.asString("fakeplayer.command.spawn.error.login-failed") + "</red>",
+                                Placeholder.component("name", text(player.getName(), WHITE)),
+                                Placeholder.component("reason", event.kickMessage())
                         ));
                     }
 
@@ -165,12 +173,10 @@ public class FakePlayer {
     private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
         var world = Worlds.getNonOverworld();
         if (world == null || !player.teleport(world.getSpawnLocation())) {
-            this.creator.sendMessage(
-                    textOfChildren(
-                            text(player.getName(), WHITE),
-                            text(" 无法获取刷怪能力, 需要你帮他完成一次世界间传送, 你可以使用 tphere 命令传送到地狱再传送回来", GRAY)
-                    )
-            );
+            this.creator.sendMessage(miniMessage.deserialize(
+                    "<gray>" + I18n.asString("fakeplayer.command.spawn.error.no-mob-spawning-ability") + "</gray>",
+                    Placeholder.component("name", text(player.getName(), WHITE))
+            ));
             return;
         }
 
@@ -179,9 +185,9 @@ public class FakePlayer {
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
         if (!Teleportor.teleportAndSound(player, spawnpoint)) {
-            this.creator.sendMessage(textOfChildren(
-                    text(player.getName(), WHITE),
-                    text(" 传送到你身边失败: 可能由于第三方插件影响", GRAY)
+            this.creator.sendMessage(miniMessage.deserialize(
+                    "<gray>" + I18n.asString("fakeplayer.command.spawn.error.teleport-failed") + "/<gray>",
+                    Placeholder.component("name", text(player.getName(), WHITE))
             ));
         }
     }

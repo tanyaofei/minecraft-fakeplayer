@@ -36,8 +36,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
@@ -64,7 +63,7 @@ public class FakeplayerManager {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Tasks.run(() -> {
                             if (removeAll("low tps") > 0) {
-                                Bukkit.broadcast(text("[服务器过于卡顿, 已移除所有假人]", RED, ITALIC));
+                                Bukkit.broadcast(I18n.translate(translatable("fakeplayer.manager.remove-all-on-low-tps", RED, ITALIC)));
                             }
                         }, Main.getInstance());
                     }
@@ -86,7 +85,7 @@ public class FakeplayerManager {
             @NotNull String name,
             @NotNull Location spawnAt,
             @Nullable LocalDateTime removeAt
-    ) {
+    ) throws MessageException {
         this.checkLimit(creator);
 
         SequenceName sn;
@@ -304,7 +303,7 @@ public class FakeplayerManager {
 
         for (var cmd : Commands.formatCommands(commands)) {
             if (!player.performCommand(cmd)) {
-                log.warning("执行命令失败: " + cmd);
+                log.warning("Failed to execute command: " + cmd);
             }
         }
     }
@@ -333,7 +332,7 @@ public class FakeplayerManager {
                 "%c", Objects.requireNonNull(getCreatorName(player)))
         ) {
             if (!server.dispatchCommand(sender, cmd)) {
-                log.warning("执行命令失败: " + cmd);
+                log.warning("Failed to execute command: " + cmd);
             }
         }
     }

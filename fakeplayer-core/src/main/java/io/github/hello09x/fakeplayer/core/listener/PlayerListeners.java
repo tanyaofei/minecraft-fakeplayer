@@ -1,11 +1,13 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
 import com.google.common.base.Throwables;
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.event.EventHandler;
@@ -19,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
@@ -49,7 +50,9 @@ public class PlayerListeners implements Listener {
 
         if (usedIdRepository.contains(event.getUniqueId())) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, textOfChildren(
-                    text("你的 UUID 被使用过, 不能登陆到服务器\n\n", RED),
+                    I18n.translate(translatable("fakeplayer.listener.prelogin.deny-used-uuid")),
+                    newline(),
+                    newline(),
                     text("<<---- fakeplayer ---->>", GRAY)
             ));
             log.info("玩家 %s '%s' 被假人使用过, 拒绝连接服务器".formatted(event.getName(), event.getUniqueId()));

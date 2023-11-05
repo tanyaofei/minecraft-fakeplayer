@@ -66,53 +66,53 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         var keepalive = config.getKeepalive();
-        fakeplayerManager.spawnAsync(
-                        sender,
-                        Optional.ofNullable(name).map(String::trim).orElse(""),
-                        spawnpoint,
-                        keepalive == null ? null : LocalDateTime.now().plus(keepalive)
-                )
-                .exceptionally(e -> {
-                    var message = Optional.ofNullable(e.getCause())
-                            .filter(cause -> cause instanceof MessageException)
-                            .map(MessageException.class::cast)
-                            .map(MessageException::asComponent)
-                            .orElse(null);
-
-                    if (message != null) {
-                        Tasks.run(() -> sender.sendMessage(message), Main.getInstance());
-                    } else {
-                        Tasks.run(() -> sender.sendMessage(I18n.translate(translatable("fakeplayer.command.spawn.error.unknown", RED))), Main.getInstance());
-                        log.severe(Throwables.getStackTraceAsString(e));
-                    }
-                    return null;
-                })
-                .thenAccept(player -> {
-                    if (player == null) {
-                        return;
-                    }
-                    Tasks.run(() -> {
-                        Component message;
-                        if (keepalive == null) {
-                            message = MINI_MESSAGE.deserialize(
-                                    "<gray>" + I18n.asString("fakeplayer.command.spawn.success.without-keepalive") + "</gray>",
-                                    Placeholder.component("name", text(player.getName(), WHITE)),
-                                    Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
-                            );
-                        } else {
-                            message = MINI_MESSAGE.deserialize(
-                                    "<gray>" + I18n.asString("fakeplayer.command.spawn.success.with-keepalive") + "</gray>",
-                                    Placeholder.component("name", text(player.getName(), WHITE)),
-                                    Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
-                                    Placeholder.component("remove-at", text(keepalive.toString()
-                                            .substring(2)
-                                            .replaceAll("(\\\\d[HMS])(?!$)", "$1")
-                                            .toLowerCase(Locale.ROOT)))
-                            );
+        try {
+            fakeplayerManager.spawnAsync(
+                            sender,
+                            Optional.ofNullable(name).map(String::trim).orElse(""),
+                            spawnpoint,
+                            keepalive == null ? null : LocalDateTime.now().plus(keepalive)
+                    )
+                    .thenAccept(player -> {
+                        if (player == null) {
+                            return;
                         }
-                        sender.sendMessage(textOfChildren(message));
-                    }, Main.getInstance());
-                });
+                        Tasks.run(() -> {
+                            Component message;
+                            if (keepalive == null) {
+                                message = MINI_MESSAGE.deserialize(
+                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.without-keepalive") + "</gray>",
+                                        Placeholder.component("name", text(player.getName(), WHITE)),
+                                        Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
+                                );
+                            } else {
+                                message = MINI_MESSAGE.deserialize(
+                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.with-keepalive") + "</gray>",
+                                        Placeholder.component("name", text(player.getName(), WHITE)),
+                                        Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
+                                        Placeholder.component("remove-at", text(keepalive.toString()
+                                                .substring(2)
+                                                .replaceAll("(\\\\d[HMS])(?!$)", "$1")
+                                                .toLowerCase(Locale.ROOT)))
+                                );
+                            }
+                            sender.sendMessage(textOfChildren(message));
+                        }, Main.getInstance());
+                    });
+        } catch (Throwable e) {
+            var message = Optional.ofNullable(e)
+                    .filter(cause -> cause instanceof MessageException)
+                    .map(MessageException.class::cast)
+                    .map(MessageException::asComponent)
+                    .orElse(null);
+
+            if (message != null) {
+                Tasks.run(() -> sender.sendMessage(message), Main.getInstance());
+            } else {
+                Tasks.run(() -> sender.sendMessage(I18n.translate(translatable("fakeplayer.command.spawn.error.unknown", RED))), Main.getInstance());
+                log.severe(Throwables.getStackTraceAsString(e));
+            }
+        }
 
     }
 
@@ -156,15 +156,15 @@ public class SpawnCommand extends AbstractCommand {
 
         var p = Page.of(fakers, page, size);
 
-        var canTp = sender instanceof Player && sender.hasPermission(Permission.tp);
+        var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.asComponent(
-                text("假人", AQUA, BOLD),
+                text(I18n.asString("fakeplayer.command.list.title"), AQUA, BOLD),
                 fakeplayer -> textOfChildren(
                         text(fakeplayer.getName() + " (" + fakeplayerManager.getCreatorName(fakeplayer) + ")", GOLD),
                         text(" - ", GRAY),
                         text(toLocationString(fakeplayer.getLocation()), WHITE),
-                        canTp ? text(" [<--传送]", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())) : empty(),
-                        text(" [<--移除]", RED).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
+                        allowsTp ? textOfChildren(space(), I18n.translate(translatable("fakeplayer.command.list.button.teleport", AQUA)).clickEvent(runCommand("/fp tp " + fakeplayer.getName()))) : empty(),
+                        textOfChildren(space(), I18n.translate(translatable("fakeplayer.command.list.button.kill", RED))).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
                 ),
                 i -> "/fp list " + i + " " + size
         ));
@@ -178,11 +178,10 @@ public class SpawnCommand extends AbstractCommand {
         var from = target.getLocation().toBlockLocation();
         var to = sender.getLocation().toBlockLocation();
 
-        if (!from.getWorld().equals(to.getWorld())) {
-            sender.sendMessage(textOfChildren(
-                    text("你离 ", GRAY),
-                    text(target.getName()),
-                    text(" 十分遥远", GRAY)
+        if (!Objects.equals(from.getWorld(), to.getWorld())) {
+            sender.sendMessage(miniMessage.deserialize(
+                    "<gray>" + I18n.asString("fakeplayer.command.distance.error.too-far") + "</gray>",
+                    Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;
         }
@@ -193,17 +192,15 @@ public class SpawnCommand extends AbstractCommand {
         var z = Math.abs(from.getBlockZ() - to.getBlockZ());
 
         sender.sendMessage(textOfChildren(
-                text("你与 ", GRAY),
-                text(target.getName(), WHITE),
-                text(" 的距离: ", GRAY),
+                miniMessage.deserialize(
+                        "<gray>" + I18n.asString("fakeplayer.command.distance.baseline") + "</gray>",
+                        Placeholder.component("name", text(target.getName(), WHITE))
+                ),
                 newline(),
-                text("- 欧氏距离: ", GRAY), text(euclidean, WHITE),
-                newline(),
-                text("- x 距离: ", GRAY), text(x, WHITE),
-                newline(),
-                text("- y 距离: ", GRAY), text(y, WHITE),
-                newline(),
-                text("- z 距离: ", GRAY), text(z, WHITE)
+                I18n.translate(translatable("fakeplayer.command.distance.euclidean", GRAY)), space(), text(euclidean, WHITE), newline(),
+                I18n.translate(translatable("fakeplayer.command.distance.x", GRAY)), space(), text(x, WHITE), newline(),
+                I18n.translate(translatable("fakeplayer.command.distance.y", GRAY)), space(), text(y, WHITE), newline(),
+                I18n.translate(translatable("fakeplayer.command.distance.z", GRAY)), space(), text(z, WHITE)
         ));
     }
 

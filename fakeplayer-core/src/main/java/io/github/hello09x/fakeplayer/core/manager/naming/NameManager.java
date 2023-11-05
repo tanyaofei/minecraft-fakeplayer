@@ -1,9 +1,12 @@
 package io.github.hello09x.fakeplayer.core.manager.naming;
 
+import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.Bukkit;
@@ -19,15 +22,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class NameManager {
 
     public final static NameManager instance = new NameManager();
     private final static Logger log = Main.getInstance().getLogger();
+    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
     private final static int MAX_LENGTH = 16;   // mojang required
     private final static int MIN_LENGTH = 3; // mojang required
     private final static String FALLBACK_NAME = "_fp_";
@@ -57,7 +59,7 @@ public class NameManager {
         }
 
         String serverId;
-        try(var in = new FileReader(file, StandardCharsets.UTF_8)) {
+        try (var in = new FileReader(file, StandardCharsets.UTF_8)) {
             serverId = IOUtils.toString(in);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -91,23 +93,32 @@ public class NameManager {
      */
     public @NotNull SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
         if (name.startsWith("-")) {
-            throw new IllegalCustomNameException(textOfChildren(text("名称不能以", GRAY), text(" - ", RED), text("开头", GRAY)));
+            throw new IllegalCustomNameException(miniMessage.deserialize(
+                    "<red>" + I18n.asString("fakeplayer.spawn.error.name.start-with-illegal-character") + "/<red>",
+                    Placeholder.component("character", text("-", WHITE))
+            ));
         }
 
         if (name.length() > MAX_LENGTH) {
-            throw new IllegalCustomNameException(text(String.format("名称最多 %d 位字符", MAX_LENGTH), GRAY));
+            throw new IllegalCustomNameException(miniMessage.deserialize(
+                    "<red>" + I18n.asString("fakeplayer.spawn.error.name.too-long") + "</red>",
+                    Placeholder.component("length", text(MAX_LENGTH, WHITE))
+            ));
         }
 
         if (name.length() < MIN_LENGTH) {
-            throw new IllegalCustomNameException(text(String.format("名称最少 %d 位字符", MIN_LENGTH), GRAY));
+            throw new IllegalCustomNameException(miniMessage.deserialize(
+                    "<red>" + I18n.asString("fakeplayer.spawn.error.name.too-short") + "</red>",
+                    Placeholder.component("length", text(MIN_LENGTH, WHITE))
+            ));
         }
 
         if (!config.getNamePattern().asPredicate().test(name)) {
-            throw new IllegalCustomNameException(text("名称不符合格式要求", GRAY));
+            throw new IllegalCustomNameException(I18n.translate(translatable("fakeplayer.spawn.error.name.invalid", RED)));
         }
 
         if (Bukkit.getPlayerExact(name) != null || Bukkit.getOfflinePlayer(name).hasPlayedBefore()) {
-            throw new IllegalCustomNameException(text("名称已被使用", GRAY));
+            throw new IllegalCustomNameException(I18n.translate(translatable("fakeplayer.spawn.error.name.existed", RED)));
         }
 
         return new SequenceName(
