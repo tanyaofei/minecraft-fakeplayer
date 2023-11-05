@@ -1,54 +1,56 @@
 package io.github.hello09x.fakeplayer.api.action;
 
+import io.github.hello09x.bedrock.i18n.TranslateKey;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
-public enum ActionType {
+public enum ActionType implements TranslateKey {
 
     /**
      * 攻击实体
      */
-    ATTACK("攻击"),
+    ATTACK("fakeplayer.action.attack"),
 
     /**
      * 挖掘
      */
-    MINE("挖掘"),
+    MINE("fakeplayer.action.mine"),
 
     /**
      * 右键
      */
-    USE("右键"),
+    USE("fakeplayer.action.use"),
 
     /**
      * 跳跃
      */
-    JUMP("跳跃"),
+    JUMP("fakeplayer.action.jump"),
 
     /**
      * 看向附近实体
      */
-    LOOK_AT_NEAREST_ENTITY("看向实体"),
+    LOOK_AT_NEAREST_ENTITY("fakeplayer.action.look-at-entity"),
 
     /**
      * 丢弃手上 1 个物品
      */
-    DROP_ITEM("丢弃单个物品"),
+    DROP_ITEM("fakeplayer.action.drop-item"),
 
     /**
      * 丢弃手上整组物品
      */
-    DROP_STACK("丢弃整组物品"),
+    DROP_STACK("fakeplayer.action.drop-stack"),
 
     /**
      * 丢弃背包
      */
-    DROP_INVENTORY("丢弃背包物品")
+    DROP_INVENTORY("fakeplayer.action.drop-inventory");
 
-    ;
+    final String translateKey;
 
-    @Getter
-    final String displayName;
-
+    @Override
+    public @NotNull String translateKey() {
+        return translateKey;
+    }
 }

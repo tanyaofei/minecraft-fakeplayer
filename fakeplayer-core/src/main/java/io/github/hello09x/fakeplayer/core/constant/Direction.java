@@ -1,17 +1,29 @@
 package io.github.hello09x.fakeplayer.core.constant;
 
-public enum Direction {
+import io.github.hello09x.bedrock.i18n.TranslateKey;
+import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
-    DOWN,
+@AllArgsConstructor
+public enum Direction implements TranslateKey {
 
-    UP,
+    DOWN("fakeplayer.direction.down"),
 
-    NORTH,
+    UP("fakeplayer.direction.up"),
 
-    SOUTH,
+    NORTH("fakeplayer.direction.north"),
 
-    WEST,
+    SOUTH("fakeplayer.direction.south"),
 
-    EAST;
+    WEST("fakeplayer.direction.west"),
+
+    EAST("fakeplayer.direction.east");
+
+    final String translateKey;
+
+    @Override
+    public @NotNull String translateKey() {
+        return this.translateKey;
+    }
 
 }
