@@ -33,7 +33,7 @@
 + `/fp look (north | south | east| west | up | down | at | entity)` - 看向指定位置
 + `/fp turn (left | right | back | to)` - 转身到指定位置
 + `/fp move (forward | backward | left | right)` - 移动假人
-+ `/fp ride (anything | normal | stop)` - 骑乘
++ `/fp ride (anything | vehicle | target | stop)` - 骑乘
 + `/fp cmd <假人> <命令>` - 执行命令
 + `/fp reload` - 重载配置文件
 
@@ -152,19 +152,31 @@ UUID，你可以通过这份文件筛查来清理多余的第三方插件存档�
 ```yml
 # 配置文件版本
 # 不要修改这个值
-version: 12
+# THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT
+version: 13
+
+# 多国语言配置
+# language
+i18n:
+  locale: zh
 
 # 服务器最多存在多少个假人
 # 默认: 1000
+# Define the maximum number of fake players on the server at the same time
+# default: 1000
 server-limit: 1000
 
 # 每个玩家最多创建多少个假人
 # 默认: 1
+# Define the maximum number of fake players each player can spawn
+# default: 1
 player-limit: 1
 
 # 假人存活时间, 0 表示永久
 # 单位: 分钟
-keepalive: 0
+# Define the maximum lifespan of fake players
+# Unit: minute, `0` represents permanent
+lifespan: 0
 
 # 假人默认名称模版
 # 如果为空, 则跟随创建者的名字并且加上后缀
@@ -176,6 +188,15 @@ keepalive: 0
 #   1. 如果包含除 英文字母、数字、下划线 以外的字符，将会导致原版及第三方的许多命令失效
 #   2. 长度超过 16 位将会被截取
 #   3. 不能以 - 开头
+# Name template of fake players
+# If this value is empty, fake players will use the creators' name as their names and add a numerical suffix.
+# if this value is NOT empty, fake players will use this value as their names and add a numerical suffix.
+# placeholder:
+#   %c: the name of the creator
+# tips:
+#   1. If this value contains characters other than alphabetic, numbers, and underscores, many vanilla commands will not be usable on them.
+#   2. Characters longer than 16 characters will be truncated
+#   3. Can not start with '-'
 name-template: ''
 
 # 假人自定义名称允许的字符
@@ -190,31 +211,26 @@ name-pattern: '^[a-zA-Z0-9_]+$'
 # 跟随下线
 # 假人创建者下线时是否也跟着下线
 # 如果玩家只是切换服务器, 那么不会触发跟随下线
+# Define whether fake personas will be removed when the creator quited.
 follow-quiting: true
 
 # 退出时是否丢弃背包物品
-# 有跨服背包同步的谨慎开启, 需验证是否会导致物品复制
-# 验证过程:
-#   1. 创建假人
-#   2. 通过 /kill 之类的命令杀死这个假人，假人死前会将背包物品丢弃出来
-#   3. 重新召唤这个假人, 查看他的背包数据有没有被复制了一份
-drop-inventory-on-quiting: true
+# Define whether fake players will drop items from their inventory when they remove.
+drop-inventory-on-quiting: false
 
 # 如果启用, 则一个 IP 只能创建 `maximum` 个假人
 # 能够避免玩家开小号疯狂创建假人
+# Define whether to check if the same IP can only spawn `player-limit` fake players.
 detect-ip: true
 
 # 服务器最近 5 分钟平均 TPS 低于这个值清除所有假人
 # 每 60 秒检测一次
 # 默认: 0, 即不开启, 因为移除假人可能导致玩家红石机器出问题, 按需开启吧
+# Server will detect tps every 5 minutes, if the average tps is lower than this value, all fake players will be removed
+# default: 0, means disabled
+# Tips:
+#    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
-
-# 是否模拟登陆
-# 真实的玩家登陆流程是 "预登陆" -> "登陆" -> "加入游戏", 而假人插件默认情况下跳过了前两个步骤直接加入游戏
-# 有一些需要在 "登陆" 时生成玩家档案的插件发生异常比如 LuckPerms
-# 如果服务器没有出现严重的错误不需要理会这些异常, 只是这些插件无法对假人进行操作而已
-# 开启也不一定能解决所有问题, 也可能因为一些 "限制新加入玩家" 的插件而导致假人出现问题, 并且会创建更多的第三方插件数据
-simulate-login: true
 
 # 预准备命令
 # 假人诞生时会以控制台的身份按顺序执行以下命令
@@ -224,6 +240,12 @@ simulate-login: true
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
+# Server will execute the following commands after the fake player was spawned
+# you can add some commands to give them permission
+# placeholder:
+#    %p: the name of the fake player
+#    %u: the uuid of the fake player
+#    %c: the name of creator
 preparing-commands:
   - ''
   - ''
@@ -235,6 +257,12 @@ preparing-commands:
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
+# Server will execute the following commands after the fake player was removed
+# you can add some commands to clean up data
+# placeholder:
+#    %p: the name of the fake player
+#    %u: the uuid of the fake player
+#    %c: the name of creator
 destroy-commands:
   - ''
   - ''
@@ -242,20 +270,26 @@ destroy-commands:
 # 自执行命令
 # 假人在诞生时会以自己的身份按顺序执行命令
 # 你可以在这里做添加 /register 和 /login 命令来防止 `AuthMe` 等插件踢掉超时未登陆的玩家
+# The fake player will execute the following commands
+# You can add some command to make him to login
+# - '/register ANY_PASSWORD'
+# - '/login ANY_PASSWORD'
 self-commands:
   - ''
   - ''
+
+# 检测更新
+check-for-updates: true
 
 # 允许玩家让假人执行的命令
 # 在这里你可以放一些你服务器的命令，玩家就可以执行
 # 例如添加 /sit 之后, 玩家可以通过 '/fp cmd myfakeplayer sit' 让假人坐下来
 # ！！！注意: 在这里定义的命令, 不需要 fakeplayer.cmd 权限！！！
 # ！！！注意: 给了 fakeplayer.cmd 命令，玩家就能够控制假人执行所有(有权限的)命令！！！
+# Define which commands can be executed by `/fp cmd` without 'fakeplayer.cmd' permission
 allow-commands:
   - ''
   - ''
 
-# 检测更新
-check-for-updates: true
 
 ```
