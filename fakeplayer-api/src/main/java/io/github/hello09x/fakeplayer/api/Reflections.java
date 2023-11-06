@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.api;
 
+import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,24 @@ public class Reflections {
             }
         }
         return null;
+    }
+
+
+    public static @N Field getFistFieldByTypeIncludeParent(
+            @NotNull Class<?> clazz,
+            @NotNull Class<?> fieldType
+    ) {
+        for (var field : clazz.getDeclaredFields()) {
+            if (field.getType() == fieldType) {
+                field.setAccessible(true);
+                return field;
+            }
+        }
+        var superclass = clazz.getSuperclass();
+        if (superclass == null || superclass == Object.class) {
+            return null;
+        }
+        return getFistFieldByTypeIncludeParent(superclass, fieldType);
     }
 
     public static @Nullable Field getFirstFieldByAssignFromType(

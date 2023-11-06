@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.api.action.impl;
 
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
-import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class JumpAction implements Action {
@@ -28,11 +27,10 @@ public class JumpAction implements Action {
 
     @Override
     public void inactiveTick() {
-
+        player.setJumping(false);
     }
 
     @Override
     public void stop() {
-
     }
 }

@@ -47,7 +47,7 @@ public class VersionSupportImpl implements VersionSupport {
     }
 
     @Override
-    public ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
+    public @NotNull ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
         return new ActionTickerImpl(player, action, setting);
     }
 

@@ -35,6 +35,6 @@ public interface VersionSupport {
 
     boolean isSupported();
 
-    ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting);
+    @NotNull ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting);
 
 }

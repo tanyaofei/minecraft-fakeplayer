@@ -30,7 +30,7 @@ import static io.github.hello09x.bedrock.command.Commands.*;
 
 @SuppressWarnings("SameParameterValue")
 public class CommandRegistry {
-    
+
     private final static I18n i18n = Main.i18n();
 
     public static void register() {
