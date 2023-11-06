@@ -21,7 +21,7 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <plugin.version>0.2.1</plugin.version>
+        <plugin.version>0.2.2</plugin.version>
     </properties>
 
     <repositories>
