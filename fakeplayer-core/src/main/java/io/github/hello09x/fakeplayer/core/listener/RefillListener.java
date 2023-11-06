@@ -23,7 +23,7 @@ public class RefillListener implements Listener {
 
     private final FakeplayerManager manager = FakeplayerManager.instance;
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemUse(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
         if (!manager.isRefillable(player)) {
@@ -39,7 +39,7 @@ public class RefillListener implements Listener {
         this.refillLater(player, slot, item);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
         var player = event.getPlayer();
         if (!manager.isRefillable(player)) {
@@ -55,7 +55,7 @@ public class RefillListener implements Listener {
         this.refillLater(player, slot, item);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
         if (!manager.isRefillable(player)) {
@@ -63,7 +63,7 @@ public class RefillListener implements Listener {
         }
 
         var item = event.getBrokenItem();
-        var slot = getHoldingHand(player, item);
+        var slot = this.getHoldingHand(player, item);
         if (slot == null) {
             return;
         }
@@ -74,7 +74,7 @@ public class RefillListener implements Listener {
     /**
      * 发射投掷物, 如扔喷溅型药水
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onProjectileLaunch(@NotNull PlayerLaunchProjectileEvent event) {
         var player = event.getPlayer();
         if (!manager.isRefillable(event.getPlayer())) {
@@ -85,14 +85,20 @@ public class RefillListener implements Listener {
             return;
         }
 
-        var slot = getHoldingHand(player, item);
+        var slot = this.getHoldingHand(player, item);
         if (slot == null) {
             return;
         }
         this.refillLater(player, slot, item);
     }
 
-
+    /**
+     * 在下一 tick 填装物品
+     *
+     * @param player 玩家
+     * @param slot   填充位置
+     * @param item   要填充的物品
+     */
     public void refillLater(@NotNull Player player, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
         var requires = item.clone();
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
@@ -109,6 +115,13 @@ public class RefillListener implements Listener {
         }, 1);
     }
 
+    /**
+     * 获取玩家哪只手持有对应的物品
+     *
+     * @param player 玩家
+     * @param item   对应的物品
+     * @return 哪只手
+     */
     private @Nullable EquipmentSlot getHoldingHand(@NotNull Player player, @NotNull ItemStack item) {
         var inv = player.getInventory();
         if (item.equals(inv.getItemInMainHand())) {
