@@ -136,8 +136,8 @@ public class ActionCommand extends AbstractCommand {
             case SOUTH -> look(target, 0, 0);
             case EAST -> look(target, -90, 0);
             case WEST -> look(target, 90, 0);
-            case UP -> look(target, target.getYaw(), -90);
-            case DOWN -> look(target, target.getYaw(), 90);
+            case UP -> look(target, target.getLocation().getYaw(), -90);
+            case DOWN -> look(target, target.getLocation().getYaw(), 90);
         }
     }
 
@@ -187,7 +187,8 @@ public class ActionCommand extends AbstractCommand {
     }
 
     private void turn(@NotNull Player player, float yaw, float pitch) {
-        look(player, player.getYaw() + yaw, player.getPitch() + pitch);
+        var pos = player.getLocation();
+        look(player, pos.getYaw() + yaw, pos.getPitch() + pitch);
     }
 
 

@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.manager;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
+import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -16,13 +17,17 @@ import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustom
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Configs;
+import io.github.hello09x.fakeplayer.core.softdepend.OpenInvDepend;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +52,8 @@ public class FakeplayerManager {
 
     private final static Logger log = Main.getInstance().getLogger();
 
+    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
+
     private final FakeplayerConfig config = FakeplayerConfig.instance;
 
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
@@ -58,6 +65,8 @@ public class FakeplayerManager {
     private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
     private final I18n i18n = Main.i18n();
+
+    private final OpenInvDepend openInvDepend = OpenInvDepend.instance;
 
     private FakeplayerManager() {
         var timer = Executors.newSingleThreadScheduledExecutor();
@@ -113,7 +122,8 @@ public class FakeplayerManager {
                             lookAtEntity = Configs.look_at_entity.defaultValue(),
                             collidable = Configs.collidable.defaultValue(),
                             pickupItems = Configs.pickup_items.defaultValue(),
-                            skin = Configs.skin.defaultValue();
+                            skin = Configs.skin.defaultValue(),
+                            refillable = Configs.refillable.defaultValue();
 
                     if (creator instanceof Player p) {
                         var creatorId = p.getUniqueId();
@@ -122,6 +132,7 @@ public class FakeplayerManager {
                         collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
                         pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
                         skin = userConfigRepository.selectOrDefault(creatorId, Configs.skin);
+                        refillable = userConfigRepository.selectOrDefault(creatorId, Configs.refillable);
                     }
 
                     return new SpawnOption(
@@ -130,7 +141,8 @@ public class FakeplayerManager {
                             collidable,
                             lookAtEntity,
                             pickupItems,
-                            skin
+                            skin,
+                            refillable
                     );
                 })
                 .thenApplyAsync(option -> fp.spawnAsync(option).join())
@@ -289,6 +301,22 @@ public class FakeplayerManager {
                 .count();
     }
 
+    public void setRefillable(@NotNull Player player, boolean refillable) {
+        if (!this.isFake(player)) {
+            return;
+        }
+
+        if (!refillable) {
+            player.removeMetadata("fakeplayer:refillable", Main.getInstance());
+        } else {
+            player.setMetadata("fakeplayer:refillable", new FixedMetadataValue(Main.getInstance(), true));
+        }
+    }
+
+    public boolean isRefillable(@NotNull Player player) {
+        return player.hasMetadata("fakeplayer:refillable");
+    }
+
     /**
      * 以假人身份执行命令
      *
@@ -339,6 +367,21 @@ public class FakeplayerManager {
         }
     }
 
+    public boolean openInventory(@NotNull Player creator, @NotNull Player player) {
+        var fake = this.playerList.getByName(player.getName());
+        if (fake == null) {
+            return false;
+        }
+        if (!creator.isOp() && !fake.getCreator().equals(creator)) {
+            return false;
+        }
+
+        if (!openInvDepend.openInventory(creator, player)) {
+            this.openInventoryDefault(creator, player);
+        }
+        return true;
+    }
+
     private void checkLimit(@NotNull CommandSender creator) throws MessageException {
         if (creator.isOp()) {
             return;
@@ -354,6 +397,16 @@ public class FakeplayerManager {
 
         if (config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= config.getPlayerLimit()) {
             throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.ip-limit"));
+        }
+    }
+
+    private void openInventoryDefault(@NotNull Player player, @NotNull Player target) {
+        var view = player.openInventory(target.getInventory());
+        if (view != null) {
+            view.setTitle("* " + Components.asString(miniMessage.deserialize(
+                    i18n.asString("fakeplayer.manager.inventory.title"),
+                    Placeholder.component("name", text(target.getName()))
+            )));
         }
     }
 

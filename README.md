@@ -11,6 +11,16 @@
 1. 这个假人有点"真", 与真实玩家一致, 可以保持区块的刷新和怪物生成, 距离取决于服务器设置的模拟距离
 2. 假人的原生数据档案、成就数据不会存档，但第三方的档案还会存在
 
+## 前置
+
+### 必须前置:
+
+- CommandAPI
+
+### 可选前置:
+
+- OpenInv: 有这个插件则玩家打开假人背包时可以操作编辑, 否则只能查看
+
 ## 命令
 
 + `/fp spawn [名称] [世界] [位置]` - 创建假人
@@ -22,10 +32,12 @@
 + `/fp tps` - 与假人交换位置
 + `/fp config get <配置项>` - 查看配置项
 + `/fp config set <配置项> <配置值>` - 设置配置项
++ `/fp config list` - 查看所有配置项
 + `/fp health` - 查看生命值
 + `/fp exp` - 查看经验值
 + `/fp expme` - 转移经验值
-+ `/fp attack (once | continuous | interval | stop)` - 攻击/破坏
++ `/fp attack (once | continuous | interval | stop)` - 攻击
++ `/fp mine (once | continuous | interval | stop)` - 挖掘
 + `/fp use (once | continuous | interval | stop)` - 使用/交互/放置
 + `/fp jump (once | continuous | interval | stop)` - 跳跃
 + `/fp drop [-a|--all]` - 丢弃手上物品
@@ -34,6 +46,10 @@
 + `/fp turn (left | right | back | to)` - 转身到指定位置
 + `/fp move (forward | backward | left | right)` - 移动假人
 + `/fp ride (anything | vehicle | target | stop)` - 骑乘
++ `/fp sleep` - 睡觉
++ `/fp wakup` - 起床
++ `/fp skin` - 拷贝皮肤
++ `/fp invsee` - 查看背包 _(有 OpenInv 前置则可以编辑)_
 + `/fp cmd <假人> <命令>` - 执行命令
 + `/fp reload` - 重载配置文件
 
@@ -43,18 +59,18 @@
 
 **_默认所有权限是 op 拥有，请通过权限管理插件来分配！_**
 
-| 节点                        | 指令                                                               |
-|---------------------------|------------------------------------------------------------------|
-| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`, `dropinv`, `drop`           |
-| fakeplayer.spawn.location | `spawn` 可以指定出生点                                                  |
-| fakeplayer.spawn.name     | `spawn` 可以自定义名称                                                  |
-| fakeplayer.tp             | `tp`, `tps`, `tphere`                                            |
-| fakeplayer.profile        | `exp`, `health`                                                  |
-| fakeplayer.exp            | `expme`                                                          |
-| fakeplayer.action         | `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`, `ride` |
-| fakeplayer.cmd            | `cmd`                                                            |
-| fakeplayer.admin          | `reload`                                                         |
-| 无                         | `config`                                                         |
+| 节点                        | 指令                                                                                            |
+|---------------------------|-----------------------------------------------------------------------------------------------|
+| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`, `dropinv`, `drop`, `skin`, `invsee`                      |
+| fakeplayer.spawn.location | `spawn` 可以指定出生点                                                                               |
+| fakeplayer.spawn.name     | `spawn` 可以自定义名称                                                                               |
+| fakeplayer.tp             | `tp`, `tps`, `tphere`                                                                         |
+| fakeplayer.profile        | `exp`, `health`                                                                               |
+| fakeplayer.exp            | `expme`                                                                                       |
+| fakeplayer.action         | `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`, `ride`, `refill`, `sleep`, `wakeup` |
+| fakeplayer.cmd            | `cmd`                                                                                         |
+| fakeplayer.admin          | `reload`                                                                                      |
+| 无                         | `config`                                                                                      |
 
 ## 玩家个性化配置
 

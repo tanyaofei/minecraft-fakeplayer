@@ -1,16 +1,21 @@
 package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.bedrock.util.Components;
+import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import io.github.hello09x.fakeplayer.core.repository.model.Configs;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class ConfigCommand extends AbstractCommand {
@@ -42,6 +47,23 @@ public class ConfigCommand extends AbstractCommand {
                 Placeholder.component("option", i18n.translate(config.translateKey(), GOLD)),
                 Placeholder.component("value", text(value.toString(), WHITE))
         ));
+    }
+
+    public void listConfig(@NotNull Player sender, @NotNull CommandArguments args) {
+        var uuid = sender.getUniqueId();
+        CompletableFuture.runAsync(() -> {
+            var components = Arrays.stream(Configs.values()).map(config -> {
+                var value = String.valueOf(repository.selectOrDefault(uuid, config));
+                return textOfChildren(
+                        i18n.translate(config, GOLD),
+                        text(": ", GRAY),
+                        text(value, WHITE)
+                );
+            }).toList();
+
+            var message = Components.join(components, newline());
+            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(message));
+        });
     }
 
 

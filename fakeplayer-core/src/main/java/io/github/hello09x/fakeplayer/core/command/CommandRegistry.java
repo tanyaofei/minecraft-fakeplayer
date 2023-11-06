@@ -53,6 +53,9 @@ public class CommandRegistry {
                                 Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.spawn),
                                 Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.spawn),
                                 Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.spawn),
+                                Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.spawn),
+                                Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.spawn),
+                                Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.spawn),
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
                                 Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tp),
                                 Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tp),
@@ -64,13 +67,14 @@ public class CommandRegistry {
                                 Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.action),
                                 Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.action),
                                 Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.action),
+                                Usage.of("refill", i18n.asString("fakeplayer.command.refill.description"), Permission.action),
                                 Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.action),
                                 Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.action),
                                 Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.action),
                                 Usage.of("move", i18n.asString("fakeplayer.command.move.description"), Permission.action),
                                 Usage.of("ride", i18n.asString("fakeplayer.command.ride.description"), Permission.action),
                                 Usage.of("sneak", i18n.asString("fakeplayer.command.sneak.description"), Permission.action),
-                                Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.spawn),
+                                Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.action),
                                 Usage.of("cmd", i18n.asString("fakeplayer.command.cmd.description"), Permission.cmd),
                                 Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), Permission.admin)
                         ),
@@ -115,6 +119,10 @@ public class CommandRegistry {
                                 .withArguments(offlinePlayer("player"))
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(SkinCommand.instance::skin),
+                        command("invsee")
+                                .withPermission(Permission.spawn)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(InvseeCommand.instance::invsee),
 
                         command("exp")
                                 .withPermission(Permission.profile)
@@ -147,7 +155,9 @@ public class CommandRegistry {
                                                 .withArguments(
                                                         config("option"),
                                                         configValue("option", "value"))
-                                                .executesPlayer(ConfigCommand.instance::setConfig)
+                                                .executesPlayer(ConfigCommand.instance::setConfig),
+                                        command("list")
+                                                .executesPlayer(ConfigCommand.instance::listConfig)
                                 ),
 
                         command("attack")
@@ -287,6 +297,21 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance::swap),
+                        command("refill")
+                                .withPermission(Permission.action)
+                                .withOptionalArguments(
+                                        literals("enabled", List.of("true", "false")),
+                                        fakeplayer("name")
+                                )
+                                .executes(RefillCommand.instance::refill),
+                        command("sleep")
+                                .withPermission(Permission.action)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executes(SleepCommand.instance::sleep),
+                        command("wakeup")
+                                .withPermission(Permission.action)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executes(SleepCommand.instance::wakeup),
 
                         command("expme")
                                 .withPermission(Permission.exp)

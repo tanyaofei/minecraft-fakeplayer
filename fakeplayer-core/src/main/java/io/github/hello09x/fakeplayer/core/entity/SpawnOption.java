@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @param collidable   是否开启碰撞
  * @param lookAtEntity 是否看向附近实体
  * @param pickupItems  是否拾取物品
+ * @param refillable   是否自动填装
  */
 public record SpawnOption(
         @NotNull
@@ -22,7 +23,9 @@ public record SpawnOption(
 
         boolean pickupItems,
 
-        boolean skin
+        boolean skin,
+
+        boolean refillable
 
 ) {
 }

@@ -8,6 +8,7 @@ import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
@@ -144,6 +145,9 @@ public class FakePlayer {
                     }
                     if (option.skin() && this.creator instanceof Player playerCreator) {
                         handle.copyTexture(playerCreator);
+                    }
+                    if (option.refillable()) {
+                        FakeplayerManager.instance.setRefillable(player, true);
                     }
 
                     var network = Main.getVersionSupport().network();

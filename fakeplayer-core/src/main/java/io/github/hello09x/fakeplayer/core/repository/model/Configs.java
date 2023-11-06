@@ -64,6 +64,14 @@ public interface Configs {
             Boolean::valueOf
     );
 
+    Config<Boolean> refillable = build(
+            "refillable",
+            "fakeplayer.config.refillable",
+            false,
+            List.of("true", "false"),
+            Boolean::valueOf
+    );
+
     @SuppressWarnings("SameParameterValue")
     private static <T> Config<T> build(
             @NotNull String name,

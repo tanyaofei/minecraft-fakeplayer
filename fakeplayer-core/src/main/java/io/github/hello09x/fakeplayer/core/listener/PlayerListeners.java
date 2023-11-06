@@ -9,11 +9,15 @@ import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,6 +63,19 @@ public class PlayerListeners implements Listener {
     }
 
     /**
+     * 由于查看假人背包时看不到盔甲栏, 且在将物品从假人背包移动到玩家背包时候有概率会将物品放置到假人的盔甲栏而找不到了, 因此禁止玩家操作假人背包
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onClickFakePlayerInventory(@NotNull InventoryClickEvent event) {
+        var top = event.getView().getTopInventory();
+        if (top.getType() == InventoryType.PLAYER && (top.getHolder() instanceof Player player && manager.isFake(player))) {
+            if (event.getView().getTitle().startsWith("*")) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
      * 死亡退出游戏
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -94,6 +111,18 @@ public class PlayerListeners implements Listener {
         } finally {
             manager.cleanup(player);
         }
+    }
+
+    /**
+     * 右键假人打开其背包
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void invsee(@NotNull PlayerInteractAtEntityEvent event) {
+        if (!(event.getRightClicked() instanceof Player target) || !manager.isFake(target)) {
+            return;
+        }
+
+        manager.openInventory(event.getPlayer(), target);
     }
 
 }

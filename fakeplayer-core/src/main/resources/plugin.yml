@@ -7,6 +7,9 @@ website: 'https://github.com/tanyaofei/minecraft-fakeplayer'
 depend:
   - CommandAPI
 
+softdepend:
+  - OpenInv
+
 permissions:
   fakeplayer.all:
     description: '假人所有基础权限(即将删除, 请替换成 `fakeplayer.basic`)'
