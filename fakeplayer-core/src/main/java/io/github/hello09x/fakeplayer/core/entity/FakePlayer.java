@@ -233,4 +233,18 @@ public class FakePlayer {
         return event;
     }
 
+    /**
+     * 判断是否是创建者
+     * <p>如果玩家下线再重新登陆, entityID 将会不一样导致 {@link Player#equals(Object)} 返回 {@code false}</p>
+     *
+     * @param sender 命令执行者
+     * @return 是否是创建者
+     */
+    public boolean isCreator(@NotNull CommandSender sender) {
+        if (this.creator instanceof Player pc && sender instanceof Player ps) {
+            return pc.getUniqueId().equals(ps.getUniqueId());
+        }
+        return creator.getClass() == sender.getClass() && creator.getName().equals(sender.getName());
+    }
+
 }
