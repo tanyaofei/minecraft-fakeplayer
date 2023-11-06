@@ -61,11 +61,10 @@
 
 | 节点                        | 指令                                                                                            |
 |---------------------------|-----------------------------------------------------------------------------------------------|
-| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`, `dropinv`, `drop`, `skin`, `invsee`                      |
+| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`, `dropinv`, `drop`, `skin`, `invsee`, `health`, `exp`     |
 | fakeplayer.spawn.location | `spawn` 可以指定出生点                                                                               |
 | fakeplayer.spawn.name     | `spawn` 可以自定义名称                                                                               |
 | fakeplayer.tp             | `tp`, `tps`, `tphere`                                                                         |
-| fakeplayer.profile        | `exp`, `health`                                                                               |
 | fakeplayer.exp            | `expme`                                                                                       |
 | fakeplayer.action         | `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`, `ride`, `refill`, `sleep`, `wakeup` |
 | fakeplayer.cmd            | `cmd`                                                                                         |

@@ -56,13 +56,13 @@ public class CommandRegistry {
                                 Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.spawn),
                                 Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.spawn),
                                 Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.spawn),
+                                Usage.of("health", i18n.asString("fakeplayer.command.health.description"), Permission.spawn),
+                                Usage.of("exp", i18n.asString("fakeplayer.command.exp.description"), Permission.spawn),
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
                                 Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tp),
                                 Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tp),
                                 Usage.of("config get", i18n.asString("fakeplayer.command.config.get.description")),
                                 Usage.of("config set", i18n.asString("fakeplayer.command.config.set.description")),
-                                Usage.of("health", i18n.asString("fakeplayer.command.health.description"), Permission.profile),
-                                Usage.of("exp", i18n.asString("fakeplayer.command.exp.description"), Permission.profile),
                                 Usage.of("expme", i18n.asString("fakeplayer.command.expme.description"), Permission.exp),
                                 Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.action),
                                 Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.action),
@@ -123,13 +123,12 @@ public class CommandRegistry {
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(InvseeCommand.instance::invsee),
-
                         command("exp")
-                                .withPermission(Permission.profile)
+                                .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ProfileCommand.instance::exp),
                         command("health")
-                                .withPermission(Permission.profile)
+                                .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ProfileCommand.instance::health),
 

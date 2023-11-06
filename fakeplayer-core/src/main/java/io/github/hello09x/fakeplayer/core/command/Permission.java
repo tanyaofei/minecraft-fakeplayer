@@ -6,8 +6,6 @@ public interface Permission {
     String spawn = "fakeplayer.spawn";
     String spawnLocation = "fakeplayer.spawn.location";
 
-    String profile = "fakeplayer.profile";
-
     String tp = "fakeplayer.tp";
 
     String exp = "fakeplayer.exp";
