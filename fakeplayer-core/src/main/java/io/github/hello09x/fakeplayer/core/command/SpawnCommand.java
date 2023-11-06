@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -22,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Math;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -36,6 +36,8 @@ public class SpawnCommand extends AbstractCommand {
     private final static Logger log = Main.getInstance().getLogger();
 
     private final static MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    private final static DateTimeFormatter REMOVE_AT_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
     private static String toLocationString(@NotNull Location location) {
         return location.getWorld().getName()
@@ -65,13 +67,13 @@ public class SpawnCommand extends AbstractCommand {
             );
         }
 
-        var lifespan = config.getLifespan();
+        var removedAt = Optional.ofNullable(config.getLifespan()).map(lifespan -> LocalDateTime.now().plus(lifespan)).orElse(null);
         try {
             fakeplayerManager.spawnAsync(
                             sender,
                             Optional.ofNullable(name).map(String::trim).orElse(""),
                             spawnpoint,
-                            lifespan == null ? null : LocalDateTime.now().plus(lifespan)
+                            removedAt
                     )
                     .thenAccept(player -> {
                         if (player == null) {
@@ -79,41 +81,36 @@ public class SpawnCommand extends AbstractCommand {
                         }
                         Tasks.run(() -> {
                             Component message;
-                            if (lifespan == null) {
+                            if (removedAt == null) {
                                 message = MINI_MESSAGE.deserialize(
-                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.without-lifespan") + "</gray>",
+                                        "<gray>" + i18n.asString("fakeplayer.command.spawn.success.without-lifespan") + "</gray>",
                                         Placeholder.component("name", text(player.getName(), WHITE)),
                                         Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
                                 );
                             } else {
                                 message = MINI_MESSAGE.deserialize(
-                                        "<gray>" + I18n.asString("fakeplayer.command.spawn.success.with-lifespan") + "</gray>",
+                                        "<gray>" + i18n.asString("fakeplayer.command.spawn.success.with-lifespan") + "</gray>",
                                         Placeholder.component("name", text(player.getName(), WHITE)),
                                         Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
-                                        Placeholder.component("remove-at", text(lifespan.toString()
-                                                .substring(2)
-                                                .replaceAll("(\\\\d[HMS])(?!$)", "$1")
-                                                .toLowerCase(Locale.ROOT)))
+                                        Placeholder.component("remove-at", text(REMOVE_AT_FORMATTER.format(removedAt)))
                                 );
                             }
                             sender.sendMessage(textOfChildren(message));
                         }, Main.getInstance());
+                    }).exceptionally(e -> {
+                        if (e instanceof MessageException me) {
+                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.asComponent()));
+                        } else if (e.getCause() != null && e.getCause() instanceof MessageException me) {
+                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.asComponent()));
+                        } else {
+                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(i18n.translate("fakeplayer.command.spawn.error.unknown", RED)));
+                            log.severe(Throwables.getStackTraceAsString(e));
+                        }
+                        return null;
                     });
-        } catch (Throwable e) {
-            var message = Optional.ofNullable(e)
-                    .filter(cause -> cause instanceof MessageException)
-                    .map(MessageException.class::cast)
-                    .map(MessageException::asComponent)
-                    .orElse(null);
-
-            if (message != null) {
-                Tasks.run(() -> sender.sendMessage(message), Main.getInstance());
-            } else {
-                Tasks.run(() -> sender.sendMessage(I18n.translate(translatable("fakeplayer.command.spawn.error.unknown", RED))), Main.getInstance());
-                log.severe(Throwables.getStackTraceAsString(e));
-            }
+        } catch (MessageException e) {
+            sender.sendMessage(e.asComponent());
         }
-
     }
 
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
@@ -129,7 +126,7 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         if (targets.isEmpty()) {
-            sender.sendMessage(text(I18n.asString("fakeplayer.command.kill.error.non-removed"), GRAY));
+            sender.sendMessage(text(i18n.asString("fakeplayer.command.kill.error.non-removed"), GRAY));
             return;
         }
 
@@ -140,7 +137,7 @@ public class SpawnCommand extends AbstractCommand {
             }
         }
         sender.sendMessage(textOfChildren(
-                I18n.translate(translatable("fakeplayer.command.kill.success.removed", GRAY)),
+                i18n.translate("fakeplayer.command.kill.success.removed", GRAY),
                 space(),
                 text(names.toString())
         ));
@@ -158,13 +155,13 @@ public class SpawnCommand extends AbstractCommand {
 
         var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.asComponent(
-                text(I18n.asString("fakeplayer.command.list.title"), AQUA, BOLD),
+                text(i18n.asString("fakeplayer.command.list.title"), AQUA, BOLD),
                 fakeplayer -> textOfChildren(
                         text(fakeplayer.getName() + " (" + fakeplayerManager.getCreatorName(fakeplayer) + ")", GOLD),
                         text(" - ", GRAY),
                         text(toLocationString(fakeplayer.getLocation()), WHITE),
-                        allowsTp ? textOfChildren(space(), I18n.translate(translatable("fakeplayer.command.list.button.teleport", AQUA)).clickEvent(runCommand("/fp tp " + fakeplayer.getName()))) : empty(),
-                        textOfChildren(space(), I18n.translate(translatable("fakeplayer.command.list.button.kill", RED))).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
+                        allowsTp ? textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.teleport", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName()))) : empty(),
+                        textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.kill", RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
                 ),
                 i -> "/fp list " + i + " " + size
         ));
@@ -180,7 +177,7 @@ public class SpawnCommand extends AbstractCommand {
 
         if (!Objects.equals(from.getWorld(), to.getWorld())) {
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.distance.error.too-far") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.distance.error.too-far") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;
@@ -193,14 +190,14 @@ public class SpawnCommand extends AbstractCommand {
 
         sender.sendMessage(textOfChildren(
                 miniMessage.deserialize(
-                        "<gray>" + I18n.asString("fakeplayer.command.distance.baseline") + "</gray>",
+                        "<gray>" + i18n.asString("fakeplayer.command.distance.baseline") + "</gray>",
                         Placeholder.component("name", text(target.getName(), WHITE))
                 ),
                 newline(),
-                I18n.translate(translatable("fakeplayer.command.distance.euclidean", GRAY)), space(), text(euclidean, WHITE), newline(),
-                I18n.translate(translatable("fakeplayer.command.distance.x", GRAY)), space(), text(x, WHITE), newline(),
-                I18n.translate(translatable("fakeplayer.command.distance.y", GRAY)), space(), text(y, WHITE), newline(),
-                I18n.translate(translatable("fakeplayer.command.distance.z", GRAY)), space(), text(z, WHITE)
+                i18n.translate("fakeplayer.command.distance.euclidean", GRAY), space(), text(euclidean, WHITE), newline(),
+                i18n.translate("fakeplayer.command.distance.x", GRAY), space(), text(x, WHITE), newline(),
+                i18n.translate("fakeplayer.command.distance.y", GRAY), space(), text(y, WHITE), newline(),
+                i18n.translate("fakeplayer.command.distance.z", GRAY), space(), text(z, WHITE)
         ));
     }
 

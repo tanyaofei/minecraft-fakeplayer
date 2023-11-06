@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -10,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class ConfigCommand extends AbstractCommand {
@@ -25,7 +25,7 @@ public class ConfigCommand extends AbstractCommand {
         var value = String.valueOf(repository.selectOrDefault(sender.getUniqueId(), config));
         sender.sendMessage(
                 textOfChildren(
-                        I18n.translate(config).color(GOLD),
+                        i18n.translate(config).color(GOLD),
                         text(": ", GRAY),
                         text(value, WHITE)
                 )
@@ -38,8 +38,8 @@ public class ConfigCommand extends AbstractCommand {
         var value = Objects.requireNonNull(args.get("value"));
         repository.saveOrUpdate(sender.getUniqueId(), config, value);
         sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + I18n.asString("fakeplayer.command.config.set.success") + "</gray>",
-                Placeholder.component("option", I18n.translate(translatable(config.translateKey(), GOLD))),
+                "<gray>" + i18n.asString("fakeplayer.command.config.set.success") + "</gray>",
+                Placeholder.component("option", i18n.translate(config.translateKey(), GOLD)),
                 Placeholder.component("value", text(value.toString(), WHITE))
         ));
     }

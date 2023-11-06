@@ -7,7 +7,6 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.event.EventHandler;
@@ -23,7 +22,6 @@ import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PlayerListeners implements Listener {
 
@@ -33,6 +31,7 @@ public class PlayerListeners implements Listener {
 
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
+    private final I18n i18n = Main.i18n();
 
     /**
      * 拒绝假人用过的 ID 上线
@@ -50,7 +49,7 @@ public class PlayerListeners implements Listener {
 
         if (usedIdRepository.contains(event.getUniqueId())) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, textOfChildren(
-                    I18n.translate(translatable("fakeplayer.listener.prelogin.deny-used-uuid")),
+                    i18n.translate("fakeplayer.listener.prelogin.deny-used-uuid"),
                     newline(),
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)

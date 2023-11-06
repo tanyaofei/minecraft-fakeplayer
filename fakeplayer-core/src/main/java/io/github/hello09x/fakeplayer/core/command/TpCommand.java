@@ -2,13 +2,11 @@ package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.util.Teleportor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class TpCommand extends AbstractCommand {
@@ -37,7 +35,7 @@ public class TpCommand extends AbstractCommand {
 
     private void teleport(@NotNull CommandSender sender, @NotNull Player from, @NotNull Player to) {
         if (!Teleportor.teleportAndSound(from, to.getLocation())) {
-            sender.sendMessage(I18n.translate(translatable("fakeplayer.command.teleport.error.canceled", RED)));
+            sender.sendMessage(i18n.translate("fakeplayer.command.teleport.error.canceled", RED));
         }
     }
 

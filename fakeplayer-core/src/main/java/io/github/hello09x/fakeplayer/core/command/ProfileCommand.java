@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.io.Experiences;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,7 +27,7 @@ public class ProfileCommand extends AbstractCommand {
         var level = target.getLevel();
         var exp = Experiences.getExp(target);
         sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + I18n.asString("fakeplayer.command.exp.success") + "</gray>",
+                "<gray>" + i18n.asString("fakeplayer.command.exp.success") + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("level", text(level, DARK_GREEN)),
                 Placeholder.component("experience", text(exp, DARK_GREEN))
@@ -58,7 +57,7 @@ public class ProfileCommand extends AbstractCommand {
         }
 
         sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + I18n.asString("fakeplayer.command.health.success") + "</gray>",
+                "<gray>" + i18n.asString("fakeplayer.command.health.success") + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("health", textOfChildren(
                         text(Mth.floor(health, 0.5), color),

@@ -7,13 +7,10 @@ import io.github.hello09x.fakeplayer.api.spi.VersionSupport;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListeners;
-import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
-import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -26,13 +23,15 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
     @Getter
     private static VersionSupport versionSupport;
 
+    private I18n i18n;
+
     @Override
     public void onLoad() {
         versionSupport = VersionSupport.getInstance();
         if (versionSupport == null) {
-            throw new ExceptionInInitializerError("不支持当前 minecraft 版本: " + Bukkit.getMinecraftVersion());
+            throw new ExceptionInInitializerError("Unsupported Minecraft version: " + Bukkit.getMinecraftVersion());
         }
-        I18n.register(this, "message/message");
+        this.i18n = new I18n(this, "message/message");
     }
 
     @Override
@@ -87,6 +86,7 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
 
     @Override
     public void onDisable() {
+        super.onDisable();
         {
             var messenger = getServer().getMessenger();
             messenger.unregisterIncomingPluginChannel(this);
@@ -99,8 +99,8 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
         return getClassLoader();
     }
 
-    @Override
-    public @NotNull String identifier() {
-        return "fakeplayer";
+    public static @NotNull I18n i18n() {
+        return instance.i18n;
     }
+
 }

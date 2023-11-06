@@ -32,11 +32,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
@@ -57,13 +57,15 @@ public class FakeplayerManager {
 
     private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
+    private final I18n i18n = Main.i18n();
+
     private FakeplayerManager() {
         var timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleAtFixedRate(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Tasks.run(() -> {
                             if (removeAll("low tps") > 0) {
-                                Bukkit.broadcast(I18n.translate(translatable("fakeplayer.manager.remove-all-on-low-tps", RED, ITALIC)));
+                                Bukkit.broadcast(i18n.translate("fakeplayer.manager.remove-all-on-low-tps", RED, ITALIC));
                             }
                         }, Main.getInstance());
                     }
@@ -131,7 +133,7 @@ public class FakeplayerManager {
                             skin
                     );
                 })
-                .thenApply(option -> fp.spawnAsync(option).join())
+                .thenApplyAsync(option -> fp.spawnAsync(option).join())
                 .thenRunAsync(() -> {
                     Tasks.run(() -> {
                         playerList.add(fp);
@@ -303,7 +305,7 @@ public class FakeplayerManager {
 
         for (var cmd : Commands.formatCommands(commands)) {
             if (!player.performCommand(cmd)) {
-                log.warning("Failed to execute command: " + cmd);
+                log.warning(player.getName() + " failed to execute command: " + cmd);
             }
         }
     }
@@ -329,10 +331,10 @@ public class FakeplayerManager {
                 commands,
                 "%p", player.getName(),
                 "%u", player.getUniqueId().toString(),
-                "%c", Objects.requireNonNull(getCreatorName(player)))
+                "%c", Objects.requireNonNull(this.getCreatorName(player)))
         ) {
             if (!server.dispatchCommand(sender, cmd)) {
-                log.warning("Failed to execute command: " + cmd);
+                log.warning("Failed to execute command for %s: ".formatted(player.getName()) + cmd);
             }
         }
     }
@@ -343,15 +345,15 @@ public class FakeplayerManager {
         }
 
         if (this.playerList.count() >= config.getServerLimit()) {
-            throw new MessageException(I18n.asString("fakeplayer.command.spawn.error.server-limit"));
+            throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.server-limit"));
         }
 
         if (this.playerList.getByCreator(creator.getName()).size() >= config.getPlayerLimit()) {
-            throw new MessageException(I18n.asString("fakeplayer.command.spawn.error.player-limit"));
+            throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.player-limit"));
         }
 
         if (config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= config.getPlayerLimit()) {
-            throw new MessageException(I18n.asString("fakeplayer.command.spawn.error.ip-limit"));
+            throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.ip-limit"));
         }
     }
 

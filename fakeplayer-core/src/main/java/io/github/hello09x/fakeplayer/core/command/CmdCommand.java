@@ -4,14 +4,12 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
-import io.github.hello09x.bedrock.i18n.I18n;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class CmdCommand extends AbstractCommand {
 
@@ -23,19 +21,18 @@ public class CmdCommand extends AbstractCommand {
 
         var name = command.command().getName();
         if (!sender.hasPermission(Permission.cmd) && !config.getAllowCommands().contains(name)) {
-            throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.cmd.error.no-permission"));
+            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.no-permission"));
         }
 
         if (name.equals("fakeplayer") || name.equals("fp")) {
-            throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.cmd.error.no-permission"));
+            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.no-permission"));
         }
 
         if (!command.execute(target)) {
-            sender.sendMessage(I18n.translate(translatable("fakeplayer.command.cmd.error.execute-failed", RED)));
-            return;
+            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.execute-failed"));
         }
 
-        sender.sendMessage(I18n.translate(translatable("fakeplayer.command.cmd.success.execute", GRAY)));
+        sender.sendMessage(i18n.translate("fakeplayer.command.cmd.success.execute", GRAY));
     }
 
 }

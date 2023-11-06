@@ -43,6 +43,8 @@ public class FakePlayer {
 
     private final static MiniMessage miniMessage = MiniMessage.miniMessage();
 
+    private final static I18n i18n = Main.i18n();
+
     @NotNull
     @Getter
     private final CommandSender creator;
@@ -103,10 +105,10 @@ public class FakePlayer {
             var address = ipGen.next();
             try {
                 Tasks.joinAsync(() -> {
-                    var event = this.preLogin(InetAddress.getLoopbackAddress());
+                    var event = this.preLogin(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
                         throw new MessageException(miniMessage.deserialize(
-                                "<red>" + I18n.asString("fakeplayer.command.spawn.error.prelogin-failed") + "</red>",
+                                "<red>" + i18n.asString("fakeplayer.command.spawn.error.prelogin-failed") + "</red>",
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
@@ -118,10 +120,10 @@ public class FakePlayer {
 
             try {
                 Tasks.join(() -> {
-                    var event = this.login(InetAddress.getLoopbackAddress());
+                    var event = this.login(address);
                     if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
                         throw new MessageException(miniMessage.deserialize(
-                                "<red>" + I18n.asString("fakeplayer.command.spawn.error.login-failed") + "</red>",
+                                "<red>" + i18n.asString("fakeplayer.command.spawn.error.login-failed") + "</red>",
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
@@ -152,9 +154,9 @@ public class FakePlayer {
                     var spawnAt = option.spawnAt().clone();
                     if (Worlds.isOverworld(spawnAt.getWorld())) {
                         // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
-                        teleportToSpawnpointAfterChangingDimension(spawnAt);
+                        this.teleportToSpawnpointAfterChangingDimension(spawnAt);
                     } else {
-                        teleportToSpawnpoint(spawnAt);
+                        this.teleportToSpawnpoint(spawnAt);
                     }
 
                     ticker.runTaskTimer(Main.getInstance(), 0, 1);
@@ -174,7 +176,7 @@ public class FakePlayer {
         var world = Worlds.getNonOverworld();
         if (world == null || !player.teleport(world.getSpawnLocation())) {
             this.creator.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.spawn.error.no-mob-spawning-ability") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.spawn.error.no-mob-spawning-ability") + "</gray>",
                     Placeholder.component("name", text(player.getName(), WHITE))
             ));
             return;
@@ -186,7 +188,7 @@ public class FakePlayer {
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
         if (!Teleportor.teleportAndSound(player, spawnpoint)) {
             this.creator.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.spawn.error.teleport-failed") + "/<gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.spawn.error.teleport-failed") + "/<gray>",
                     Placeholder.component("name", text(player.getName(), WHITE))
             ));
         }
@@ -211,7 +213,7 @@ public class FakePlayer {
                 address,
                 this.uuid,
                 player.getPlayerProfile(),
-                address.getHostName()
+                address.getHostAddress()
         );
         Bukkit.getPluginManager().callEvent(event);
         return event;

@@ -4,7 +4,6 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.wrappers.Rotation;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public class ActionCommand extends AbstractCommand {
@@ -53,17 +51,17 @@ public class ActionCommand extends AbstractCommand {
 
         String baseline;
         if (setting.equals(ActionSetting.stop())) {
-            baseline = I18n.asString("fakeplayer.command.action.stop");
+            baseline = i18n.asString("fakeplayer.command.action.stop");
         } else if (setting.equals(ActionSetting.once())) {
-            baseline = I18n.asString("fakeplayer.command.action.once");
+            baseline = i18n.asString("fakeplayer.command.action.once");
         } else {
-            baseline = I18n.asString("fakeplayer.command.action.continuous");
+            baseline = i18n.asString("fakeplayer.command.action.continuous");
         }
 
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + baseline + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("action", I18n.translate(translatable(action.translateKey(), WHITE)))
+                Placeholder.component("action", i18n.translate(action.translateKey(), WHITE))
         ));
     }
 
@@ -76,7 +74,7 @@ public class ActionCommand extends AbstractCommand {
         target.getInventory().setItemInOffHand(item1);
 
         sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + I18n.asString("fakeplayer.command.swap.success") + "</gray>",
+                "<gray>" + i18n.asString("fakeplayer.command.swap.success") + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE))
         ));
     }
@@ -93,12 +91,12 @@ public class ActionCommand extends AbstractCommand {
 
         if (sneaking) {
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.sneak.enabled") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.sneak.enabled") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
         } else {
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.sneak.disabled") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.sneak.disabled") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
         }
@@ -110,7 +108,7 @@ public class ActionCommand extends AbstractCommand {
         var location = Objects.requireNonNull((Location) args.get("location"));
         target.lookAt(location, LookAnchor.EYES);
         sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + I18n.asString("fakeplayer.command.look.success") + "</gray>",
+                "<gray>" + i18n.asString("fakeplayer.command.look.success") + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("direction", text(toLocationString(location), WHITE))
         ));
@@ -122,9 +120,9 @@ public class ActionCommand extends AbstractCommand {
             look(target, direction);
 
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.look.success") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.look.success") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE)),
-                    Placeholder.component("direction", I18n.translate(translatable(direction.translateKey(), WHITE)))
+                    Placeholder.component("direction", i18n.translate(direction.translateKey(), WHITE))
             ));
         };
     }
@@ -161,7 +159,7 @@ public class ActionCommand extends AbstractCommand {
                 handle.setXxa(vel * strafing);
             }
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.move.success") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.move.success") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
         };
@@ -172,7 +170,7 @@ public class ActionCommand extends AbstractCommand {
             var target = getTarget(sender, args);
             turn(target, yaw, pitch);
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.turn.success") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.turn.success") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
         };
@@ -183,7 +181,7 @@ public class ActionCommand extends AbstractCommand {
         var rotation = Objects.requireNonNull((Rotation) args.get("rotation"));
         turn(target, rotation.getYaw(), rotation.getPitch());
         sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + I18n.asString("fakeplayer.command.turn.success") + "</gray>",
+                "<gray>" + i18n.asString("fakeplayer.command.turn.success") + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE))
         ));
     }

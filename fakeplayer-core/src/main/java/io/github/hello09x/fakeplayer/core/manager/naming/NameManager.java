@@ -22,8 +22,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public class NameManager {
 
@@ -37,6 +38,7 @@ public class NameManager {
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final Map<String, NameSource> nameSources = new HashMap<>();
+    private final I18n i18n = Main.i18n();
 
     private final String serverId;
 
@@ -94,31 +96,31 @@ public class NameManager {
     public @NotNull SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
         if (name.startsWith("-")) {
             throw new IllegalCustomNameException(miniMessage.deserialize(
-                    "<red>" + I18n.asString("fakeplayer.spawn.error.name.start-with-illegal-character") + "/<red>",
+                    "<red>" + i18n.asString("fakeplayer.spawn.error.name.start-with-illegal-character") + "/<red>",
                     Placeholder.component("character", text("-", WHITE))
             ));
         }
 
         if (name.length() > MAX_LENGTH) {
             throw new IllegalCustomNameException(miniMessage.deserialize(
-                    "<red>" + I18n.asString("fakeplayer.spawn.error.name.too-long") + "</red>",
+                    "<red>" + i18n.asString("fakeplayer.spawn.error.name.too-long") + "</red>",
                     Placeholder.component("length", text(MAX_LENGTH, WHITE))
             ));
         }
 
         if (name.length() < MIN_LENGTH) {
             throw new IllegalCustomNameException(miniMessage.deserialize(
-                    "<red>" + I18n.asString("fakeplayer.spawn.error.name.too-short") + "</red>",
+                    "<red>" + i18n.asString("fakeplayer.spawn.error.name.too-short") + "</red>",
                     Placeholder.component("length", text(MIN_LENGTH, WHITE))
             ));
         }
 
         if (!config.getNamePattern().asPredicate().test(name)) {
-            throw new IllegalCustomNameException(I18n.translate(translatable("fakeplayer.spawn.error.name.invalid", RED)));
+            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.invalid", RED));
         }
 
         if (Bukkit.getPlayerExact(name) != null || Bukkit.getOfflinePlayer(name).hasPlayedBefore()) {
-            throw new IllegalCustomNameException(I18n.translate(translatable("fakeplayer.spawn.error.name.existed", RED)));
+            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
         }
 
         return new SequenceName(

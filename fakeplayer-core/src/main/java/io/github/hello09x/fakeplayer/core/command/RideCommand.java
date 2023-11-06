@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -70,13 +69,13 @@ public class RideCommand extends AbstractCommand {
     public void rideMe(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         if (!target.getWorld().equals(sender.getWorld())) {
-            throw CommandAPI.failWithString(I18n.asString("fakeplayer.command.ride.me.error.too-far"));
+            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.ride.me.error.too-far"));
         }
 
         var distance = target.getLocation().distance(sender.getLocation());
         if (distance > Bukkit.getViewDistance()) {
             sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + I18n.asString("fakeplayer.command.ride.me.error.too-far") + "</gray>",
+                    "<gray>" + i18n.asString("fakeplayer.command.ride.me.error.too-far") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;
