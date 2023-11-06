@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.v1_20_R1.spi;
 
 import com.google.common.collect.Iterables;
 import io.github.hello09x.fakeplayer.api.Reflections;
+import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyAdvancements;
 import lombok.Getter;
@@ -207,7 +208,7 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
                 Bukkit.getViewDistance(),
                 ChatVisiblity.FULL,
                 false,
-                (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40),
+                ConstantPool.PLAYER_DISPLAYED_SKIN_PARTS_ALL_ENABLED,
                 HumanoidArm.RIGHT,
                 false,
                 true

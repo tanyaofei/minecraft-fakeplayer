@@ -41,7 +41,7 @@ public class CommandRegistry {
                         i18n.asString("fakeplayer.command.fp.full-description")
                 )
                 .withUsage(
-                        "type fp ? for more usage",
+                        "type fp ? for more information",
                         "hello09x [汤姆]"
                 )
                 .withSubcommands(
@@ -52,6 +52,7 @@ public class CommandRegistry {
                                 Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.spawn),
                                 Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.spawn),
                                 Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.spawn),
+                                Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.spawn),
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
                                 Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tp),
                                 Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tp),
@@ -109,6 +110,11 @@ public class CommandRegistry {
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance.action(ActionType.DROP_INVENTORY, ActionSetting.once())),
+                        command("skin")
+                                .withPermission(Permission.spawn)
+                                .withArguments(offlinePlayer("player"))
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executes(SkinCommand.instance::skin),
 
                         command("exp")
                                 .withPermission(Permission.profile)
