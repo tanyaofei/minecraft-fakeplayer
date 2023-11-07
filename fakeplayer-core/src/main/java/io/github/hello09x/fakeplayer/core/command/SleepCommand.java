@@ -3,10 +3,13 @@ package io.github.hello09x.fakeplayer.core.command;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.util.Blocks;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SleepCommand extends AbstractCommand {
 
     public final static SleepCommand instance = new SleepCommand();

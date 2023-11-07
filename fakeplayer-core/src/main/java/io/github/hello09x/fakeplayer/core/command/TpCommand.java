@@ -3,12 +3,15 @@ package io.github.hello09x.fakeplayer.core.command;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.util.Teleportor;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TpCommand extends AbstractCommand {
 
     public final static TpCommand instance = new TpCommand();

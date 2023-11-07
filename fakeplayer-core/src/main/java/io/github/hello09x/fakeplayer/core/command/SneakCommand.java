@@ -16,6 +16,9 @@ public class SneakCommand extends AbstractCommand {
 
     public final static SneakCommand instance = new SneakCommand();
 
+    /**
+     * 设置潜行
+     */
     public void sneak(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var sneaking = args

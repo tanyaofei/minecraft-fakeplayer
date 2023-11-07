@@ -4,6 +4,8 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.Main;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RideCommand extends AbstractCommand {
 
     public final static RideCommand instance = new RideCommand();
@@ -84,6 +87,9 @@ public class RideCommand extends AbstractCommand {
         Main.getVersionSupport().player(target).startRiding(sender, true);
     }
 
+    /**
+     * 停止骑行
+     */
     public void stopRiding(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         Main.getVersionSupport().player(getTarget(sender, args)).stopRiding();
     }

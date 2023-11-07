@@ -4,6 +4,8 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +13,7 @@ import java.util.Objects;
 
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CmdCommand extends AbstractCommand {
 
     public final static CmdCommand instance = new CmdCommand();

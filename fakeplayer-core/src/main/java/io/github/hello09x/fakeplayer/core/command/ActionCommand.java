@@ -6,6 +6,8 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ActionCommand extends AbstractCommand {
 
     public final static ActionCommand instance = new ActionCommand();

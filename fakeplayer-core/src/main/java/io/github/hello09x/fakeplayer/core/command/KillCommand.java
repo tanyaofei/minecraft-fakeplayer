@@ -19,6 +19,9 @@ public class KillCommand extends AbstractCommand {
 
     public final static KillCommand instance = new KillCommand();
 
+    /**
+     * 移除假人
+     */
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         @SuppressWarnings("unchecked")
         var targets = (List<Player>) args.get("names");

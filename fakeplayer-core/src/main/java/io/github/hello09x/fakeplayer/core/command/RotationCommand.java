@@ -34,6 +34,9 @@ public class RotationCommand extends AbstractCommand {
                 Mth.floor(location.getZ(), 0.5));
     }
 
+    /**
+     * 看向给定坐标
+     */
     @SuppressWarnings("UnstableApiUsage")
     public void lookAt(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
@@ -46,6 +49,9 @@ public class RotationCommand extends AbstractCommand {
         ));
     }
 
+    /**
+     * 看向给定方向
+     */
     public CommandExecutor look(@NotNull Direction direction) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
@@ -59,6 +65,9 @@ public class RotationCommand extends AbstractCommand {
         };
     }
 
+    /**
+     * 看向给定方向
+     */
     private void look(
             @NotNull Player target,
             @NotNull Direction direction
@@ -73,16 +82,22 @@ public class RotationCommand extends AbstractCommand {
         }
     }
 
+    /**
+     * 看向指定方向
+     */
     private void look(@NotNull Player player, float yaw, float pitch) {
         var handle = Main.getVersionSupport().player(player);
         handle.setYRot(yaw % 360);
         handle.setXRot(Mth.clamp(pitch, -90, 90));
     }
 
+    /**
+     * 转向指定角度
+     */
     public CommandExecutor turn(float yaw, float pitch) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
-            turn(target, yaw, pitch);
+            this.turn(target, yaw, pitch);
             sender.sendMessage(miniMessage.deserialize(
                     "<gray>" + i18n.asString("fakeplayer.command.turn.success") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE))
@@ -90,19 +105,25 @@ public class RotationCommand extends AbstractCommand {
         };
     }
 
+    /**
+     * 转向指定角度
+     */
     public void turnTo(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var rotation = Objects.requireNonNull((Rotation) args.get("rotation"));
-        turn(target, rotation.getYaw(), rotation.getPitch());
+        this.turn(target, rotation.getYaw(), rotation.getPitch());
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + i18n.asString("fakeplayer.command.turn.success") + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE))
         ));
     }
 
+    /**
+     * 转向指定方向
+     */
     private void turn(@NotNull Player player, float yaw, float pitch) {
         var pos = player.getLocation();
-        look(player, pos.getYaw() + yaw, pos.getPitch() + pitch);
+        this.look(player, pos.getYaw() + yaw, pos.getPitch() + pitch);
     }
 
 

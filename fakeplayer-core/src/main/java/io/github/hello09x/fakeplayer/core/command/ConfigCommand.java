@@ -6,6 +6,8 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.repository.model.Configs;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigCommand extends AbstractCommand {
 
     public final static ConfigCommand instance = new ConfigCommand();

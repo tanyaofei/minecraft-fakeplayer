@@ -7,6 +7,8 @@ import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -28,6 +30,7 @@ import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpawnCommand extends AbstractCommand {
 
     public final static SpawnCommand instance = new SpawnCommand();

@@ -23,12 +23,15 @@ public class SkinCommand extends AbstractCommand {
 
     private final Map<CommandSender, MutableInt> cd = new HashMap<>();
 
-    public SkinCommand() {
+    private SkinCommand() {
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
             cd.entrySet().removeIf(counter -> counter.getValue().decrementAndGet() <= 0);
         }, 0, 1);
     }
 
+    /**
+     * 复制皮肤
+     */
     public void skin(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var player = Objects.requireNonNull((OfflinePlayer) args.get("player"));
         var target = getTarget(sender, args);

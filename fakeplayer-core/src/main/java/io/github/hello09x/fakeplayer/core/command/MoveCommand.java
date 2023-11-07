@@ -14,6 +14,9 @@ public class MoveCommand extends AbstractCommand {
 
     public final static MoveCommand instance = new MoveCommand();
 
+    /**
+     * 假人移动
+     */
     public CommandExecutor move(float forward, float strafing) {
         return (sender, args) -> {
             var target = getTarget(sender, args);
