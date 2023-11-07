@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command;
 
 import com.google.common.base.Throwables;
-import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.page.Page;
@@ -18,11 +17,10 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Math;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.*;
@@ -113,35 +111,6 @@ public class SpawnCommand extends AbstractCommand {
         }
     }
 
-    public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        @SuppressWarnings("unchecked")
-        var targets = (List<Player>) args.get("names");
-        if (targets == null) {
-            var reserved = fakeplayerManager.getAll(sender);
-            if (reserved.size() == 1) {
-                targets = Collections.singletonList(reserved.get(0));
-            } else {
-                targets = Collections.emptyList();
-            }
-        }
-
-        if (targets.isEmpty()) {
-            sender.sendMessage(text(i18n.asString("fakeplayer.command.kill.error.non-removed"), GRAY));
-            return;
-        }
-
-        var names = new StringJoiner(", ");
-        for (var target : targets) {
-            if (fakeplayerManager.remove(target.getName(), "command kill")) {
-                names.add(target.getName());
-            }
-        }
-        sender.sendMessage(textOfChildren(
-                i18n.translate("fakeplayer.command.kill.success.removed", GRAY),
-                space(),
-                text(names.toString())
-        ));
-    }
 
     public void list(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var page = (int) args.getOptional("page").orElse(1);
@@ -156,49 +125,24 @@ public class SpawnCommand extends AbstractCommand {
         var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.asComponent(
                 text(i18n.asString("fakeplayer.command.list.title"), AQUA, BOLD),
-                fakeplayer -> textOfChildren(
-                        text(fakeplayer.getName() + " (" + fakeplayerManager.getCreatorName(fakeplayer) + ")", GOLD),
-                        text(" - ", GRAY),
-                        text(toLocationString(fakeplayer.getLocation()), WHITE),
-                        allowsTp ? textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.teleport", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName()))) : empty(),
-                        textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.kill", RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()))
-                ),
+                fakeplayer -> {
+                    var partTp = allowsTp
+                            ? textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.teleport", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())))
+                            : empty();
+
+                    var partKill = textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.kill", RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()));
+
+                    return textOfChildren(
+                            text(fakeplayer.getName() + " (" + fakeplayerManager.getCreatorName(fakeplayer) + ")", GOLD),
+                            text(" - ", GRAY),
+                            text(toLocationString(fakeplayer.getLocation()), WHITE),
+                            partTp,
+                            partKill
+                    );
+                },
                 i -> "/fp list " + i + " " + size
         ));
     }
 
-    public void distance(
-            @NotNull Player sender,
-            @NotNull CommandArguments args
-    ) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
-        var from = target.getLocation().toBlockLocation();
-        var to = sender.getLocation().toBlockLocation();
-
-        if (!Objects.equals(from.getWorld(), to.getWorld())) {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.distance.error.too-far") + "</gray>",
-                    Placeholder.component("name", text(target.getName(), WHITE))
-            ));
-            return;
-        }
-
-        var euclidean = Mth.floor(from.distance(to), 0.5);
-        var x = Math.abs(from.getBlockX() - to.getBlockX());
-        var y = Math.abs(from.getBlockY() - to.getBlockY());
-        var z = Math.abs(from.getBlockZ() - to.getBlockZ());
-
-        sender.sendMessage(textOfChildren(
-                miniMessage.deserialize(
-                        "<gray>" + i18n.asString("fakeplayer.command.distance.baseline") + "</gray>",
-                        Placeholder.component("name", text(target.getName(), WHITE))
-                ),
-                newline(),
-                i18n.translate("fakeplayer.command.distance.euclidean", GRAY), space(), text(euclidean, WHITE), newline(),
-                i18n.translate("fakeplayer.command.distance.x", GRAY), space(), text(x, WHITE), newline(),
-                i18n.translate("fakeplayer.command.distance.y", GRAY), space(), text(y, WHITE), newline(),
-                i18n.translate("fakeplayer.command.distance.z", GRAY), space(), text(z, WHITE)
-        ));
-    }
 
 }

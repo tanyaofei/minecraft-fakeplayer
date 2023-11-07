@@ -2,8 +2,9 @@ package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.io.Experiences;
 import io.github.hello09x.fakeplayer.core.util.Mth;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.attribute.AttributeInstance;
@@ -17,22 +18,10 @@ import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
 
-public class ProfileCommand extends AbstractCommand {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class HealthCommand extends AbstractCommand {
 
-    public final static ProfileCommand instance = new ProfileCommand();
-
-    public void exp(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
-
-        var level = target.getLevel();
-        var exp = Experiences.getExp(target);
-        sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.exp.success") + "</gray>",
-                Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("level", text(level, DARK_GREEN)),
-                Placeholder.component("experience", text(exp, DARK_GREEN))
-        ));
-    }
+    public final static HealthCommand instance = new HealthCommand();
 
     public void health(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);

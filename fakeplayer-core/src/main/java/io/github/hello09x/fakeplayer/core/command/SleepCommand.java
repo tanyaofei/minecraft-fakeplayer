@@ -14,22 +14,16 @@ public class SleepCommand extends AbstractCommand {
     public void sleep(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var bed = Blocks.getNearbyBlock(target.getLocation(), 4, block -> {
-            if (block.getType().data != Bed.class) {
+            if (!(block.getBlockData() instanceof Bed data)) {
                 return false;
             }
-            var data = (Bed) block.getBlockData();
-            if (data.isOccupied()) {
-                return false;
-            }
-            if (data.getPart() == Bed.Part.FOOT) {
-                return false;
-            }
-            return true;
-        });
 
+            return !data.isOccupied() && data.getPart() == Bed.Part.HEAD;
+        });
         if (bed == null) {
             return;
         }
+
         target.sleep(bed.getLocation(), false);
     }
 

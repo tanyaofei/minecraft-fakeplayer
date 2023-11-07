@@ -10,10 +10,25 @@ public class InternalAddressGenerator {
 
     private final AtomicInteger next = new AtomicInteger(1);
 
+    /**
+     * 判断 IP 地址能否由本工具类生成
+     *
+     * @param address 地址
+     * @return 能否生成
+     */
+    public static boolean canBeGenerate(@NotNull InetAddress address) {
+        return address.getAddress()[0] == 127;
+    }
+
+    /**
+     * 获取下一个 IP 地址
+     *
+     * @return IP 地址
+     */
     @SneakyThrows
-    public InetAddress next() {
+    public @NotNull InetAddress next() {
         var ip = next.getAndIncrement();
-        // max 10.255.255.254
+        // max 127.255.255.254
         if (ip == 0xfffffe) {
             next.set(0);
         }
@@ -23,10 +38,6 @@ public class InternalAddressGenerator {
         var p4 = ip & 0xff;
 
         return InetAddress.getByAddress(new byte[]{127, (byte) p2, (byte) p3, (byte) p4});
-    }
-
-    public static boolean canBeGenerate(@NotNull InetAddress address) {
-        return address.getAddress()[0] == 127;
     }
 
 }

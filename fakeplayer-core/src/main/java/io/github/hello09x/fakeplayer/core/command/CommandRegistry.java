@@ -5,7 +5,6 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
@@ -89,7 +88,7 @@ public class CommandRegistry {
                         command("kill")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayers("names"))
-                                .executes(SpawnCommand.instance::kill),
+                                .executes(KillCommand.instance::kill),
                         command("list")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
@@ -99,21 +98,17 @@ public class CommandRegistry {
                         command("distance")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
-                                .executesPlayer(SpawnCommand.instance::distance),
+                                .executesPlayer(DistanceCommand.instance::distance),
                         command("drop")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(
                                         fakeplayer("name"),
                                         literals("all", List.of("-a", "--all")))
-                                .executes((CommandExecutor) (sender, args) -> ActionCommand.instance.action(
-                                        sender,
-                                        args,
-                                        args.getOptional("all").isPresent() ? ActionType.DROP_STACK : ActionType.DROP_ITEM,
-                                        ActionSetting.once())),
+                                .executes(DropCommand.instance.drop()),
                         command("dropinv")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
-                                .executes(ActionCommand.instance.action(ActionType.DROP_INVENTORY, ActionSetting.once())),
+                                .executes(DropCommand.instance.dropinv()),
                         command("skin")
                                 .withPermission(Permission.spawn)
                                 .withArguments(offlinePlayer("player"))
@@ -123,14 +118,19 @@ public class CommandRegistry {
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(InvseeCommand.instance::invsee),
-                        command("exp")
-                                .withPermission(Permission.spawn)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executes(ProfileCommand.instance::exp),
                         command("health")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
-                                .executes(ProfileCommand.instance::health),
+                                .executes(HealthCommand.instance::health),
+
+                        command("exp")
+                                .withPermission(Permission.exp)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executes(ExpCommand.instance::exp),
+                        command("expme")
+                                .withPermission(Permission.exp)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(ExpCommand.instance::expme),
 
                         command("tp")
                                 .withPermission(Permission.tp)
@@ -176,32 +176,32 @@ public class CommandRegistry {
                                 .withOptionalArguments(
                                         literals("sneaking", List.of("true", "false")),
                                         fakeplayer("name"))
-                                .executes(ActionCommand.instance::sneak),
+                                .executes(SneakCommand.instance::sneak),
                         command("look")
                                 .withPermission(Permission.action)
                                 .withSubcommands(
                                         command("north")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.look(Direction.NORTH)),
+                                                .executes(RotationCommand.instance.look(Direction.NORTH)),
                                         command("south")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.look(Direction.SOUTH)),
+                                                .executes(RotationCommand.instance.look(Direction.SOUTH)),
                                         command("west")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.look(Direction.WEST)),
+                                                .executes(RotationCommand.instance.look(Direction.WEST)),
                                         command("east")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.look(Direction.EAST)),
+                                                .executes(RotationCommand.instance.look(Direction.EAST)),
                                         command("up")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.look(Direction.UP)),
+                                                .executes(RotationCommand.instance.look(Direction.UP)),
                                         command("down")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.look(Direction.DOWN)),
+                                                .executes(RotationCommand.instance.look(Direction.DOWN)),
                                         command("at")
                                                 .withArguments(location("location"))
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance::lookAt),
+                                                .executes(RotationCommand.instance::lookAt),
                                         command("entity")
                                                 .withOptionalArguments(fakeplayer("name"))
                                                 .withSubcommands(newActionCommands(ActionType.LOOK_AT_NEAREST_ENTITY)),
@@ -222,17 +222,17 @@ public class CommandRegistry {
                                 .withSubcommands(
                                         command("left")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.turn(-90, 0)),
+                                                .executes(RotationCommand.instance.turn(-90, 0)),
                                         command("right")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.turn(90, 0)),
+                                                .executes(RotationCommand.instance.turn(90, 0)),
                                         command("back")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.turn(180, 0)),
+                                                .executes(RotationCommand.instance.turn(180, 0)),
                                         command("to")
                                                 .withArguments(rotation("rotation"))
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance::turnTo),
+                                                .executes(RotationCommand.instance::turnTo),
                                         helpCommand(
                                                 "/fp turn",
                                                 Usage.of("left", i18n.asString("fakeplayer.command.turn.left.description")),
@@ -246,16 +246,16 @@ public class CommandRegistry {
                                 .withSubcommands(
                                         command("forward")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.move(1, 0)),
+                                                .executes(MoveCommand.instance.move(1, 0)),
                                         command("backward")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.move(-1, 0)),
+                                                .executes(MoveCommand.instance.move(-1, 0)),
                                         command("left")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.move(0, 1)),
+                                                .executes(MoveCommand.instance.move(0, 1)),
                                         command("right")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .executes(ActionCommand.instance.move(0, -1)),
+                                                .executes(MoveCommand.instance.move(0, -1)),
                                         helpCommand(
                                                 "/fp move",
                                                 Usage.of("forward", i18n.asString("fakeplayer.command.move.forward.description")),
@@ -311,11 +311,6 @@ public class CommandRegistry {
                                 .withPermission(Permission.action)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(SleepCommand.instance::wakeup),
-
-                        command("expme")
-                                .withPermission(Permission.exp)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executesPlayer(ExpCommand.instance::expme),
 
                         command("cmd")
                                 .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
