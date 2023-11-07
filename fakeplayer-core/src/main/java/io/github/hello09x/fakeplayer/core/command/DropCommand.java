@@ -13,12 +13,11 @@ public class DropCommand extends AbstractCommand {
     public final static DropCommand instance = new DropCommand();
 
     public @NotNull CommandExecutor drop() {
-        return (sender, args) -> ActionCommand.instance.action(
-                sender,
-                args,
-                args.getOptional("all").isPresent() ? ActionType.DROP_STACK : ActionType.DROP_INVENTORY,
-                ActionSetting.once()
-        );
+        return ActionCommand.instance.action(ActionType.DROP_ITEM, ActionSetting.once());
+    }
+
+    public @NotNull CommandExecutor dropstack() {
+       return ActionCommand.instance.action(ActionType.DROP_STACK, ActionSetting.once());
     }
 
     public @NotNull CommandExecutor dropinv() {

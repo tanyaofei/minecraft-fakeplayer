@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
+import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentException;
 import dev.jorel.commandapi.arguments.StringArgument;
 import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.bedrock.i18n.I18n;
@@ -50,6 +51,7 @@ public class CommandRegistry {
                                 Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.spawn),
                                 Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.spawn),
                                 Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.spawn),
+                                Usage.of("dropstack", i18n.asString("fakeplayer.command.dropstack.description"), Permission.spawn),
                                 Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.spawn),
                                 Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.spawn),
                                 Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.spawn),
@@ -101,10 +103,12 @@ public class CommandRegistry {
                                 .executesPlayer(DistanceCommand.instance::distance),
                         command("drop")
                                 .withPermission(Permission.spawn)
-                                .withOptionalArguments(
-                                        fakeplayer("name"),
-                                        literals("all", List.of("-a", "--all")))
+                                .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.drop()),
+                        command("dropstack")
+                                .withPermission(Permission.spawn)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executes(DropCommand.instance.dropstack()),
                         command("dropinv")
                                 .withPermission(Permission.spawn)
                                 .withOptionalArguments(fakeplayer("name"))
@@ -378,7 +382,7 @@ public class CommandRegistry {
             var sender = info.sender();
             var arg = info.currentInput();
 
-            if (arg.equals("--all") || arg.equals("-a")) {
+            if (arg.equals("-a")) {
                 return sender.isOp()
                         ? FakeplayerManager.instance.getAll()
                         : FakeplayerManager.instance.getAll(sender);
@@ -397,7 +401,7 @@ public class CommandRegistry {
                     ? FakeplayerManager.instance.getAll()
                     : FakeplayerManager.instance.getAll(sender);
 
-            var names = Stream.concat(fakes.stream().map(Player::getName), Stream.of("-a", "--all"));
+            var names = Stream.concat(fakes.stream().map(Player::getName), Stream.of("-a"));
             if (!arg.isEmpty()) {
                 names = names.filter(n -> n.toLowerCase().contains(arg));
             }
@@ -412,7 +416,7 @@ public class CommandRegistry {
             try {
                 return Configs.valueOf(arg);
             } catch (Exception e) {
-                throw CustomArgument.CustomArgumentException.fromMessageBuilder(new CustomArgument.MessageBuilder(i18n.asString("fakeplayer.command.config.set.error.invalid-option")));
+                throw CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-option"));
             }
         }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Configs.values()).map(Config::name).toList()));
     }
@@ -423,7 +427,7 @@ public class CommandRegistry {
             var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));
             var arg = info.currentInput();
             if (!config.options().contains(arg)) {
-                throw CustomArgument.CustomArgumentException.fromMessageBuilder(new CustomArgument.MessageBuilder(i18n.asString("fakeplayer.command.config.set.error.invalid-value")));
+                throw CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-value"));
             }
             return config.mapper().apply(arg);
         }).replaceSuggestions(ArgumentSuggestions.strings(info -> {

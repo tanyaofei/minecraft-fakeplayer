@@ -32,7 +32,7 @@ public class ActionCommand extends AbstractCommand {
             @NotNull ActionType action,
             @NotNull ActionSetting setting
     ) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = super.getTarget(sender, args);
         actionManager.setAction(target, action, setting);
 
         String baseline;
@@ -52,7 +52,7 @@ public class ActionCommand extends AbstractCommand {
     }
 
     public void swap(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = super.getTarget(sender, args);
         var item1 = target.getInventory().getItemInMainHand();
         var item2 = target.getInventory().getItemInOffHand();
 

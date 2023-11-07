@@ -24,7 +24,7 @@ public class HealthCommand extends AbstractCommand {
     public final static HealthCommand instance = new HealthCommand();
 
     public void health(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = super.getTarget(sender, args);
         var health = target.getHealth();
         double max = Optional.ofNullable(target.getAttribute(GENERIC_MAX_HEALTH))
                 .map(AttributeInstance::getValue)

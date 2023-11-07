@@ -1,14 +1,12 @@
 package io.github.hello09x.fakeplayer.core.command;
 
+import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.StringJoiner;
 
 import static net.kyori.adventure.text.Component.*;
@@ -22,17 +20,8 @@ public class KillCommand extends AbstractCommand {
     /**
      * 移除假人
      */
-    public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        @SuppressWarnings("unchecked")
-        var targets = (List<Player>) args.get("names");
-        if (targets == null) {
-            var reserved = fakeplayerManager.getAll(sender);
-            if (reserved.size() == 1) {
-                targets = Collections.singletonList(reserved.get(0));
-            } else {
-                targets = Collections.emptyList();
-            }
-        }
+    public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        var targets = super.getTargets(sender, args);
 
         if (targets.isEmpty()) {
             sender.sendMessage(text(i18n.asString("fakeplayer.command.kill.error.non-removed"), GRAY));

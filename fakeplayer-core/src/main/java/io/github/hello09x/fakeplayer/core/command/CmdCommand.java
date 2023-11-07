@@ -19,7 +19,7 @@ public class CmdCommand extends AbstractCommand {
     public final static CmdCommand instance = new CmdCommand();
 
     public void cmd(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = super.getTarget(sender, args);
         var command = Objects.requireNonNull((CommandResult) args.get("command"));
 
         var name = command.command().getName();

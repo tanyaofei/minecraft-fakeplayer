@@ -25,7 +25,7 @@ public class DistanceCommand extends AbstractCommand {
             @NotNull Player sender,
             @NotNull CommandArguments args
     ) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = super.getTarget(sender, args);
         var from = target.getLocation().toBlockLocation();
         var to = sender.getLocation().toBlockLocation();
 

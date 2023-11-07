@@ -22,7 +22,7 @@ public class ExpCommand extends AbstractCommand {
     public final static ExpCommand instance = new ExpCommand();
 
     public void exp(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = super.getTarget(sender, args);
 
         var level = target.getLevel();
         var exp = Experiences.getExp(target);
