@@ -16,6 +16,8 @@ public class RefillCommand extends AbstractCommand {
 
     public final static RefillCommand instance = new RefillCommand();
 
+    public final static String PERMISSION = Permission.action;
+
     public void refill(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var refillable = args.getOptional("enabled").map(value -> Boolean.parseBoolean((String) value)).orElse(null);

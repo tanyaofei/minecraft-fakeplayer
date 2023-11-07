@@ -297,7 +297,7 @@ public class CommandRegistry {
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance::swap),
                         command("refill")
-                                .withPermission(Permission.action)
+                                .withPermission(RefillCommand.PERMISSION)
                                 .withOptionalArguments(
                                         literals("enabled", List.of("true", "false")),
                                         fakeplayer("name")
