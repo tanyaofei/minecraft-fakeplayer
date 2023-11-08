@@ -17,7 +17,7 @@ server-limit: 1000
 # 每个玩家最多创建多少个假人
 # 默认: 1
 # Define the maximum number of fake players each player can spawn
-# default: 1
+# Default: 1
 player-limit: 1
 
 # 假人存活时间, 0 表示永久
@@ -37,8 +37,8 @@ lifespan: 0
 #   2. 长度超过 16 位将会被截取
 #   3. 不能以 - 开头
 # Name template of fake players
-# If this value is empty, fake players will use the creators' name as their names and add a numerical suffix.
-# if this value is NOT empty, fake players will use this value as their names and add a numerical suffix.
+# If this value is empty, fake players will use creators' name as their name and add a numerical suffix.
+# Otherwise, fake players will use this value as their names and add a numerical suffix.
 # placeholder:
 #   %c: the name of the creator
 # tips:
@@ -72,16 +72,16 @@ drop-inventory-on-quiting: false
 # Default: true
 kick-on-dead: true
 
-# 如果启用, 则一个 IP 只能创建 `maximum` 个假人
+# 如果启用, 则一个 IP 只能创建 `player-limit` 个假人
 # 能够避免玩家开小号疯狂创建假人
-# Define whether to check if the same IP can only spawn `player-limit` fake players.
+# Define whether to check if players with the same IP sharing `player-limit`
 detect-ip: true
 
 # 服务器最近 5 分钟平均 TPS 低于这个值清除所有假人
 # 每 60 秒检测一次
 # 默认: 0, 即不开启, 因为移除假人可能导致玩家红石机器出问题, 按需开启吧
 # Server will detect tps every 5 minutes, if the average tps is lower than this value, all fake players will be removed
-# default: 0, means disabled
+# Default: 0, means disabled
 # Tips:
 #    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
@@ -89,13 +89,12 @@ kale-tps: 0
 # 预准备命令
 # 假人诞生时会以控制台的身份按顺序执行以下命令
 # 你可以用这个来实现权限组的分配之类的命令
-# 非正版服请避免写一些危险指令以防第三方插件没有清档被其他玩家以假人的身份登陆而利用
 # 占位符:
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
 # Server will execute the following commands after the fake player was spawned
-# you can add some commands to give them permission
+# You can add some commands to give them permission, such as '/lp user %p permission set xxx true'
 # placeholder:
 #    %p: the name of the fake player
 #    %u: the uuid of the fake player
@@ -111,7 +110,7 @@ preparing-commands:
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
-# Server will execute the following commands after the fake player was removed
+# Server will execute the following commands before the fake player was quited(PlayerQuitEvent)
 # you can add some commands to clean up data
 # placeholder:
 #    %p: the name of the fake player
