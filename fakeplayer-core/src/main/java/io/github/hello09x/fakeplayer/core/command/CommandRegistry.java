@@ -11,6 +11,7 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
+import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
@@ -28,6 +29,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static io.github.hello09x.bedrock.command.Commands.*;
+import static io.github.hello09x.fakeplayer.core.command.CommandSupports.*;
 
 
 @SuppressWarnings("SameParameterValue")
@@ -49,8 +51,8 @@ public class CommandRegistry {
                 .withPermission(Permission.spawn)
                 .withSubcommands(
                         helpCommand("/fp",
-                                Usage.of("select", i18n.asString("fakeplayer.command.select.description"), null, CommandRegistry::selectRequirement),
-                                Usage.of("selection", i18n.asString("fakeplayer.command.selection.description"), null, CommandRegistry::selectRequirement),
+                                Usage.of("select", i18n.asString("fakeplayer.command.select.description"), null, CommandSupports::selectRequirement),
+                                Usage.of("selection", i18n.asString("fakeplayer.command.selection.description"), null, CommandSupports::selectRequirement),
                                 Usage.of("spawn", i18n.asString("fakeplayer.command.spawn.description"), Permission.spawn),
                                 Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.kill),
                                 Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.list),
@@ -64,7 +66,7 @@ public class CommandRegistry {
                                 Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.wakeup),
                                 Usage.of("health", i18n.asString("fakeplayer.command.health.description"), Permission.health),
                                 Usage.of("exp", i18n.asString("fakeplayer.command.exp.description"), Permission.exp),
-                                Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, CommandRegistry::respawnRequirement),
+                                Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, CommandSupports::respawnRequirement),
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
                                 Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
                                 Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
@@ -86,11 +88,11 @@ public class CommandRegistry {
                         ),
 
                         command("select")
-                                .withRequirement(CommandRegistry::selectRequirement)
+                                .withRequirement(CommandSupports::selectRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(SelectCommand.instance::select),
                         command("selection")
-                                .withRequirement(CommandRegistry::selectRequirement)
+                                .withRequirement(CommandSupports::selectRequirement)
                                 .executesPlayer(SelectCommand.instance::selection),
 
                         command("spawn")
@@ -101,55 +103,55 @@ public class CommandRegistry {
                                         location("location").withPermission(Permission.spawnLocation))
                                 .executes(SpawnCommand.instance::spawn),
                         command("kill")
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withPermission(Permission.kill)
                                 .withOptionalArguments(fakeplayers("names"))
                                 .executes(KillCommand.instance::kill),
                         command("list")
                                 .withPermission(Permission.list)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(
                                         int32("page", 1),
                                         int32("size", 1))
                                 .executes(ListCommand.instance::list),
                         command("distance")
                                 .withPermission(Permission.distance)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(DistanceCommand.instance::distance),
                         command("drop")
                                 .withPermission(Permission.drop)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.drop()),
                         command("dropstack")
                                 .withPermission(Permission.dropstack)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.dropstack()),
                         command("dropinv")
                                 .withPermission(Permission.dropinv)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.dropinv()),
                         command("skin")
                                 .withPermission(Permission.skin)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withArguments(offlinePlayer("player"))
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(SkinCommand.instance::skin),
                         command("invsee")
                                 .withPermission(Permission.invsee)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(InvseeCommand.instance::invsee),
                         command("health")
                                 .withPermission(Permission.health)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(HealthCommand.instance::health),
                         command("respawn")
-                                .withRequirement(CommandRegistry::respawnRequirement)
+                                .withRequirement(CommandSupports::respawnRequirement)
                                 .withPermission(Permission.respawn)
                                 .withOptionalArguments(fakeplayer("name", Entity::isDead))
                                 .executes(RespawnCommand.instance::respawn),
@@ -170,46 +172,46 @@ public class CommandRegistry {
 
                         command("exp")
                                 .withPermission(Permission.exp)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ExpCommand.instance::exp),
                         command("expme")
                                 .withPermission(Permission.expme)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(ExpCommand.instance::expme),
 
                         command("tp")
                                 .withPermission(Permission.tp)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(TpCommand.instance::tp),
                         command("tphere")
                                 .withPermission(Permission.tphere)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(TpCommand.instance::tphere),
                         command("tps")
                                 .withPermission(Permission.tps)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(TpCommand.instance::tps),
 
                         command("attack")
                                 .withPermission(Permission.attack)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(newActionCommands(ActionType.ATTACK)),
                         command("mine")
                                 .withPermission(Permission.mine)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(newActionCommands(ActionType.MINE)),
                         command("use")
                                 .withPermission(Permission.use)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(newActionCommands(ActionType.USE)),
                         command("refill")
                                 .withPermission(RefillCommand.PERMISSION)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(
                                         literals("enabled", List.of("true", "false")),
                                         fakeplayer("name")
@@ -217,18 +219,18 @@ public class CommandRegistry {
                                 .executes(RefillCommand.instance::refill),
                         command("jump")
                                 .withPermission(Permission.jump)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(newActionCommands(ActionType.JUMP)),
                         command("sneak")
                                 .withPermission(Permission.sneak)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(
                                         literals("sneaking", List.of("true", "false")),
                                         fakeplayer("name"))
                                 .executes(SneakCommand.instance::sneak),
                         command("look")
                                 .withPermission(Permission.look)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(
                                         command("north")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -269,7 +271,7 @@ public class CommandRegistry {
                                 ),
                         command("turn")
                                 .withPermission(Permission.turn)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(
                                         command("left")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -294,7 +296,7 @@ public class CommandRegistry {
                                 ),
                         command("move")
                                 .withPermission(Permission.move)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(
                                         command("forward")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -319,7 +321,7 @@ public class CommandRegistry {
 
                         command("ride")
                                 .withPermission(Permission.ride)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withSubcommands(
                                         command("me")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -347,26 +349,26 @@ public class CommandRegistry {
                                 ),
                         command("swap")
                                 .withPermission(Permission.swap)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance::swap),
                         command("sleep")
                                 .withPermission(Permission.sleep)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name", p -> !p.isSleeping()))
                                 .executes(SleepCommand.instance::sleep),
                         command("wakeup")
                                 .withPermission(Permission.wakeup)
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withOptionalArguments(fakeplayer("name", LivingEntity::isSleeping))
                                 .executes(SleepCommand.instance::wakeup),
 
                         command("cmd")
-                                .withRequirement(CommandRegistry::targetRequirement)
+                                .withRequirement(CommandSupports::targetRequirement)
                                 .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
                                 .withArguments(
                                         fakeplayer("name"),
-                                        cmd("command").branchSuggestions(buildCmdSuggestion())
+                                        cmd("command")
                                 )
                                 .executes(CmdCommand.instance::cmd),
 
@@ -377,163 +379,6 @@ public class CommandRegistry {
                 ).register();
     }
 
-    private static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
-        return new CommandAPICommand[]{
-                command("once")
-                        .withOptionalArguments(fakeplayer("name"))
-                        .executes(ActionCommand.instance.action(action, ActionSetting.once())),
-                command("continuous")
-                        .withOptionalArguments(fakeplayer("name"))
-                        .executes(ActionCommand.instance.action(action, ActionSetting.continuous())),
-                command("stop")
-                        .withOptionalArguments(fakeplayer("name"))
-                        .executes(ActionCommand.instance.action(action, ActionSetting.stop())),
-                command("interval")
-                        .withOptionalArguments(
-                                int32("interval", 1),
-                                fakeplayer("name"))
-                        .executes((sender, args) -> {
-                    int interval = (int) args.getOptional("interval").orElse(1);
-                    ActionCommand.instance.action(sender, args, action, ActionSetting.interval(interval));
-                })
-        };
-    }
-
-    private static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
-        return new CustomArgument<>(new StringArgument(nodeName), info -> {
-            var sender = info.sender();
-            var target = sender.isOp()
-                    ? FakeplayerManager.instance.get(info.currentInput())
-                    : FakeplayerManager.instance.get(sender, info.currentInput());
-            if (predicate != null && target != null && !predicate.test(target)) {
-                target = null;
-            }
-            return target;
-        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var sender = info.sender();
-            var arg = info.currentArg();
-
-            var targets = sender.isOp()
-                    ? FakeplayerManager.instance.getAll(predicate)
-                    : FakeplayerManager.instance.getAll(sender, predicate);
-
-            var names = targets.stream().map(Player::getName);
-            if (!arg.isEmpty()) {
-                names = names.filter(n -> n.toLowerCase().contains(arg));
-            }
-
-            return names.toArray(String[]::new);
-        })));
-    }
-
-
-    private static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName) {
-        return fakeplayer(nodeName, null);
-    }
-
-    private static @NotNull Argument<List<Player>> fakeplayers(@NotNull String nodeName) {
-        return new CustomArgument<List<Player>, String>(new StringArgument(nodeName), info -> {
-            var sender = info.sender();
-            var arg = info.currentInput();
-
-            if (arg.equals("-a")) {
-                return sender.isOp()
-                        ? FakeplayerManager.instance.getAll()
-                        : FakeplayerManager.instance.getAll(sender);
-            }
-
-            var target = sender.isOp()
-                    ? FakeplayerManager.instance.get(arg)
-                    : FakeplayerManager.instance.get(sender, arg);
-
-            return target == null ? Collections.emptyList() : Collections.singletonList(target);
-        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var sender = info.sender();
-            var arg = info.currentArg().toLowerCase();
-
-            var fakes = sender.isOp()
-                    ? FakeplayerManager.instance.getAll()
-                    : FakeplayerManager.instance.getAll(sender);
-
-            var names = Stream.concat(fakes.stream().map(Player::getName), Stream.of("-a"));
-            if (!arg.isEmpty()) {
-                names = names.filter(n -> n.toLowerCase().contains(arg));
-            }
-
-            return names.toArray(String[]::new);
-        })));
-    }
-
-    private static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {
-        return new CustomArgument<>(new StringArgument(nodeName), info -> {
-            var arg = info.currentInput();
-            try {
-                return Config.valueOf(arg);
-            } catch (Exception e) {
-                throw CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-option"));
-            }
-        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Config.values()).map(Config::name).toList()));
-    }
-
-    private static @NotNull Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
-        return new CustomArgument<>(new StringArgument(nodeName), info -> {
-            @SuppressWarnings("unchecked")
-            var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));
-            var arg = info.currentInput();
-            if (!config.options().contains(arg)) {
-                throw CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-value"));
-            }
-            return config.converter().apply(arg);
-        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var config = Objects.requireNonNull((Config<?>) info.previousArgs().get(configNodeName));
-            var arg = info.currentArg().toLowerCase();
-            var options = config.options().stream();
-            if (!arg.isEmpty()) {
-                options = options.filter(o -> o.toLowerCase().contains(arg));
-            }
-            return options.toArray(String[]::new);
-        })));
-    }
-
-    private static boolean respawnRequirement(@NotNull CommandSender sender) {
-        if (FakeplayerConfig.instance.isKickOnDead()) {
-            return false;
-        }
-        return sender.isOp() || FakeplayerManager.instance.countByCreator(sender) > 0;
-    }
-
-    private static boolean selectRequirement(@NotNull CommandSender sender) {
-        return sender.isOp() || (FakeplayerConfig.instance.getPlayerLimit() > 1 && FakeplayerManager.instance.countByCreator(sender) > 0);
-    }
-
-    private static boolean targetRequirement(@NotNull CommandSender sender) {
-        return sender.isOp() || FakeplayerManager.instance.countByCreator(sender) > 0;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static SuggestionsBranch<CommandSender>[] buildCmdSuggestion() {
-        SuggestionsBranch<CommandSender> fromTarget = SuggestionsBranch.suggest(ArgumentSuggestions.stringCollectionAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var target = Iterables.getFirst(FakeplayerManager.instance.getAll(a -> true), null);
-            if (target == null) {
-                return Collections.emptyList();
-            }
-            var suggestion = CommandAPIBukkit.get().getSimpleCommandMap().tabComplete(target, info.currentArg());
-            if (suggestion == null || suggestion.isEmpty()) {
-                return Collections.emptyList();
-            }
-            return suggestion.stream().map(a -> a.substring(1)).toList();
-        })));
-
-        SuggestionsBranch<CommandSender> fromConfig = SuggestionsBranch.suggest(ArgumentSuggestions.stringCollectionAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var whitelist = FakeplayerConfig.instance.getAllowCommands();
-            if (whitelist.isEmpty()) {
-                return Collections.emptyList();
-            }
-            return new ArrayList<>(whitelist);
-        })));
-
-        return new SuggestionsBranch[]{fromTarget, fromConfig};
-    }
 
 
 }

@@ -8,6 +8,7 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -100,7 +101,7 @@ public class PlayerListeners implements Listener {
             // 如果移除玩家后没有假人, 则更新命令列表
             // 这个方法需要在 cleanup 之前执行, 不然无法获取假人的创建者
             if (manager.getCreator(target) instanceof Player creator && manager.countByCreator(creator) == 1) {
-                creator.updateCommands();
+                Bukkit.getScheduler().runTaskLater(Main.getInstance(), creator::updateCommands, 1); // 需要下一 tick 移除后才正确刷新
             }
         } catch (Throwable e) {
             log.warning("执行 destroy-commands 时发生错误: \n" + Throwables.getStackTraceAsString(e));

@@ -1,9 +1,10 @@
-package io.github.hello09x.fakeplayer.core.command;
+package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
+import io.github.hello09x.fakeplayer.core.command.Permission;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;

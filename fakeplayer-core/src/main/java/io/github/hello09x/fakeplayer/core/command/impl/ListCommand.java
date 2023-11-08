@@ -1,7 +1,8 @@
-package io.github.hello09x.fakeplayer.core.command;
+package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.page.Page;
+import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

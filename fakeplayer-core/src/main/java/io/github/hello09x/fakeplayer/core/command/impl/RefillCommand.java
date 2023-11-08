@@ -1,7 +1,8 @@
-package io.github.hello09x.fakeplayer.core.command;
+package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.fakeplayer.core.command.Permission;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;

@@ -7,7 +7,7 @@ import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.command.RefillCommand;
+import io.github.hello09x.fakeplayer.core.command.impl.RefillCommand;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;

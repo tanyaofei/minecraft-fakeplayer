@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core.command;
+package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;

@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core.command;
+package io.github.hello09x.fakeplayer.core.command.impl;
 
 import com.google.common.base.Throwables;
 import dev.jorel.commandapi.executors.CommandArguments;

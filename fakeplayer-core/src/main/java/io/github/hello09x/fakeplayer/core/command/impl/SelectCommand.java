@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core.command;
+package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
