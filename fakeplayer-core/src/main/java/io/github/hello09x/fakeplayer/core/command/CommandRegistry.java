@@ -1,12 +1,11 @@
 package io.github.hello09x.fakeplayer.core.command;
 
+import com.google.common.collect.Iterables;
+import dev.jorel.commandapi.CommandAPIBukkit;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.CustomArgument;
+import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.arguments.CustomArgument.CustomArgumentException;
-import dev.jorel.commandapi.arguments.StringArgument;
 import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
@@ -23,10 +22,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -342,7 +338,7 @@ public class CommandRegistry {
                                 .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
                                 .withArguments(
                                         fakeplayer("name"),
-                                        cmd("command")
+                                        cmd("command").branchSuggestions(buildCmdSuggestion())
                                 )
                                 .executes(CmdCommand.instance::cmd),
 
@@ -353,7 +349,7 @@ public class CommandRegistry {
                 ).register();
     }
 
-    private static CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
+    private static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
                         .withOptionalArguments(fakeplayer("name"))
@@ -477,6 +473,33 @@ public class CommandRegistry {
 
     private static boolean selectRequirement(@NotNull CommandSender sender) {
         return sender.isOp() || FakeplayerConfig.instance.getPlayerLimit() > 1;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static SuggestionsBranch<CommandSender>[] buildCmdSuggestion() {
+        SuggestionsBranch<CommandSender> fromTarget = SuggestionsBranch.suggest(ArgumentSuggestions.stringCollectionAsync(info -> {
+            return CompletableFuture.supplyAsync(() -> {
+                var target = Iterables.getFirst(FakeplayerManager.instance.getAll(a -> true), null);
+                if (target == null) {
+                    return Collections.emptyList();
+                }
+                var suggestion = CommandAPIBukkit.get().getSimpleCommandMap().tabComplete(target, info.currentArg());
+                if (suggestion == null || suggestion.isEmpty()) {
+                    return Collections.emptyList();
+                }
+                return suggestion.stream().map(a -> a.substring(1)).toList();
+            });
+        }));
+
+        SuggestionsBranch<CommandSender> fromConfig = SuggestionsBranch.suggest(ArgumentSuggestions.stringCollectionAsync(info -> CompletableFuture.supplyAsync(() -> {
+            var whitelist = FakeplayerConfig.instance.getAllowCommands();
+            if (whitelist.isEmpty()) {
+                return Collections.emptyList();
+            }
+            return new ArrayList<>(whitelist);
+        })));
+
+        return new SuggestionsBranch[]{fromTarget, fromConfig};
     }
 
 
