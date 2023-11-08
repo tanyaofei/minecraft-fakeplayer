@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.naming;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class NameSource {
@@ -12,7 +13,7 @@ public class NameSource {
     /**
      * 容量
      */
-    private volatile int capacity;
+    private int capacity;
 
     public NameSource(int initializeCapacity) {
         this.capacity = initializeCapacity;
@@ -31,7 +32,7 @@ public class NameSource {
      *
      * @return 名称序号
      */
-    public synchronized int pop() {
+    public int pop() {
         if (names.isEmpty()) {
             var newCapacity = capacity * 2;
             for (int i = capacity; i < newCapacity; i++) {
@@ -47,7 +48,7 @@ public class NameSource {
      *
      * @param i 名称序号
      */
-    public synchronized void push(int i) {
+    public void push(int i) {
         if (i >= capacity) {
             return;
         }
@@ -57,6 +58,11 @@ public class NameSource {
         }
 
         names.push(i);
+        this.sort();
+    }
+
+    public void sort() {
+        Collections.sort(this.names);
     }
 
 
