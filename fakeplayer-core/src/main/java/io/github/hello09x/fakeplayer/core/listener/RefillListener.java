@@ -23,6 +23,9 @@ public class RefillListener implements Listener {
 
     private final FakeplayerManager manager = FakeplayerManager.instance;
 
+    /**
+     * 消耗物品自动填装
+     */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemUse(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
@@ -39,6 +42,9 @@ public class RefillListener implements Listener {
         this.refillLater(player, slot, item);
     }
 
+    /**
+     * 放置方块自动填装
+     */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
         var player = event.getPlayer();
@@ -55,6 +61,9 @@ public class RefillListener implements Listener {
         this.refillLater(player, slot, item);
     }
 
+    /**
+     * 物品损坏自动填装
+     */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
@@ -72,7 +81,7 @@ public class RefillListener implements Listener {
     }
 
     /**
-     * 发射投掷物, 如扔喷溅型药水
+     * 发射投掷物, 如扔喷溅型药水 自动填装
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onProjectileLaunch(@NotNull PlayerLaunchProjectileEvent event) {
@@ -102,6 +111,10 @@ public class RefillListener implements Listener {
     public void refillLater(@NotNull Player player, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
         var requires = item.clone();
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            if (!player.isOnline()) {
+                return;
+            }
+
             var inv = player.getInventory();
             var current = inv.getItem(slot);
             for (int i = inv.getSize(); i >= 0; i--) {

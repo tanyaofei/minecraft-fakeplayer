@@ -33,13 +33,13 @@ public class HealthCommand extends AbstractCommand {
         var rate = health / max;
 
         NamedTextColor color;
-        if (rate >= 1.0) {
+        if (rate >= 0.75) {
             color = GREEN;
-        } else if (rate > 0.75) {
-            color = YELLOW;
         } else if (rate > 0.5) {
-            color = GOLD;
+            color = YELLOW;
         } else if (rate > 0.25) {
+            color = GOLD;
+        } else if (rate > 0.125) {
             color = RED;
         } else {
             color = DARK_RED;

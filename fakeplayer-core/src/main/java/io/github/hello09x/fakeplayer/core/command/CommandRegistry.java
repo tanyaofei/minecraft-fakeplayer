@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandPermission;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
@@ -15,14 +16,18 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
-import io.github.hello09x.fakeplayer.core.repository.model.Configs;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static io.github.hello09x.bedrock.command.Commands.*;
@@ -44,40 +49,41 @@ public class CommandRegistry {
                         "type fp ? for more information",
                         "hello09x [汤姆]"
                 )
+                .withPermission(Permission.spawn)
                 .withSubcommands(
                         helpCommand("/fp",
                                 Usage.of("spawn", i18n.asString("fakeplayer.command.spawn.description"), Permission.spawn),
-                                Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.spawn),
-                                Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.spawn),
-                                Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.spawn),
-                                Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.spawn),
-                                Usage.of("dropstack", i18n.asString("fakeplayer.command.dropstack.description"), Permission.spawn),
-                                Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.spawn),
-                                Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.spawn),
-                                Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.spawn),
-                                Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.spawn),
-                                Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.spawn),
-                                Usage.of("health", i18n.asString("fakeplayer.command.health.description"), Permission.spawn),
-                                Usage.of("exp", i18n.asString("fakeplayer.command.exp.description"), Permission.spawn),
+                                Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.kill),
+                                Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.list),
+                                Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.distance),
+                                Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.drop),
+                                Usage.of("dropstack", i18n.asString("fakeplayer.command.dropstack.description"), Permission.dropstack),
+                                Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.dropinv),
+                                Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.skin),
+                                Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.invsee),
+                                Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.sleep),
+                                Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.wakeup),
+                                Usage.of("health", i18n.asString("fakeplayer.command.health.description"), Permission.health),
+                                Usage.of("exp", i18n.asString("fakeplayer.command.exp.description"), Permission.exp),
+                                Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, p -> !FakeplayerConfig.instance.isKickOnDead()),
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
-                                Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tp),
-                                Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tp),
-                                Usage.of("config get", i18n.asString("fakeplayer.command.config.get.description")),
-                                Usage.of("config set", i18n.asString("fakeplayer.command.config.set.description")),
+                                Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
+                                Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
+                                Usage.of("config", i18n.asString("fakeplayer.command.config.description"), Permission.config),
                                 Usage.of("expme", i18n.asString("fakeplayer.command.expme.description"), Permission.exp),
-                                Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.action),
-                                Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.action),
-                                Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.action),
-                                Usage.of("refill", i18n.asString("fakeplayer.command.refill.description"), Permission.action),
-                                Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.action),
-                                Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.action),
-                                Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.action),
-                                Usage.of("move", i18n.asString("fakeplayer.command.move.description"), Permission.action),
-                                Usage.of("ride", i18n.asString("fakeplayer.command.ride.description"), Permission.action),
-                                Usage.of("sneak", i18n.asString("fakeplayer.command.sneak.description"), Permission.action),
-                                Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.action),
+                                Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.attack),
+                                Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.mine),
+                                Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.use),
+                                Usage.of("refill", i18n.asString("fakeplayer.command.refill.description"), Permission.refill),
+                                Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.jump),
+                                Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.look),
+                                Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.turn),
+                                Usage.of("move", i18n.asString("fakeplayer.command.move.description"), Permission.move),
+                                Usage.of("ride", i18n.asString("fakeplayer.command.ride.description"), Permission.ride),
+                                Usage.of("sneak", i18n.asString("fakeplayer.command.sneak.description"), Permission.sneak),
+                                Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.swap),
                                 Usage.of("cmd", i18n.asString("fakeplayer.command.cmd.description"), Permission.cmd),
-                                Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), Permission.admin)
+                                Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), "OP")
                         ),
 
                         command("spawn")
@@ -88,68 +94,51 @@ public class CommandRegistry {
                                         location("location").withPermission(Permission.spawnLocation))
                                 .executes(SpawnCommand.instance::spawn),
                         command("kill")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.kill)
                                 .withOptionalArguments(fakeplayers("names"))
                                 .executes(KillCommand.instance::kill),
                         command("list")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.list)
                                 .withOptionalArguments(
                                         int32("page", 1),
                                         int32("size", 1))
-                                .executes(SpawnCommand.instance::list),
+                                .executes(ListCommand.instance::list),
                         command("distance")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.distance)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(DistanceCommand.instance::distance),
                         command("drop")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.drop)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.drop()),
                         command("dropstack")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.dropstack)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.dropstack()),
                         command("dropinv")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.dropinv)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(DropCommand.instance.dropinv()),
                         command("skin")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.skin)
                                 .withArguments(offlinePlayer("player"))
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(SkinCommand.instance::skin),
                         command("invsee")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.invsee)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executesPlayer(InvseeCommand.instance::invsee),
                         command("health")
-                                .withPermission(Permission.spawn)
+                                .withPermission(Permission.health)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(HealthCommand.instance::health),
-
-                        command("exp")
-                                .withPermission(Permission.exp)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executes(ExpCommand.instance::exp),
-                        command("expme")
-                                .withPermission(Permission.exp)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executesPlayer(ExpCommand.instance::expme),
-
-                        command("tp")
-                                .withPermission(Permission.tp)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executesPlayer(TpCommand.instance::tp),
-                        command("tphere")
-                                .withPermission(Permission.tp)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executesPlayer(TpCommand.instance::tphere),
-                        command("tps")
-                                .withPermission(Permission.tp)
-                                .withOptionalArguments(fakeplayer("name"))
-                                .executesPlayer(TpCommand.instance::tps),
-
+                        command("respawn")
+                                .withPermission(Permission.respawn)
+                                .withRequirement(sender -> !FakeplayerConfig.instance.isKickOnDead())
+                                .withOptionalArguments(fakeplayer("name", Entity::isDead))
+                                .executes(RespawnCommand.instance::respawn),
                         command("config")
+                                .withPermission(Permission.config)
                                 .withSubcommands(
                                         command("get")
                                                 .withArguments(config("option"))
@@ -163,26 +152,55 @@ public class CommandRegistry {
                                                 .executesPlayer(ConfigCommand.instance::listConfig)
                                 ),
 
+                        command("exp")
+                                .withPermission(Permission.exp)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executes(ExpCommand.instance::exp),
+                        command("expme")
+                                .withPermission(Permission.expme)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(ExpCommand.instance::expme),
+
+                        command("tp")
+                                .withPermission(Permission.tp)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(TpCommand.instance::tp),
+                        command("tphere")
+                                .withPermission(Permission.tphere)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(TpCommand.instance::tphere),
+                        command("tps")
+                                .withPermission(Permission.tps)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(TpCommand.instance::tps),
+
                         command("attack")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.attack)
                                 .withSubcommands(newActionCommands(ActionType.ATTACK)),
                         command("mine")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.mine)
                                 .withSubcommands(newActionCommands(ActionType.MINE)),
                         command("use")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.use)
                                 .withSubcommands(newActionCommands(ActionType.USE)),
+                        command("refill")
+                                .withPermission(RefillCommand.PERMISSION)
+                                .withOptionalArguments(
+                                        literals("enabled", List.of("true", "false")),
+                                        fakeplayer("name")
+                                )
+                                .executes(RefillCommand.instance::refill),
                         command("jump")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.jump)
                                 .withSubcommands(newActionCommands(ActionType.JUMP)),
                         command("sneak")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.sneak)
                                 .withOptionalArguments(
                                         literals("sneaking", List.of("true", "false")),
                                         fakeplayer("name"))
                                 .executes(SneakCommand.instance::sneak),
                         command("look")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.look)
                                 .withSubcommands(
                                         command("north")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -222,7 +240,7 @@ public class CommandRegistry {
                                         )
                                 ),
                         command("turn")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.turn)
                                 .withSubcommands(
                                         command("left")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -246,7 +264,7 @@ public class CommandRegistry {
                                         )
                                 ),
                         command("move")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.move)
                                 .withSubcommands(
                                         command("forward")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -270,7 +288,7 @@ public class CommandRegistry {
                                 ),
 
                         command("ride")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.ride)
                                 .withSubcommands(
                                         command("me")
                                                 .withOptionalArguments(fakeplayer("name"))
@@ -297,23 +315,16 @@ public class CommandRegistry {
                                         )
                                 ),
                         command("swap")
-                                .withPermission(Permission.action)
+                                .withPermission(Permission.swap)
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(ActionCommand.instance::swap),
-                        command("refill")
-                                .withPermission(RefillCommand.PERMISSION)
-                                .withOptionalArguments(
-                                        literals("enabled", List.of("true", "false")),
-                                        fakeplayer("name")
-                                )
-                                .executes(RefillCommand.instance::refill),
                         command("sleep")
-                                .withPermission(Permission.action)
-                                .withOptionalArguments(fakeplayer("name"))
+                                .withPermission(Permission.sleep)
+                                .withOptionalArguments(fakeplayer("name", p -> !p.isSleeping()))
                                 .executes(SleepCommand.instance::sleep),
                         command("wakeup")
-                                .withPermission(Permission.action)
-                                .withOptionalArguments(fakeplayer("name"))
+                                .withPermission(Permission.wakeup)
+                                .withOptionalArguments(fakeplayer("name", LivingEntity::isSleeping))
                                 .executes(SleepCommand.instance::wakeup),
 
                         command("cmd")
@@ -325,7 +336,7 @@ public class CommandRegistry {
                                 .executes(CmdCommand.instance::cmd),
 
                         command("reload")
-                                .withPermission(Permission.admin)
+                                .withPermission(CommandPermission.OP)
                                 .executes(ReloadCommand.instance::reload)
 
                 ).register();
@@ -353,28 +364,36 @@ public class CommandRegistry {
         };
     }
 
-
-    private static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName) {
+    private static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
-            return sender.isOp()
+            var target = sender.isOp()
                     ? FakeplayerManager.instance.get(info.currentInput())
                     : FakeplayerManager.instance.get(sender, info.currentInput());
-        }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
+            if (predicate != null && target != null && !predicate.test(target)) {
+                target = null;
+            }
+            return target;
+        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
             var sender = info.sender();
             var arg = info.currentArg();
 
-            var fakes = sender.isOp()
-                    ? FakeplayerManager.instance.getAll()
-                    : FakeplayerManager.instance.getAll(sender);
+            var targets = sender.isOp()
+                    ? FakeplayerManager.instance.getAll(predicate)
+                    : FakeplayerManager.instance.getAll(sender, predicate);
 
-            var names = fakes.stream().map(Player::getName);
+            var names = targets.stream().map(Player::getName);
             if (!arg.isEmpty()) {
                 names = names.filter(n -> n.toLowerCase().contains(arg));
             }
 
             return names.toArray(String[]::new);
-        }));
+        })));
+    }
+
+
+    private static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName) {
+        return fakeplayer(nodeName, null);
     }
 
     private static @NotNull Argument<List<Player>> fakeplayers(@NotNull String nodeName) {
@@ -393,7 +412,7 @@ public class CommandRegistry {
                     : FakeplayerManager.instance.get(sender, arg);
 
             return target == null ? Collections.emptyList() : Collections.singletonList(target);
-        }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
+        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
             var sender = info.sender();
             var arg = info.currentArg().toLowerCase();
 
@@ -407,18 +426,18 @@ public class CommandRegistry {
             }
 
             return names.toArray(String[]::new);
-        }));
+        })));
     }
 
     private static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
             try {
-                return Configs.valueOf(arg);
+                return Config.valueOf(arg);
             } catch (Exception e) {
                 throw CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-option"));
             }
-        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Configs.values()).map(Config::name).toList()));
+        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Config.values()).map(Config::name).toList()));
     }
 
     private static @NotNull Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
@@ -429,8 +448,8 @@ public class CommandRegistry {
             if (!config.options().contains(arg)) {
                 throw CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-value"));
             }
-            return config.mapper().apply(arg);
-        }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
+            return config.converter().apply(arg);
+        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
             var config = Objects.requireNonNull((Config<?>) info.previousArgs().get(configNodeName));
             var arg = info.currentArg().toLowerCase();
             var options = config.options().stream();
@@ -438,7 +457,7 @@ public class CommandRegistry {
                 options = options.filter(o -> o.toLowerCase().contains(arg));
             }
             return options.toArray(String[]::new);
-        }));
+        })));
     }
 
 

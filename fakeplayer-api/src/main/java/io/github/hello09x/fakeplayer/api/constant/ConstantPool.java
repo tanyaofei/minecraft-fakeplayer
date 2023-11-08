@@ -9,4 +9,6 @@ public interface ConstantPool {
      */
     byte PLAYER_DISPLAYED_SKIN_PARTS_ALL_ENABLED = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40;
 
+    String UNMODIFIABLE_INVENTORY_TITLE_PREFIX = "* ";
+
 }

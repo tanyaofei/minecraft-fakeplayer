@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command;
 import com.google.common.base.Throwables;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
-import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
@@ -25,10 +24,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.event.ClickEvent.runCommand;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpawnCommand extends AbstractCommand {
@@ -112,39 +111,6 @@ public class SpawnCommand extends AbstractCommand {
         } catch (MessageException e) {
             sender.sendMessage(e.asComponent());
         }
-    }
-
-
-    public void list(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        var page = (int) args.getOptional("page").orElse(1);
-        var size = (int) args.getOptional("size").orElse(10);
-
-        var fakers = sender.isOp()
-                ? fakeplayerManager.getAll()
-                : fakeplayerManager.getAll(sender);
-
-        var p = Page.of(fakers, page, size);
-
-        var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
-        sender.sendMessage(p.asComponent(
-                text(i18n.asString("fakeplayer.command.list.title"), AQUA, BOLD),
-                fakeplayer -> {
-                    var partTp = allowsTp
-                            ? textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.teleport", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())))
-                            : empty();
-
-                    var partKill = textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.kill", RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()));
-
-                    return textOfChildren(
-                            text(fakeplayer.getName() + " (" + fakeplayerManager.getCreatorName(fakeplayer) + ")", GOLD),
-                            text(" - ", GRAY),
-                            text(toLocationString(fakeplayer.getLocation()), WHITE),
-                            partTp,
-                            partKill
-                    );
-                },
-                i -> "/fp list " + i + " " + size
-        ));
     }
 
 

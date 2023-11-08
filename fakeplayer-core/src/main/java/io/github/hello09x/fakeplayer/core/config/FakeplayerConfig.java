@@ -88,6 +88,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private boolean dropInventoryOnQuiting;
 
     /**
+     * 死亡时是否踢出游戏
+     */
+    private boolean kickOnDead;
+
+    /**
      * 自定义名称规则
      */
     private Pattern namePattern;
@@ -129,6 +134,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
+        this.kickOnDead = file.getBoolean("kick-on-dead", true);
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);
         this.nameTemplate = getNameTemplate(file);

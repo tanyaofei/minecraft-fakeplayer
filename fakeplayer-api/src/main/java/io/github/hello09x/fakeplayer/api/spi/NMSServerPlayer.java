@@ -198,4 +198,9 @@ public interface NMSServerPlayer {
      */
     void configClientOptions();
 
+    /**
+     * 重生
+     */
+    void respawn();
+
 }

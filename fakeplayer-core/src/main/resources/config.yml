@@ -66,6 +66,12 @@ follow-quiting: true
 # Define whether fake players will drop items from their inventory when they remove.
 drop-inventory-on-quiting: false
 
+# 死亡时是否剔除游戏, 如果设置为 false, 那么玩家可以通过 /fp respawn 命令重生
+# 默认: true
+# Define whether kick the fake player who was dead, if this value is true, players can type command '/fp respawn' to respawn him
+# Default: true
+kick-on-dead: true
+
 # 如果启用, 则一个 IP 只能创建 `maximum` 个假人
 # 能够避免玩家开小号疯狂创建假人
 # Define whether to check if the same IP can only spawn `player-limit` fake players.

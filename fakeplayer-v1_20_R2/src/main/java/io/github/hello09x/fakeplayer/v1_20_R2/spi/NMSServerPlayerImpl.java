@@ -2,10 +2,12 @@ package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 
 import com.google.common.collect.Iterables;
 import io.github.hello09x.fakeplayer.api.Reflections;
+import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.v1_20_R2.network.EmptyAdvancements;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
@@ -207,13 +209,23 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
                 Bukkit.getViewDistance(),
                 ChatVisiblity.FULL,
                 false,
-                (byte) (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40),
+                ConstantPool.PLAYER_DISPLAYED_SKIN_PARTS_ALL_ENABLED,
                 HumanoidArm.RIGHT,
                 false,
                 true
         );
 
         handle.updateOptions(option);
+    }
+
+    @Override
+    public void respawn() {
+        if (!this.player.isDead()) {
+            return;
+        }
+
+        var packet = new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN);
+        handle.connection.handleClientCommand(packet);
     }
 
 }

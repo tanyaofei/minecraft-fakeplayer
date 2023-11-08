@@ -7,6 +7,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyAdvancements;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
@@ -214,6 +215,16 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
                 true
         );
         handle.updateOptions(option);
+    }
+
+    @Override
+    public void respawn() {
+        if (!this.player.isDead()) {
+            return;
+        }
+
+        var packet = new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN);
+        handle.connection.handleClientCommand(packet);
     }
 
 }

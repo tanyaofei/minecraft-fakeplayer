@@ -6,6 +6,7 @@ import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
@@ -16,7 +17,7 @@ import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
-import io.github.hello09x.fakeplayer.core.repository.model.Configs;
+import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.softdepend.OpenInvDepend;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
@@ -40,12 +41,12 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
 public class FakeplayerManager {
@@ -66,6 +67,8 @@ public class FakeplayerManager {
 
     private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
+    private final UserConfigManager configManager = UserConfigManager.instance;
+
     private final I18n i18n = Main.i18n();
 
     private final OpenInvDepend openInvDepend = OpenInvDepend.instance;
@@ -75,8 +78,8 @@ public class FakeplayerManager {
         timer.scheduleAtFixedRate(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Tasks.run(() -> {
-                            if (removeAll("low tps") > 0) {
-                                Bukkit.broadcast(i18n.translate("fakeplayer.manager.remove-all-on-low-tps", RED, ITALIC));
+                            if (FakeplayerManager.this.removeAll("low tps") > 0) {
+                                Bukkit.broadcast(i18n.translate("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
                             }
                         }, Main.getInstance());
                     }
@@ -115,50 +118,34 @@ public class FakeplayerManager {
                 removeAt
         );
 
-        var player = fp.getPlayer();
-        player.playerListName(text(player.getName(), GRAY, ITALIC));
+        var target = fp.getPlayer();
+        target.playerListName(text(target.getName(), GRAY, ITALIC));
 
         return CompletableFuture
                 .supplyAsync(() -> {
-                    boolean invulnerable = Configs.invulnerable.defaultValue(),
-                            lookAtEntity = Configs.look_at_entity.defaultValue(),
-                            collidable = Configs.collidable.defaultValue(),
-                            pickupItems = Configs.pickup_items.defaultValue(),
-                            skin = Configs.skin.defaultValue(),
-                            refillable = Configs.refillable.defaultValue();
-
-                    if (creator instanceof Player p) {
-                        var creatorId = p.getUniqueId();
-                        invulnerable = userConfigRepository.selectOrDefault(creatorId, Configs.invulnerable);
-                        lookAtEntity = userConfigRepository.selectOrDefault(creatorId, Configs.look_at_entity);
-                        collidable = userConfigRepository.selectOrDefault(creatorId, Configs.collidable);
-                        pickupItems = userConfigRepository.selectOrDefault(creatorId, Configs.pickup_items);
-                        skin = userConfigRepository.selectOrDefault(creatorId, Configs.skin);
-                        refillable = userConfigRepository.selectOrDefault(creatorId, Configs.refillable);
-                    }
-
+                    var configs = configManager.getConfigs(creator);
                     return new SpawnOption(
                             spawnAt,
-                            invulnerable,
-                            collidable,
-                            lookAtEntity,
-                            pickupItems,
-                            skin,
-                            refillable
+                            configs.getOrDefault(Config.invulnerable),
+                            configs.getOrDefault(Config.collidable),
+                            configs.getOrDefault(Config.look_at_entity),
+                            configs.getOrDefault(Config.pickup_items),
+                            configs.getOrDefault(Config.skin),
+                            configs.getOrDefault(Config.refillable)
                     );
                 })
-                .thenApplyAsync(option -> fp.spawnAsync(option).join())
+                .thenCompose(fp::spawnAsync)
                 .thenRunAsync(() -> {
                     Tasks.run(() -> {
                         playerList.add(fp);
-                        usedIdRepository.add(player.getUniqueId());
+                        usedIdRepository.add(target.getUniqueId());
                     }, Main.getInstance());
 
                     Tasks.run(() -> {
-                        dispatchCommands(player, config.getPreparingCommands());
-                        performCommands(player, config.getSelfCommands());
+                        FakeplayerManager.this.dispatchCommands(target, config.getPreparingCommands());
+                        FakeplayerManager.this.performCommands(target, config.getSelfCommands());
                     }, Main.getInstance(), 20);
-                }).thenApply(ignored -> player);
+                }).thenApply(ignored -> target);
     }
 
     /**
@@ -251,7 +238,19 @@ public class FakeplayerManager {
      * @return 获取所有假人
      */
     public @NotNull List<Player> getAll() {
-        return playerList.getAll().stream().map(FakePlayer::getPlayer).toList();
+        return this.getAll((Predicate<Player>) null);
+    }
+
+    /**
+     * @param predicate 筛选条件
+     * @return 经过筛选的假人
+     */
+    public @NotNull List<Player> getAll(@Nullable Predicate<Player> predicate) {
+        var stream = playerList.getAll().stream().map(FakePlayer::getPlayer);
+        if (predicate != null) {
+            stream = stream.filter(predicate);
+        }
+        return stream.toList();
     }
 
     /**
@@ -277,7 +276,22 @@ public class FakeplayerManager {
      * @return 创建者创建的假人
      */
     public @NotNull List<Player> getAll(@NotNull CommandSender creator) {
-        return playerList.getByCreator(creator.getName()).stream().map(FakePlayer::getPlayer).toList();
+        return this.getAll(creator, null);
+    }
+
+    /**
+     * 获取筛选过的创建者创建的假人
+     *
+     * @param creator   创建者
+     * @param predicate 筛选条件
+     * @return 假人
+     */
+    public @NotNull List<Player> getAll(@NotNull CommandSender creator, @Nullable Predicate<Player> predicate) {
+        var stream = playerList.getByCreator(creator.getName()).stream().map(FakePlayer::getPlayer);
+        if (predicate != null) {
+            stream = stream.filter(predicate);
+        }
+        return stream.toList();
     }
 
     /**
@@ -315,6 +329,12 @@ public class FakeplayerManager {
         }
     }
 
+    /**
+     * 判断假人是否自动填装
+     *
+     * @param player 假人
+     * @return 是否自动填装
+     */
     public boolean isRefillable(@NotNull Player player) {
         return player.hasMetadata("fakeplayer:refillable");
     }
@@ -365,16 +385,18 @@ public class FakeplayerManager {
         ) {
             if (!server.dispatchCommand(sender, cmd)) {
                 log.warning("Failed to execute command for %s: ".formatted(player.getName()) + cmd);
+            } else {
+                log.info("dispatched command: " + cmd);
             }
         }
     }
 
     public boolean openInventory(@NotNull Player creator, @NotNull Player player) {
-        var fake = this.playerList.getByName(player.getName());
-        if (fake == null) {
+        var target = this.playerList.getByName(player.getName());
+        if (target == null) {
             return false;
         }
-        if (!creator.isOp() && !fake.isCreator(creator)) {
+        if (!creator.isOp() && !target.isCreator(creator)) {
             return false;
         }
 
@@ -385,6 +407,12 @@ public class FakeplayerManager {
         return true;
     }
 
+    /**
+     * 检测限制, 不满足条件则抛出一场
+     *
+     * @param creator 创建者
+     * @throws MessageException 消息
+     */
     private void checkLimit(@NotNull CommandSender creator) throws MessageException {
         if (creator.isOp()) {
             return;
@@ -406,7 +434,7 @@ public class FakeplayerManager {
     private void openInventoryDefault(@NotNull Player player, @NotNull Player target) {
         var view = player.openInventory(target.getInventory());
         if (view != null) {
-            view.setTitle("* " + Components.asString(miniMessage.deserialize(
+            view.setTitle(ConstantPool.UNMODIFIABLE_INVENTORY_TITLE_PREFIX + Components.asString(miniMessage.deserialize(
                     i18n.asString("fakeplayer.manager.inventory.title"),
                     Placeholder.component("name", text(target.getName()))
             )));

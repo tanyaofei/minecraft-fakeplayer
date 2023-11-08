@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,36 +22,46 @@ public class UserConfigRepository extends Repository<UserConfig> {
         super(plugin);
     }
 
-    public <T> @NotNull T selectOrDefault(@NotNull UUID playerId, @NotNull Config<T> config) {
-        return Optional.ofNullable(select(playerId, config)).orElse(config.defaultValue());
-    }
-
-    public <T> @Nullable T select(@NotNull UUID playerId, @NotNull Config<T> config) {
+    public @Nullable String select(@NotNull UUID playerId, @NotNull Config<?> config) {
         var sql = """
                   select * from user_config
                   where player_id = ?
-                  and key = ?
+                  and `key` = ?
                   """;
 
         return execute(connection -> {
             try (PreparedStatement stm = connection.prepareStatement(sql)) {
                 stm.setString(1, playerId.toString());
                 stm.setString(2, config.name());
-                return Optional.ofNullable(mapOne(stm.executeQuery())).map(c -> config.mapper().apply(c.value())).orElse(
-                        null);
+                return Optional.ofNullable(mapOne(stm.executeQuery()))
+                        .map(UserConfig::value)
+                        .orElse(null);
+            }
+        });
+    }
+
+    public @NotNull List<UserConfig> selectList(@NotNull UUID playerId) {
+        var sql = """
+                select * from user_config
+                where player_id = ?
+                """;
+        return execute(connection -> {
+            try (PreparedStatement stm = connection.prepareStatement(sql)) {
+                stm.setString(1, playerId.toString());
+                return mapMany(stm.executeQuery());
             }
         });
     }
 
     public <T> int saveOrUpdate(@NotNull UUID playerId, @NotNull Config<T> key, @NotNull T value) {
         var sql = """
-                  insert or replace into user_config(
-                      id, player_id, `key`, `value`
-                  ) values (
-                      (select id from user_config where player_id = ? and `key` = ?),
-                      ?,
-                      ?,
-                      ?
+                insert or replace into user_config(
+                    id, player_id, `key`, `value`
+                ) values (
+                    (select id from user_config where player_id = ? and `key` = ?),
+                    ?,
+                    ?,
+                    ?
                   )
                   """;
 

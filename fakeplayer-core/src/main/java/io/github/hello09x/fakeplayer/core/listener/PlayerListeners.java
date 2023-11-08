@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.core.listener;
 
 import com.google.common.base.Throwables;
 import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
@@ -63,25 +64,15 @@ public class PlayerListeners implements Listener {
     }
 
     /**
-     * 由于查看假人背包时看不到盔甲栏, 且在将物品从假人背包移动到玩家背包时候有概率会将物品放置到假人的盔甲栏而找不到了, 因此禁止玩家操作假人背包
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onClickFakePlayerInventory(@NotNull InventoryClickEvent event) {
-        var top = event.getView().getTopInventory();
-        if (top.getType() == InventoryType.PLAYER && (top.getHolder() instanceof Player player && manager.isFake(player))) {
-            if (event.getView().getTitle().startsWith("*")) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    /**
      * 死亡退出游戏
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onDead(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
         if (!manager.isFake(player)) {
+            return;
+        }
+        if (!config.isKickOnDead()) {
             return;
         }
 
@@ -123,6 +114,19 @@ public class PlayerListeners implements Listener {
         }
 
         manager.openInventory(event.getPlayer(), target);
+    }
+
+    /**
+     * 如果打开背包的行为是默认实现, 则禁止玩家操作背包(因为默认实现有可能导致物品被异常挪到假人的装备栏从而看不到)
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onClickFakePlayerInventory(@NotNull InventoryClickEvent event) {
+        var top = event.getView().getTopInventory();
+        if (top.getType() == InventoryType.PLAYER && (top.getHolder() instanceof Player player && manager.isFake(player))) {
+            if (event.getView().getTitle().startsWith(ConstantPool.UNMODIFIABLE_INVENTORY_TITLE_PREFIX)) {
+                event.setCancelled(true);
+            }
+        }
     }
 
 }
