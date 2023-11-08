@@ -487,7 +487,7 @@ public class FakeplayerManager {
         if (!openInvDepend.openInventory(creator, player)) {
             this.openInventoryDefault(creator, player);
         }
-        creator.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.8f, 0.8f);
+        creator.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
         return true;
     }
 
