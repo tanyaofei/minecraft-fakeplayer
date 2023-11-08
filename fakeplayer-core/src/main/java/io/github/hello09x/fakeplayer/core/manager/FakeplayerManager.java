@@ -16,7 +16,6 @@ import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.softdepend.OpenInvDepend;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
@@ -31,6 +30,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +38,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -64,8 +65,6 @@ public class FakeplayerManager {
     private final NameManager nameManager = NameManager.instance;
 
     private final FakeplayerList playerList = FakeplayerList.instance;
-
-    private final UserConfigRepository userConfigRepository = UserConfigRepository.instance;
 
     private final UserConfigManager configManager = UserConfigManager.instance;
 
@@ -179,12 +178,12 @@ public class FakeplayerManager {
     /**
      * 获取一个假人的创建者, 如果这个玩家不是假人, 则为 {@code null}
      *
-     * @param player 假人
+     * @param target 假人
      * @return 假人的创建者
      */
-    public @Nullable String getCreatorName(@NotNull Player player) {
+    public @Nullable String getCreatorName(@NotNull Player target) {
         return Optional
-                .ofNullable(playerList.getByUUID(player.getUniqueId()))
+                .ofNullable(playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getCreator)
                 .map(CommandSender::getName)
                 .orElse(null);
@@ -256,10 +255,10 @@ public class FakeplayerManager {
     /**
      * 清理假人
      *
-     * @param player 假人
+     * @param target 假人
      */
-    public void cleanup(@NotNull Player player) {
-        var fakeplayer = playerList.removeByUUID(player.getUniqueId());
+    public void cleanup(@NotNull Player target) {
+        var fakeplayer = playerList.removeByUUID(target.getUniqueId());
         if (fakeplayer == null) {
             return;
         }
@@ -297,11 +296,11 @@ public class FakeplayerManager {
     /**
      * 判断一名玩家是否是假人
      *
-     * @param player 玩家
+     * @param target 玩家
      * @return 是否是假人
      */
-    public boolean isFake(@NotNull Player player) {
-        return playerList.getByUUID(player.getUniqueId()) != null;
+    public boolean isFake(@NotNull Player target) {
+        return playerList.getByUUID(target.getUniqueId()) != null;
     }
 
     /**
@@ -317,45 +316,101 @@ public class FakeplayerManager {
                 .count();
     }
 
-    public void setRefillable(@NotNull Player player, boolean refillable) {
-        if (!this.isFake(player)) {
+    /**
+     * 设置假人是否自动填装
+     *
+     * @param target     假人
+     * @param refillable 是否自动装填
+     */
+    public void setRefillable(@NotNull Player target, boolean refillable) {
+        if (!this.isFake(target)) {
             return;
         }
 
         if (!refillable) {
-            player.removeMetadata("fakeplayer:refillable", Main.getInstance());
+            target.removeMetadata("fakeplayer:refillable", Main.getInstance());
         } else {
-            player.setMetadata("fakeplayer:refillable", new FixedMetadataValue(Main.getInstance(), true));
+            target.setMetadata("fakeplayer:refillable", new FixedMetadataValue(Main.getInstance(), true));
         }
+    }
+
+    /**
+     * 设置玩家当前选择的假人
+     *
+     * @param creator 玩家
+     * @param target  假人
+     */
+    public void setSelection(@NotNull Player creator, @Nullable Player target) {
+        if (target == null) {
+            creator.removeMetadata("fakeplayer:selection", Main.getInstance());
+            return;
+        }
+
+        if (!this.isFake(target)) {
+            return;
+        }
+
+        creator.setMetadata("fakeplayer:selection", new FixedMetadataValue(Main.getInstance(), target.getUniqueId()));
+    }
+
+    /**
+     * 获取当前选中的假人
+     *
+     * @param creator 创建者
+     * @return 选中的假人
+     */
+    public @Nullable Player getSelection(@NotNull CommandSender creator) {
+        if (!(creator instanceof Player p)) {
+            return null;
+        }
+        if (!p.hasMetadata("fakeplayer:selection")) {
+            return null;
+        }
+
+        var uuid = (UUID) p.getMetadata("fakeplayer:selection")
+                .stream()
+                .map(MetadataValue::value)
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElse(null);
+        if (uuid == null) {
+            return null;
+        }
+
+        var target = Optional.ofNullable(playerList.getByUUID(uuid)).map(FakePlayer::getPlayer).orElse(null);
+        if (target == null) {
+            this.setSelection(p, null);
+        }
+        return target;
     }
 
     /**
      * 判断假人是否自动填装
      *
-     * @param player 假人
+     * @param target 假人
      * @return 是否自动填装
      */
-    public boolean isRefillable(@NotNull Player player) {
-        return player.hasMetadata("fakeplayer:refillable");
+    public boolean isRefillable(@NotNull Player target) {
+        return target.hasMetadata("fakeplayer:refillable");
     }
 
     /**
      * 以假人身份执行命令
      *
-     * @param player   假人
+     * @param target   假人
      * @param commands 命令
      */
-    public void performCommands(@NotNull Player player, @NotNull List<String> commands) {
+    public void performCommands(@NotNull Player target, @NotNull List<String> commands) {
         if (commands.isEmpty()) {
             return;
         }
-        if (!isFake(player)) {
+        if (!isFake(target)) {
             return;
         }
 
         for (var cmd : Commands.formatCommands(commands)) {
-            if (!player.performCommand(cmd)) {
-                log.warning(player.getName() + " failed to execute command: " + cmd);
+            if (!target.performCommand(cmd)) {
+                log.warning(target.getName() + " failed to execute command: " + cmd);
             }
         }
     }
@@ -405,6 +460,16 @@ public class FakeplayerManager {
         }
         creator.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.8f, 0.8f);
         return true;
+    }
+
+    /**
+     * 判断当前创建者是否有假人
+     *
+     * @param creator 创建者
+     * @return 是否创建了假人
+     */
+    public boolean hasSpawned(@NotNull CommandSender creator) {
+        return !playerList.getByCreator(creator.getName()).isEmpty();
     }
 
     /**

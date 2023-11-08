@@ -16,6 +16,7 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -52,6 +53,8 @@ public class CommandRegistry {
                 .withPermission(Permission.spawn)
                 .withSubcommands(
                         helpCommand("/fp",
+                                Usage.of("select", i18n.asString("fakeplayer.command.select.description"), null, CommandRegistry::selectRequirement),
+                                Usage.of("selection", i18n.asString("fakeplayer.command.selection.description"), null, CommandRegistry::selectRequirement),
                                 Usage.of("spawn", i18n.asString("fakeplayer.command.spawn.description"), Permission.spawn),
                                 Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.kill),
                                 Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.list),
@@ -65,7 +68,7 @@ public class CommandRegistry {
                                 Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.wakeup),
                                 Usage.of("health", i18n.asString("fakeplayer.command.health.description"), Permission.health),
                                 Usage.of("exp", i18n.asString("fakeplayer.command.exp.description"), Permission.exp),
-                                Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, p -> !FakeplayerConfig.instance.isKickOnDead()),
+                                Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, CommandRegistry::respawnRequirement),
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
                                 Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
                                 Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
@@ -85,6 +88,14 @@ public class CommandRegistry {
                                 Usage.of("cmd", i18n.asString("fakeplayer.command.cmd.description"), Permission.cmd),
                                 Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), "OP")
                         ),
+
+                        command("select")
+                                .withRequirement(CommandRegistry::selectRequirement)
+                                .withOptionalArguments(fakeplayer("name"))
+                                .executesPlayer(SelectCommand.instance::select),
+                        command("selection")
+                                .withRequirement(CommandRegistry::selectRequirement)
+                                .executesPlayer(SelectCommand.instance::selection),
 
                         command("spawn")
                                 .withPermission(Permission.spawn)
@@ -134,7 +145,7 @@ public class CommandRegistry {
                                 .executes(HealthCommand.instance::health),
                         command("respawn")
                                 .withPermission(Permission.respawn)
-                                .withRequirement(sender -> !FakeplayerConfig.instance.isKickOnDead())
+                                .withRequirement(CommandRegistry::respawnRequirement)
                                 .withOptionalArguments(fakeplayer("name", Entity::isDead))
                                 .executes(RespawnCommand.instance::respawn),
                         command("config")
@@ -458,6 +469,14 @@ public class CommandRegistry {
             }
             return options.toArray(String[]::new);
         })));
+    }
+
+    private static boolean respawnRequirement(@NotNull CommandSender sender) {
+        return !FakeplayerConfig.instance.isKickOnDead();
+    }
+
+    private static boolean selectRequirement(@NotNull CommandSender sender) {
+        return sender.isOp() || FakeplayerConfig.instance.getPlayerLimit() > 1;
     }
 
 

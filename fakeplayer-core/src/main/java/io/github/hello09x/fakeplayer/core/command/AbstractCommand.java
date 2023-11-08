@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -29,12 +30,12 @@ public abstract class AbstractCommand {
 
     /**
      * 获取命令指定的假人
-     * <ul>
+     * <ol>
      *     <li>如果玩家指定了名称, 则返回对应的假人</li>
-     *     <li>如果没有指定名称, 并且玩家仅有一个假人, 则返回该假人</li>
-     *     <li>如果提供了筛选条件并且没有指定名称, 经筛选后仅有一个假人, 则返回该假人</li>
+     *     <li>如果玩家通过 /fp select 选择了假人, 则返回该假人</li>
+     *     <li>如果玩家仅有一个假人, 则返回该假人</li>
      *     <li>不能找到唯一的一个假人时, 返回错误给玩家</li>
-     * </ul>
+     * </ol>
      *
      * @param sender    命令发送方
      * @param args      命令参数
@@ -43,9 +44,12 @@ public abstract class AbstractCommand {
      * @throws WrapperCommandSyntaxException 找不到唯一的假人时抛出次异常
      */
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args, @Nullable Predicate<Player> predicate) throws WrapperCommandSyntaxException {
-        var player = (Player) args.get("name");
-        if (player != null) {
-            return player;
+        var target = (Player) args.get("name");
+        if (target == null && sender instanceof Player p) {
+            target = fakeplayerManager.getSelection(p);
+        }
+        if (target != null) {
+            return target;
         }
 
         var all = fakeplayerManager.getAll(sender, predicate);
@@ -58,7 +62,7 @@ public abstract class AbstractCommand {
                             "fakeplayer.command.generic.error.non-fake-player"
                     ));
                 } else {
-                   throw CommandAPI.failWithString(i18n.asString(
+                    throw CommandAPI.failWithString(i18n.asString(
                             "fakeplayer.command.generic.error.non-matching-fake-player"
                     ));
                 }
@@ -69,9 +73,23 @@ public abstract class AbstractCommand {
         };
     }
 
+    protected @Nullable Player getTargetNullable(@NotNull CommandSender sender, @NotNull CommandArguments args) {
+        return (Player) args.get("name");
+    }
+
     protected @NotNull List<Player> getTargets(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         @SuppressWarnings("unchecked")
         var players = (List<Player>) args.get("names");
+
+        // 优先选中的假人
+        if (players == null || players.isEmpty()) {
+            var target = fakeplayerManager.getSelection(sender);
+            if (target != null) {
+                return Collections.singletonList(target);
+            }
+        }
+
+        // 查找唯一假人
         if (players == null || players.isEmpty()) {
             var fakeplayers = fakeplayerManager.getAll(sender);
             return switch (fakeplayers.size()) {
