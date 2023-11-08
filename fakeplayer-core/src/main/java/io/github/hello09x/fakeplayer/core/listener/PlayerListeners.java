@@ -90,17 +90,22 @@ public class PlayerListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onQuit(@NotNull PlayerQuitEvent event) {
-        var player = event.getPlayer();
-        if (!manager.isFake(player)) {
+        var target = event.getPlayer();
+        if (!manager.isFake(target)) {
             return;
         }
 
         try {
-            manager.dispatchCommands(player, config.getDestroyCommands());
+            manager.dispatchCommands(target, config.getDestroyCommands());
+            // 如果移除玩家后没有假人, 则更新命令列表
+            // 这个方法需要在 cleanup 之前执行, 不然无法获取假人的创建者
+            if (manager.getCreator(target) instanceof Player creator && manager.countByCreator(creator) == 1) {
+                creator.updateCommands();
+            }
         } catch (Throwable e) {
             log.warning("执行 destroy-commands 时发生错误: \n" + Throwables.getStackTraceAsString(e));
         } finally {
-            manager.cleanup(player);
+            manager.cleanup(target);
         }
     }
 

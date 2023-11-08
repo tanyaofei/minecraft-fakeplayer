@@ -190,6 +190,25 @@ public class FakeplayerManager {
     }
 
     /**
+     * 获取假人的创建者
+     *
+     * @param target 假人
+     * @return 创建者
+     */
+    public @Nullable CommandSender getCreator(@NotNull Player target) {
+        return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
+                .map(FakePlayer::getCreator)
+                .map(creator -> {
+                    if (creator instanceof Player p) {
+                        return Bukkit.getPlayer(p.getUniqueId());
+                    } else {
+                        return creator;
+                    }
+                })
+                .orElse(null);
+    }
+
+    /**
      * 根据名称删除假人
      *
      * @param name   名称
@@ -314,6 +333,16 @@ public class FakeplayerManager {
                 .stream()
                 .filter(p -> p.getCreatorIp().equals(address))
                 .count();
+    }
+
+    /**
+     * 获取这个玩家创建了多少个假人
+     *
+     * @param creator 玩家
+     * @return 创建了多少个假人
+     */
+    public int countByCreator(@NotNull CommandSender creator) {
+        return playerList.countByCreator(creator.getName());
     }
 
     /**
@@ -460,16 +489,6 @@ public class FakeplayerManager {
         }
         creator.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.8f, 0.8f);
         return true;
-    }
-
-    /**
-     * 判断当前创建者是否有假人
-     *
-     * @param creator 创建者
-     * @return 是否创建了假人
-     */
-    public boolean hasSpawned(@NotNull CommandSender creator) {
-        return !playerList.getByCreator(creator.getName()).isEmpty();
     }
 
     /**

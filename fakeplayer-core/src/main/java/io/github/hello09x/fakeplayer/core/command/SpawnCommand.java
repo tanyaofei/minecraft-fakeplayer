@@ -96,6 +96,12 @@ public class SpawnCommand extends AbstractCommand {
                                 );
                             }
                             sender.sendMessage(textOfChildren(message));
+
+                            if (sender instanceof Player p && fakeplayerManager.countByCreator(sender) == 1) {
+                                // 有些命令在有假人的时候才会显示, 因此需要强制刷新一下
+                                p.updateCommands();
+                            }
+
                         }, Main.getInstance());
                     }).exceptionally(e -> {
                         if (e instanceof MessageException me) {

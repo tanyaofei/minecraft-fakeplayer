@@ -86,6 +86,19 @@ public class FakeplayerList {
     }
 
     /**
+     * 获取创建的数量
+     *
+     * @param creator 玩家
+     * @return 数量
+     */
+    public int countByCreator(@NotNull String creator) {
+        return Optional
+                .ofNullable(this.playersByCreator.get(creator))
+                .map(List::size)
+                .orElse(0);
+    }
+
+    /**
      * 获取所有假人
      *
      * @return 假人
