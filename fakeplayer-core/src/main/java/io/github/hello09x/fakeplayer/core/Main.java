@@ -6,6 +6,7 @@ import io.github.hello09x.bedrock.util.RegistrablePlugin;
 import io.github.hello09x.fakeplayer.api.spi.VersionSupport;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListeners;
 import io.github.hello09x.fakeplayer.core.listener.RefillListener;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
@@ -48,8 +49,10 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
         }
 
         {
-            getServer().getPluginManager().registerEvents(PlayerListeners.instance, this);
-            getServer().getPluginManager().registerEvents(RefillListener.instance, this);
+            var manager = getServer().getPluginManager();
+            manager.registerEvents(PlayerListeners.instance, this);
+            manager.registerEvents(FakeplayerListener.instance, this);
+            manager.registerEvents(RefillListener.instance, this);
         }
 
         if (FakeplayerConfig.instance.isCheckForUpdates()) {
