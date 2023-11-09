@@ -6,6 +6,9 @@ public interface Permission {
     String spawnName = "fakeplayer.command.spawn.name";
     String spawnLocation = "fakeplayer.command.spawn.location";
 
+    String select = "fakeplayer.command.select";
+    String selection = "fakeplayer.command.selection";
+
     String kill = "fakeplayer.command.kill";
     String list = "fakeplayer.command.list";
     String distance = "fakeplayer.command.distance";
@@ -14,9 +17,9 @@ public interface Permission {
     String dropinv = "fakeplayer.command.dropinv";
     String skin = "fakeplayer.command.skin";
     String invsee = "fakeplayer.command.invsee";
-    String health = "fakeplayer.command.health";
+    String hold = "fakeplayer.command.hold";
+    String status = "fakeplayer.command.status";
     String respawn = "fakeplayer.command.respawn";
-    String exp = "fakeplayer.command.exp";
     String expme = "fakeplayer.command.expme";
     String tp = "fakeplayer.command.tp";
     String tphere = "fakeplayer.command.tphere";
@@ -36,5 +39,8 @@ public interface Permission {
     String sleep = "fakeplayer.command.sleep";
     String wakeup = "fakeplayer.command.wakeup";
     String cmd = "fakeplayer.command.cmd";
+
+
+    String op = "OP";
 
 }

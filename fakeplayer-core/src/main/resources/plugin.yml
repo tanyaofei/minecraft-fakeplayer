@@ -22,6 +22,10 @@ permissions:
     description: 'kill 命令权限'
   fakeplayer.command.list:
     description: 'list 命令权限'
+  fakeplayer.command.select:
+    description: 'select 权限命令'
+  fakeplayer.command.selection:
+    description: 'selection 权限命令'
   fakeplayer.command.distance:
     description: 'distance 命令权限'
   fakeplayer.command.drop:
@@ -34,12 +38,10 @@ permissions:
     description: 'skin 命令权限'
   fakeplayer.command.invsee:
     description: 'invsee 命令权限'
-  fakeplayer.command.health:
-    description: 'health 命令权限'
+  fakeplayer.command.status:
+    description: 'status 命令权限'
   fakeplayer.command.respawn:
     description: 'respawn 命令权限'
-  fakeplayer.command.exp:
-    description: 'exp 命令权限'
   fakeplayer.command.expme:
     description: 'expme 命令权限'
   fakeplayer.command.tp:
@@ -76,6 +78,8 @@ permissions:
     description: 'sleep 命令权限'
   fakeplayer.command.wakeup:
     description: 'wakeup 命令权限'
+  fakeplayer.command.hold:
+    description: 'hold 命令权限'
   fakeplayer.command.cmd:
     description: 'cmd 命令权限'
 
@@ -87,12 +91,14 @@ permissions:
       - fakeplayer.command.kill
       - fakeplayer.command.list
       - fakeplayer.command.distance
+      - fakeplayer.command.select
+      - fakeplayer.command.selection
       - fakeplayer.command.drop
       - fakeplayer.command.dropstack
       - fakeplayer.command.dropinv
       - fakeplayer.command.skin
       - fakeplayer.command.invsee
-      - fakeplayer.command.health
+      - fakeplayer.command.status
       - fakeplayer.command.respawn
       - fakeplayer.command.config
 
@@ -106,7 +112,6 @@ permissions:
   fakeplayer.exp:
     description: '所有关于经验值的命令权限'
     children:
-      - fakeplayer.command.exp
       - fakeplayer.command.expme
 
   fakeplayer.action:
@@ -125,6 +130,7 @@ permissions:
       - fakeplayer.command.swap
       - fakeplayer.command.sleep
       - fakeplayer.command.wakeup
+      - fakeplayer.command.hold
 
   fakeplayer.cmd:
     description: '假人所有关于命令的权限'

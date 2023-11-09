@@ -1,7 +1,10 @@
 package io.github.hello09x.fakeplayer.core.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.*;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.CustomArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
@@ -15,7 +18,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -34,18 +40,18 @@ public abstract class CommandSupports {
     public static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
-                        .withOptionalArguments(fakeplayer("name"))
+                        .withOptionalArguments(target("name"))
                         .executes(ActionCommand.instance.action(action, ActionSetting.once())),
                 command("continuous")
-                        .withOptionalArguments(fakeplayer("name"))
+                        .withOptionalArguments(target("name"))
                         .executes(ActionCommand.instance.action(action, ActionSetting.continuous())),
                 command("stop")
-                        .withOptionalArguments(fakeplayer("name"))
+                        .withOptionalArguments(target("name"))
                         .executes(ActionCommand.instance.action(action, ActionSetting.stop())),
                 command("interval")
                         .withOptionalArguments(
                                 int32("interval", 1),
-                                fakeplayer("name"))
+                                target("name"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
                     ActionCommand.instance.action(sender, args, action, ActionSetting.interval(interval));
@@ -53,7 +59,7 @@ public abstract class CommandSupports {
         };
     }
 
-    public static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
+    public static @NotNull Argument<Player> target(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var target = sender.isOp()
@@ -81,19 +87,17 @@ public abstract class CommandSupports {
     }
 
 
-    public static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName) {
-        return fakeplayer(nodeName, null);
+    public static @NotNull Argument<Player> target(@NotNull String nodeName) {
+        return target(nodeName, null);
     }
 
-    public static @NotNull Argument<List<Player>> fakeplayers(@NotNull String nodeName) {
+    public static @NotNull Argument<List<Player>> targets(@NotNull String nodeName) {
         return new CustomArgument<List<Player>, String>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var arg = info.currentInput();
 
             if (arg.equals("-a")) {
-                return sender.isOp()
-                        ? manager.getAll()
-                        : manager.getAll(sender);
+                return manager.getAll(sender);
             }
 
             var target = sender.isOp()
@@ -149,18 +153,18 @@ public abstract class CommandSupports {
         })));
     }
 
-    public static boolean respawnRequirement(@NotNull CommandSender sender) {
+    public static boolean hasDeadTarget(@NotNull CommandSender sender) {
         if (config.isKickOnDead()) {
             return false;
         }
-        return sender.isOp() || manager.countByCreator(sender) > 0;
+        return hasTarget(sender);
     }
 
-    public static boolean selectRequirement(@NotNull CommandSender sender) {
+    public static boolean needSelect(@NotNull CommandSender sender) {
         return sender.isOp() || (config.getPlayerLimit() > 1 && manager.countByCreator(sender) > 0);
     }
 
-    public static boolean targetRequirement(@NotNull CommandSender sender) {
+    public static boolean hasTarget(@NotNull CommandSender sender) {
         return sender.isOp() || manager.countByCreator(sender) > 0;
     }
 

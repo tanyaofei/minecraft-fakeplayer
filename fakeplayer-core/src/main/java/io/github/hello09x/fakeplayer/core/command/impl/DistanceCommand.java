@@ -44,7 +44,7 @@ public class DistanceCommand extends AbstractCommand {
 
         sender.sendMessage(textOfChildren(
                 miniMessage.deserialize(
-                        "<gray>" + i18n.asString("fakeplayer.command.distance.baseline") + "</gray>",
+                        "<gray>" + i18n.asString("fakeplayer.command.distance.title") + "</gray>",
                         Placeholder.component("name", text(target.getName(), WHITE))
                 ),
                 newline(),
