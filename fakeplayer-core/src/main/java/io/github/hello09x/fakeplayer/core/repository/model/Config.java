@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.repository.model;
 
-import io.github.hello09x.bedrock.i18n.TranslateKey;
 import io.github.hello09x.fakeplayer.core.command.Permission;
+import net.kyori.adventure.translation.Translatable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * @param name         配置项 key
- * @param translateKey 翻译 key
- * @param defaultValue 默认值
- * @param options      可选值
- * @param converter       转换器
+ * @param name           配置项 key
+ * @param translationKey 翻译 key
+ * @param defaultValue   默认值
+ * @param options        可选值
+ * @param converter      转换器
  */
 public record Config<T>(
 
@@ -25,7 +25,7 @@ public record Config<T>(
         String name,
 
         @NotNull
-        String translateKey,
+        String translationKey,
 
         @NotNull Class<T> type,
 
@@ -41,12 +41,7 @@ public record Config<T>(
         @NotNull
         Function<String, T> converter
 
-) implements TranslateKey {
-
-    @Override
-    public @NotNull String translateKey() {
-        return this.translateKey;
-    }
+) implements Translatable {
 
     private static final Map<String, Config<?>> values = new HashMap<>();
 
@@ -149,4 +144,8 @@ public record Config<T>(
         return this.permission == null || player.hasPermission(this.permission);
     }
 
+    @Override
+    public @NotNull String translationKey() {
+        return this.translationKey;
+    }
 }

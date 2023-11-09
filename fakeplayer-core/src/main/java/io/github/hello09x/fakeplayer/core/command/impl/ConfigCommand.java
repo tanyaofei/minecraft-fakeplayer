@@ -58,7 +58,7 @@ public class ConfigCommand extends AbstractCommand {
         manager.setConfig(sender, config, value);
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + i18n.asString("fakeplayer.command.config.set.success") + "</gray>",
-                Placeholder.component("option", i18n.translate(config.translateKey(), GOLD)),
+                Placeholder.component("option", i18n.translate(config, GOLD)),
                 Placeholder.component("value", text(value.toString(), WHITE))
         ));
     }

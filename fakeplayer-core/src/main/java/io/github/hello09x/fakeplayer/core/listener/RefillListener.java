@@ -17,10 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -219,9 +216,10 @@ public class RefillListener implements Listener {
 
                         target.getInventory().setItem(slot, replacement);
                         inv.setItem(i, new ItemStack(Material.AIR));
-                        return;
+                        break;
                     }
                 }
+                target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
             }, 20);
             return;
         }

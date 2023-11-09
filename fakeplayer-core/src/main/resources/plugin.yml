@@ -74,6 +74,8 @@ permissions:
     description: 'swap 命令权限'
   fakeplayer.command.refill:
     description: 'refill 命令权限'
+  fakeplayer.command.refill.chest:
+    description: '补货时允许从附近箱子里补'
   fakeplayer.command.sleep:
     description: 'sleep 命令权限'
   fakeplayer.command.wakeup:
@@ -121,6 +123,7 @@ permissions:
       - fakeplayer.command.mine
       - fakeplayer.command.use
       - fakeplayer.command.refill
+      - fakeplayer.command.refill.chest
       - fakeplayer.command.jump
       - fakeplayer.command.sneak
       - fakeplayer.command.look

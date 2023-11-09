@@ -202,8 +202,8 @@ public class CommandRegistry {
                                 .withPermission(RefillCommand.PERMISSION)
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(
-                                        literals("enabled", List.of("true", "false")),
-                                        target("name")
+                                        target("name"),
+                                        literals("enabled", List.of("true", "false"))
                                 )
                                 .executes(RefillCommand.instance::refill),
                         command("jump")

@@ -47,7 +47,7 @@ public class ActionCommand extends AbstractCommand {
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + baseline + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("action", i18n.translate(action.translateKey(), WHITE))
+                Placeholder.component("action", i18n.translate(action, WHITE))
         ));
     }
 

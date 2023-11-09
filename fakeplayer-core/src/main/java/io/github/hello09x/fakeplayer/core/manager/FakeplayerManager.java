@@ -352,10 +352,6 @@ public class FakeplayerManager {
      * @param refillable 是否自动装填
      */
     public void setRefillable(@NotNull Player target, boolean refillable) {
-        if (!this.isFake(target)) {
-            return;
-        }
-
         if (!refillable) {
             target.removeMetadata("fakeplayer:refillable", Main.getInstance());
         } else {

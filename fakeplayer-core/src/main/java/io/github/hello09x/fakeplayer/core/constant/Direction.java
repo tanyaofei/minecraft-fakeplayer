@@ -1,11 +1,11 @@
 package io.github.hello09x.fakeplayer.core.constant;
 
-import io.github.hello09x.bedrock.i18n.TranslateKey;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.translation.Translatable;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
-public enum Direction implements TranslateKey {
+public enum Direction implements Translatable {
 
     DOWN("fakeplayer.direction.down"),
 
@@ -19,11 +19,10 @@ public enum Direction implements TranslateKey {
 
     EAST("fakeplayer.direction.east");
 
-    final String translateKey;
+    final String translationKey;
 
     @Override
-    public @NotNull String translateKey() {
-        return this.translateKey;
+    public @NotNull String translationKey() {
+        return this.translationKey;
     }
-
 }

@@ -60,7 +60,7 @@ public class RotationCommand extends AbstractCommand {
             sender.sendMessage(miniMessage.deserialize(
                     "<gray>" + i18n.asString("fakeplayer.command.look.success") + "</gray>",
                     Placeholder.component("name", text(target.getName(), WHITE)),
-                    Placeholder.component("direction", i18n.translate(direction.translateKey(), WHITE))
+                    Placeholder.component("direction", i18n.translate(direction, WHITE))
             ));
         };
     }
