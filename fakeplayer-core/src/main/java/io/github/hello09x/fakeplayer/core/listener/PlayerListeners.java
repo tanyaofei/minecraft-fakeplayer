@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -65,6 +66,21 @@ public class PlayerListeners implements Listener {
     }
 
     /**
+     * 玩家蹲伏时取消假人骑乘
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onSneak(@NotNull PlayerToggleSneakEvent event) {
+        var player = event.getPlayer();
+        for (var passenger : player.getPassengers()) {
+            if (passenger instanceof Player target) {
+                if (manager.isFake(target)) {
+                    player.removePassenger(target);
+                }
+            }
+        }
+    }
+
+    /**
      * 死亡退出游戏
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -101,7 +117,7 @@ public class PlayerListeners implements Listener {
             // 如果移除玩家后没有假人, 则更新命令列表
             // 这个方法需要在 cleanup 之前执行, 不然无法获取假人的创建者
             if (manager.getCreator(target) instanceof Player creator && manager.countByCreator(creator) == 1) {
-                Bukkit.getScheduler().runTaskLater(Main.getInstance(), creator::updateCommands, 1); // 需要下一 tick 移除后才正确刷新
+                Bukkit.getScheduler().runTaskLater(Main.getInstance(), creator::updateCommands, 1); // 需要下 1 tick 移除后才正确刷新
             }
         } catch (Throwable e) {
             log.warning("执行 destroy-commands 时发生错误: \n" + Throwables.getStackTraceAsString(e));

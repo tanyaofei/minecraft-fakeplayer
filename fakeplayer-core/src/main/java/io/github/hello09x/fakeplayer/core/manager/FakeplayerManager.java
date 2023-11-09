@@ -492,7 +492,7 @@ public class FakeplayerManager {
     }
 
     /**
-     * 检测限制, 不满足条件则抛出一场
+     * 检测限制, 不满足条件则抛出异常
      *
      * @param creator 创建者
      * @throws MessageException 消息
