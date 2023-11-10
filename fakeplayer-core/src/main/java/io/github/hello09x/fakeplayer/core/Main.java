@@ -8,7 +8,7 @@ import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListeners;
-import io.github.hello09x.fakeplayer.core.listener.RefillListener;
+import io.github.hello09x.fakeplayer.core.listener.ReplenishListener;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
@@ -52,7 +52,7 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
             var manager = getServer().getPluginManager();
             manager.registerEvents(PlayerListeners.instance, this);
             manager.registerEvents(FakeplayerListener.instance, this);
-            manager.registerEvents(RefillListener.instance, this);
+            manager.registerEvents(ReplenishListener.instance, this);
         }
 
         if (FakeplayerConfig.instance.isCheckForUpdates()) {

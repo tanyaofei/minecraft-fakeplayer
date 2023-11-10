@@ -88,6 +88,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private boolean dropInventoryOnQuiting;
 
     /**
+     * 是否保存假人存档
+     */
+    private boolean persistData;
+
+    /**
      * 死亡时是否踢出游戏
      */
     private boolean kickOnDead;
@@ -134,6 +139,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
+        this.persistData = file.getBoolean("persist-data", true);
         this.kickOnDead = file.getBoolean("kick-on-dead", true);
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);

@@ -102,13 +102,13 @@ public record Config<T>(
             null,
             Boolean::valueOf
     );
-    public static Config<Boolean> refillable = build(
-            "refillable",
-            "fakeplayer.config.refillable",
+    public static Config<Boolean> replenish = build(
+            "replenish",
+            "fakeplayer.config.replenish",
             Boolean.class,
             false,
             List.of("true", "false"),
-            Permission.refill,
+            Permission.replenish,
             Boolean::valueOf
     );
 

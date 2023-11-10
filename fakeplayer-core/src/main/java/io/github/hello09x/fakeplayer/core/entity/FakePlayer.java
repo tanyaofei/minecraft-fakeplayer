@@ -8,7 +8,6 @@ import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.command.impl.RefillCommand;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
@@ -101,7 +100,7 @@ public class FakePlayer {
         this.player = handle.getPlayer();
         this.ticker = new FakeplayerTicker(this, removeAt);
 
-        player.setPersistent(false);
+        player.setPersistent(config.isPersistData());
         player.setSleepingIgnored(true);
         handle.setPlayBefore();
         handle.unpersistAdvancements(Main.getInstance()); // 可避免一些插件的第一次入服欢迎信息
@@ -160,8 +159,8 @@ public class FakePlayer {
                     if (option.skin() && this.creator instanceof Player playerCreator) {
                         handle.copyTexture(playerCreator);
                     }
-                    if (option.refillable() && creator.hasPermission(RefillCommand.PERMISSION)) {
-                        FakeplayerManager.instance.setRefillable(player, true);
+                    if (option.replenish()) {
+                        FakeplayerManager.instance.setReplenish(player, true);
                     }
 
                     var network = Main.getBridge().network();
@@ -245,7 +244,7 @@ public class FakePlayer {
 
     /**
      * 判断是否是创建者
-     * <p>如果玩家下线再重新登陆, entityID 将会不一样导致 {@link Player#equals(Object)} 返回 {@code false}</p>
+     * <p>如果玩家下线再重新登陆, entityID 将会不一样导致 {@link Object#equals(Object)} 返回 {@code false}</p>
      *
      * @param sender 命令执行者
      * @return 是否是创建者

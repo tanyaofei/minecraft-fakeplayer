@@ -62,7 +62,6 @@ public class CommandRegistry {
                                 Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.attack),
                                 Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.mine),
                                 Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.use),
-                                Usage.of("refill", i18n.asString("fakeplayer.command.refill.description"), Permission.refill),
                                 Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.jump),
                                 Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.look),
                                 Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.turn),
@@ -139,17 +138,15 @@ public class CommandRegistry {
                         command("config")
                                 .withPermission(Permission.config)
                                 .withSubcommands(
-                                        command("get")
-                                                .withArguments(config("option"))
-                                                .executesPlayer(ConfigCommand.instance::getConfig),
                                         command("set")
                                                 .withArguments(
-                                                        config("option"),
-                                                        configValue("option", "value"))
+                                                        config("config"),
+                                                        configValue("config", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig),
                                         command("list")
                                                 .executesPlayer(ConfigCommand.instance::listConfig)
-                                ),
+                                )
+                                .executesPlayer(ConfigCommand.instance::listConfig),
 
                         command("expme")
                                 .withPermission(Permission.expme)
@@ -215,14 +212,6 @@ public class CommandRegistry {
                                         target("name"),
                                         literals("sneaking", List.of("true", "false")))
                                 .executes(SneakCommand.instance::sneak),
-                        command("refill")
-                                .withPermission(RefillCommand.PERMISSION)
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withOptionalArguments(
-                                        target("name"),
-                                        literals("enabled", List.of("true", "false"))
-                                )
-                                .executes(RefillCommand.instance::refill),
                         command("look")
                                 .withPermission(Permission.look)
                                 .withRequirement(CommandSupports::hasTarget)

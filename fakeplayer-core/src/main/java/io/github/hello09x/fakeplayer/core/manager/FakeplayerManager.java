@@ -127,7 +127,7 @@ public class FakeplayerManager {
                             configs.getOrDefault(Config.look_at_entity),
                             configs.getOrDefault(Config.pickup_items),
                             configs.getOrDefault(Config.skin),
-                            configs.getOrDefault(Config.refillable)
+                            configs.getOrDefault(Config.replenish)
                     );
                 })
                 .thenCompose(fp::spawnAsync)
@@ -346,14 +346,24 @@ public class FakeplayerManager {
      * 设置假人是否自动填装
      *
      * @param target     假人
-     * @param refillable 是否自动装填
+     * @param replenish 是否自动补货
      */
-    public void setRefillable(@NotNull Player target, boolean refillable) {
-        if (!refillable) {
-            target.removeMetadata("fakeplayer:refillable", Main.getInstance());
+    public void setReplenish(@NotNull Player target, boolean replenish) {
+        if (!replenish) {
+            target.removeMetadata("fakeplayer:replenish", Main.getInstance());
         } else {
-            target.setMetadata("fakeplayer:refillable", new FixedMetadataValue(Main.getInstance(), true));
+            target.setMetadata("fakeplayer:replenish", new FixedMetadataValue(Main.getInstance(), true));
         }
+    }
+
+    /**
+     * 判断假人是否自动补货
+     *
+     * @param target 假人
+     * @return 是否自动补货
+     */
+    public boolean isReplenish(@NotNull Player target) {
+        return target.hasMetadata("fakeplayer:replenish");
     }
 
     /**
@@ -404,16 +414,6 @@ public class FakeplayerManager {
             this.setSelection(p, null);
         }
         return target;
-    }
-
-    /**
-     * 判断假人是否自动填装
-     *
-     * @param target 假人
-     * @return 是否自动填装
-     */
-    public boolean isRefillable(@NotNull Player target) {
-        return target.hasMetadata("fakeplayer:refillable");
     }
 
     public @Nullable ReceivedMessage getLastMessage(@NotNull Player target) {

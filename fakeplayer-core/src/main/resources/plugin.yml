@@ -72,10 +72,6 @@ permissions:
     description: 'ride 命令权限'
   fakeplayer.command.swap:
     description: 'swap 命令权限'
-  fakeplayer.command.refill:
-    description: 'refill 命令权限'
-  fakeplayer.command.refill.chest:
-    description: '补货时允许从附近箱子里补'
   fakeplayer.command.sleep:
     description: 'sleep 命令权限'
   fakeplayer.command.wakeup:
@@ -84,6 +80,10 @@ permissions:
     description: 'hold 命令权限'
   fakeplayer.command.cmd:
     description: 'cmd 命令权限'
+  fakeplayer.config.replenish:
+    description: '自动补货权限'
+  fakeplayer.config.replenish.chest:
+    description: '补货时允许从附近箱子里补'
 
   # ------ 根据命令的分类聚合成一个权限组
   fakeplayer.spawn:
@@ -122,8 +122,6 @@ permissions:
       - fakeplayer.command.attack
       - fakeplayer.command.mine
       - fakeplayer.command.use
-      - fakeplayer.command.refill
-      - fakeplayer.command.refill.chest
       - fakeplayer.command.jump
       - fakeplayer.command.sneak
       - fakeplayer.command.look
@@ -134,6 +132,8 @@ permissions:
       - fakeplayer.command.sleep
       - fakeplayer.command.wakeup
       - fakeplayer.command.hold
+      - fakeplayer.config.replenish
+      - fakeplayer.config.replenish.chest
 
   fakeplayer.cmd:
     description: '假人所有关于命令的权限'

@@ -28,9 +28,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class RefillListener implements Listener {
+public class ReplenishListener implements Listener {
 
-    public final static RefillListener instance = new RefillListener();
+    public final static ReplenishListener instance = new ReplenishListener();
 
     private final FakeplayerManager manager = FakeplayerManager.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
@@ -41,7 +41,7 @@ public class RefillListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemUse(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
-        if (!manager.isRefillable(player)) {
+        if (!manager.isReplenish(player)) {
             return;
         }
 
@@ -51,7 +51,7 @@ public class RefillListener implements Listener {
             return;
         }
 
-        this.refillLater(player, slot, item);
+        this.replenishLater(player, slot, item);
     }
 
     /**
@@ -60,7 +60,7 @@ public class RefillListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
         var player = event.getPlayer();
-        if (!manager.isRefillable(player)) {
+        if (!manager.isReplenish(player)) {
             return;
         }
 
@@ -70,7 +70,7 @@ public class RefillListener implements Listener {
             return;
         }
 
-        this.refillLater(player, slot, item);
+        this.replenishLater(player, slot, item);
     }
 
     /**
@@ -79,7 +79,7 @@ public class RefillListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
-        if (!manager.isRefillable(player)) {
+        if (!manager.isReplenish(player)) {
             return;
         }
 
@@ -89,7 +89,7 @@ public class RefillListener implements Listener {
             return;
         }
 
-        this.refillLater(player, slot, item);
+        this.replenishLater(player, slot, item);
     }
 
     /**
@@ -98,7 +98,7 @@ public class RefillListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onProjectileLaunch(@NotNull PlayerLaunchProjectileEvent event) {
         var player = event.getPlayer();
-        if (!manager.isRefillable(event.getPlayer())) {
+        if (!manager.isReplenish(event.getPlayer())) {
             return;
         }
         var item = event.getItemStack();
@@ -110,7 +110,7 @@ public class RefillListener implements Listener {
         if (slot == null) {
             return;
         }
-        this.refillLater(player, slot, item);
+        this.replenishLater(player, slot, item);
     }
 
     /**
@@ -120,7 +120,7 @@ public class RefillListener implements Listener {
      * @param slot   填充位置
      * @param item   要填充的物品
      */
-    public void refillLater(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
+    public void replenishLater(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
         var requires = item.clone();
         item = null;    // 以防下面的代码用到了这个值
 
@@ -133,12 +133,12 @@ public class RefillListener implements Listener {
                 return;
             }
 
-            if (!this.refillFromInventory(target, slot, requires)) {
+            if (!this.replenishFromInventory(target, slot, requires)) {
                 if (Optional.ofNullable(manager.getCreator(target))
-                        .filter(creator -> creator.hasPermission(Permission.refillFromChest))
+                        .filter(creator -> creator.hasPermission(Permission.replenishFromChest))
                         .isPresent()
                 ) {
-                    this.refillFromNearbyChest(target, slot, requires);
+                    this.replenishFromNearbyChest(target, slot, requires);
                 }
             }
 
@@ -153,7 +153,7 @@ public class RefillListener implements Listener {
      * @param item   需要补货的物品
      * @return 是否补货了
      */
-    private boolean refillFromInventory(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
+    private boolean replenishFromInventory(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
         var inv = target.getInventory();
         for (int i = inv.getSize() - 1; i >= 0; i--) {
             var replacement = inv.getItem(i);
@@ -173,7 +173,7 @@ public class RefillListener implements Listener {
      * @param slot   补充到哪只手
      * @param item   需要补货的物品
      */
-    public void refillFromNearbyChest(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
+    public void replenishFromNearbyChest(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
         var blocks = Blocks.getNearbyBlocks(target.getLocation(), 4, Material.CHEST);
         for (var block : blocks) {
             var openEvent = new PlayerInteractEvent(

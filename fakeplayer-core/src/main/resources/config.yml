@@ -66,6 +66,13 @@ follow-quiting: true
 # Define whether fake players will drop items from their inventory when they remove.
 drop-inventory-on-quiting: false
 
+# 是否保存玩家存档, 如果你将这个设置改成 false, 你可能还需要将 `drop-inventory-on-quiting` 设置为 `true` 以防玩家放置一些物品到假人的背包
+# 默认: true
+# Define whether persist player's data, if this value is `false`,
+# you may need to set `drop-inventory-on-quiting` as `true` in case players will put some items in their inventory
+# 默认: true
+persistent-data: true
+
 # 死亡时是否剔除游戏, 如果设置为 false, 那么玩家可以通过 /fp respawn 命令重生
 # 默认: true
 # Define whether kick the fake player who was dead, if this value is true, players can type command '/fp respawn' to respawn him
