@@ -13,11 +13,11 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * @param name           配置项 key
+ * @param name         配置项 key
  * @param translationKey 翻译 key
- * @param defaultValue   默认值
- * @param options        可选值
- * @param converter      转换器
+ * @param defaultValue 默认值
+ * @param options      可选值
+ * @param converter       转换器
  */
 public record Config<T>(
 
@@ -128,14 +128,14 @@ public record Config<T>(
 
     private static <T> Config<T> build(
             @NotNull String name,
-            @NotNull String translateKey,
+            @NotNull String translationKey,
             @NotNull Class<T> type,
             @NotNull T defaultValue,
             @NotNull List<String> options,
             @Nullable String permission,
             @NotNull Function<String, T> converter
     ) {
-        var config = new Config<>(name, translateKey, type, defaultValue, options, permission, converter);
+        var config = new Config<>(name, translationKey, type, defaultValue, options, permission, converter);
         values.put(name, config);
         return config;
     }

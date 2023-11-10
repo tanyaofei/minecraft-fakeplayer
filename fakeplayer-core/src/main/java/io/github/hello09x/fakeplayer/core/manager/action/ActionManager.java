@@ -37,7 +37,7 @@ public class ActionManager {
             @NotNull ActionSetting setting
     ) {
         var managers = this.managers.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
-        managers.put(action, Main.getVersionSupport().createAction(player, action, setting));
+        managers.put(action, Main.getBridge().createAction(player, action, setting));
     }
 
     public void tick() {

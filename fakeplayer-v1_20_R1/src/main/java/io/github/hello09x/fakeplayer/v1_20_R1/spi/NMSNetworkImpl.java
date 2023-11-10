@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.v1_20_R1.spi;
 
+import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyConnection;
 import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyLoginPacketListener;
@@ -16,7 +17,7 @@ import java.net.InetAddress;
 public class NMSNetworkImpl implements NMSNetwork {
 
     @Override
-    public void bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address) {
+    public @NotNull NMSGamePacketListener bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address) {
         var connect = new EmptyConnection(PacketFlow.SERVERBOUND, address);
         var listener = new EmptyServerGamePacketListener(
                 ((CraftServer) server).getServer(),
@@ -24,6 +25,7 @@ public class NMSNetworkImpl implements NMSNetwork {
                 ((CraftPlayer) player).getHandle()
         );
         connect.setListener(listener);
+        return listener;
     }
 
     @Override

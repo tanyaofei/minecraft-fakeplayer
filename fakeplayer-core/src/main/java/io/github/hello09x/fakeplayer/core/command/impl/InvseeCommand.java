@@ -15,6 +15,9 @@ public class InvseeCommand extends AbstractCommand {
 
     public final static InvseeCommand instance = new InvseeCommand();
 
+    /**
+     * 查看背包
+     */
     public void invsee(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         if (!Objects.equals(sender.getLocation().getWorld(), target.getLocation().getWorld())) {

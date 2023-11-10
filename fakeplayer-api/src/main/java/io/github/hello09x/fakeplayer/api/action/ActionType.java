@@ -49,8 +49,9 @@ public enum ActionType implements Translatable {
 
     final String translationKey;
 
+
     @Override
     public @NotNull String translationKey() {
-        return translationKey;
+        return this.translationKey;
     }
 }

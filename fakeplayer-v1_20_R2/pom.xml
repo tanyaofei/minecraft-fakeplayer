@@ -27,11 +27,13 @@
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-core</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

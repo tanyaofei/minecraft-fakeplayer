@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.v1_20_R2.spi;
+package io.github.hello09x.fakeplayer.v1_20_R1.spi;
 
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class VersionSupportImpl implements VersionSupport {
+public class NMSBridgeImpl implements NMSBridge {
 
-    private final static Set<String> SUPPORTS = Set.of("1.20.2");
+    private final static Set<String> SUPPORTS = Set.of("1.20", "1.20.1");
 
     @Override
     public @NotNull NMSEntity entity(@NotNull Entity entity) {

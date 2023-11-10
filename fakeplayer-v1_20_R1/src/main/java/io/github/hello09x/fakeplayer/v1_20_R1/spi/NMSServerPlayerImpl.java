@@ -75,7 +75,6 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     @Override
     public void doTick() {
         handle.doTick();
-        ;
     }
 
     @Override

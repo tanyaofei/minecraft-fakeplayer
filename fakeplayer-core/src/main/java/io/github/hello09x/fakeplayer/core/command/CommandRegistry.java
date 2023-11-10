@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.command;
 import dev.jorel.commandapi.CommandPermission;
 import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
@@ -21,6 +22,7 @@ import static io.github.hello09x.fakeplayer.core.command.CommandSupports.*;
 public class CommandRegistry {
 
     private final static I18n i18n = Main.i18n();
+
 
     public static void register() {
         command("fakeplayer")
@@ -107,21 +109,6 @@ public class CommandRegistry {
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(target("name"))
                                 .executesPlayer(DistanceCommand.instance::distance),
-                        command("drop")
-                                .withPermission(Permission.drop)
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withOptionalArguments(target("name"))
-                                .executes(DropCommand.instance.drop()),
-                        command("dropstack")
-                                .withPermission(Permission.dropstack)
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withOptionalArguments(target("name"))
-                                .executes(DropCommand.instance.dropstack()),
-                        command("dropinv")
-                                .withPermission(Permission.dropinv)
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withOptionalArguments(target("name"))
-                                .executes(DropCommand.instance.dropinv()),
                         command("skin")
                                 .withPermission(Permission.skin)
                                 .withRequirement(CommandSupports::hasTarget)
@@ -174,30 +161,60 @@ public class CommandRegistry {
                                 .withPermission(Permission.tp)
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(target("name"))
-                                .executesPlayer(TpCommand.instance::tp),
+                                .executesPlayer(TeleportCommand.instance::tp),
                         command("tphere")
                                 .withPermission(Permission.tphere)
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(target("name"))
-                                .executesPlayer(TpCommand.instance::tphere),
+                                .executesPlayer(TeleportCommand.instance::tphere),
                         command("tps")
                                 .withPermission(Permission.tps)
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(target("name"))
-                                .executesPlayer(TpCommand.instance::tps),
+                                .executesPlayer(TeleportCommand.instance::tps),
 
                         command("attack")
                                 .withPermission(Permission.attack)
                                 .withRequirement(CommandSupports::hasTarget)
-                                .withSubcommands(newActionCommands(ActionType.ATTACK)),
+                                .withSubcommands(newActionCommands(ActionType.ATTACK))
+                                .executes(ActionCommand.instance.action(ActionType.ATTACK, ActionSetting.once())),
                         command("mine")
                                 .withPermission(Permission.mine)
                                 .withRequirement(CommandSupports::hasTarget)
-                                .withSubcommands(newActionCommands(ActionType.MINE)),
+                                .withSubcommands(newActionCommands(ActionType.MINE))
+                                .executes(ActionCommand.instance.action(ActionType.MINE, ActionSetting.once())),
                         command("use")
                                 .withPermission(Permission.use)
                                 .withRequirement(CommandSupports::hasTarget)
-                                .withSubcommands(newActionCommands(ActionType.USE)),
+                                .withSubcommands(newActionCommands(ActionType.USE))
+                                .executes(ActionCommand.instance.action(ActionType.USE, ActionSetting.once())),
+                        command("jump")
+                                .withPermission(Permission.jump)
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withSubcommands(newActionCommands(ActionType.JUMP))
+                                .executes(ActionCommand.instance.action(ActionType.JUMP, ActionSetting.once())),
+                        command("drop")
+                                .withPermission(Permission.drop)
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withSubcommands(newActionCommands(ActionType.DROP_ITEM))
+                                .executes(ActionCommand.instance.action(ActionType.DROP_ITEM, ActionSetting.once())),
+                        command("dropstack")
+                                .withPermission(Permission.dropstack)
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withSubcommands(newActionCommands(ActionType.DROP_STACK))
+                                .executes(ActionCommand.instance.action(ActionType.DROP_STACK, ActionSetting.once())),
+                        command("dropinv")
+                                .withPermission(Permission.dropinv)
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withSubcommands(newActionCommands(ActionType.DROP_INVENTORY))
+                                .executes(ActionCommand.instance.action(ActionType.DROP_INVENTORY, ActionSetting.once())),
+                        command("sneak")
+                                .withPermission(Permission.sneak)
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withOptionalArguments(
+                                        target("name"),
+                                        literals("sneaking", List.of("true", "false")))
+                                .executes(SneakCommand.instance::sneak),
                         command("refill")
                                 .withPermission(RefillCommand.PERMISSION)
                                 .withRequirement(CommandSupports::hasTarget)
@@ -206,17 +223,6 @@ public class CommandRegistry {
                                         literals("enabled", List.of("true", "false"))
                                 )
                                 .executes(RefillCommand.instance::refill),
-                        command("jump")
-                                .withPermission(Permission.jump)
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withSubcommands(newActionCommands(ActionType.JUMP)),
-                        command("sneak")
-                                .withPermission(Permission.sneak)
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withOptionalArguments(
-                                        literals("sneaking", List.of("true", "false")),
-                                        target("name"))
-                                .executes(SneakCommand.instance::sneak),
                         command("look")
                                 .withPermission(Permission.look)
                                 .withRequirement(CommandSupports::hasTarget)
@@ -306,7 +312,8 @@ public class CommandRegistry {
                                                 Usage.of("left", i18n.asString("fakeplayer.command.move.left.description")),
                                                 Usage.of("right", i18n.asString("fakeplayer.command.move.right.description"))
                                         )
-                                ),
+                                )
+                                .executes(MoveCommand.instance.move(1, 0)),
 
                         command("ride")
                                 .withPermission(Permission.ride)
@@ -364,6 +371,14 @@ public class CommandRegistry {
                         command("killall")
                                 .withPermission(CommandPermission.OP)
                                 .executes(KillallCommand.instance::killall),
+                        command("msg")
+                                .withPermission(CommandPermission.OP)
+                                .withOptionalArguments(
+                                        int32("size", 1),
+                                        int32("skip", 0),
+                                        target("name")
+                                )
+                                .executes(MsgCommand.instance::msg),
                         command("reload")
                                 .withPermission(CommandPermission.OP)
                                 .executes(ReloadCommand.instance::reload)

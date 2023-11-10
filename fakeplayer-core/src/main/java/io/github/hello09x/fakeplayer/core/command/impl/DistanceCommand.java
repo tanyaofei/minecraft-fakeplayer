@@ -21,10 +21,10 @@ public class DistanceCommand extends AbstractCommand {
 
     public final static DistanceCommand instance = new DistanceCommand();
 
-    public void distance(
-            @NotNull Player sender,
-            @NotNull CommandArguments args
-    ) throws WrapperCommandSyntaxException {
+    /**
+     * 查看距离
+     */
+    public void distance(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         var from = target.getLocation().toBlockLocation();
         var to = sender.getLocation().toBlockLocation();

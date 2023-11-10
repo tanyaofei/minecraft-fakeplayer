@@ -17,7 +17,7 @@ import java.net.InetAddress;
 public class NMSNetworkImpl implements NMSNetwork {
 
     @Override
-    public void bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address) {
+    public @NotNull EmptyServerGamePacketListener bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address) {
         var connect = new EmptyConnection(PacketFlow.CLIENTBOUND, address);
         var listener = new EmptyServerGamePacketListener(
                 ((CraftServer) server).getServer(),
@@ -26,6 +26,7 @@ public class NMSNetworkImpl implements NMSNetwork {
                 CommonListenerCookie.createInitial(((CraftPlayer) player).getProfile())
         );
         connect.setListener(listener);
+        return listener;
     }
 
     @Override

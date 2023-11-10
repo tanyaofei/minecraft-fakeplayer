@@ -11,14 +11,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ServiceLoader;
 
-public interface VersionSupport {
+public interface NMSBridge {
 
-    static @Nullable VersionSupport getInstance() {
+    static @Nullable NMSBridge getInstance() {
         return ServiceLoader
-                .load(VersionSupport.class, VersionSupport.class.getClassLoader())
+                .load(NMSBridge.class, NMSBridge.class.getClassLoader())
                 .stream()
                 .map(ServiceLoader.Provider::get)
-                .filter(VersionSupport::isSupported)
+                .filter(NMSBridge::isSupported)
                 .findAny()
                 .orElse(null);
     }

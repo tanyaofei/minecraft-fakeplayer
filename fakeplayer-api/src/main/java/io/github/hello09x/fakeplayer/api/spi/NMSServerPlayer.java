@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface NMSServerPlayer {
 
+
     /**
      * @return 返回 bukkit 的 Player 对象
      */

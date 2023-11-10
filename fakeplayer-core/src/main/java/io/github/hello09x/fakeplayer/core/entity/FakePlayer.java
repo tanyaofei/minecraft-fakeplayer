@@ -5,6 +5,7 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.RefillCommand;
@@ -26,6 +27,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -34,7 +36,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
 public class FakePlayer {
 
@@ -77,6 +81,10 @@ public class FakePlayer {
     @NotNull
     private final UUID uuid;
 
+    @UnknownNullability
+    @Getter
+    private NMSGamePacketListener connection;
+
     public FakePlayer(
             @NotNull CommandSender creator,
             @NotNull String creatorIp,
@@ -89,7 +97,7 @@ public class FakePlayer {
         this.creator = creator;
         this.creatorIp = creatorIp;
         this.sequenceName = sequenceName;
-        this.handle = Main.getVersionSupport().server(Bukkit.getServer()).newPlayer(uuid, name);
+        this.handle = Main.getBridge().server(Bukkit.getServer()).newPlayer(uuid, name);
         this.player = handle.getPlayer();
         this.ticker = new FakeplayerTicker(this, removeAt);
 
@@ -97,6 +105,11 @@ public class FakePlayer {
         player.setSleepingIgnored(true);
         handle.setPlayBefore();
         handle.unpersistAdvancements(Main.getInstance()); // 可避免一些插件的第一次入服欢迎信息
+
+        var displayName = text(player.getName(), GRAY, ITALIC);
+        player.playerListName(displayName);
+        player.displayName(displayName);
+        player.customName(displayName);
     }
 
     /**
@@ -151,9 +164,9 @@ public class FakePlayer {
                         FakeplayerManager.instance.setRefillable(player, true);
                     }
 
-                    var network = Main.getVersionSupport().network();
-                    network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
+                    var network = Main.getBridge().network();
                     network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
+                    this.connection = network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
                     handle.configClientOptions();   // 处理皮肤设置问题
 
                     var spawnAt = option.spawnAt().clone();
@@ -197,10 +210,6 @@ public class FakePlayer {
                     Placeholder.component("name", text(player.getName(), WHITE))
             ));
         }
-    }
-
-    public @NotNull UUID getUUID() {
-        return this.uuid;
     }
 
     public boolean isOnline() {
@@ -248,4 +257,7 @@ public class FakePlayer {
         return creator.getClass() == sender.getClass() && creator.getName().equals(sender.getName());
     }
 
+    public @NotNull UUID getUUID() {
+        return uuid;
+    }
 }
