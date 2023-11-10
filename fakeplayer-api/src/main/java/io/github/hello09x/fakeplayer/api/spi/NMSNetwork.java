@@ -15,7 +15,7 @@ public interface NMSNetwork {
      * @param player  假人玩家
      * @param address 虚拟地址
      */
-    void bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address);
+    @NotNull NMSGamePacketListener bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address);
 
     /**
      * 绑定一个虚拟的登陆连接

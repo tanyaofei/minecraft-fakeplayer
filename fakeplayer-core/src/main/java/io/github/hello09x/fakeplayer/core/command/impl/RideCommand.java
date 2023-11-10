@@ -32,7 +32,7 @@ public class RideCommand extends AbstractCommand {
         if (entities.isEmpty()) {
             return;
         }
-        Main.getVersionSupport().player(target).startRiding(entities.get(0), true);
+        Main.getBridge().player(target).startRiding(entities.get(0), true);
     }
 
     /**
@@ -45,7 +45,7 @@ public class RideCommand extends AbstractCommand {
             return;
         }
 
-        Main.getVersionSupport().player(target).startRiding(entity, true);
+        Main.getBridge().player(target).startRiding(entity, true);
     }
 
     /**
@@ -63,7 +63,7 @@ public class RideCommand extends AbstractCommand {
             return;
         }
 
-        Main.getVersionSupport().player(target).startRiding(entity, true);
+        Main.getBridge().player(target).startRiding(entity, true);
     }
 
     /**
@@ -84,14 +84,14 @@ public class RideCommand extends AbstractCommand {
             return;
         }
 
-        Main.getVersionSupport().player(target).startRiding(sender, true);
+        Main.getBridge().player(target).startRiding(sender, true);
     }
 
     /**
      * 停止骑行
      */
     public void stopRiding(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        Main.getVersionSupport().player(getTarget(sender, args)).stopRiding();
+        Main.getBridge().player(getTarget(sender, args)).stopRiding();
     }
 
 }

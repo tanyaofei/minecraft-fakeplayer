@@ -17,10 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -145,7 +142,7 @@ public class RefillListener implements Listener {
                 }
             }
 
-        }, 1);
+        }, 1);  // delay 1 是因为要等手上的物品在此 tick 消耗完
     }
 
     /**
@@ -162,7 +159,7 @@ public class RefillListener implements Listener {
             var replacement = inv.getItem(i);
             if (replacement != null && replacement.isSimilar(item)) {
                 inv.setItem(slot, replacement);
-                inv.setItem(i, new ItemStack(Material.AIR));
+                inv.setItem(i, null);
                 return true;
             }
         }
@@ -187,7 +184,7 @@ public class RefillListener implements Listener {
                     BlockFace.NORTH
             );
             if (!openEvent.callEvent()) {
-                // Could not open this inventory cause by other plugins
+                // 无法打开箱子
                 continue;
             }
 
@@ -199,7 +196,7 @@ public class RefillListener implements Listener {
                 var view = target.getOpenInventory();
                 var inv = view.getTopInventory();
                 if (inv.getType() != InventoryType.CHEST) {
-                    // closed by other plugins
+                    // 被其他插件取消了, 变成打开自己的背包了
                     return;
                 }
                 for (int i = inv.getSize() - 1; i >= 0; i--) {
@@ -213,12 +210,14 @@ public class RefillListener implements Listener {
                                 InventoryAction.MOVE_TO_OTHER_INVENTORY
                         );
                         if (!event.callEvent()) {
-                            // canceled by other plugins
+                            // 无法操作箱子
+                            target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
                             return;
                         }
 
                         target.getInventory().setItem(slot, replacement);
-                        inv.setItem(i, new ItemStack(Material.AIR));
+                        inv.setItem(i, null);
+                        target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
                         return;
                     }
                 }

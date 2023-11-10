@@ -3,10 +3,9 @@ package io.github.hello09x.fakeplayer.api.action;
 import io.github.hello09x.fakeplayer.api.action.impl.*;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
-import io.github.hello09x.fakeplayer.api.spi.VersionSupport;
+import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -18,14 +17,14 @@ public abstract class BaseActionTicker implements ActionTicker {
     protected ActionSetting setting;
 
     public BaseActionTicker(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
-        var versionSupport = Objects.requireNonNull(VersionSupport.getInstance());
+        var bridge = Objects.requireNonNull(NMSBridge.getInstance());
         this.setting = setting;
         this.action = switch (action) {
-            case JUMP -> new JumpAction(versionSupport.player(player));
-            case LOOK_AT_NEAREST_ENTITY -> new LookAtEntityAction(versionSupport.player(player));
-            case DROP_ITEM -> new DropItemAction(versionSupport.player(player));
-            case DROP_STACK -> new DropStackAction(versionSupport.player(player));
-            case DROP_INVENTORY -> new DropInventoryAction(versionSupport.player(player));
+            case JUMP -> new JumpAction(bridge.player(player));
+            case LOOK_AT_NEAREST_ENTITY -> new LookAtEntityAction(bridge.player(player));
+            case DROP_ITEM -> new DropItemAction(bridge.player(player));
+            case DROP_STACK -> new DropStackAction(bridge.player(player));
+            case DROP_INVENTORY -> new DropInventoryAction(bridge.player(player));
             default -> null;
         };
     }

@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.core;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.i18n.I18nSupported;
 import io.github.hello09x.bedrock.util.RegistrablePlugin;
-import io.github.hello09x.fakeplayer.api.spi.VersionSupport;
+import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
@@ -23,14 +23,14 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
     private static Main instance;
 
     @Getter
-    private static VersionSupport versionSupport;
+    private static NMSBridge bridge;
 
     private I18n i18n;
 
     @Override
     public void onLoad() {
-        versionSupport = VersionSupport.getInstance();
-        if (versionSupport == null) {
+        bridge = NMSBridge.getInstance();
+        if (bridge == null) {
             throw new ExceptionInInitializerError("Unsupported Minecraft version: " + Bukkit.getMinecraftVersion());
         }
         this.i18n = new I18n(this, "message/message");

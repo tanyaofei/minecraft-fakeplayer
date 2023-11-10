@@ -7,6 +7,8 @@ import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
+import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
+import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener.ReceivedMessage;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
@@ -35,10 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +73,7 @@ public class FakeplayerManager {
 
     private FakeplayerManager() {
         var timer = Executors.newSingleThreadScheduledExecutor();
-        timer.scheduleAtFixedRate(() -> {
+        timer.scheduleWithFixedDelay(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Tasks.run(() -> {
                             if (FakeplayerManager.this.removeAll("low tps") > 0) {
@@ -116,9 +115,7 @@ public class FakeplayerManager {
                 sn,
                 removeAt
         );
-
         var target = fp.getPlayer();
-        target.playerListName(text(target.getName(), GRAY, ITALIC));
 
         return CompletableFuture
                 .supplyAsync(() -> {
@@ -352,10 +349,6 @@ public class FakeplayerManager {
      * @param refillable 是否自动装填
      */
     public void setRefillable(@NotNull Player target, boolean refillable) {
-        if (!this.isFake(target)) {
-            return;
-        }
-
         if (!refillable) {
             target.removeMetadata("fakeplayer:refillable", Main.getInstance());
         } else {
@@ -423,6 +416,24 @@ public class FakeplayerManager {
         return target.hasMetadata("fakeplayer:refillable");
     }
 
+    public @Nullable ReceivedMessage getLastMessage(@NotNull Player target) {
+        return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
+                .map(FakePlayer::getConnection)
+                .map(NMSGamePacketListener::getLastMessage)
+                .orElse(null);
+    }
+
+    public @NotNull List<ReceivedMessage> getMessages(@NotNull Player target, int skip, int size) {
+        return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
+                .map(FakePlayer::getConnection)
+                .map(NMSGamePacketListener::getRecentMessages)
+                .orElse(Collections.emptyList())
+                .stream()
+                .skip(skip)
+                .limit(size)
+                .toList();
+    }
+
     /**
      * 以假人身份执行命令
      *
@@ -475,19 +486,19 @@ public class FakeplayerManager {
         }
     }
 
-    public boolean openInventory(@NotNull Player creator, @NotNull Player player) {
-        var target = this.playerList.getByName(player.getName());
-        if (target == null) {
+    public boolean openInventory(@NotNull Player creator, @NotNull Player target) {
+        var fp = this.playerList.getByName(target.getName());
+        if (fp == null) {
             return false;
         }
-        if (!creator.isOp() && !target.isCreator(creator)) {
+        if (!creator.isOp() && !fp.isCreator(creator)) {
             return false;
         }
 
-        if (!openInvDepend.openInventory(creator, player)) {
-            this.openInventoryDefault(creator, player);
+        if (!openInvDepend.openInventory(creator, target)) {
+            this.openInventoryDefault(creator, target);
         }
-        creator.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
+        creator.playSound(target.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
         return true;
     }
 

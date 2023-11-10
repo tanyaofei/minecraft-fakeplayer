@@ -21,6 +21,16 @@
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-v1_20_R1</artifactId>
         </dependency>
 

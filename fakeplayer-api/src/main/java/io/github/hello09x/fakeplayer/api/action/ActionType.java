@@ -1,11 +1,11 @@
 package io.github.hello09x.fakeplayer.api.action;
 
-import io.github.hello09x.bedrock.i18n.TranslateKey;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.translation.Translatable;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
-public enum ActionType implements TranslateKey {
+public enum ActionType implements Translatable {
 
     /**
      * 攻击实体
@@ -47,10 +47,11 @@ public enum ActionType implements TranslateKey {
      */
     DROP_INVENTORY("fakeplayer.action.drop-inventory");
 
-    final String translateKey;
+    final String translationKey;
+
 
     @Override
-    public @NotNull String translateKey() {
-        return translateKey;
+    public @NotNull String translationKey() {
+        return this.translationKey;
     }
 }

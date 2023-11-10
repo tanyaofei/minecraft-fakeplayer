@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TpCommand extends AbstractCommand {
+public class TeleportCommand extends AbstractCommand {
 
-    public final static TpCommand instance = new TpCommand();
+    public final static TeleportCommand instance = new TeleportCommand();
 
     public void tp(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
@@ -29,8 +29,8 @@ public class TpCommand extends AbstractCommand {
     public void tps(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
 
-        var l1 = sender.getLocation().clone();
-        var l2 = target.getLocation().clone();
+        var l1 = sender.getLocation();
+        var l2 = target.getLocation();
 
         Teleportor.teleportAndSound(target, l1);
         Teleportor.teleportAndSound(sender, l2);
