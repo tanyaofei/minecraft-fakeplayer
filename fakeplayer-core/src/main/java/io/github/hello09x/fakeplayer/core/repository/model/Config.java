@@ -1,28 +1,32 @@
 package io.github.hello09x.fakeplayer.core.repository.model;
 
 import io.github.hello09x.fakeplayer.core.command.Permission;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import net.kyori.adventure.translation.Translatable;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * @param name         配置项 key
+ * @param key           配置项 key
  * @param translationKey 翻译 key
- * @param defaultValue 默认值
- * @param options      可选值
- * @param converter       转换器
+ * @param defaultValue   默认值
+ * @param options        可选值
+ * @param converter      转换器
  */
 public record Config<T>(
 
         @NotNull
-        String name,
+        String key,
 
         @NotNull
         String translationKey,
@@ -39,7 +43,13 @@ public record Config<T>(
         String permission,
 
         @NotNull
-        Function<String, T> converter
+        Function<String, T> converter,
+
+        @UnknownNullability
+        Function<Player, T> current,
+
+        @UnknownNullability
+        BiConsumer<Player, T> configurer
 
 ) implements Translatable {
 
@@ -52,8 +62,11 @@ public record Config<T>(
             true,
             List.of("true", "false"),
             null,
-            Boolean::valueOf
+            Boolean::valueOf,
+            LivingEntity::isCollidable,
+            LivingEntity::setCollidable
     );
+
     /**
      * 无敌
      */
@@ -64,8 +77,11 @@ public record Config<T>(
             true,
             List.of("true", "false"),
             null,
-            Boolean::valueOf
+            Boolean::valueOf,
+            LivingEntity::isInvulnerable,
+            LivingEntity::setInvulnerable
     );
+
     /**
      * 看向实体
      */
@@ -76,8 +92,11 @@ public record Config<T>(
             true,
             List.of("true", "false"),
             null,
-            Boolean::valueOf
+            Boolean::valueOf,
+            null,
+            null
     );
+
     /**
      * 拾取物品
      */
@@ -88,8 +107,11 @@ public record Config<T>(
             true,
             List.of("true", "false"),
             null,
-            Boolean::valueOf
+            Boolean::valueOf,
+            LivingEntity::getCanPickupItems,
+            LivingEntity::setCanPickupItems
     );
+
     /**
      * 使用皮肤
      */
@@ -100,8 +122,14 @@ public record Config<T>(
             true,
             List.of("true", "false"),
             null,
-            Boolean::valueOf
+            Boolean::valueOf,
+            null,
+            null
     );
+
+    /**
+     * 自动补货
+     */
     public static Config<Boolean> replenish = build(
             "replenish",
             "fakeplayer.config.replenish",
@@ -109,7 +137,9 @@ public record Config<T>(
             false,
             List.of("true", "false"),
             Permission.replenish,
-            Boolean::valueOf
+            Boolean::valueOf,
+            FakeplayerManager.instance::isReplenish,
+            FakeplayerManager.instance::setReplenish
     );
 
     @SuppressWarnings("unchecked")
@@ -133,9 +163,11 @@ public record Config<T>(
             @NotNull T defaultValue,
             @NotNull List<String> options,
             @Nullable String permission,
-            @NotNull Function<String, T> converter
+            @NotNull Function<String, T> converter,
+            @Nullable Function<Player, T> descriptor,
+            @Nullable BiConsumer<Player, T> configurer
     ) {
-        var config = new Config<>(name, translationKey, type, defaultValue, options, permission, converter);
+        var config = new Config<>(name, translationKey, type, defaultValue, options, permission, converter, descriptor, configurer);
         values.put(name, config);
         return config;
     }
@@ -147,5 +179,9 @@ public record Config<T>(
     @Override
     public @NotNull String translationKey() {
         return this.translationKey;
+    }
+
+    public boolean hasConfigurer() {
+        return this.configurer != null;
     }
 }

@@ -9,6 +9,7 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
+import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
@@ -57,6 +58,7 @@ public class CommandRegistry {
                                 Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
                                 Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
                                 Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
+                                Usage.of("set", i18n.asString("fakeplayer.command.set.description"), Permission.set),
                                 Usage.of("config", i18n.asString("fakeplayer.command.config.description"), Permission.config),
                                 Usage.of("expme", i18n.asString("fakeplayer.command.expme.description"), Permission.expme),
                                 Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.attack),
@@ -135,6 +137,15 @@ public class CommandRegistry {
                                 .withPermission(Permission.respawn)
                                 .withOptionalArguments(target("name", Entity::isDead))
                                 .executes(RespawnCommand.instance::respawn),
+                        command("set")
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withPermission(Permission.set)
+                                .withArguments(
+                                        config("config", Config::hasConfigurer),
+                                        configValue("config", "value")
+                                )
+                                .withOptionalArguments(target("name"))
+                                .executes(SetCommand.instance::set),
                         command("config")
                                 .withPermission(Permission.config)
                                 .withSubcommands(
@@ -374,7 +385,6 @@ public class CommandRegistry {
 
                 ).register();
     }
-
 
 
 }

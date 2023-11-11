@@ -8,7 +8,6 @@ import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -67,7 +66,7 @@ public class ConfigCommand extends AbstractCommand {
                             if (option.equals(value)) {
                                 return text("[" + option + "]", GREEN, TextDecoration.UNDERLINED);
                             } else {
-                                return text("[" + option + "]", WHITE).clickEvent(suggestCommand("/fp config set " + config.name() + " " + option));
+                                return text("[" + option + "]", WHITE).clickEvent(suggestCommand("/fp config set " + config.key() + " " + option));
                             }
                         }).toList())
                 );

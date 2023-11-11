@@ -123,14 +123,23 @@ public abstract class CommandSupports {
     }
 
     public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {
+        return config(nodeName, null);
+    }
+
+    public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName, @Nullable Predicate<Config<Object>> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
+            Config<Object> config;
             try {
-                return Config.valueOf(arg);
+                config = Config.valueOf(arg);
             } catch (Exception e) {
                 throw CustomArgument.CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-option"));
             }
-        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Config.values()).map(Config::name).toList()));
+            if (predicate != null && !predicate.test(config)) {
+                throw CustomArgument.CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-option"));
+            }
+            return config;
+        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Config.values()).map(Config::key).toList()));
     }
 
     public static @NotNull Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {

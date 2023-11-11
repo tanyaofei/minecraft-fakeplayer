@@ -32,7 +32,7 @@ public class UserConfigRepository extends Repository<UserConfig> {
         return execute(connection -> {
             try (PreparedStatement stm = connection.prepareStatement(sql)) {
                 stm.setString(1, playerId.toString());
-                stm.setString(2, config.name());
+                stm.setString(2, config.key());
                 return Optional.ofNullable(mapOne(stm.executeQuery()))
                         .map(UserConfig::value)
                         .orElse(null);
@@ -53,7 +53,7 @@ public class UserConfigRepository extends Repository<UserConfig> {
         });
     }
 
-    public <T> int saveOrUpdate(@NotNull UUID playerId, @NotNull Config<T> key, @NotNull T value) {
+    public <T> int saveOrUpdate(@NotNull UUID playerId, @NotNull Config<T> config, @NotNull T value) {
         var sql = """
                 insert or replace into user_config(
                     id, player_id, `key`, `value`
@@ -69,9 +69,9 @@ public class UserConfigRepository extends Repository<UserConfig> {
             try (PreparedStatement stm = connection.prepareStatement(sql)) {
                 int i = 1;
                 stm.setString(i++, playerId.toString());
-                stm.setString(i++, key.name());
+                stm.setString(i++, config.key());
                 stm.setString(i++, playerId.toString());
-                stm.setString(i++, key.name());
+                stm.setString(i++, config.key());
                 stm.setString(i++, value.toString());
                 return stm.executeUpdate();
             }

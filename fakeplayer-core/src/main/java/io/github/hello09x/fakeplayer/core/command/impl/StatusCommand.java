@@ -4,6 +4,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.io.Experiences;
 import io.github.hello09x.fakeplayer.core.command.Permission;
+import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
@@ -19,15 +21,19 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StatusCommand extends AbstractCommand {
 
     public final static StatusCommand instance = new StatusCommand();
+
+    private final static Component LINE_SPLITTER = text(StringUtils.repeat("-", 20), GRAY);
 
     private static @NotNull NamedTextColor color(double current, double max) {
         var p = current / max;
@@ -60,6 +66,8 @@ public class StatusCommand extends AbstractCommand {
         if (sender.hasPermission(Permission.expme)) {
             lines.add(this.getExperienceLine(target));
         }
+        lines.add(LINE_SPLITTER);
+        lines.add(getConfigLine(target));
 
         sender.sendMessage(join(JoinConfiguration.newlines(), lines));
     }
@@ -106,6 +114,29 @@ public class StatusCommand extends AbstractCommand {
                 space(),
                 i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(ClickEvent.runCommand("/fp expme " + target.getName()))
         );
+    }
+
+    private @NotNull Component getConfigLine(@NotNull Player target) {
+        var configs = Arrays.stream(Config.values()).filter(Config::hasConfigurer).toList();
+        var messages = new ArrayList<Component>();
+        for (var config : configs) {
+            var name = i18n.translate(config.translationKey());
+            var options = config.options();
+            var status = config.current().apply(target).toString();
+
+            messages.add(textOfChildren(
+                    name,
+                    space(),
+                    join(JoinConfiguration.separator(space()), options.stream().map(option -> {
+                        if (option.equals(status)) {
+                            return text("[" + option + "]", GREEN);
+                        } else {
+                            return text("[" + option + "]", GRAY).clickEvent(suggestCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName())));
+                        }
+                    }).toList())
+            ));
+        }
+        return join(JoinConfiguration.newlines(), messages);
     }
 
 }

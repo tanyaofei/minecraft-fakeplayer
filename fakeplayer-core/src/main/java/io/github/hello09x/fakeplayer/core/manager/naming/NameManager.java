@@ -157,7 +157,7 @@ public class NameManager {
             }
             name += suffix;
 
-            if (Bukkit.getServer().getOfflinePlayer(name).hasPlayedBefore() || Bukkit.getPlayerExact(name) != null) {
+            if (Bukkit.getPlayerExact(name) != null) {
                 tries--;
                 continue;
             }

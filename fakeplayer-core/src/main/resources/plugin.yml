@@ -52,6 +52,8 @@ permissions:
     description: 'tps 命令权限'
   fakeplayer.command.config:
     description: 'config 命令权限'
+  fakeplayer.command.set:
+    description: 'set 命令权限'
   fakeplayer.command.attack:
     description: 'attack 命令权限'
   fakeplayer.command.mine:
@@ -103,6 +105,7 @@ permissions:
       - fakeplayer.command.status
       - fakeplayer.command.respawn
       - fakeplayer.command.config
+      - fakeplayer.command.set
 
   fakeplayer.tp:
     description: '所有关于传送的命令权限'
