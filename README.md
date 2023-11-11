@@ -4,7 +4,10 @@
 
 ### 支持版本
 
-`1.20.1 (即 1.20)` 和 `1.20.2` 的 paper, purpur _(建议)_
+仅支持 `Paper` 及其下游 `Purpur` 核心
+
++ 1.20 / 1.20.1 **(已测试通过)**
++ 1.20.2 **_(未经过测试)_**
 
 ## 特性
 
@@ -23,53 +26,112 @@
 
 ## 命令
 
-+ `/fp spawn [名称] [世界] [位置]` - 创建假人
-+ `/fp kill` - 移除假人
-+ `/fp list [页码] [数量]` - 查看所有假人
-+ `/fp distance` - 查看与假人的距离
-+ `/fp tp` - 传送到假人身边
-+ `/fp tphere` - 将假人传送到身边
-+ `/fp tps` - 与假人交换位置
-+ `/fp config get <配置项>` - 查看配置项
-+ `/fp config set <配置项> <配置值>` - 设置配置项
-+ `/fp config list` - 查看所有配置项
-+ `/fp health` - 查看生命值
-+ `/fp exp` - 查看经验值
-+ `/fp expme` - 转移经验值
-+ `/fp attack (once | continuous | interval | stop)` - 攻击
-+ `/fp mine (once | continuous | interval | stop)` - 挖掘
-+ `/fp use (once | continuous | interval | stop)` - 使用/交互/放置
-+ `/fp jump (once | continuous | interval | stop)` - 跳跃
-+ `/fp drop [-a|--all]` - 丢弃手上物品
-+ `/fp dropinv` - 丢弃背包物品
-+ `/fp look (north | south | east| west | up | down | at | entity)` - 看向指定位置
-+ `/fp turn (left | right | back | to)` - 转身到指定位置
-+ `/fp move (forward | backward | left | right)` - 移动假人
-+ `/fp ride (anything | vehicle | target | stop)` - 骑乘
-+ `/fp sleep` - 睡觉
-+ `/fp wakup` - 起床
-+ `/fp skin` - 拷贝皮肤
-+ `/fp invsee` - 查看背包 _(有 OpenInv 前置则可以编辑)_
-+ `/fp cmd <假人> <命令>` - 执行命令
-+ `/fp reload` - 重载配置文件
+| 命令            | 作用            | 权限                           | 备注                        |
+|---------------|---------------|------------------------------|---------------------------|
+| /fp spawn     | 召唤假人          | fakeplayer.command.spawn     |                           |
+| /fp kill      | 杀死假人          | fakeplayer.command.kill      |                           |
+| /fp killall   | 杀死服务器所有假人     | OP                           |                           |
+| /fp select    | 选中假人          | fakeplayer.command.select    | 当玩家假人数量 >= 2 时才会出现        |
+| /fp selection | 查看选中假人        | fakeplayer.command.selection | 当玩家假人数量 >= 2 时才会出现        |
+| /fp list      | 查看已召唤的假人      | fakeplayer.command.list      |                           |
+| /fp distance  | 查看与假人的距离      | fakeplayer.command.distance  |                           |
+| /fp drop      | 丢弃手上一个物品      | fakeplayer.command.drop      |                           |
+| /fp dropstack | 丢弃手上整组物品      | fakeplayer.command.dropstack |                           |
+| /fp dropinv   | 丢弃背包所有物品      | fakeplayer.command.dropinv   |                           |
+| /fp skin      | 复制玩家皮肤        | fakeplayer.command.skin      | 非在线玩家有 60 秒冷却             |
+| /fp invsee    | 查看假人背包        | fakeplayer.command.invsee    | 默认仅查看, 装 `OpenInv` 前置才可操作 |
+| /fp sleep     | 睡觉            | fakeplayer.command.sleep     |                           |
+| /fp wakeup    | 起床            | fakeplayer.command.wakeup    |                           |
+| /fp status    | 查看假人状态        | fakeplayer.command.status    |                           |
+| /fp respawn   | 让死亡的假人复活      | fakeplayer.command.respawn   | 当服务器配置假人死亡时不踢出才会出现        |
+| /fp tp        | 传送到假人身边       | fakeplayer.command.tp        |                           |
+| /fp tphere    | 让假人传送到身边      | fakeplayer.command.tphere    |                           |
+| /fp tps       | 与假人交换位置       | fakeplayer.command.tps       |                           |
+| /fp set       | 更改假人的配置       | fakeplayer.command.set       |                           |
+| /fp config    | 更改默认假人配置      | fakeplayer.command.config    |                           |
+| /fp expme     | 吸收假人经验值       | fakeplayer.command.expme     |                           |
+| /fp attack    | 攻击            | fakeplayer.command.attack    |                           |
+| /fp mine      | 挖掘            | fakeplayer.command.mine      |                           |
+| /fp use       | 使用/交互/放置      | fakeplayer.command.use       |                           |
+| /fp jump      | 跳跃            | fakeplayer.command.jump      |                           |
+| /fp turn      | 转身            | fakeplayer.command.turn      |                           |
+| /fp look      | 看向指定位置        | fakeplayer.command.look      |                           |
+| /fp move      | 移动            | fakeplayer.command.mvoe      |                           |
+| /fp ride      | 骑乘            | fakeplayer.command.ride      |                           |
+| /fp sneak     | 潜行            | fakeplayer.command.sneak     |                           |
+| /fp swap      | 交换主副手物品       | fakeplayer.command.swap      |                           |
+| /fp hold      | 手持对应快捷栏物品     | fakeplayer.command.hold      |                           |
+| /fp cmd       | 让假人执行命令       | fakeplayer.command.cmd       | 不给权限的情况下，允许执行配置文件里定义的命令   |
+| /fp reload    | 重载配置文件        | OP                           |                           |
+| /fp msg       | 查看假人最近收到的系统消息 | OP                           |                           |
 
-此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等
+_此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等_
 
 ## 权限
 
-**_默认所有权限是 op 拥有，请通过权限管理插件来分配！_**
+实际上每一个命令都有一个单独权限，如果你觉得这样子太麻烦了，你可以设置预定好的批量权限
 
-| 节点                        | 指令                                                                                            |
-|---------------------------|-----------------------------------------------------------------------------------------------|
-| fakeplayer.spawn          | `spawn`, `list`, `kill`, `distance`, `dropinv`, `drop`, `skin`, `invsee`, `health`, `exp`     |
-| fakeplayer.spawn.location | `spawn` 可以指定出生点                                                                               |
-| fakeplayer.spawn.name     | `spawn` 可以自定义名称                                                                               |
-| fakeplayer.tp             | `tp`, `tps`, `tphere`                                                                         |
-| fakeplayer.exp            | `expme`                                                                                       |
-| fakeplayer.action         | `sneak`, `turn`, `jump`, `look`, `move`, `attack`, `use`, `ride`, `refill`, `sleep`, `wakeup` |
-| fakeplayer.cmd            | `cmd`                                                                                         |
-| fakeplayer.admin          | `reload`                                                                                      |
-| 无                         | `config`                                                                                      |
+### 最基本的命令组权限
+
+`fakeplayer.spawn`
+包含了以下权限:
+
+- fakeplayer.command.spawn - 创建假人
+- fakeplayer.command.kill - 杀死假人
+- fakeplayer.command.list - 列出假人
+- fakeplayer.command.distance - 查看距离
+- fakeplayer.command.select - 选中假人
+- fakeplayer.command.selection - 查看选中的假人
+- fakeplayer.command.drop - 丢弃一个物品
+- fakeplayer.command.dropstack - 丢弃整组物品
+- fakeplayer.command.dropinv - 丢弃背包物品
+- fakeplayer.command.skin - 复制皮肤
+- fakeplayer.command.invsee - 查看背包
+- fakeplayer.command.status - 查看状态
+- fakeplayer.command.respawn - 复活假人
+- fakeplayer.command.config - 设置默认设置
+- fakeplayer.command.set - 设置假人设置
+
+### 关于传送的组权限
+
+`fakeplayer.tp`
+
+包含了以下权限:
+
+- fakeplayer.command.tp
+- fakeplayer.command.tphere
+- fakeplayer.command.tps
+
+### 控制假人行动的权限
+
+`fakeplayer.action`
+
+包含了以下权限:
+
+- fakeplayer.command.attack - 攻击
+- fakeplayer.command.mine - 挖掘
+- fakeplayer.command.use - 右键
+- fakeplayer.command.jump - 跳跃
+- fakeplayer.command.sneak - 潜行
+- fakeplayer.command.look - 查看
+- fakeplayer.command.turn - 转身
+- fakeplayer.command.move - 移动
+- fakeplayer.command.ride - 骑乘
+- fakeplayer.command.swap - 交换主副手物品
+- fakeplayer.command.sleep - 睡觉
+- fakeplayer.command.wakeup - 起床
+- fakeplayer.command.hold - 切换快捷栏
+- fakeplayer.config.replenish - 自动补货
+- fakeplayer.config.replenish.chest - 自动补货时可以从附近箱子里补
+
+如果你服务器不限制玩家的各种命令，则可以直接使用这个
+`fakeplayer.basic`
+
+包含了所有安全的权限, 只有 `/fp cmd` 命令排除在外
+
+## 交互
+
++ 对着假人右键可查看假人的背包，默认情况下不可操作，如果装了 `OpenInv` 则可以操作
 
 ## 玩家个性化配置
 
@@ -77,16 +139,24 @@
 
 命令例子:
 
-+ `/fp config get collidable`
-+ `/fp config set collidable false`
++ `/fp config list` - 查看所有个性化配置
++ `/fp config set collidable false` - 设置个性化配置
 
-| 配置项            | 备注                                    |
-|----------------|---------------------------------------|
-| collidable     | 是否开启碰撞箱                               |
-| invulnerable   | 是否无敌模式                                |
-| look_at_entity | 是否自动看向附近的实体(包括玩家), 可以配合 `attack` 自动打怪 |
-| pickup_items   | 是否能够拾取物品                              |
-| skin           | 是否使用你的皮肤                              |
+| 配置项            | 备注                                        |
+|----------------|-------------------------------------------|
+| collidable     | 是否开启碰撞箱                                   |
+| invulnerable   | 是否无敌模式                                    |
+| look_at_entity | 是否自动看向附近的可攻击的实体(包括玩家), 可以配合 `attack` 自动打怪 |
+| pickup_items   | 是否能够拾取物品                                  |
+| skin           | 是否使用你的皮肤                                  |
+| replenish      | 是否自动补货                                    |
+
+## 开发者的建议
+
+1. 默认情况下假人是根据召唤者名称生成的，而 UUID 根据假人名称生成。不建议服务器设置 `name-template`
+   ，因为这样假人就变成公共的了，玩家对其使用 `res` 等配置可能具有风险
+
+2. 不建议直接给玩家 `fakeplayer.command.cmd` 权限，这样玩家可以执行任何假人有权限的命令。建议通过配置文件加入白名单命令来允许玩家执行有限的命令
 
 # 常见问题（很重要务必要看）
 
@@ -203,7 +273,7 @@ server-limit: 1000
 # 每个玩家最多创建多少个假人
 # 默认: 1
 # Define the maximum number of fake players each player can spawn
-# default: 1
+# Default: 1
 player-limit: 1
 
 # 假人存活时间, 0 表示永久
@@ -223,8 +293,8 @@ lifespan: 0
 #   2. 长度超过 16 位将会被截取
 #   3. 不能以 - 开头
 # Name template of fake players
-# If this value is empty, fake players will use the creators' name as their names and add a numerical suffix.
-# if this value is NOT empty, fake players will use this value as their names and add a numerical suffix.
+# If this value is empty, fake players will use creators' name as their name and add a numerical suffix.
+# Otherwise, fake players will use this value as their names and add a numerical suffix.
 # placeholder:
 #   %c: the name of the creator
 # tips:
@@ -252,16 +322,29 @@ follow-quiting: true
 # Define whether fake players will drop items from their inventory when they remove.
 drop-inventory-on-quiting: false
 
-# 如果启用, 则一个 IP 只能创建 `maximum` 个假人
+# 是否保存玩家存档, 如果你将这个设置改成 false, 你可能还需要将 `drop-inventory-on-quiting` 设置为 `true` 以防玩家放置一些物品到假人的背包
+# 默认: true
+# Define whether persist player's data, if this value is `false`,
+# you may need to set `drop-inventory-on-quiting` as `true` in case players will put some items in their inventory
+# 默认: true
+persistent-data: true
+
+# 死亡时是否剔除游戏, 如果设置为 false, 那么玩家可以通过 /fp respawn 命令重生
+# 默认: true
+# Define whether kick the fake player who was dead, if this value is true, players can type command '/fp respawn' to respawn him
+# Default: true
+kick-on-dead: true
+
+# 如果启用, 则一个 IP 只能创建 `player-limit` 个假人
 # 能够避免玩家开小号疯狂创建假人
-# Define whether to check if the same IP can only spawn `player-limit` fake players.
+# Define whether to check if players with the same IP sharing `player-limit`
 detect-ip: true
 
 # 服务器最近 5 分钟平均 TPS 低于这个值清除所有假人
 # 每 60 秒检测一次
 # 默认: 0, 即不开启, 因为移除假人可能导致玩家红石机器出问题, 按需开启吧
 # Server will detect tps every 5 minutes, if the average tps is lower than this value, all fake players will be removed
-# default: 0, means disabled
+# Default: 0, means disabled
 # Tips:
 #    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
@@ -269,13 +352,12 @@ kale-tps: 0
 # 预准备命令
 # 假人诞生时会以控制台的身份按顺序执行以下命令
 # 你可以用这个来实现权限组的分配之类的命令
-# 非正版服请避免写一些危险指令以防第三方插件没有清档被其他玩家以假人的身份登陆而利用
 # 占位符:
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
 # Server will execute the following commands after the fake player was spawned
-# you can add some commands to give them permission
+# You can add some commands to give them permission, such as '/lp user %p permission set xxx true'
 # placeholder:
 #    %p: the name of the fake player
 #    %u: the uuid of the fake player
@@ -291,7 +373,7 @@ preparing-commands:
 #   %p: 假人名称
 #   %u: 假人 uuid
 #   %c: 创建者的名称
-# Server will execute the following commands after the fake player was removed
+# Server will execute the following commands before the fake player was quited(PlayerQuitEvent)
 # you can add some commands to clean up data
 # placeholder:
 #    %p: the name of the fake player
