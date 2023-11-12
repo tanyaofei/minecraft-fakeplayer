@@ -204,4 +204,9 @@ public interface NMSServerPlayer {
      */
     void respawn();
 
+    /**
+     * 交换主副手物品
+     */
+    void swapItemWithOffhand();
+
 }

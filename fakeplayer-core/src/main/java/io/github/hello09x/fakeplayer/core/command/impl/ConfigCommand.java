@@ -28,7 +28,7 @@ public class ConfigCommand extends AbstractCommand {
 
     public final static ConfigCommand instance = new ConfigCommand();
 
-    private final UserConfigManager manager = UserConfigManager.instance;
+    private final UserConfigManager configManager = UserConfigManager.instance;
 
     /**
      * 设置配置
@@ -43,7 +43,7 @@ public class ConfigCommand extends AbstractCommand {
         }
 
         var value = Objects.requireNonNull(args.get("value"));
-        manager.setConfig(sender, config, value);
+        configManager.setConfig(sender, config, value);
         sender.sendMessage(miniMessage.deserialize(
                 "<gray>" + i18n.asString("fakeplayer.command.config.set.success") + "</gray>",
                 Placeholder.component("config", i18n.translate(config.translationKey(), GOLD)),
@@ -58,7 +58,7 @@ public class ConfigCommand extends AbstractCommand {
         CompletableFuture.runAsync(() -> {
             var components = Arrays.stream(Config.values()).map(config -> {
                 var options = new ArrayList<>(config.options());
-                var value = String.valueOf(manager.getConfig(sender, config));
+                var value = String.valueOf(configManager.getConfig(sender, config));
                 return textOfChildren(
                         i18n.translate(config, GOLD),
                         text(": ", GRAY),

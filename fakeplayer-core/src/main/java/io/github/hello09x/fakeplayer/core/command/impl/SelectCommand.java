@@ -15,7 +15,7 @@ public class SelectCommand extends AbstractCommand {
 
     public void select(@NotNull Player sender, @NotNull CommandArguments args) {
         var target = this.getTargetNullable(sender, args);
-        fakeplayerManager.setSelection(sender, target);
+        manager.setSelection(sender, target);
         if (target == null) {
             sender.sendMessage(i18n.translate("fakeplayer.command.select.success.clear", GRAY));
         } else {
@@ -27,7 +27,7 @@ public class SelectCommand extends AbstractCommand {
     }
 
     public void selection(@NotNull Player sender, @NotNull CommandArguments args) {
-        var selection = fakeplayerManager.getSelection(sender);
+        var selection = manager.getSelection(sender);
         if (selection == null) {
             sender.sendMessage(i18n.translate("fakeplayer.command.selection.error.none", GRAY));
         } else {

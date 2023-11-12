@@ -24,6 +24,9 @@ public class CmdCommand extends AbstractCommand {
 
     public final static CmdCommand instance = new CmdCommand();
 
+    /**
+     * 假人执行命令
+     */
     public void cmd(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         var command = Objects.requireNonNull((CommandResult) args.get("command"));
@@ -37,14 +40,14 @@ public class CmdCommand extends AbstractCommand {
             throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.no-permission"));
         }
 
-        var messageId = Optional.ofNullable(fakeplayerManager.getLastMessage(target))
+        var messageId = Optional.ofNullable(manager.getLastMessage(target))
                 .map(NMSGamePacketListener.ReceivedMessage::id)
                 .orElse(-1);
         if (!command.execute(target)) {
             throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.execute-failed"));
         }
 
-        var message = fakeplayerManager.getLastMessage(target);
+        var message = manager.getLastMessage(target);
         if (message != null && message.id() != messageId) {
             sender.sendMessage(textOfChildren(
                     text(">> ", GRAY),

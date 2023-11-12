@@ -17,7 +17,7 @@ public class MsgCommand extends AbstractCommand {
         int skip = (int) args.getOptional("skip").orElse(0);
         int size = (int) args.getOptional("size").orElse(10);
 
-        var messages = fakeplayerManager.getMessages(target, skip, size);
+        var messages = manager.getMessages(target, skip, size);
         for (var message : messages) {
             sender.sendMessage(message.content());
         }

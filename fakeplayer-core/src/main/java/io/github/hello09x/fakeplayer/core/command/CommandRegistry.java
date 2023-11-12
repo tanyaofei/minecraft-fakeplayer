@@ -347,7 +347,7 @@ public class CommandRegistry {
                                 .withPermission(Permission.swap)
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(target("name"))
-                                .executes(ActionCommand.instance::swap),
+                                .executes(SwapCommand.instance::swap),
                         command("sleep")
                                 .withPermission(Permission.sleep)
                                 .withRequirement(CommandSupports::hasTarget)

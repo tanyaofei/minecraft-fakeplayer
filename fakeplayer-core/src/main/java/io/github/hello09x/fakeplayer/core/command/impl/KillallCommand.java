@@ -15,7 +15,7 @@ public class KillallCommand extends AbstractCommand {
      * 移除服务器所有假人
      */
     public void killall(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        fakeplayerManager.removeAll("Command killall");
+        manager.removeAll("Command killall");
     }
 
 }

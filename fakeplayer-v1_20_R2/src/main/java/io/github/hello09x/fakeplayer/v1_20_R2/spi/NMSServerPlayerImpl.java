@@ -6,8 +6,11 @@ import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.v1_20_R2.network.EmptyAdvancements;
 import lombok.Getter;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
@@ -226,6 +229,15 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
 
         var packet = new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN);
         handle.connection.handleClientCommand(packet);
+    }
+
+    @Override
+    public void swapItemWithOffhand() {
+        handle.connection.handlePlayerAction(new ServerboundPlayerActionPacket(
+                ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND,
+                new BlockPos(0, 0, 0),
+                Direction.DOWN
+        ));
     }
 
 }

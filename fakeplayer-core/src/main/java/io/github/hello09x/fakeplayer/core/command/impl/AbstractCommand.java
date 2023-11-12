@@ -4,6 +4,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
@@ -16,13 +17,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 public abstract class AbstractCommand {
 
-    protected final FakeplayerManager fakeplayerManager = FakeplayerManager.instance;
+    protected final FakeplayerManager manager = FakeplayerManager.instance;
     protected final FakeplayerConfig config = FakeplayerConfig.instance;
     protected final MiniMessage miniMessage = MiniMessage.miniMessage();
+    protected final NMSBridge bridge = Main.getBridge();
     protected final I18n i18n = Main.i18n();
+    protected final static Logger log = Main.getInstance().getLogger();
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         return this.getTarget(sender, args, null);
@@ -46,13 +50,13 @@ public abstract class AbstractCommand {
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args, @Nullable Predicate<Player> predicate) throws WrapperCommandSyntaxException {
         var target = (Player) args.get("name");
         if (target == null && sender instanceof Player p) {
-            target = fakeplayerManager.getSelection(p);
+            target = manager.getSelection(p);
         }
         if (target != null) {
             return target;
         }
 
-        var all = fakeplayerManager.getAll(sender, predicate);
+        var all = manager.getAll(sender, predicate);
         var count = all.size();
         return switch (count) {
             case 1 -> all.get(0);
@@ -83,7 +87,7 @@ public abstract class AbstractCommand {
 
         // 优先选中的假人
         if (players == null || players.isEmpty()) {
-            var target = fakeplayerManager.getSelection(sender);
+            var target = manager.getSelection(sender);
             if (target != null) {
                 return Collections.singletonList(target);
             }
@@ -91,7 +95,7 @@ public abstract class AbstractCommand {
 
         // 查找唯一假人
         if (players == null || players.isEmpty()) {
-            var fakeplayers = fakeplayerManager.getAll(sender);
+            var fakeplayers = manager.getAll(sender);
             return switch (fakeplayers.size()) {
                 case 1 -> fakeplayers;
                 case 0 -> throw CommandAPI.failWithString(i18n.asString(

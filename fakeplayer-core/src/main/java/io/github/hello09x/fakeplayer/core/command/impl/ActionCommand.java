@@ -26,6 +26,9 @@ public class ActionCommand extends AbstractCommand {
         return (sender, args) -> action(sender, args, action, setting.clone());
     }
 
+    /**
+     * 执行动作
+     */
     public void action(
             @NotNull CommandSender sender,
             @NotNull CommandArguments args,
@@ -48,20 +51,6 @@ public class ActionCommand extends AbstractCommand {
                 "<gray>" + baseline + "</gray>",
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("action", i18n.translate(action, WHITE))
-        ));
-    }
-
-    public void swap(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
-        var item1 = target.getInventory().getItemInMainHand();
-        var item2 = target.getInventory().getItemInOffHand();
-
-        target.getInventory().setItemInMainHand(item2);
-        target.getInventory().setItemInOffHand(item1);
-
-        sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.swap.success") + "</gray>",
-                Placeholder.component("name", text(target.getName(), WHITE))
         ));
     }
 

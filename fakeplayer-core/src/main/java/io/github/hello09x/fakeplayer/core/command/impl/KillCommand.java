@@ -30,7 +30,7 @@ public class KillCommand extends AbstractCommand {
 
         var names = new StringJoiner(", ");
         for (var target : targets) {
-            if (fakeplayerManager.remove(target.getName(), "command kill")) {
+            if (manager.remove(target.getName(), "command kill")) {
                 names.add(target.getName());
             }
         }

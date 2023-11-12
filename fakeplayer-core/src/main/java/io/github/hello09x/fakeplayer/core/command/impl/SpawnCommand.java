@@ -33,9 +33,6 @@ import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 public class SpawnCommand extends AbstractCommand {
 
     public final static SpawnCommand instance = new SpawnCommand();
-    private final static Logger log = Main.getInstance().getLogger();
-
-    private final static MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private final static DateTimeFormatter REMOVE_AT_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
@@ -48,6 +45,9 @@ public class SpawnCommand extends AbstractCommand {
                 Mth.floor(location.getZ(), 0.5));
     }
 
+    /**
+     * 交换主副手物品
+     */
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var name = (String) args.get("name");
         if (name != null && name.isEmpty()) {
@@ -72,7 +72,7 @@ public class SpawnCommand extends AbstractCommand {
 
         var removedAt = Optional.ofNullable(config.getLifespan()).map(lifespan -> LocalDateTime.now().plus(lifespan)).orElse(null);
         try {
-            fakeplayerManager.spawnAsync(
+            manager.spawnAsync(
                             sender,
                             name,
                             spawnpoint,
@@ -85,13 +85,13 @@ public class SpawnCommand extends AbstractCommand {
                         Tasks.run(() -> {
                             Component message;
                             if (removedAt == null) {
-                                message = MINI_MESSAGE.deserialize(
+                                message = miniMessage.deserialize(
                                         "<gray>" + i18n.asString("fakeplayer.command.spawn.success.without-lifespan") + "</gray>",
                                         Placeholder.component("name", text(player.getName(), WHITE)),
                                         Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
                                 );
                             } else {
-                                message = MINI_MESSAGE.deserialize(
+                                message = miniMessage.deserialize(
                                         "<gray>" + i18n.asString("fakeplayer.command.spawn.success.with-lifespan") + "</gray>",
                                         Placeholder.component("name", text(player.getName(), WHITE)),
                                         Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
@@ -100,7 +100,7 @@ public class SpawnCommand extends AbstractCommand {
                             }
                             sender.sendMessage(textOfChildren(message));
 
-                            if (sender instanceof Player p && fakeplayerManager.countByCreator(sender) == 1) {
+                            if (sender instanceof Player p && manager.countByCreator(sender) == 1) {
                                 // 有些命令在有假人的时候才会显示, 因此需要强制刷新一下
                                 p.updateCommands();
                             }

@@ -16,11 +16,22 @@ public interface NMSGamePacketListener {
     @Nullable ReceivedMessage getLastMessage();
 
     /**
-     * 获取最近消息消息
+     * 获取最近消息
      *
      * @return 最近消息
      */
-    @NotNull List<ReceivedMessage> getRecentMessages();
+    default @NotNull List<ReceivedMessage> getRecentMessages() {
+        return getRecentMessages(0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * 获取最近的消息
+     *
+     * @param skip 跳过
+     * @param size 数量
+     * @return 获取最近的消息
+     */
+    @NotNull List<ReceivedMessage> getRecentMessages(int skip, int size);
 
     record ReceivedMessage(
             int id,

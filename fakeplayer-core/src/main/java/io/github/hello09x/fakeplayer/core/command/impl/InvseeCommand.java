@@ -23,7 +23,7 @@ public class InvseeCommand extends AbstractCommand {
         if (!Objects.equals(sender.getLocation().getWorld(), target.getLocation().getWorld())) {
             throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.invsee.error.not-the-same-world"));
         }
-        fakeplayerManager.openInventory(sender, target);
+        manager.openInventory(sender, target);
     }
 
 }
