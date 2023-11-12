@@ -96,7 +96,7 @@ public class FakeplayerManager {
      */
     public @NotNull CompletableFuture<Player> spawnAsync(
             @NotNull CommandSender creator,
-            @NotNull String name,
+            @Nullable String name,
             @NotNull Location spawnAt,
             @Nullable LocalDateTime removeAt
     ) throws MessageException {
@@ -104,7 +104,7 @@ public class FakeplayerManager {
 
         SequenceName sn;
         try {
-            sn = name.isBlank() ? nameManager.register(creator) : nameManager.custom(creator, name);
+            sn = name == null ? nameManager.register(creator) : nameManager.custom(creator, name);
         } catch (IllegalCustomNameException e) {
             throw new MessageException(e.getText());
         }

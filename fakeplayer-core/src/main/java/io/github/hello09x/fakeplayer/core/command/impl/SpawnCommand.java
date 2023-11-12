@@ -50,6 +50,9 @@ public class SpawnCommand extends AbstractCommand {
 
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var name = (String) args.get("name");
+        if (name != null && name.isEmpty()) {
+            name = null;
+        }
         var world = (World) args.get("world");
         var location = (Location) args.get("location");
 
@@ -71,7 +74,7 @@ public class SpawnCommand extends AbstractCommand {
         try {
             fakeplayerManager.spawnAsync(
                             sender,
-                            Optional.ofNullable(name).map(String::trim).orElse(""),
+                            name,
                             spawnpoint,
                             removedAt
                     )
