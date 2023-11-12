@@ -126,7 +126,7 @@ public interface NMSServerPlayer {
      *
      * @param plugin 插件
      */
-    void unpersistAdvancements(@NotNull Plugin plugin);
+    void disableAdvancements(@NotNull Plugin plugin);
 
     /**
      * 从另外一名玩家里复制皮肤

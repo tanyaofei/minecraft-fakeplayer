@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -162,12 +163,12 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     }
 
     @Override
-    public void unpersistAdvancements(@NotNull Plugin plugin) {
+    public void disableAdvancements(@NotNull Plugin plugin) {
         if (ServerPlayer$advancements == null) {
             return;
         }
 
-        var server = new NMSServerImpl(Bukkit.getServer()).getHandle();
+        var server = ((CraftServer) Bukkit.getServer()).getServer();
         try {
             ServerPlayer$advancements.set(
                     handle,

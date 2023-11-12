@@ -102,8 +102,8 @@ public class FakePlayer {
 
         player.setPersistent(config.isPersistData());
         player.setSleepingIgnored(true);
-        handle.setPlayBefore();
-        handle.unpersistAdvancements(Main.getInstance()); // 可避免一些插件的第一次入服欢迎信息
+        handle.setPlayBefore(); // 可避免一些插件的第一次入服欢迎信息
+        handle.disableAdvancements(Main.getInstance()); // 不提示成就信息
 
         var displayName = text(player.getName(), GRAY, ITALIC);
         player.playerListName(displayName);
