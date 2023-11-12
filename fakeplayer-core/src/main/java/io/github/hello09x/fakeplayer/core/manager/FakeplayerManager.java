@@ -495,9 +495,7 @@ public class FakeplayerManager {
             return false;
         }
 
-        if (!openInvDepend.openInventory(creator, target)) {
-            this.openInventoryDefault(creator, target);
-        }
+        this.openInventoryDefault(creator, target);
         creator.playSound(target.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
         return true;
     }
@@ -529,7 +527,7 @@ public class FakeplayerManager {
     private void openInventoryDefault(@NotNull Player player, @NotNull Player target) {
         var view = player.openInventory(target.getInventory());
         if (view != null) {
-            view.setTitle(ConstantPool.UNMODIFIABLE_INVENTORY_TITLE_PREFIX + Components.asString(miniMessage.deserialize(
+            view.setTitle(Components.asString(miniMessage.deserialize(
                     i18n.asString("fakeplayer.manager.inventory.title"),
                     Placeholder.component("name", text(target.getName()))
             )));

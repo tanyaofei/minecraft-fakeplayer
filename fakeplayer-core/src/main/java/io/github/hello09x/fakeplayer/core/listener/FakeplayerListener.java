@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.google.common.base.Throwables;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;

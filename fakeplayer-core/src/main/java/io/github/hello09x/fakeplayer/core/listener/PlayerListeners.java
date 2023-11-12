@@ -1,12 +1,12 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
-import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.DragType;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -45,13 +45,13 @@ public class PlayerListeners implements Listener {
     }
 
     /**
-     * 如果打开背包的行为是默认实现, 则禁止玩家操作背包(因为默认实现有可能导致物品被异常挪到假人的装备栏从而看不到)
+     * 客户端操作假人背包时(将假人的背包物品移动到玩家背包时)的时候，如果是拖拽的, 会被处理成放置到假人的盔甲栏上
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onClickFakePlayerInventory(@NotNull InventoryClickEvent event) {
+    public void onDropFakePlayerInventory(@NotNull InventoryDragEvent event) {
         var top = event.getView().getTopInventory();
-        if (top.getType() == InventoryType.PLAYER && (top.getHolder() instanceof Player player && manager.isFake(player))) {
-            if (event.getView().getTitle().startsWith(ConstantPool.UNMODIFIABLE_INVENTORY_TITLE_PREFIX)) {
+        if (top.getType() == InventoryType.PLAYER && top.getHolder() instanceof Player player && manager.isFake(player)) {
+            if (event.getInventorySlots().stream().anyMatch(slot -> slot > 35)) {   // > 35 表示从假人背包移动到玩家背包
                 event.setCancelled(true);
             }
         }
