@@ -28,18 +28,6 @@ public class SneakCommand extends AbstractCommand {
                 .orElse(!target.isSneaking());
 
         target.setSneaking(sneaking);
-
-        if (sneaking) {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.sneak.enabled") + "</gray>",
-                    Placeholder.component("name", text(target.getName(), WHITE))
-            ));
-        } else {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.sneak.disabled") + "</gray>",
-                    Placeholder.component("name", text(target.getName(), WHITE))
-            ));
-        }
     }
 
 }
