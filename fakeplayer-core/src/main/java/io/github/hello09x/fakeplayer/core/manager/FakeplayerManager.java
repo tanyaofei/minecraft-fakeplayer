@@ -5,6 +5,7 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener.ReceivedMessage;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -51,8 +52,6 @@ public class FakeplayerManager {
     public final static FakeplayerManager instance = new FakeplayerManager();
 
     private final static Logger log = Main.getInstance().getLogger();
-
-    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
 
     private final FakeplayerConfig config = FakeplayerConfig.instance;
 
