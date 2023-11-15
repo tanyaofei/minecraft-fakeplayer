@@ -44,6 +44,7 @@ public class PlayerListeners implements Listener {
         manager.openInventory(event.getPlayer(), target);
     }
 
+
     /**
      * 客户端操作假人背包时(将假人的背包物品移动到玩家背包时)的时候，如果是拖拽的, 会被处理成放置到假人的盔甲栏上
      */
@@ -51,7 +52,7 @@ public class PlayerListeners implements Listener {
     public void onDropFakePlayerInventory(@NotNull InventoryDragEvent event) {
         var top = event.getView().getTopInventory();
         if (top.getType() == InventoryType.PLAYER && top.getHolder() instanceof Player player && manager.isFake(player)) {
-            if (event.getInventorySlots().stream().anyMatch(slot -> slot > 35)) {   // > 35 表示从假人背包移动到玩家背包
+            if (event.getNewItems().keySet().stream().anyMatch(slot -> slot > 35)) {   // > 35 表示从假人背包移动到玩家背包
                 event.setCancelled(true);
             }
         }

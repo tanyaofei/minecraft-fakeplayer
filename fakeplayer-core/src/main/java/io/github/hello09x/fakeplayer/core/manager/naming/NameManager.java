@@ -38,7 +38,7 @@ public class NameManager {
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final Map<String, NameSource> nameSources = new HashMap<>();
-    private final I18n i18n = Main.i18n();
+    private final I18n i18n = Main.getI18n();
 
     private final String serverId;
 

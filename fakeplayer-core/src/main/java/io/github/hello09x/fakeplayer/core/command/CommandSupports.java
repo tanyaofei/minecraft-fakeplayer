@@ -35,7 +35,7 @@ public abstract class CommandSupports {
 
     private final static FakeplayerConfig config = FakeplayerConfig.instance;
 
-    private final static I18n i18n = Main.i18n();
+    private final static I18n i18n = Main.getI18n();
 
     public static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
         return new CommandAPICommand[]{

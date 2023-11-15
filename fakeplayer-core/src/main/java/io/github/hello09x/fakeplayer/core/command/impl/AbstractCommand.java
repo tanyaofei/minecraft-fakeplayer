@@ -25,7 +25,7 @@ public abstract class AbstractCommand {
     protected final FakeplayerConfig config = FakeplayerConfig.instance;
     protected final MiniMessage miniMessage = MiniMessage.miniMessage();
     protected final NMSBridge bridge = Main.getBridge();
-    protected final I18n i18n = Main.i18n();
+    protected final I18n i18n = Main.getI18n();
     protected final static Logger log = Main.getInstance().getLogger();
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {

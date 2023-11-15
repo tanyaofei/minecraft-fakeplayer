@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl implements NMSGamePacketListener {
 
     private final LinkedList<ReceivedMessage> messages = new LinkedList<>();
-    private final MutableInt messageId = new MutableInt();
+    private int messageId = 0;
 
     public EmptyServerGamePacketListener(
             @NotNull MinecraftServer server,
@@ -51,7 +51,7 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
             return;
         }
 
-        this.messages.addLast(new ReceivedMessage(messageId.incrementAndGet(), content));
+        this.messages.addLast(new ReceivedMessage(++messageId, content));
     }
 
     @Override

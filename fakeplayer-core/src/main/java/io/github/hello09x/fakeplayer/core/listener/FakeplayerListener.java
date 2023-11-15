@@ -1,6 +1,5 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
-import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.google.common.base.Throwables;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -34,7 +33,7 @@ public class FakeplayerListener implements Listener {
     private final FakeplayerConfig config = FakeplayerConfig.instance;
     private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
 
-    private final I18n i18n = Main.i18n();
+    private final I18n i18n = Main.getI18n();
 
     /**
      * 拒绝假人用过的 ID 上线
@@ -57,7 +56,10 @@ public class FakeplayerListener implements Listener {
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)
             ));
-            log.info("玩家 %s '%s' 被假人使用过, 拒绝连接服务器".formatted(event.getName(), event.getUniqueId()));
+            log.info("%s(%s) was refused to login cause his UUID was used by fake player".formatted(
+                    event.getName(),
+                    event.getUniqueId()
+            ));
         }
     }
 

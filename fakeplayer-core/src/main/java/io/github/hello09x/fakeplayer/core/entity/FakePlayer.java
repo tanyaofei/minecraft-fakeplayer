@@ -48,7 +48,7 @@ public class FakePlayer {
 
     private final static MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    private final static I18n i18n = Main.i18n();
+    private final static I18n i18n = Main.getI18n();
 
     @NotNull
     @Getter

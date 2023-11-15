@@ -10,7 +10,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +23,7 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
     @NotNull
     private final LinkedList<ReceivedMessage> messages = new LinkedList<>();
 
-    @NotNull
-    private final MutableInt messageId = new MutableInt();
+    private int messageId = 0;
 
     public EmptyServerGamePacketListener(
             @NotNull MinecraftServer server,
@@ -56,7 +54,7 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
             return;
         }
 
-        this.messages.addLast(new ReceivedMessage(messageId.incrementAndGet(), content));
+        this.messages.addLast(new ReceivedMessage(++messageId, content));
     }
 
     @Override

@@ -3,10 +3,8 @@ package io.github.hello09x.fakeplayer.core.manager;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
-import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener.ReceivedMessage;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -14,17 +12,16 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
+import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
-import io.github.hello09x.fakeplayer.core.softdepend.OpenInvDepend;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -67,9 +64,9 @@ public class FakeplayerManager {
 
     private final UserConfigManager configManager = UserConfigManager.instance;
 
-    private final I18n i18n = Main.i18n();
+    private final I18n i18n = Main.getI18n();
 
-    private final OpenInvDepend openInvDepend = OpenInvDepend.instance;
+    private final Invsee invsee = Invsee.getInstance();
 
     private FakeplayerManager() {
         var timer = Executors.newSingleThreadScheduledExecutor();
@@ -345,7 +342,7 @@ public class FakeplayerManager {
     /**
      * 设置假人是否自动填装
      *
-     * @param target     假人
+     * @param target    假人
      * @param replenish 是否自动补货
      */
     public void setReplenish(@NotNull Player target, boolean replenish) {
@@ -486,6 +483,13 @@ public class FakeplayerManager {
         }
     }
 
+    /**
+     * 让玩家打开假人背包
+     *
+     * @param creator 玩家
+     * @param target  假人
+     * @return 是否打开成功
+     */
     public boolean openInventory(@NotNull Player creator, @NotNull Player target) {
         var fp = this.playerList.getByName(target.getName());
         if (fp == null) {
@@ -495,7 +499,7 @@ public class FakeplayerManager {
             return false;
         }
 
-        this.openInventoryDefault(creator, target);
+        invsee.openInventory(creator, target);
         creator.playSound(target.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
         return true;
     }
@@ -524,14 +528,5 @@ public class FakeplayerManager {
         }
     }
 
-    private void openInventoryDefault(@NotNull Player player, @NotNull Player target) {
-        var view = player.openInventory(target.getInventory());
-        if (view != null) {
-            view.setTitle(Components.asString(miniMessage.deserialize(
-                    i18n.asString("fakeplayer.manager.inventory.title"),
-                    Placeholder.component("name", text(target.getName()))
-            )));
-        }
-    }
 
 }

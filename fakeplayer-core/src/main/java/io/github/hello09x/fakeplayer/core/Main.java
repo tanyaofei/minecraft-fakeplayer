@@ -104,7 +104,7 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
         return getClassLoader();
     }
 
-    public static @NotNull I18n i18n() {
+    public static @NotNull I18n getI18n() {
         return instance.i18n;
     }
 
