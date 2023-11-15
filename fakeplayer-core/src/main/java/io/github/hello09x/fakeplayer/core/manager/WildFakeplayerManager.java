@@ -29,9 +29,10 @@ public class WildFakeplayerManager implements PluginMessageListener {
     private final Set<String> bungeePlayers = new HashSet<>();
     private final static String CHANNEL = "BungeeCord";
     private final static String SUB_CHANNEL = "PlayerList";
+    private final static boolean IS_BUNGEE_CORD = Bukkit.getServer().spigot().getSpigotConfig().getBoolean("settings.bungeecord", false);
 
     public WildFakeplayerManager() {
-        timer.scheduleAtFixedRate(this::preCleanup, 0, 5, TimeUnit.SECONDS);
+        timer.scheduleAtFixedRate(this::cleanup, 0, 5, TimeUnit.SECONDS);
         Main.getInstance().registerOnDisable(timer::shutdown);
     }
 
@@ -60,10 +61,10 @@ public class WildFakeplayerManager implements PluginMessageListener {
             this.bungeePlayers.addAll(Arrays.asList(in.readUTF().split(", ")));
         }
 
-        this.cleanup();
+        this.cleanup0();
     }
 
-    public void cleanup() {
+    public void cleanup0() {
         @SuppressWarnings("all")
         var group = manager.getAll()
                 .stream()
@@ -89,16 +90,24 @@ public class WildFakeplayerManager implements PluginMessageListener {
         }
     }
 
-    public void preCleanup() {
+    /**
+     * 清理召唤者下线的假人
+     *
+     * @see #onPluginMessageReceived(String, Player, byte[]) 如果是 BungeeCord 服务器则执行这个方法时才清理
+     */
+    public void cleanup() {
         if (!config.isFollowQuiting()) {
             return;
         }
 
-        if (!Bukkit.getServer().spigot().getSpigotConfig().getBoolean("settings.bungeecord", false)) {
-            cleanup();
+        // 非 bungeeCord 服务器立即清理
+        if (!IS_BUNGEE_CORD) {
+            this.cleanup0();
             return;
         }
 
+        // BungeeCord 服务器请求获取所有服务器在线玩家后
+        // 在接收到在线列表后再进行清理
         var recipient = Bukkit
                 .getServer()
                 .getOnlinePlayers()
