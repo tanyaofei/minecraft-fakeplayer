@@ -112,7 +112,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
                 .getServer()
                 .getOnlinePlayers()
                 .stream()
-                .filter(p -> !manager.isFake(p))
+                .filter(manager::isNotFake)
                 .findAny()
                 .orElse(null);
 

@@ -5,7 +5,6 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
 import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener.ReceivedMessage;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -22,7 +21,6 @@ import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -316,6 +314,16 @@ public class FakeplayerManager {
     }
 
     /**
+     * 判断一名玩家不是假人
+     *
+     * @param target 玩家
+     * @return 是否不是假人
+     */
+    public boolean isNotFake(@NotNull Player target) {
+        return playerList.getByUUID(target.getUniqueId()) == null;
+    }
+
+    /**
      * 获取 IP 地址创建着多少个假人
      *
      * @param address IP 地址
@@ -440,7 +448,7 @@ public class FakeplayerManager {
         if (commands.isEmpty()) {
             return;
         }
-        if (!isFake(target)) {
+        if (this.isNotFake(target)) {
             return;
         }
 
@@ -462,7 +470,7 @@ public class FakeplayerManager {
             return;
         }
 
-        if (!isFake(player)) {
+        if (this.isNotFake(player)) {
             return;
         }
 

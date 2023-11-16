@@ -12,14 +12,12 @@ import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -37,10 +35,9 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
             @NotNull ServerPlayer player
     ) {
         super(server, connection, player);
-        var bp = Bukkit.getPlayer(player.getUUID());
-        if (bp != null) {
-            ((CraftPlayer) bp).addChannel("bungeecord:main");
-        }
+        Optional.ofNullable(Bukkit.getPlayer(player.getUUID()))
+                .map(CraftPlayer.class::cast)
+                .ifPresent(p -> p.addChannel(StandardMessenger.validateAndCorrectChannel(BUNGEE_CORD_CHANNEL)));
     }
 
     @Override
@@ -55,6 +52,11 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
     }
 
     private void handleCustomPayloadPacket(@NotNull ClientboundCustomPayloadPacket packet) {
+        var channel = StandardMessenger.validateAndCorrectChannel(packet.getIdentifier().getNamespace() + ":" + packet.getIdentifier().getPath());
+        if (!channel.equals(BUNGEE_CORD_CHANNEL)) {
+            return;
+        }
+
         var recipient = Bukkit
                 .getOnlinePlayers()
                 .stream()
@@ -65,7 +67,6 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
             return;
         }
 
-        var channel = StandardMessenger.validateAndCorrectChannel(packet.getIdentifier().getNamespace() + ":" + packet.getIdentifier().getPath());
         var message = packet.getData().array();
         recipient.sendPluginMessage(Main.getInstance(), channel, message);
     }

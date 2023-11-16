@@ -10,6 +10,8 @@ public interface NMSGamePacketListener {
 
     int MESSAGE_HISTORY_SIZE = 50;
 
+    static String BUNGEE_CORD_CHANNEL = "BungeeCord";
+
     /**
      * @return 获取最后一条消息
      */
