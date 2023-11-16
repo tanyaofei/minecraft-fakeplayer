@@ -69,7 +69,7 @@ public abstract class CommandSupports {
                 target = null;
             }
             return target;
-        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
+        }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
             var sender = info.sender();
             var arg = info.currentArg();
 
@@ -83,7 +83,7 @@ public abstract class CommandSupports {
             }
 
             return names.toArray(String[]::new);
-        })));
+        }));
     }
 
 
@@ -105,7 +105,7 @@ public abstract class CommandSupports {
                     : manager.get(sender, arg);
 
             return target == null ? Collections.emptyList() : Collections.singletonList(target);
-        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
+        }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
             var sender = info.sender();
             var arg = info.currentArg().toLowerCase();
 
@@ -119,7 +119,7 @@ public abstract class CommandSupports {
             }
 
             return names.toArray(String[]::new);
-        })));
+        }));
     }
 
     public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {

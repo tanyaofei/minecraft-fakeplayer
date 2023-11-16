@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
@@ -23,10 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StatusCommand extends AbstractCommand {
@@ -112,7 +113,7 @@ public class StatusCommand extends AbstractCommand {
                         Placeholder.component("points", text(points, DARK_GREEN))
                 ),
                 space(),
-                i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(ClickEvent.runCommand("/fp expme " + target.getName()))
+                i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
         );
     }
 
@@ -131,9 +132,9 @@ public class StatusCommand extends AbstractCommand {
                         if (option.equals(status)) {
                             return text("[" + option + "]", GREEN);
                         } else {
-                            return text("[" + option + "]", GRAY).clickEvent(suggestCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName())));
+                            return text("[" + option + "]", GRAY, UNDERLINED).clickEvent(runCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName())));
                         }
-                    }).toList())
+                    }).collect(Collectors.toList()))
             ));
         }
         return join(JoinConfiguration.newlines(), messages);
