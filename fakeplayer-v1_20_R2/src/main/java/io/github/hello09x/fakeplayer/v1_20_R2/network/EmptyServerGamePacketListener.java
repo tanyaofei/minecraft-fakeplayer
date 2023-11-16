@@ -82,7 +82,7 @@ public class EmptyServerGamePacketListener extends ServerGamePacketListenerImpl 
         var recipient = Bukkit
                 .getOnlinePlayers()
                 .stream()
-                .filter(p -> !manager.isFake(p))
+                .filter(manager::isNotFake)
                 .findAny()
                 .orElse(null);
         if (recipient == null) {

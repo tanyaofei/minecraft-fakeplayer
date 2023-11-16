@@ -69,7 +69,7 @@ public class FakeplayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onDead(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
-        if (!manager.isFake(player)) {
+        if (manager.isNotFake(player)) {
             return;
         }
         if (!config.isKickOnDead()) {
@@ -91,7 +91,7 @@ public class FakeplayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onQuit(@NotNull PlayerQuitEvent event) {
         var target = event.getPlayer();
-        if (!manager.isFake(target)) {
+        if (manager.isNotFake(target)) {
             return;
         }
 
