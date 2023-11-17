@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -44,8 +44,8 @@ public class ConfigCommand extends AbstractCommand {
 
         var value = Objects.requireNonNull(args.get("value"));
         configManager.setConfig(sender, config, value);
-        sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.config.set.success") + "</gray>",
+        sender.sendMessage(i18n.translate(
+                "fakeplayer.command.config.set.success", GRAY,
                 Placeholder.component("config", i18n.translate(config.translationKey(), GOLD)),
                 Placeholder.component("value", text(value.toString(), WHITE))
         ));
@@ -66,7 +66,7 @@ public class ConfigCommand extends AbstractCommand {
                             if (option.equals(value)) {
                                 return text("[" + option + "]", GREEN, TextDecoration.UNDERLINED);
                             } else {
-                                return text("[" + option + "]", WHITE).clickEvent(suggestCommand("/fp config set " + config.key() + " " + option));
+                                return text("[" + option + "]", WHITE).clickEvent(runCommand("/fp config set " + config.key() + " " + option));
                             }
                         }).toList())
                 );

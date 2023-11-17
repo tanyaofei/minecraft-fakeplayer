@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,17 +39,18 @@ public class ActionCommand extends AbstractCommand {
         var target = super.getTarget(sender, args);
         actionManager.setAction(target, action, setting);
 
-        String baseline;
+        String translationKey;
         if (setting.equals(ActionSetting.stop())) {
-            baseline = i18n.asString("fakeplayer.command.action.stop");
+            translationKey = "fakeplayer.command.action.stop";
         } else if (setting.equals(ActionSetting.once())) {
-            baseline = i18n.asString("fakeplayer.command.action.once");
+            translationKey = "fakeplayer.command.action.once";
         } else {
-            baseline = i18n.asString("fakeplayer.command.action.continuous");
+            translationKey = "fakeplayer.command.action.continuous";
         }
 
-        sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + baseline + "</gray>",
+        sender.sendMessage(i18n.translate(
+                translationKey,
+                GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("action", i18n.translate(action, WHITE))
         ));

@@ -8,7 +8,6 @@ import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,6 @@ public abstract class AbstractCommand {
 
     protected final FakeplayerManager manager = FakeplayerManager.instance;
     protected final FakeplayerConfig config = FakeplayerConfig.instance;
-    protected final MiniMessage miniMessage = MiniMessage.miniMessage();
     protected final NMSBridge bridge = Main.getBridge();
     protected final I18n i18n = Main.getI18n();
     protected final static Logger log = Main.getInstance().getLogger();

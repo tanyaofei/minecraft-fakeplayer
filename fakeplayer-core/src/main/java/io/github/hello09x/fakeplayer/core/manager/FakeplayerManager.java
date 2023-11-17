@@ -21,7 +21,6 @@ import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -33,7 +32,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -51,8 +49,6 @@ public class FakeplayerManager {
     public final static FakeplayerManager instance = new FakeplayerManager();
 
     private final static Logger log = Main.getInstance().getLogger();
-
-    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
 
     private final FakeplayerConfig config = FakeplayerConfig.instance;
 
@@ -95,7 +91,7 @@ public class FakeplayerManager {
             @NotNull CommandSender creator,
             @Nullable String name,
             @NotNull Location spawnAt,
-            @Nullable LocalDateTime removeAt
+            long lifespan
     ) throws MessageException {
         this.checkLimit(creator);
 
@@ -103,16 +99,16 @@ public class FakeplayerManager {
         try {
             sn = name == null ? nameManager.register(creator) : nameManager.custom(creator, name);
         } catch (IllegalCustomNameException e) {
-            throw new MessageException(e.getText());
+            throw new MessageException(e.getMessage());
         }
 
         var fp = new FakePlayer(
                 creator,
                 AddressUtils.getAddress(creator),
                 sn,
-                removeAt
+                lifespan
         );
-        var target = fp.getPlayer();
+        var target = fp.getPlayer();    // 即使出现移除也不需要处理这个玩家, Bukkit 自行清除
 
         return CompletableFuture
                 .supplyAsync(() -> {
@@ -129,16 +125,17 @@ public class FakeplayerManager {
                 })
                 .thenCompose(fp::spawnAsync)
                 .thenRunAsync(() -> {
-                    Tasks.run(() -> {
+                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                         playerList.add(fp);
                         usedIdRepository.add(target.getUniqueId());
-                    }, Main.getInstance());
+                    });
 
-                    Tasks.run(() -> {
+                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                         FakeplayerManager.this.dispatchCommands(target, config.getPreparingCommands());
                         FakeplayerManager.this.performCommands(target, config.getSelfCommands());
-                    }, Main.getInstance(), 20);
-                }).thenApply(ignored -> target);
+                    }, 20);
+                })
+                .thenApply(ignored -> target);
     }
 
     /**
@@ -317,6 +314,16 @@ public class FakeplayerManager {
     }
 
     /**
+     * 判断一名玩家不是假人
+     *
+     * @param target 玩家
+     * @return 是否不是假人
+     */
+    public boolean isNotFake(@NotNull Player target) {
+        return playerList.getByUUID(target.getUniqueId()) == null;
+    }
+
+    /**
      * 获取 IP 地址创建着多少个假人
      *
      * @param address IP 地址
@@ -413,6 +420,12 @@ public class FakeplayerManager {
         return target;
     }
 
+    /**
+     * 获取假人最后一条消息
+     *
+     * @param target 假人
+     * @return 最后一条消息
+     */
     public @Nullable ReceivedMessage getLastMessage(@NotNull Player target) {
         return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getConnection)
@@ -420,6 +433,15 @@ public class FakeplayerManager {
                 .orElse(null);
     }
 
+    /**
+     * 获取假人所有消息
+     * <p>所有消息并不意味着加入游戏以来的所有消息，假人暂存的消息取决于 {@link NMSGamePacketListener#MESSAGE_HISTORY_SIZE}</p>
+     *
+     * @param target 假人
+     * @param skip   跳过多少条
+     * @param size   最多获取多少条
+     * @return 所有消息
+     */
     public @NotNull List<ReceivedMessage> getMessages(@NotNull Player target, int skip, int size) {
         return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getConnection)
@@ -441,7 +463,7 @@ public class FakeplayerManager {
         if (commands.isEmpty()) {
             return;
         }
-        if (!isFake(target)) {
+        if (this.isNotFake(target)) {
             return;
         }
 
@@ -463,7 +485,7 @@ public class FakeplayerManager {
             return;
         }
 
-        if (!isFake(player)) {
+        if (this.isNotFake(player)) {
             return;
         }
 
@@ -478,7 +500,7 @@ public class FakeplayerManager {
             if (!server.dispatchCommand(sender, cmd)) {
                 log.warning("Failed to execute command for %s: ".formatted(player.getName()) + cmd);
             } else {
-                log.info("dispatched command: " + cmd);
+                log.info("Dispatched command: " + cmd);
             }
         }
     }

@@ -11,8 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GREEN;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExpmeCommand extends AbstractCommand {
@@ -25,17 +24,18 @@ public class ExpmeCommand extends AbstractCommand {
         var exp = Experiences.getExp(target);
 
         if (exp == 0) {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.expme.error.non-experience") + "</gray>",
-                    Placeholder.component("name", text(target.getName(), WHITE))
-            ));
+            sender.sendMessage(i18n.translate(
+                    "fakeplayer.command.expme.error.non-experience",
+                    GRAY,
+                    Placeholder.component("name", text(target.getName(), WHITE)))
+            );
             return;
         }
 
         Experiences.clean(target);
         sender.giveExp(exp, false);
-        sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.expme.success") + "</gray>",
+        sender.sendMessage(i18n.translate(
+                "fakeplayer.command.expme.success", GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("experience", text(exp, DARK_GREEN))
         ));

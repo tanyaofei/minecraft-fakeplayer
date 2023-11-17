@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.core.constant;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 

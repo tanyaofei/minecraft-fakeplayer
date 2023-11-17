@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.core.manager.naming.exception;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 

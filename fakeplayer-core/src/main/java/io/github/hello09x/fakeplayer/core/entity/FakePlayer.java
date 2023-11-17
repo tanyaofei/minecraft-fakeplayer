@@ -16,7 +16,6 @@ import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import io.github.hello09x.fakeplayer.core.util.Teleportor;
 import io.github.hello09x.fakeplayer.core.util.Worlds;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,28 +24,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.net.InetAddress;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
 public class FakePlayer {
 
-    private final static Logger log = Main.getInstance().getLogger();
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
     private final FakeplayerConfig config = FakeplayerConfig.instance;
-
-    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
 
     private final static I18n i18n = Main.getI18n();
 
@@ -84,11 +76,17 @@ public class FakePlayer {
     @Getter
     private NMSGamePacketListener connection;
 
+    /**
+     * @param creator      创建者
+     * @param creatorIp    创建者 IP
+     * @param sequenceName 序列名
+     * @param lifespan     存活时间
+     */
     public FakePlayer(
             @NotNull CommandSender creator,
             @NotNull String creatorIp,
             @NotNull SequenceName sequenceName,
-            @Nullable LocalDateTime removeAt
+            long lifespan
     ) {
         this.name = sequenceName.name();
         this.uuid = sequenceName.uuid();
@@ -98,7 +96,7 @@ public class FakePlayer {
         this.sequenceName = sequenceName;
         this.handle = Main.getBridge().server(Bukkit.getServer()).newPlayer(uuid, name);
         this.player = handle.getPlayer();
-        this.ticker = new FakeplayerTicker(this, removeAt);
+        this.ticker = new FakeplayerTicker(this, lifespan);
 
         player.setPersistent(config.isPersistData());
         player.setSleepingIgnored(true);
@@ -121,23 +119,23 @@ public class FakePlayer {
                 Tasks.joinAsync(() -> {
                     var event = this.preLogin(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(miniMessage.deserialize(
-                                "<red>" + i18n.asString("fakeplayer.command.spawn.error.prelogin-failed") + "</red>",
+                        throw new MessageException(i18n.translate(
+                                "fakeplayer.command.spawn.error.prelogin-failed", RED,
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
                     }
                 }, Main.getInstance());
             } catch (Throwable e) {
-                throw MessageException.tryCast(e);
+                throw new IllegalStateException(e);
             }
 
             try {
                 Tasks.join(() -> {
                     var event = this.login(address);
                     if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(miniMessage.deserialize(
-                                "<red>" + i18n.asString("fakeplayer.command.spawn.error.login-failed") + "</red>",
+                        throw new MessageException(i18n.translate(
+                                "fakeplayer.command.spawn.error.login-failed", RED,
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
@@ -166,7 +164,7 @@ public class FakePlayer {
                     var network = Main.getBridge().network();
                     network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
                     this.connection = network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
-                    handle.configClientOptions();   // 处理皮肤设置问题
+                    handle.setupClientOptions();   // 处理皮肤设置问题
 
                     var spawnAt = option.spawnAt().clone();
                     if (Worlds.isOverworld(spawnAt.getWorld())) {
@@ -179,7 +177,7 @@ public class FakePlayer {
                     ticker.runTaskTimer(Main.getInstance(), 0, 1);
                 }, Main.getInstance());
             } catch (Throwable e) {
-                throw MessageException.tryCast(e);
+                throw new IllegalStateException(e);
             }
         });
     }
@@ -192,8 +190,8 @@ public class FakePlayer {
     private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
         var world = Worlds.getNonOverworld();
         if (world == null || !player.teleport(world.getSpawnLocation())) {
-            this.creator.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.spawn.error.no-mob-spawning-ability") + "</gray>",
+            this.creator.sendMessage(i18n.translate(
+                    "fakeplayer.command.spawn.error.no-mob-spawning-ability", GRAY,
                     Placeholder.component("name", text(player.getName(), WHITE))
             ));
             return;
@@ -204,8 +202,8 @@ public class FakePlayer {
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
         if (!Teleportor.teleportAndSound(player, spawnpoint)) {
-            this.creator.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.spawn.error.teleport-failed") + "/<gray>",
+            this.creator.sendMessage(i18n.translate(
+                    "fakeplayer.command.spawn.error.teleport-failed", GRAY,
                     Placeholder.component("name", text(player.getName(), WHITE))
             ));
         }

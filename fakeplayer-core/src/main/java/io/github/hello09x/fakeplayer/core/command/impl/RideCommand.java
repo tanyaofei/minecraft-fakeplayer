@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -77,8 +78,8 @@ public class RideCommand extends AbstractCommand {
 
         var distance = target.getLocation().distance(sender.getLocation());
         if (distance > Bukkit.getViewDistance()) {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.ride.me.error.too-far") + "</gray>",
+            sender.sendMessage(i18n.translate(
+                    "fakeplayer.command.ride.me.error.too-far", GRAY,
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;

@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
@@ -23,10 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StatusCommand extends AbstractCommand {
@@ -54,8 +55,8 @@ public class StatusCommand extends AbstractCommand {
 
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
-        var title = miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.status.title") + "</gray>",
+        var title = i18n.translate(
+                "fakeplayer.command.status.title", GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE))
         );
 
@@ -75,8 +76,8 @@ public class StatusCommand extends AbstractCommand {
     private @NotNull Component getFoodLine(@NotNull Player target) {
         var food = target.getFoodLevel();
         var max = 20.0;
-        return miniMessage.deserialize(
-                "<white>" + i18n.asString("fakeplayer.command.status.food") + "</white>",
+        return i18n.translate(
+                "fakeplayer.command.status.food", GRAY,
                 Placeholder.component("food", textOfChildren(
                         text(Mth.floor(food, 0.5), color(food, max)),
                         text("/", GRAY),
@@ -91,8 +92,8 @@ public class StatusCommand extends AbstractCommand {
                 .map(AttributeInstance::getValue)
                 .orElse(20D);
 
-        return miniMessage.deserialize(
-                "<white>" + i18n.asString("fakeplayer.command.status.health") + "</white>",
+        return i18n.translate(
+                "fakeplayer.command.status.health", WHITE,
                 Placeholder.component("health", textOfChildren(
                         text(Mth.floor(health, 0.5), color(health, max)),
                         text("/", GRAY),
@@ -106,13 +107,13 @@ public class StatusCommand extends AbstractCommand {
         var points = Experiences.getExp(target);
 
         return textOfChildren(
-                miniMessage.deserialize(
-                        "<white>" + i18n.asString("fakeplayer.command.status.exp") + "</white>",
+                i18n.translate(
+                        "fakeplayer.command.status.exp", WHITE,
                         Placeholder.component("level", text(level, DARK_GREEN)),
                         Placeholder.component("points", text(points, DARK_GREEN))
                 ),
                 space(),
-                i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(ClickEvent.runCommand("/fp expme " + target.getName()))
+                i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
         );
     }
 
@@ -131,9 +132,9 @@ public class StatusCommand extends AbstractCommand {
                         if (option.equals(status)) {
                             return text("[" + option + "]", GREEN);
                         } else {
-                            return text("[" + option + "]", GRAY).clickEvent(suggestCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName())));
+                            return text("[" + option + "]", GRAY, UNDERLINED).clickEvent(runCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName())));
                         }
-                    }).toList())
+                    }).collect(Collectors.toList()))
             ));
         }
         return join(JoinConfiguration.newlines(), messages);

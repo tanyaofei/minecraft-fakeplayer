@@ -5,16 +5,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 public class FakeplayerTicker extends BukkitRunnable {
+
+    public final static long NO_REMOVE_AT = -1;
 
     @NotNull
     private final FakePlayer player;
@@ -29,10 +23,10 @@ public class FakeplayerTicker extends BukkitRunnable {
 
     public FakeplayerTicker(
             @NotNull FakePlayer player,
-            @Nullable LocalDateTime removeAt
+            long lifespan
     ) {
         this.player = player;
-        this.removeAt = removeAt == null ? 0 : removeAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        this.removeAt = lifespan > 0 ? System.currentTimeMillis() + lifespan : NO_REMOVE_AT;
     }
 
     @Override
@@ -42,15 +36,8 @@ public class FakeplayerTicker extends BukkitRunnable {
             return;
         }
 
-        if (removeAt != 0 && player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
+        if (removeAt != NO_REMOVE_AT && player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
             manager.remove(player.getName(), "lifespan ends");
-            player.getCreator().sendMessage(
-                   textOfChildren(
-                            text("假人 ", GRAY),
-                            text(this.player.getName()),
-                            text(" 存活时间到期, 已移除", GRAY)
-                    )
-            );
             super.cancel();
             return;
         }
@@ -68,10 +55,11 @@ public class FakeplayerTicker extends BukkitRunnable {
             handle.setXo(x);
             handle.setYo(y);
             handle.setZo(z);
+
             handle.doTick();
 
             // clearFog 插件会在第一次传送的时候改变了玩家的位置, 因此必须进行一次传送
-            getBukkitPlayer().teleport(new Location(getBukkitPlayer().getWorld(), x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch()));
+            player.teleport(new Location(player.getWorld(), x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch()));
             handle.absMoveTo(x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
             // endregion
         } else {

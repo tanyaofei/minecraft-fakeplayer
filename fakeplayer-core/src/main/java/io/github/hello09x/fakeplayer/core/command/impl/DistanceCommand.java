@@ -30,8 +30,8 @@ public class DistanceCommand extends AbstractCommand {
         var to = sender.getLocation().toBlockLocation();
 
         if (!Objects.equals(from.getWorld(), to.getWorld())) {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.distance.error.too-far") + "</gray>",
+            sender.sendMessage(i18n.translate(
+                    "fakeplayer.command.distance.error.too-far", GRAY,
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;
@@ -43,8 +43,8 @@ public class DistanceCommand extends AbstractCommand {
         var z = Math.abs(from.getBlockZ() - to.getBlockZ());
 
         sender.sendMessage(textOfChildren(
-                miniMessage.deserialize(
-                        "<gray>" + i18n.asString("fakeplayer.command.distance.title") + "</gray>",
+                i18n.translate(
+                        "fakeplayer.command.distance.title", GRAY,
                         Placeholder.component("name", text(target.getName(), WHITE))
                 ),
                 newline(),
