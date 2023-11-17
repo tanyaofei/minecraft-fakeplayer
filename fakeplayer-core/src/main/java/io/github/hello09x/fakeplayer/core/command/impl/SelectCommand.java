@@ -19,8 +19,8 @@ public class SelectCommand extends AbstractCommand {
         if (target == null) {
             sender.sendMessage(i18n.translate("fakeplayer.command.select.success.clear", GRAY));
         } else {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.select.success.selected") + "</gray>",
+            sender.sendMessage(i18n.translate(
+                    "fakeplayer.command.select.success.selected", GRAY,
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
         }
@@ -31,8 +31,8 @@ public class SelectCommand extends AbstractCommand {
         if (selection == null) {
             sender.sendMessage(i18n.translate("fakeplayer.command.selection.error.none", GRAY));
         } else {
-            sender.sendMessage(miniMessage.deserialize(
-                    "<gray>" + i18n.asString("fakeplayer.command.selection.success") + "</gray>",
+            sender.sendMessage(i18n.translate(
+                    "fakeplayer.command.selection.success", GRAY,
                     Placeholder.component("name", text(selection.getName(), WHITE))
             ));
         }

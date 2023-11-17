@@ -12,8 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SetCommand extends AbstractCommand {
@@ -28,8 +27,8 @@ public class SetCommand extends AbstractCommand {
         var value = Objects.requireNonNull(args.get("value"));
 
         config.configurer().accept(target, value);
-        sender.sendMessage(miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.set.success") + "</gray>",
+        sender.sendMessage(i18n.translate(
+                "fakeplayer.command.set.success", GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE)),
                 Placeholder.component("config", i18n.translate(config, GOLD)),
                 Placeholder.component("value", text(value.toString(), WHITE))

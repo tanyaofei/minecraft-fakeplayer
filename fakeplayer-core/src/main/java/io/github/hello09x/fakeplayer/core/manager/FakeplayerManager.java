@@ -32,9 +32,9 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -92,7 +92,7 @@ public class FakeplayerManager {
             @NotNull CommandSender creator,
             @Nullable String name,
             @NotNull Location spawnAt,
-            @Nullable LocalDateTime removeAt
+            long lifespan
     ) throws MessageException {
         this.checkLimit(creator);
 
@@ -100,16 +100,16 @@ public class FakeplayerManager {
         try {
             sn = name == null ? nameManager.register(creator) : nameManager.custom(creator, name);
         } catch (IllegalCustomNameException e) {
-            throw new MessageException(e.getText());
+            throw new MessageException(e.getMessage());
         }
 
         var fp = new FakePlayer(
                 creator,
                 AddressUtils.getAddress(creator),
                 sn,
-                removeAt
+                lifespan
         );
-        var target = fp.getPlayer();
+        var target = fp.getPlayer();    // 即使出现移除也不需要处理这个玩家, Bukkit 自行清除
 
         return CompletableFuture
                 .supplyAsync(() -> {
@@ -126,16 +126,17 @@ public class FakeplayerManager {
                 })
                 .thenCompose(fp::spawnAsync)
                 .thenRunAsync(() -> {
-                    Tasks.run(() -> {
+                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                         playerList.add(fp);
                         usedIdRepository.add(target.getUniqueId());
-                    }, Main.getInstance());
+                    });
 
-                    Tasks.run(() -> {
+                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                         FakeplayerManager.this.dispatchCommands(target, config.getPreparingCommands());
                         FakeplayerManager.this.performCommands(target, config.getSelfCommands());
-                    }, Main.getInstance(), 20);
-                }).thenApply(ignored -> target);
+                    }, 20);
+                })
+                .thenApply(ignored -> target);
     }
 
     /**
@@ -420,6 +421,12 @@ public class FakeplayerManager {
         return target;
     }
 
+    /**
+     * 获取假人最后一条消息
+     *
+     * @param target 假人
+     * @return 最后一条消息
+     */
     public @Nullable ReceivedMessage getLastMessage(@NotNull Player target) {
         return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getConnection)
@@ -427,6 +434,15 @@ public class FakeplayerManager {
                 .orElse(null);
     }
 
+    /**
+     * 获取假人所有消息
+     * <p>所有消息并不意味着加入游戏以来的所有消息，假人暂存的消息取决于 {@link NMSGamePacketListener#MESSAGE_HISTORY_SIZE}</p>
+     *
+     * @param target 假人
+     * @param skip   跳过多少条
+     * @param size   最多获取多少条
+     * @return 所有消息
+     */
     public @NotNull List<ReceivedMessage> getMessages(@NotNull Player target, int skip, int size) {
         return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getConnection)
@@ -485,7 +501,7 @@ public class FakeplayerManager {
             if (!server.dispatchCommand(sender, cmd)) {
                 log.warning("Failed to execute command for %s: ".formatted(player.getName()) + cmd);
             } else {
-                log.info("dispatched command: " + cmd);
+                log.info("Dispatched command: " + cmd);
             }
         }
     }

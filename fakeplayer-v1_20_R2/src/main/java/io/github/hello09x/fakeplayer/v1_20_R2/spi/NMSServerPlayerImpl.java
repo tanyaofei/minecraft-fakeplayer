@@ -207,7 +207,7 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     }
 
     @Override
-    public void configClientOptions() {
+    public void setupClientOptions() {
         var option = new ClientInformation(
                 "en_us",
                 Bukkit.getViewDistance(),

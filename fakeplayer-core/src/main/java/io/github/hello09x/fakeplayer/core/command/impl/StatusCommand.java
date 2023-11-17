@@ -55,8 +55,8 @@ public class StatusCommand extends AbstractCommand {
 
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
-        var title = miniMessage.deserialize(
-                "<gray>" + i18n.asString("fakeplayer.command.status.title") + "</gray>",
+        var title = i18n.translate(
+                "fakeplayer.command.status.title", GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE))
         );
 
@@ -76,8 +76,8 @@ public class StatusCommand extends AbstractCommand {
     private @NotNull Component getFoodLine(@NotNull Player target) {
         var food = target.getFoodLevel();
         var max = 20.0;
-        return miniMessage.deserialize(
-                "<white>" + i18n.asString("fakeplayer.command.status.food") + "</white>",
+        return i18n.translate(
+                "fakeplayer.command.status.food", GRAY,
                 Placeholder.component("food", textOfChildren(
                         text(Mth.floor(food, 0.5), color(food, max)),
                         text("/", GRAY),
@@ -92,8 +92,8 @@ public class StatusCommand extends AbstractCommand {
                 .map(AttributeInstance::getValue)
                 .orElse(20D);
 
-        return miniMessage.deserialize(
-                "<white>" + i18n.asString("fakeplayer.command.status.health") + "</white>",
+        return i18n.translate(
+                "fakeplayer.command.status.health", WHITE,
                 Placeholder.component("health", textOfChildren(
                         text(Mth.floor(health, 0.5), color(health, max)),
                         text("/", GRAY),
@@ -107,8 +107,8 @@ public class StatusCommand extends AbstractCommand {
         var points = Experiences.getExp(target);
 
         return textOfChildren(
-                miniMessage.deserialize(
-                        "<white>" + i18n.asString("fakeplayer.command.status.exp") + "</white>",
+                i18n.translate(
+                        "fakeplayer.command.status.exp", WHITE,
                         Placeholder.component("level", text(level, DARK_GREEN)),
                         Placeholder.component("points", text(points, DARK_GREEN))
                 ),

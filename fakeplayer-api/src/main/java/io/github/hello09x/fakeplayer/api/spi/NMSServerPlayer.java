@@ -197,7 +197,7 @@ public interface NMSServerPlayer {
     /**
      * 设置客户端选项
      */
-    void configClientOptions();
+    void setupClientOptions();
 
     /**
      * 重生

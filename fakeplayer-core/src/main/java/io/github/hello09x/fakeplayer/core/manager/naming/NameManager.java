@@ -5,7 +5,6 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -30,7 +29,6 @@ public class NameManager {
 
     public final static NameManager instance = new NameManager();
     private final static Logger log = Main.getInstance().getLogger();
-    private final static MiniMessage miniMessage = MiniMessage.miniMessage();
     private final static int MAX_LENGTH = 16;   // mojang required
     private final static int MIN_LENGTH = 3; // mojang required
     private final static String FALLBACK_NAME = "_fp_";
@@ -95,22 +93,22 @@ public class NameManager {
      */
     public @NotNull SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
         if (name.startsWith("-")) {
-            throw new IllegalCustomNameException(miniMessage.deserialize(
-                    "<red>" + i18n.asString("fakeplayer.spawn.error.name.start-with-illegal-character") + "/<red>",
+            throw new IllegalCustomNameException(i18n.translate(
+                    "fakeplayer.spawn.error.name.start-with-illegal-character", RED,
                     Placeholder.component("character", text("-", WHITE))
             ));
         }
 
         if (name.length() > MAX_LENGTH) {
-            throw new IllegalCustomNameException(miniMessage.deserialize(
-                    "<red>" + i18n.asString("fakeplayer.spawn.error.name.too-long") + "</red>",
+            throw new IllegalCustomNameException(i18n.translate(
+                    "fakeplayer.spawn.error.name.too-long", RED,
                     Placeholder.component("length", text(MAX_LENGTH, WHITE))
             ));
         }
 
         if (name.length() < MIN_LENGTH) {
-            throw new IllegalCustomNameException(miniMessage.deserialize(
-                    "<red>" + i18n.asString("fakeplayer.spawn.error.name.too-short") + "</red>",
+            throw new IllegalCustomNameException(i18n.translate(
+                    "fakeplayer.spawn.error.name.too-short", RED,
                     Placeholder.component("length", text(MIN_LENGTH, WHITE))
             ));
         }
