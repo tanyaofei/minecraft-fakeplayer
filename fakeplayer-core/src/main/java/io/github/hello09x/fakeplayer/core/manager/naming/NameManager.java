@@ -169,7 +169,7 @@ public class NameManager {
         }
 
         var name = FALLBACK_NAME + RandomStringUtils.random(MAX_LENGTH - FALLBACK_NAME.length(), true, true);
-        log.warning("Could not generate a name which is never used at this server after 10 tries, using random player name as fallback: " + name);
+        log.warning("Could not generate a regular name for the fake player after 10 tries, using a random name as fallback: " + name);
         return new SequenceName("random", 0, uuidFromName(name), name);
     }
 

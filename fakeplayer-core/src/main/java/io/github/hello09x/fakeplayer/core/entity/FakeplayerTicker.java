@@ -42,13 +42,6 @@ public class FakeplayerTicker extends BukkitRunnable {
 
         if (removeAt != NO_REMOVE_AT && player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
             manager.remove(player.getName(), "lifespan ends");
-            player.getCreator().sendMessage(
-                    textOfChildren(
-                            text("假人 ", GRAY),
-                            text(this.player.getName()),
-                            text(" 存活时间到期, 已移除", GRAY)
-                    )
-            );
             super.cancel();
             return;
         }
