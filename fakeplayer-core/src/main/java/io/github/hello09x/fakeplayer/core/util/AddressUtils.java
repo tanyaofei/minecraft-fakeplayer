@@ -1,6 +1,5 @@
 package io.github.hello09x.fakeplayer.core.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

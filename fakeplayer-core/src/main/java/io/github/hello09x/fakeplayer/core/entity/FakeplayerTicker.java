@@ -6,10 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-
 public class FakeplayerTicker extends BukkitRunnable {
 
     public final static long NO_REMOVE_AT = -1;
