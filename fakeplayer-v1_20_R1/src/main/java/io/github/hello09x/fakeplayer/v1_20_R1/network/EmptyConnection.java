@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.net.InetAddress;
 
 public class EmptyConnection extends Connection {
-    public EmptyConnection(@NotNull PacketFlow flag, @NotNull InetAddress address) {
-        super(flag);
+    public EmptyConnection(@NotNull InetAddress address) {
+        super(PacketFlow.SERVERBOUND);
         this.channel = new EmptyChannel(null, address);
         this.address = this.channel.remoteAddress();
     }

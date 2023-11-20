@@ -5,7 +5,7 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
+import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -38,7 +38,7 @@ public class FakePlayer {
 
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
+    private final static FakeplayerConfig config = FakeplayerConfig.instance;
 
     private final static I18n i18n = Main.getI18n();
 
@@ -74,7 +74,7 @@ public class FakePlayer {
 
     @UnknownNullability
     @Getter
-    private NMSGamePacketListener connection;
+    private NMSNetwork network;
 
     /**
      * @param creator      创建者
@@ -102,11 +102,6 @@ public class FakePlayer {
         player.setSleepingIgnored(true);
         handle.setPlayBefore(); // 可避免一些插件的第一次入服欢迎信息
         handle.disableAdvancements(Main.getInstance()); // 不提示成就信息
-
-        var displayName = text(player.getName(), GRAY, ITALIC);
-        player.playerListName(displayName);
-        player.displayName(displayName);
-        player.customName(displayName);
     }
 
     /**
@@ -145,26 +140,26 @@ public class FakePlayer {
                         // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
                         // 因此在生成的时候清空一次背包
                         // 但无法解决登陆后延迟同步背包的情况
-                        player.getInventory().clear();
+                        this.player.getInventory().clear();
                     }
 
-                    player.setInvulnerable(option.invulnerable());
-                    player.setCollidable(option.collidable());
-                    player.setCanPickupItems(option.pickupItems());
+                    this.player.setInvulnerable(option.invulnerable());
+                    this.player.setCollidable(option.collidable());
+                    this.player.setCanPickupItems(option.pickupItems());
                     if (option.lookAtEntity()) {
                         ActionManager.instance.setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
                     }
                     if (option.skin() && this.creator instanceof Player playerCreator) {
-                        handle.copyTexture(playerCreator);
+                        this.handle.copyTexture(playerCreator);
                     }
                     if (option.replenish()) {
                         FakeplayerManager.instance.setReplenish(player, true);
                     }
 
-                    var network = Main.getBridge().network();
-                    network.bindEmptyLoginPacketListener(Bukkit.getServer(), this.player, address);
-                    this.connection = network.bindEmptyServerGamePacketListener(Bukkit.getServer(), this.player, address);
-                    handle.setupClientOptions();   // 处理皮肤设置问题
+                    this.network = Main.getBridge().createNetwork(address);
+                    this.network.placeNewPlayer(Bukkit.getServer(), this.player, address);
+                    this.setupName();
+                    this.handle.setupClientOptions();   // 处理皮肤设置问题
 
                     var spawnAt = option.spawnAt().clone();
                     if (Worlds.isOverworld(spawnAt.getWorld())) {
@@ -174,7 +169,7 @@ public class FakePlayer {
                         this.teleportToSpawnpoint(spawnAt);
                     }
 
-                    ticker.runTaskTimer(Main.getInstance(), 0, 1);
+                    this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
                 }, Main.getInstance());
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
@@ -256,5 +251,12 @@ public class FakePlayer {
 
     public @NotNull UUID getUUID() {
         return uuid;
+    }
+
+    private void setupName() {
+        var displayName = text(player.getName(), GRAY, ITALIC);
+        player.playerListName(displayName);
+        player.displayName(displayName);
+        player.customName(displayName);
     }
 }

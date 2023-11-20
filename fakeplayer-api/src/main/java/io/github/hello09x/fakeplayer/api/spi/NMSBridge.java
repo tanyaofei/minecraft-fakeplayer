@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.InetAddress;
 import java.util.ServiceLoader;
 
 public interface NMSBridge {
@@ -31,7 +32,7 @@ public interface NMSBridge {
 
     @NotNull NMSServerPlayer player(@NotNull Player player);
 
-    @NotNull NMSNetwork network();
+    @NotNull NMSNetwork createNetwork(@NotNull InetAddress address);
 
     boolean isSupported();
 

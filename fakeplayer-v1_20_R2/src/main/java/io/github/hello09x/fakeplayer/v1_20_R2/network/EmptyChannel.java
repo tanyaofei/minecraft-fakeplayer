@@ -9,9 +9,9 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 public class EmptyChannel extends AbstractChannel {
+    private final static EventLoop EVENT_LOOP = new DefaultEventLoop();
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
-    private final static EventLoop EVENT_LOOP = new DefaultEventLoop();
     private final InetAddress address;
 
     public EmptyChannel(@Nullable Channel parent, @NotNull InetAddress address) {
@@ -47,7 +47,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public boolean isActive() {
-        return false;
+        return true;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class EmptyChannel extends AbstractChannel {
 
     @Override
     public boolean isOpen() {
-        return false;
+        return true;
     }
 
     @Override

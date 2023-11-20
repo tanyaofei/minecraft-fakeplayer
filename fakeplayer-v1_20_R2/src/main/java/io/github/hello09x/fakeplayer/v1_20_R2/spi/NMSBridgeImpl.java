@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.InetAddress;
 import java.util.Set;
 
 public class NMSBridgeImpl implements NMSBridge {
@@ -37,8 +38,8 @@ public class NMSBridgeImpl implements NMSBridge {
     }
 
     @Override
-    public @NotNull NMSNetwork network() {
-        return new NMSNetworkImpl();
+    public @NotNull NMSNetwork createNetwork(@NotNull InetAddress address) {
+        return new NMSNetworkImpl(address);
     }
 
     @Override

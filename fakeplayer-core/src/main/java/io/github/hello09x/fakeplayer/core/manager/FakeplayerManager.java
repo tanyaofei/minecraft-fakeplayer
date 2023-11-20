@@ -5,8 +5,6 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener;
-import io.github.hello09x.fakeplayer.api.spi.NMSGamePacketListener.ReceivedMessage;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
@@ -32,7 +30,10 @@ import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -418,39 +419,6 @@ public class FakeplayerManager {
             this.setSelection(p, null);
         }
         return target;
-    }
-
-    /**
-     * 获取假人最后一条消息
-     *
-     * @param target 假人
-     * @return 最后一条消息
-     */
-    public @Nullable ReceivedMessage getLastMessage(@NotNull Player target) {
-        return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
-                .map(FakePlayer::getConnection)
-                .map(NMSGamePacketListener::getLastMessage)
-                .orElse(null);
-    }
-
-    /**
-     * 获取假人所有消息
-     * <p>所有消息并不意味着加入游戏以来的所有消息，假人暂存的消息取决于 {@link NMSGamePacketListener#MESSAGE_HISTORY_SIZE}</p>
-     *
-     * @param target 假人
-     * @param skip   跳过多少条
-     * @param size   最多获取多少条
-     * @return 所有消息
-     */
-    public @NotNull List<ReceivedMessage> getMessages(@NotNull Player target, int skip, int size) {
-        return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
-                .map(FakePlayer::getConnection)
-                .map(NMSGamePacketListener::getRecentMessages)
-                .orElse(Collections.emptyList())
-                .stream()
-                .skip(skip)
-                .limit(size)
-                .toList();
     }
 
     /**

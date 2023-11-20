@@ -371,14 +371,6 @@ public class CommandRegistry {
                         command("killall")
                                 .withPermission(CommandPermission.OP)
                                 .executes(KillallCommand.instance::killall),
-                        command("msg")
-                                .withPermission(CommandPermission.OP)
-                                .withOptionalArguments(
-                                        int32("size", 1),
-                                        int32("skip", 0),
-                                        target("name")
-                                )
-                                .executes(MsgCommand.instance::msg),
                         command("reload")
                                 .withPermission(CommandPermission.OP)
                                 .executes(ReloadCommand.instance::reload)

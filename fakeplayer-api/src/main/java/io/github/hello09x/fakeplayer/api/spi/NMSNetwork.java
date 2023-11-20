@@ -4,8 +4,6 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.InetAddress;
-
 public interface NMSNetwork {
 
     /**
@@ -13,17 +11,7 @@ public interface NMSNetwork {
      *
      * @param server  服务器
      * @param player  假人玩家
-     * @param address 虚拟地址
      */
-    @NotNull NMSGamePacketListener bindEmptyServerGamePacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address);
-
-    /**
-     * 绑定一个虚拟的登陆连接
-     *
-     * @param server  服务器
-     * @param player  家人物价
-     * @param address 虚拟地址
-     */
-    void bindEmptyLoginPacketListener(@NotNull Server server, @NotNull Player player, @NotNull InetAddress address);
+    @NotNull NMSServerGamePacketListener placeNewPlayer(@NotNull Server server, @NotNull Player player);
 
 }
