@@ -7,7 +7,6 @@ import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.entity.Entity;
@@ -360,8 +359,7 @@ public class CommandRegistry {
                                 .executes(SleepCommand.instance::wakeup),
 
                         command("cmd")
-                                .withRequirement(CommandSupports::hasTarget)
-                                .withRequirement(sender -> sender.hasPermission(Permission.cmd) || !FakeplayerConfig.instance.getAllowCommands().isEmpty())
+                                .withRequirement(CommandSupports::isCmdAvailable)
                                 .withArguments(
                                         target("name"),
                                         cmd("command")

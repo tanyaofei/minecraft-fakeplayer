@@ -177,4 +177,8 @@ public abstract class CommandSupports {
         return sender.isOp() || manager.countByCreator(sender) > 0;
     }
 
+    public static boolean isCmdAvailable(@NotNull CommandSender sender) {
+        return hasTarget(sender) && (sender.hasPermission(Permission.cmd) || !config.getAllowCommands().isEmpty());
+    }
+
 }
