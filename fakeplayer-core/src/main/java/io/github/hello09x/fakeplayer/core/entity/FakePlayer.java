@@ -157,7 +157,7 @@ public class FakePlayer {
                     }
 
                     this.network = Main.getBridge().createNetwork(address);
-                    this.network.placeNewPlayer(Bukkit.getServer(), this.player, address);
+                    this.network.placeNewPlayer(Bukkit.getServer(), this.player);
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
