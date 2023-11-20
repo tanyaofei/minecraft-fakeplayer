@@ -24,43 +24,43 @@
 
 ## 命令
 
-| 命令            | 作用            | 权限                           | 备注                        |
-|---------------|---------------|------------------------------|---------------------------|
-| /fp spawn     | 召唤假人          | fakeplayer.command.spawn     |                           |
-| /fp kill      | 杀死假人          | fakeplayer.command.kill      |                           |
-| /fp killall   | 杀死服务器所有假人     | OP                           |                           |
-| /fp select    | 选中假人          | fakeplayer.command.select    | 当玩家假人数量 >= 2 时才会出现        |
-| /fp selection | 查看选中假人        | fakeplayer.command.selection | 当玩家假人数量 >= 2 时才会出现        |
-| /fp list      | 查看已召唤的假人      | fakeplayer.command.list      |                           |
-| /fp distance  | 查看与假人的距离      | fakeplayer.command.distance  |                           |
-| /fp drop      | 丢弃手上一个物品      | fakeplayer.command.drop      |                           |
-| /fp dropstack | 丢弃手上整组物品      | fakeplayer.command.dropstack |                           |
-| /fp dropinv   | 丢弃背包所有物品      | fakeplayer.command.dropinv   |                           |
-| /fp skin      | 复制玩家皮肤        | fakeplayer.command.skin      | 非在线玩家有 60 秒冷却             |
-| /fp invsee    | 查看假人背包        | fakeplayer.command.invsee    | 默认仅查看, 装 `OpenInv` 前置才可操作 |
-| /fp sleep     | 睡觉            | fakeplayer.command.sleep     |                           |
-| /fp wakeup    | 起床            | fakeplayer.command.wakeup    |                           |
-| /fp status    | 查看假人状态        | fakeplayer.command.status    |                           |
-| /fp respawn   | 让死亡的假人复活      | fakeplayer.command.respawn   | 当服务器配置假人死亡时不踢出才会出现        |
-| /fp tp        | 传送到假人身边       | fakeplayer.command.tp        |                           |
-| /fp tphere    | 让假人传送到身边      | fakeplayer.command.tphere    |                           |
-| /fp tps       | 与假人交换位置       | fakeplayer.command.tps       |                           |
-| /fp set       | 更改假人的配置       | fakeplayer.command.set       |                           |
-| /fp config    | 更改默认假人配置      | fakeplayer.command.config    |                           |
-| /fp expme     | 吸收假人经验值       | fakeplayer.command.expme     |                           |
-| /fp attack    | 攻击            | fakeplayer.command.attack    |                           |
-| /fp mine      | 挖掘            | fakeplayer.command.mine      |                           |
-| /fp use       | 使用/交互/放置      | fakeplayer.command.use       |                           |
-| /fp jump      | 跳跃            | fakeplayer.command.jump      |                           |
-| /fp turn      | 转身            | fakeplayer.command.turn      |                           |
-| /fp look      | 看向指定位置        | fakeplayer.command.look      |                           |
-| /fp move      | 移动            | fakeplayer.command.mvoe      |                           |
-| /fp ride      | 骑乘            | fakeplayer.command.ride      |                           |
-| /fp sneak     | 潜行            | fakeplayer.command.sneak     |                           |
-| /fp swap      | 交换主副手物品       | fakeplayer.command.swap      |                           |
-| /fp hold      | 手持对应快捷栏物品     | fakeplayer.command.hold      |                           |
-| /fp cmd       | 让假人执行命令       | fakeplayer.command.cmd       | 不给权限的情况下，允许执行配置文件里定义的命令   |
-| /fp reload    | 重载配置文件        | OP                           |                           |
+| 命令            | 作用        | 权限                           | 备注                      |
+|---------------|-----------|------------------------------|-------------------------|
+| /fp spawn     | 召唤假人      | fakeplayer.command.spawn     |                         |
+| /fp kill      | 杀死假人      | fakeplayer.command.kill      |                         |
+| /fp killall   | 杀死服务器所有假人 | OP                           |                         |
+| /fp select    | 选中假人      | fakeplayer.command.select    | 当玩家假人数量 >= 2 时才会出现      |
+| /fp selection | 查看选中假人    | fakeplayer.command.selection | 当玩家假人数量 >= 2 时才会出现      |
+| /fp list      | 查看已召唤的假人  | fakeplayer.command.list      |                         |
+| /fp distance  | 查看与假人的距离  | fakeplayer.command.distance  |                         |
+| /fp drop      | 丢弃手上一个物品  | fakeplayer.command.drop      |                         |
+| /fp dropstack | 丢弃手上整组物品  | fakeplayer.command.dropstack |                         |
+| /fp dropinv   | 丢弃背包所有物品  | fakeplayer.command.dropinv   |                         |
+| /fp skin      | 复制玩家皮肤    | fakeplayer.command.skin      | 非在线玩家有 60 秒冷却           |
+| /fp invsee    | 查看假人背包    | fakeplayer.command.invsee    | 玩家对假人右键同等效果             |
+| /fp sleep     | 睡觉        | fakeplayer.command.sleep     |                         |
+| /fp wakeup    | 起床        | fakeplayer.command.wakeup    |                         |
+| /fp status    | 查看假人状态    | fakeplayer.command.status    |                         |
+| /fp respawn   | 让死亡的假人复活  | fakeplayer.command.respawn   | 当服务器配置假人死亡时不踢出才会出现      |
+| /fp tp        | 传送到假人身边   | fakeplayer.command.tp        |                         |
+| /fp tphere    | 让假人传送到身边  | fakeplayer.command.tphere    |                         |
+| /fp tps       | 与假人交换位置   | fakeplayer.command.tps       |                         |
+| /fp set       | 更改假人的配置   | fakeplayer.command.set       |                         |
+| /fp config    | 更改默认假人配置  | fakeplayer.command.config    |                         |
+| /fp expme     | 吸收假人经验值   | fakeplayer.command.expme     |                         |
+| /fp attack    | 攻击        | fakeplayer.command.attack    |                         |
+| /fp mine      | 挖掘        | fakeplayer.command.mine      |                         |
+| /fp use       | 使用/交互/放置  | fakeplayer.command.use       |                         |
+| /fp jump      | 跳跃        | fakeplayer.command.jump      |                         |
+| /fp turn      | 转身        | fakeplayer.command.turn      |                         |
+| /fp look      | 看向指定位置    | fakeplayer.command.look      |                         |
+| /fp move      | 移动        | fakeplayer.command.mvoe      |                         |
+| /fp ride      | 骑乘        | fakeplayer.command.ride      |                         |
+| /fp sneak     | 潜行        | fakeplayer.command.sneak     |                         |
+| /fp swap      | 交换主副手物品   | fakeplayer.command.swap      |                         |
+| /fp hold      | 手持对应快捷栏物品 | fakeplayer.command.hold      |                         |
+| /fp cmd       | 让假人执行命令   | fakeplayer.command.cmd       | 不给权限的情况下，允许执行配置文件里定义的命令 |
+| /fp reload    | 重载配置文件    | OP                           |                         |
 
 _此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等_
 
