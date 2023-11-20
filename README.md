@@ -61,7 +61,6 @@
 | /fp hold      | 手持对应快捷栏物品     | fakeplayer.command.hold      |                           |
 | /fp cmd       | 让假人执行命令       | fakeplayer.command.cmd       | 不给权限的情况下，允许执行配置文件里定义的命令   |
 | /fp reload    | 重载配置文件        | OP                           |                           |
-| /fp msg       | 查看假人最近收到的系统消息 | OP                           |                           |
 
 _此外，假人是一个模拟玩家，因此可以被任何指令所识别比如 `kick`, `tp`, `ban` 等等_
 

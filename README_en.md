@@ -53,7 +53,6 @@ Only for `Paper` and it's downstream such as `Purpur`.
 | /fp hold      | change hold slot                                  | fakeplayer.command.hold      |
 | /fp cmd       | execute command as the fake player                | fakeplayer.command.cmd       |
 | /fp reload    | reload config                                     | OP                           |
-| /fp msg       | show recent message                               | OP                           |
 
 
 
