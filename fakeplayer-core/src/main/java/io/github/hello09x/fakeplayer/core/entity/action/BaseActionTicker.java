@@ -6,18 +6,24 @@ import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.entity.action.impl.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Objects;
 
 public abstract class BaseActionTicker implements ActionTicker {
 
+    protected final static NMSBridge bridge = Objects.requireNonNull(NMSBridge.getInstance(), "Unsupported");
+
+    /**
+     * 这个类无法初始化的动作, 由子类完成
+     */
+    @UnknownNullability
     protected Action action;
 
     @NotNull
     protected Action.ActionSetting setting;
 
     public BaseActionTicker(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
-        var bridge = Objects.requireNonNull(NMSBridge.getInstance());
         this.setting = setting;
         this.action = switch (action) {
             case JUMP -> new JumpAction(bridge.fromPlayer(player));
@@ -25,7 +31,7 @@ public abstract class BaseActionTicker implements ActionTicker {
             case DROP_ITEM -> new DropItemAction(bridge.fromPlayer(player));
             case DROP_STACK -> new DropStackAction(bridge.fromPlayer(player));
             case DROP_INVENTORY -> new DropInventoryAction(bridge.fromPlayer(player));
-            default -> null;
+            default -> null;    // 子类需要实现其他 Action
         };
     }
 
