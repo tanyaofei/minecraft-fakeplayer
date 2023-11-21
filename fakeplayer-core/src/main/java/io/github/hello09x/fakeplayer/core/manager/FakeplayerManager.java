@@ -273,7 +273,11 @@ public class FakeplayerManager {
         }
         this.nameManager.unregister(fakeplayer.getSequenceName());
         if (config.isDropInventoryOnQuiting()) {
-            ActionManager.instance.setAction(fakeplayer.getPlayer(), Action.ActionType.DROP_INVENTORY, Action.ActionSetting.once());
+            Main.getBridge().createAction(
+                    fakeplayer.getPlayer(),
+                    Action.ActionType.DROP_INVENTORY,
+                    Action.ActionSetting.once()
+            ).tick();
         }
     }
 
