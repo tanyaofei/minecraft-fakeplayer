@@ -4,7 +4,6 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.wrappers.Rotation;
-import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import io.papermc.paper.entity.LookAnchor;
@@ -64,7 +63,7 @@ public class RotationCommand extends AbstractCommand {
      * 看向指定方向
      */
     private void look(@NotNull Player player, float yaw, float pitch) {
-        var handle = Main.getBridge().player(player);
+        var handle = bridge.fromPlayer(player);
         handle.setYRot(yaw % 360);
         handle.setXRot(Mth.clamp(pitch, -90, 90));
     }

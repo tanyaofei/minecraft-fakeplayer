@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.core.manager;
 
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
-import io.github.hello09x.bedrock.task.Tasks;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -69,11 +68,11 @@ public class FakeplayerManager {
         var timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleWithFixedDelay(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
-                        Tasks.run(() -> {
+                        Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                             if (FakeplayerManager.this.removeAll("low tps") > 0) {
                                 Bukkit.broadcast(i18n.translate("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
                             }
-                        }, Main.getInstance());
+                        });
                     }
                 }, 0, 60, TimeUnit.SECONDS
         );
@@ -124,8 +123,8 @@ public class FakeplayerManager {
                             configs.getOrDefault(Config.replenish)
                     );
                 })
-                .thenCompose(fp::spawnAsync)
-                .thenRunAsync(() -> {
+                .thenComposeAsync(fp::spawnAsync)
+                .thenApply(nul -> {
                     Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                         playerList.add(fp);
                         usedIdRepository.add(target.getUniqueId());
@@ -135,8 +134,8 @@ public class FakeplayerManager {
                         FakeplayerManager.this.dispatchCommands(target, config.getPreparingCommands());
                         FakeplayerManager.this.performCommands(target, config.getSelfCommands());
                     }, 20);
-                })
-                .thenApply(ignored -> target);
+                    return target;
+                });
     }
 
     /**

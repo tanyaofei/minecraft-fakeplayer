@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.core.Main;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -33,7 +32,7 @@ public class RideCommand extends AbstractCommand {
         if (entities.isEmpty()) {
             return;
         }
-        Main.getBridge().player(target).startRiding(entities.get(0), true);
+        bridge.fromPlayer(target).startRiding(entities.get(0), true);
     }
 
     /**
@@ -46,7 +45,7 @@ public class RideCommand extends AbstractCommand {
             return;
         }
 
-        Main.getBridge().player(target).startRiding(entity, true);
+        bridge.fromPlayer(target).startRiding(entity, true);
     }
 
     /**
@@ -64,7 +63,7 @@ public class RideCommand extends AbstractCommand {
             return;
         }
 
-        Main.getBridge().player(target).startRiding(entity, true);
+        bridge.fromPlayer(target).startRiding(entity, true);
     }
 
     /**
@@ -85,14 +84,14 @@ public class RideCommand extends AbstractCommand {
             return;
         }
 
-        Main.getBridge().player(target).startRiding(sender, true);
+        bridge.fromPlayer(target).startRiding(sender, true);
     }
 
     /**
      * 停止骑行
      */
     public void stopRiding(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        Main.getBridge().player(getTarget(sender, args)).stopRiding();
+        bridge.fromPlayer(getTarget(sender, args)).stopRiding();
     }
 
 }

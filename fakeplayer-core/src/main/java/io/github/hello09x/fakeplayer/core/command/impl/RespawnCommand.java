@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.core.Main;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +15,7 @@ public class RespawnCommand extends AbstractCommand {
 
     public void respawn(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args, Entity::isDead);
-        Main.getBridge().player(target).respawn();
+        bridge.fromPlayer(target).respawn();
     }
 
 }

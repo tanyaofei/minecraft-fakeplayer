@@ -20,11 +20,11 @@ public abstract class BaseActionTicker implements ActionTicker {
         var bridge = Objects.requireNonNull(NMSBridge.getInstance());
         this.setting = setting;
         this.action = switch (action) {
-            case JUMP -> new JumpAction(bridge.player(player));
-            case LOOK_AT_NEAREST_ENTITY -> new LookAtEntityAction(bridge.player(player));
-            case DROP_ITEM -> new DropItemAction(bridge.player(player));
-            case DROP_STACK -> new DropStackAction(bridge.player(player));
-            case DROP_INVENTORY -> new DropInventoryAction(bridge.player(player));
+            case JUMP -> new JumpAction(bridge.fromPlayer(player));
+            case LOOK_AT_NEAREST_ENTITY -> new LookAtEntityAction(bridge.fromPlayer(player));
+            case DROP_ITEM -> new DropItemAction(bridge.fromPlayer(player));
+            case DROP_STACK -> new DropStackAction(bridge.fromPlayer(player));
+            case DROP_INVENTORY -> new DropInventoryAction(bridge.fromPlayer(player));
             default -> null;
         };
     }

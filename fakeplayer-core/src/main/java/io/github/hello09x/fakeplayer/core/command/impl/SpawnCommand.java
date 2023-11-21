@@ -69,7 +69,7 @@ public class SpawnCommand extends AbstractCommand {
         var removedAt = Optional.ofNullable(config.getLifespan()).map(lifespan -> LocalDateTime.now().plus(lifespan)).orElse(null);
         try {
             manager.spawnAsync(sender, name, spawnpoint, Optional.ofNullable(config.getLifespan()).map(Duration::toMillis).orElse(-1L))
-                    .thenAccept(player -> {
+                    .thenAcceptAsync(player -> {
                         if (player == null) {
                             return;
                         }

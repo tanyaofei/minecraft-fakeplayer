@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.util;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import io.github.hello09x.bedrock.task.Tasks;
+import io.github.hello09x.bedrock.task.CompletableTask;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,18 +39,19 @@ public class Skins {
         }
 
         var profile = from.getPlayerProfile();
-        return CompletableFuture.supplyAsync(profile::complete)
-                .thenApply(completed -> {
+        return CompletableFuture
+                .supplyAsync(profile::complete)
+                .thenComposeAsync(completed -> CompletableTask.join(plugin, () -> {
                     if (!completed) {
                         return false;
                     }
                     try {
-                        Tasks.join(() -> copyTexture(profile, to), plugin);
+                        copyTexture(profile, to);
                         return true;
                     } catch (Throwable e) {
                         return false;
                     }
-                });
+                }));
     }
 
     private static void copyTexture(@NotNull PlayerProfile from, @NotNull Player to) {

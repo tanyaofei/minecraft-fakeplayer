@@ -18,22 +18,22 @@ public class NMSBridgeImpl implements NMSBridge {
     private final static Set<String> SUPPORTS = Set.of("1.20.2");
 
     @Override
-    public @NotNull NMSEntity entity(@NotNull Entity entity) {
+    public @NotNull NMSEntity fromEntity(@NotNull Entity entity) {
         return new NMSEntityImpl(entity);
     }
 
     @Override
-    public @NotNull NMSServer server(@NotNull Server server) {
+    public @NotNull NMSServer fromServer(@NotNull Server server) {
         return new NMSServerImpl(server);
     }
 
     @Override
-    public @NotNull NMSServerLevel world(@NotNull World world) {
+    public @NotNull NMSServerLevel fromWorld(@NotNull World world) {
         return new NMSServerLevelImpl(world);
     }
 
     @Override
-    public @NotNull NMSServerPlayer player(@NotNull Player player) {
+    public @NotNull NMSServerPlayer fromPlayer(@NotNull Player player) {
         return new NMSServerPlayerImpl(player);
     }
 

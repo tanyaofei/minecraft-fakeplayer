@@ -2,9 +2,10 @@ package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
-import io.github.hello09x.bedrock.task.Tasks;
+import io.github.hello09x.bedrock.task.CompletableTask;
 import io.github.hello09x.fakeplayer.api.action.ActionSetting;
 import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -42,6 +43,8 @@ public class FakePlayer {
     private final static FakeplayerConfig config = FakeplayerConfig.instance;
 
     private final static I18n i18n = Main.getI18n();
+
+    private final static NMSBridge bridge = Main.getBridge();
 
     @NotNull
     @Getter
@@ -95,7 +98,7 @@ public class FakePlayer {
         this.creator = creator;
         this.creatorIp = creatorIp;
         this.sequenceName = sequenceName;
-        this.handle = Main.getBridge().server(Bukkit.getServer()).newPlayer(uuid, name);
+        this.handle = bridge.fromServer(Bukkit.getServer()).newPlayer(uuid, name);
         this.player = handle.getPlayer();
         this.ticker = new FakeplayerTicker(this, lifespan);
 
@@ -109,10 +112,9 @@ public class FakePlayer {
      * 让假人诞生
      */
     public CompletableFuture<Void> spawnAsync(@NotNull SpawnOption option) {
-        return CompletableFuture.runAsync(() -> {
-            var address = ipGen.next();
-            try {
-                Tasks.joinAsync(() -> {
+        var address = ipGen.next();
+        return CompletableTask
+                .joinAsync(Main.getInstance(), () -> {
                     var event = this.preLogin(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
                         throw new MessageException(i18n.translate(
@@ -121,13 +123,8 @@ public class FakePlayer {
                                 Placeholder.component("reason", event.kickMessage())
                         ));
                     }
-                }, Main.getInstance());
-            } catch (Throwable e) {
-                throw new IllegalStateException(e);
-            }
-
-            try {
-                Tasks.join(() -> {
+                })
+                .thenComposeAsync(nul -> CompletableTask.join(Main.getInstance(), () -> {
                     var event = this.login(address);
                     if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
                         throw new MessageException(i18n.translate(
@@ -157,25 +154,24 @@ public class FakePlayer {
                         FakeplayerManager.instance.setReplenish(player, true);
                     }
 
-                    this.network = Main.getBridge().createNetwork(address);
+                    this.network = bridge.createNetwork(address);
                     this.network.placeNewPlayer(Bukkit.getServer(), this.player);
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
                     var spawnAt = option.spawnAt().clone();
+
+                    // 假人需要穿越一次纬度才能让区块知道该区域有假人
+                    // 假人在创建时会在主世界出生点出生, 如果目标点是其他世界, 则已经完成了一次纬度传送
+                    // 但是如果目标点是主世界, 则需要另外进行一次纬度传送
                     if (Worlds.isOverworld(spawnAt.getWorld())) {
-                        // 创建在主世界时需要跨越一次世界才能拥有刷怪能力
                         this.teleportToSpawnpointAfterChangingDimension(spawnAt);
                     } else {
                         this.teleportToSpawnpoint(spawnAt);
                     }
 
                     this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
-                }, Main.getInstance());
-            } catch (Throwable e) {
-                throw new IllegalStateException(e);
-            }
-        });
+                }));
     }
 
     /**
@@ -193,7 +189,7 @@ public class FakePlayer {
             return;
         }
 
-        Tasks.run(() -> teleportToSpawnpoint(spawnpoint), Main.getInstance());
+        Bukkit.getScheduler().runTask(Main.getInstance(), () -> teleportToSpawnpoint(spawnpoint));
     }
 
     private void teleportToSpawnpoint(@NotNull Location spawnpoint) {

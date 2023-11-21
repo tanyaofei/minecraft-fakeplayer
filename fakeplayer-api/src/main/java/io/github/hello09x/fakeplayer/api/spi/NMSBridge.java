@@ -24,13 +24,13 @@ public interface NMSBridge {
                 .orElse(null);
     }
 
-    @NotNull NMSEntity entity(@NotNull Entity entity);
+    @NotNull NMSEntity fromEntity(@NotNull Entity entity);
 
-    @NotNull NMSServer server(@NotNull Server server);
+    @NotNull NMSServer fromServer(@NotNull Server server);
 
-    @NotNull NMSServerLevel world(@NotNull World world);
+    @NotNull NMSServerLevel fromWorld(@NotNull World world);
 
-    @NotNull NMSServerPlayer player(@NotNull Player player);
+    @NotNull NMSServerPlayer fromPlayer(@NotNull Player player);
 
     @NotNull NMSNetwork createNetwork(@NotNull InetAddress address);
 
