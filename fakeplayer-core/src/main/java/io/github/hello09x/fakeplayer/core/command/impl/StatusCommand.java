@@ -53,6 +53,9 @@ public class StatusCommand extends AbstractCommand {
         return color;
     }
 
+    /**
+     * 查看假人状态
+     */
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         var title = i18n.translate(
@@ -60,7 +63,7 @@ public class StatusCommand extends AbstractCommand {
                 Placeholder.component("name", text(target.getName(), WHITE))
         );
 
-        var lines = new ArrayList<Component>(4);
+        var lines = new ArrayList<Component>(6);
         lines.add(title);
         lines.add(this.getHealthLine(target));
         lines.add(this.getFoodLine(target));

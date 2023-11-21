@@ -1,6 +1,5 @@
 package io.github.hello09x.fakeplayer.v1_20_R1.spi;
 
-import com.google.common.collect.Iterables;
 import io.github.hello09x.fakeplayer.api.Reflections;
 import io.github.hello09x.fakeplayer.api.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
@@ -25,7 +24,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
 
 public class NMSServerPlayerImpl implements NMSServerPlayer {
 
@@ -183,16 +181,6 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
         } catch (IllegalAccessException ignored) {
         }
     }
-
-    @Override
-    public void copyTexture(@NotNull Player from) {
-        var source = new NMSServerPlayerImpl(from).getHandle();
-        Optional.of(source)
-                .map(h -> h.getGameProfile().getProperties().get("textures"))
-                .map(textures -> Iterables.getFirst(textures, null))
-                .ifPresent(texture -> handle.getGameProfile().getProperties().put("textures", texture));
-    }
-
 
     @Override
     public void drop(int slot, boolean flag, boolean flag1) {

@@ -13,6 +13,7 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
+import io.github.hello09x.fakeplayer.core.util.Skins;
 import io.github.hello09x.fakeplayer.core.util.Teleportor;
 import io.github.hello09x.fakeplayer.core.util.Worlds;
 import lombok.Getter;
@@ -150,7 +151,7 @@ public class FakePlayer {
                         ActionManager.instance.setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
                     }
                     if (option.skin() && this.creator instanceof Player playerCreator) {
-                        this.handle.copyTexture(playerCreator);
+                        Skins.copySkin(playerCreator, this.player);
                     }
                     if (option.replenish()) {
                         FakeplayerManager.instance.setReplenish(player, true);

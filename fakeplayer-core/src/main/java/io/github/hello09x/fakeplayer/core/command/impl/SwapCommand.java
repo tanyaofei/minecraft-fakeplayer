@@ -11,6 +11,9 @@ public class SwapCommand extends AbstractCommand {
 
     public final static SwapCommand instance = new SwapCommand();
 
+    /**
+     * 交换主副手物品
+     */
     public void swap(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         bridge.player(target).swapItemWithOffhand();

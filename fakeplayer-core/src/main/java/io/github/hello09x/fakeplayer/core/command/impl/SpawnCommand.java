@@ -42,7 +42,7 @@ public class SpawnCommand extends AbstractCommand {
     }
 
     /**
-     * 交换主副手物品
+     * 创建假人
      */
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var name = (String) args.get("name");

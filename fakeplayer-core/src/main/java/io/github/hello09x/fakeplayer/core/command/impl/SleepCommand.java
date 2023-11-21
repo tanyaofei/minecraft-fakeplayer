@@ -14,6 +14,9 @@ public class SleepCommand extends AbstractCommand {
 
     public final static SleepCommand instance = new SleepCommand();
 
+    /**
+     * 睡觉
+     */
     public void sleep(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var bed = Blocks.getNearbyBlock(target.getLocation(), 4, block -> {
@@ -30,6 +33,9 @@ public class SleepCommand extends AbstractCommand {
         target.sleep(bed.getLocation(), false);
     }
 
+    /**
+     * 起床
+     */
     public void wakeup(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         if (!target.isSleeping()) {
