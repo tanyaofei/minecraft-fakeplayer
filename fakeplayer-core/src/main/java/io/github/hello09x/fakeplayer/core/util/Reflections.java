@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.api;
+package io.github.hello09x.fakeplayer.core.util;
 
 import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;

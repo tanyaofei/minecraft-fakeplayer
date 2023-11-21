@@ -1,7 +1,5 @@
 package io.github.hello09x.fakeplayer.api.spi;
 
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -36,6 +34,6 @@ public interface NMSBridge {
 
     boolean isSupported();
 
-    @NotNull ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting);
+    @NotNull ActionTicker createAction(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting);
 
 }

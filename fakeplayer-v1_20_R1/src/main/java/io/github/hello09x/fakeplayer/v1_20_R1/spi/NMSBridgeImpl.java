@@ -1,7 +1,5 @@
 package io.github.hello09x.fakeplayer.v1_20_R1.spi;
 
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -48,7 +46,7 @@ public class NMSBridgeImpl implements NMSBridge {
     }
 
     @Override
-    public @NotNull ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
+    public @NotNull ActionTicker createAction(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
         return new ActionTickerImpl(player, action, setting);
     }
 

@@ -6,8 +6,7 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import io.github.hello09x.bedrock.i18n.I18n;
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.ActionCommand;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -37,24 +36,24 @@ public abstract class CommandSupports {
 
     private final static I18n i18n = Main.getI18n();
 
-    public static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
+    public static @NotNull CommandAPICommand[] newActionCommands(@NotNull Action.ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
                         .withOptionalArguments(target("name"))
-                        .executes(ActionCommand.instance.action(action, ActionSetting.once())),
+                        .executes(ActionCommand.instance.action(action, Action.ActionSetting.once())),
                 command("continuous")
                         .withOptionalArguments(target("name"))
-                        .executes(ActionCommand.instance.action(action, ActionSetting.continuous())),
+                        .executes(ActionCommand.instance.action(action, Action.ActionSetting.continuous())),
                 command("stop")
                         .withOptionalArguments(target("name"))
-                        .executes(ActionCommand.instance.action(action, ActionSetting.stop())),
+                        .executes(ActionCommand.instance.action(action, Action.ActionSetting.stop())),
                 command("interval")
                         .withOptionalArguments(
                                 int32("interval", 1),
                                 target("name"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
-                    ActionCommand.instance.action(sender, args, action, ActionSetting.interval(interval));
+                    ActionCommand.instance.action(sender, args, action, Action.ActionSetting.interval(interval));
                 })
         };
     }

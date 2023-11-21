@@ -1,10 +1,9 @@
 package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 
 
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
-import io.github.hello09x.fakeplayer.api.action.BaseActionTicker;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
+import io.github.hello09x.fakeplayer.core.entity.action.BaseActionTicker;
 import io.github.hello09x.fakeplayer.v1_20_R2.action.AttackAction;
 import io.github.hello09x.fakeplayer.v1_20_R2.action.MineAction;
 import io.github.hello09x.fakeplayer.v1_20_R2.action.UseAction;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ActionTickerImpl extends BaseActionTicker implements ActionTicker {
 
-    public ActionTickerImpl(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
+    public ActionTickerImpl(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
         super(player, action, setting);
         if (this.action == null) {
             this.action = switch (action) {

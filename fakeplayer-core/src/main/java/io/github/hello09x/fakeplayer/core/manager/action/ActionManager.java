@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.action;
 
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
 import io.github.hello09x.fakeplayer.core.Main;
 import org.bukkit.Bukkit;
@@ -16,7 +15,7 @@ public class ActionManager {
 
     public final static ActionManager instance = new ActionManager();
 
-    private final Map<UUID, Map<ActionType, ActionTicker>> managers = new HashMap<>();
+    private final Map<UUID, Map<Action.ActionType, ActionTicker>> managers = new HashMap<>();
 
     public ActionManager() {
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::tick, 0, 1);
@@ -25,8 +24,8 @@ public class ActionManager {
 
     public void setAction(
             @NotNull Player player,
-            @NotNull ActionType action,
-            @NotNull ActionSetting setting
+            @NotNull Action.ActionType action,
+            @NotNull Action.ActionSetting setting
     ) {
         var managers = this.managers.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
         managers.put(action, Main.getBridge().createAction(player, action, setting));

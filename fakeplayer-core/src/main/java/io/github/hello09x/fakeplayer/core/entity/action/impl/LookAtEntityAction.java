@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.api.action.impl;
+package io.github.hello09x.fakeplayer.core.entity.action.impl;
 
 import com.google.common.collect.Iterables;
 import io.github.hello09x.fakeplayer.api.spi.Action;

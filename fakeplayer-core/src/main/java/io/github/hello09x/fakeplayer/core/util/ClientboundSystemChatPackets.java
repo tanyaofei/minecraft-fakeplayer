@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.api.utils;
+package io.github.hello09x.fakeplayer.core.util;
 
 import io.github.hello09x.bedrock.util.LazyInit;
 import net.kyori.adventure.text.Component;

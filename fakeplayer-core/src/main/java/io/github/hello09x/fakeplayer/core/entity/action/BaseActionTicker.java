@@ -1,9 +1,9 @@
-package io.github.hello09x.fakeplayer.api.action;
+package io.github.hello09x.fakeplayer.core.entity.action;
 
-import io.github.hello09x.fakeplayer.api.action.impl.*;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
+import io.github.hello09x.fakeplayer.core.entity.action.impl.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,9 +14,9 @@ public abstract class BaseActionTicker implements ActionTicker {
     protected Action action;
 
     @NotNull
-    protected ActionSetting setting;
+    protected Action.ActionSetting setting;
 
-    public BaseActionTicker(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
+    public BaseActionTicker(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
         var bridge = Objects.requireNonNull(NMSBridge.getInstance());
         this.setting = setting;
         this.action = switch (action) {

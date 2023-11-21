@@ -2,8 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager;
 
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
@@ -274,7 +273,7 @@ public class FakeplayerManager {
         }
         nameManager.unregister(fakeplayer.getSequenceName());
         if (config.isDropInventoryOnQuiting()) {
-            ActionManager.instance.setAction(fakeplayer.getPlayer(), ActionType.DROP_INVENTORY, ActionSetting.once());
+            ActionManager.instance.setAction(fakeplayer.getPlayer(), Action.ActionType.DROP_INVENTORY, Action.ActionSetting.once());
         }
     }
 

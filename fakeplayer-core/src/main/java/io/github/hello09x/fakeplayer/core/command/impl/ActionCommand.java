@@ -3,8 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,7 @@ public class ActionCommand extends AbstractCommand {
 
     private final ActionManager actionManager = ActionManager.instance;
 
-    public @NotNull CommandExecutor action(@NotNull ActionType action, @NotNull ActionSetting setting) {
+    public @NotNull CommandExecutor action(@NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
         return (sender, args) -> action(sender, args, action, setting.clone());
     }
 
@@ -33,16 +32,16 @@ public class ActionCommand extends AbstractCommand {
     public void action(
             @NotNull CommandSender sender,
             @NotNull CommandArguments args,
-            @NotNull ActionType action,
-            @NotNull ActionSetting setting
+            @NotNull Action.ActionType action,
+            @NotNull Action.ActionSetting setting
     ) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         actionManager.setAction(target, action, setting);
 
         String translationKey;
-        if (setting.equals(ActionSetting.stop())) {
+        if (setting.equals(Action.ActionSetting.stop())) {
             translationKey = "fakeplayer.command.action.stop";
-        } else if (setting.equals(ActionSetting.once())) {
+        } else if (setting.equals(Action.ActionSetting.once())) {
             translationKey = "fakeplayer.command.action.once";
         } else {
             translationKey = "fakeplayer.command.action.continuous";

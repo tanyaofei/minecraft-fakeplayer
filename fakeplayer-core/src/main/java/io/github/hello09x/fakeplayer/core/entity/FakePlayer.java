@@ -3,8 +3,8 @@ package io.github.hello09x.fakeplayer.core.entity;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.CompletableTask;
-import io.github.hello09x.fakeplayer.api.action.ActionSetting;
-import io.github.hello09x.fakeplayer.api.action.ActionType;
+import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
@@ -115,23 +115,36 @@ public class FakePlayer {
         var address = ipGen.next();
         return CompletableTask
                 .joinAsync(Main.getInstance(), () -> {
-                    var event = this.preLogin(address);
+                    var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
                         throw new MessageException(i18n.translate(
-                                "fakeplayer.command.spawn.error.prelogin-failed", RED,
+                                "fakeplayer.command.spawn.error.disallowed", RED,
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
                     }
                 })
                 .thenComposeAsync(nul -> CompletableTask.join(Main.getInstance(), () -> {
-                    var event = this.login(address);
-                    if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(i18n.translate(
-                                "fakeplayer.command.spawn.error.login-failed", RED,
-                                Placeholder.component("name", text(player.getName(), WHITE)),
-                                Placeholder.component("reason", event.kickMessage())
-                        ));
+                    {
+                        var event = this.callLoginEvent(address);
+                        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+                            throw new MessageException(i18n.translate(
+                                    "fakeplayer.command.spawn.error.disallowed", RED,
+                                    Placeholder.component("name", text(player.getName(), WHITE)),
+                                    Placeholder.component("reason", event.kickMessage())
+                            ));
+                        }
+                    }
+
+                    {
+                        var event = this.callSpawnEvent();
+                        if (event.isCancelled()) {
+                            throw new MessageException(i18n.translate(
+                                    "fakeplayer.command.spawn.error.disallowed", RED,
+                                    Placeholder.component("name", text(player.getName(), WHITE)),
+                                    Placeholder.component("reason", event.getReason())
+                            ));
+                        }
                     }
 
                     if (config.isDropInventoryOnQuiting()) {
@@ -145,7 +158,7 @@ public class FakePlayer {
                     this.player.setCollidable(option.collidable());
                     this.player.setCanPickupItems(option.pickupItems());
                     if (option.lookAtEntity()) {
-                        ActionManager.instance.setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
+                        ActionManager.instance.setAction(player, Action.ActionType.LOOK_AT_NEAREST_ENTITY, Action.ActionSetting.continuous());
                     }
                     if (option.skin() && this.creator instanceof Player playerCreator) {
                         Skins.copySkin(playerCreator, this.player);
@@ -209,7 +222,7 @@ public class FakePlayer {
         return handle.getTickCount();
     }
 
-    private @NotNull AsyncPlayerPreLoginEvent preLogin(@NotNull InetAddress address) {
+    private @NotNull AsyncPlayerPreLoginEvent callPreLoginEvent(@NotNull InetAddress address) {
         var event = new AsyncPlayerPreLoginEvent(
                 this.name,
                 address,
@@ -222,12 +235,18 @@ public class FakePlayer {
         return event;
     }
 
-    private @NotNull PlayerLoginEvent login(@NotNull InetAddress address) {
+    private @NotNull PlayerLoginEvent callLoginEvent(@NotNull InetAddress address) {
         var event = new PlayerLoginEvent(
                 player,
                 address.getHostAddress(),
                 address
         );
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    private @NotNull FakePlayerSpawnEvent callSpawnEvent() {
+        var event = new FakePlayerSpawnEvent(this.creator, this.player);
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
