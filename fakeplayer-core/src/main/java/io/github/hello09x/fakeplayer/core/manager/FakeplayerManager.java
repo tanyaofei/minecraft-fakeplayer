@@ -107,7 +107,7 @@ public class FakeplayerManager {
                 sn,
                 lifespan
         );
-        var target = fp.getPlayer();    // 即使出现移除也不需要处理这个玩家, Bukkit 自行清除
+        var target = fp.getPlayer();    // 即使出现异常也不需要处理这个玩家, 最终会被 GC 掉
 
         return CompletableFuture
                 .supplyAsync(() -> {

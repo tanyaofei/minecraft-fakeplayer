@@ -25,7 +25,9 @@ public class WildFakeplayerManager implements PluginMessageListener {
 
     private final FakeplayerManager manager = FakeplayerManager.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
-    private final Set<String> bungeePlayers = new HashSet<>();
+
+    @NotNull
+    private final Set<String> bungeeCordPlayers = new HashSet<>();
 
     public WildFakeplayerManager() {
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, 100);
@@ -51,8 +53,8 @@ public class WildFakeplayerManager implements PluginMessageListener {
             return;
         }
 
-        this.bungeePlayers.clear();
-        this.bungeePlayers.addAll(Arrays.asList(in.readUTF().split(", ")));
+        this.bungeeCordPlayers.clear();
+        this.bungeeCordPlayers.addAll(Arrays.asList(in.readUTF().split(", ")));
         this.cleanup0();
     }
 
@@ -66,7 +68,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
             var creator = entry.getKey();
             var targets = entry.getValue();
             if (targets.isEmpty() || this.isOnline(creator)) {
-                return;
+                continue;
             }
 
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
@@ -121,7 +123,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
 
     private boolean isOnline(@NotNull String name) {
         return Bukkit.getConsoleSender().getName().equals(name)
-                || bungeePlayers.contains(name)
+                || this.bungeeCordPlayers.contains(name)
                 || Bukkit.getServer().getPlayerExact(name) != null;
     }
 
