@@ -8,6 +8,7 @@ import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigCommand extends AbstractCommand {
@@ -63,11 +65,10 @@ public class ConfigCommand extends AbstractCommand {
                         i18n.translate(config, GOLD),
                         text(": ", GRAY),
                         join(JoinConfiguration.separator(space()), options.stream().map(option -> {
-                            if (option.equals(value)) {
-                                return text("[" + option + "]", GREEN, TextDecoration.UNDERLINED);
-                            } else {
-                                return text("[" + option + "]", WHITE).clickEvent(runCommand("/fp config set " + config.key() + " " + option));
-                            }
+                            var style = option.equals(value) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);
+                            return text("[" + option + "]").style(style).clickEvent(
+                                    runCommand("/fp config set " + config.key() + " " + option)
+                            );
                         }).toList())
                 );
             }).toList();

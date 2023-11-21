@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.attribute.Attribute;
@@ -80,7 +81,7 @@ public class StatusCommand extends AbstractCommand {
         var food = target.getFoodLevel();
         var max = 20.0;
         return i18n.translate(
-                "fakeplayer.command.status.food", GRAY,
+                "fakeplayer.command.status.food", WHITE,
                 Placeholder.component("food", textOfChildren(
                         text(Mth.floor(food, 0.5), color(food, max)),
                         text("/", GRAY),
@@ -112,8 +113,8 @@ public class StatusCommand extends AbstractCommand {
         return textOfChildren(
                 i18n.translate(
                         "fakeplayer.command.status.exp", WHITE,
-                        Placeholder.component("level", text(level, DARK_GREEN)),
-                        Placeholder.component("points", text(points, DARK_GREEN))
+                        Placeholder.component("level", text(level, GREEN)),
+                        Placeholder.component("points", text(points, GREEN))
                 ),
                 space(),
                 i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
@@ -132,11 +133,10 @@ public class StatusCommand extends AbstractCommand {
                     name,
                     space(),
                     join(JoinConfiguration.separator(space()), options.stream().map(option -> {
-                        if (option.equals(status)) {
-                            return text("[" + option + "]", GREEN);
-                        } else {
-                            return text("[" + option + "]", GRAY, UNDERLINED).clickEvent(runCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName())));
-                        }
+                        var style = option.equals(status) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);
+                        return text("[" + option + "]").style(style).clickEvent(
+                                runCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName()))
+                        );
                     }).collect(Collectors.toList()))
             ));
         }
