@@ -131,7 +131,7 @@ public class FakeplayerManager {
 
                     Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                         FakeplayerManager.this.dispatchCommands(target, config.getPreparingCommands());
-                        FakeplayerManager.this.performCommands(target, config.getSelfCommands());
+                        FakeplayerManager.this.issueCommands(target, config.getSelfCommands());
                     }, 20);
                     return target;
                 });
@@ -425,7 +425,7 @@ public class FakeplayerManager {
      * @param target   假人
      * @param commands 命令
      */
-    public void performCommands(@NotNull Player target, @NotNull List<String> commands) {
+    public void issueCommands(@NotNull Player target, @NotNull List<String> commands) {
         if (commands.isEmpty()) {
             return;
         }
@@ -436,6 +436,8 @@ public class FakeplayerManager {
         for (var cmd : Commands.formatCommands(commands)) {
             if (!target.performCommand(cmd)) {
                 log.warning(target.getName() + " failed to execute command: " + cmd);
+            } else {
+                log.info(target.getName() + " issued command: " + cmd);
             }
         }
     }
