@@ -125,13 +125,13 @@ public class FakeplayerManager {
                 .thenComposeAsync(fp::spawnAsync)
                 .thenApply(nul -> {
                     Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                        playerList.add(fp);
-                        usedIdRepository.add(target.getUniqueId());
+                        this.playerList.add(fp);
+                        this.usedIdRepository.add(target.getUniqueId());
                     });
 
                     Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                        FakeplayerManager.this.dispatchCommands(target, config.getPreparingCommands());
-                        FakeplayerManager.this.issueCommands(target, config.getSelfCommands());
+                        this.dispatchCommands(target, config.getPreparingCommands());
+                        this.issueCommands(target, config.getSelfCommands());
                     }, 20);
                     return target;
                 });
@@ -146,7 +146,7 @@ public class FakeplayerManager {
      */
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
         return Optional
-                .ofNullable(playerList.getByName(name))
+                .ofNullable(this.playerList.getByName(name))
                 .filter(p -> p.isCreator(creator))
                 .map(FakePlayer::getPlayer)
                 .orElse(null);
@@ -160,7 +160,7 @@ public class FakeplayerManager {
      */
     public @Nullable Player get(@NotNull String name) {
         return Optional
-                .ofNullable(playerList.getByName(name))
+                .ofNullable(this.playerList.getByName(name))
                 .map(FakePlayer::getPlayer)
                 .orElse(null);
     }
@@ -173,7 +173,7 @@ public class FakeplayerManager {
      */
     public @Nullable String getCreatorName(@NotNull Player target) {
         return Optional
-                .ofNullable(playerList.getByUUID(target.getUniqueId()))
+                .ofNullable(this.playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getCreator)
                 .map(CommandSender::getName)
                 .orElse(null);
@@ -186,7 +186,7 @@ public class FakeplayerManager {
      * @return 创建者
      */
     public @Nullable CommandSender getCreator(@NotNull Player target) {
-        return Optional.ofNullable(playerList.getByUUID(target.getUniqueId()))
+        return Optional.ofNullable(this.playerList.getByUUID(target.getUniqueId()))
                 .map(FakePlayer::getCreator)
                 .map(creator -> {
                     if (creator instanceof Player p) {
@@ -217,12 +217,12 @@ public class FakeplayerManager {
      * @return 是否移除成功
      */
     public boolean remove(@NotNull String name, @Nullable Component reason) {
-        var player = this.get(name);
-        if (player == null) {
+        var target = this.get(name);
+        if (target == null) {
             return false;
         }
 
-        player.kick(textOfChildren(
+        target.kick(textOfChildren(
                 text("[fakeplayer] "),
                 reason == null ? text("removed") : reason
         ));
@@ -235,11 +235,11 @@ public class FakeplayerManager {
      * @return 移除的假人数量
      */
     public int removeAll(@Nullable String reason) {
-        var fakers = getAll();
-        for (var f : fakers) {
-            f.kick(text("[fakeplayer] " + (reason == null ? "removed" : reason)));
+        var targets = getAll();
+        for (var target : targets) {
+            target.kick(text("[fakeplayer] " + (reason == null ? "removed" : reason)));
         }
-        return fakers.size();
+        return targets.size();
     }
 
     /**
@@ -254,7 +254,7 @@ public class FakeplayerManager {
      * @return 经过筛选的假人
      */
     public @NotNull List<Player> getAll(@Nullable Predicate<Player> predicate) {
-        var stream = playerList.getAll().stream().map(FakePlayer::getPlayer);
+        var stream = this.playerList.getAll().stream().map(FakePlayer::getPlayer);
         if (predicate != null) {
             stream = stream.filter(predicate);
         }
@@ -267,11 +267,11 @@ public class FakeplayerManager {
      * @param target 假人
      */
     public void cleanup(@NotNull Player target) {
-        var fakeplayer = playerList.removeByUUID(target.getUniqueId());
+        var fakeplayer = this.playerList.removeByUUID(target.getUniqueId());
         if (fakeplayer == null) {
             return;
         }
-        nameManager.unregister(fakeplayer.getSequenceName());
+        this.nameManager.unregister(fakeplayer.getSequenceName());
         if (config.isDropInventoryOnQuiting()) {
             ActionManager.instance.setAction(fakeplayer.getPlayer(), Action.ActionType.DROP_INVENTORY, Action.ActionSetting.once());
         }
@@ -295,7 +295,7 @@ public class FakeplayerManager {
      * @return 假人
      */
     public @NotNull List<Player> getAll(@NotNull CommandSender creator, @Nullable Predicate<Player> predicate) {
-        var stream = playerList.getByCreator(creator.getName()).stream().map(FakePlayer::getPlayer);
+        var stream = this.playerList.getByCreator(creator.getName()).stream().map(FakePlayer::getPlayer);
         if (predicate != null) {
             stream = stream.filter(predicate);
         }
@@ -309,7 +309,7 @@ public class FakeplayerManager {
      * @return 是否是假人
      */
     public boolean isFake(@NotNull Player target) {
-        return playerList.getByUUID(target.getUniqueId()) != null;
+        return this.playerList.getByUUID(target.getUniqueId()) != null;
     }
 
     /**
@@ -319,7 +319,7 @@ public class FakeplayerManager {
      * @return 是否不是假人
      */
     public boolean isNotFake(@NotNull Player target) {
-        return playerList.getByUUID(target.getUniqueId()) == null;
+        return this.playerList.getByUUID(target.getUniqueId()) == null;
     }
 
     /**
@@ -329,7 +329,7 @@ public class FakeplayerManager {
      * @return 该 IP 地址创建着多少个假人
      */
     public long countByAddress(@NotNull String address) {
-        return playerList
+        return this.playerList
                 .stream()
                 .filter(p -> p.getCreatorIp().equals(address))
                 .count();
@@ -342,7 +342,7 @@ public class FakeplayerManager {
      * @return 创建了多少个假人
      */
     public int countByCreator(@NotNull CommandSender creator) {
-        return playerList.countByCreator(creator.getName());
+        return this.playerList.countByCreator(creator.getName());
     }
 
     /**
@@ -489,7 +489,7 @@ public class FakeplayerManager {
             return false;
         }
 
-        invsee.openInventory(creator, target);
+        this.invsee.openInventory(creator, target);
         creator.playSound(target.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
         return true;
     }
@@ -505,15 +505,15 @@ public class FakeplayerManager {
             return;
         }
 
-        if (this.playerList.count() >= config.getServerLimit()) {
+        if (this.playerList.count() >= this.config.getServerLimit()) {
             throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.server-limit"));
         }
 
-        if (this.playerList.getByCreator(creator.getName()).size() >= config.getPlayerLimit()) {
+        if (this.playerList.getByCreator(creator.getName()).size() >= this.config.getPlayerLimit()) {
             throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.player-limit"));
         }
 
-        if (config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= config.getPlayerLimit()) {
+        if (this.config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= this.config.getPlayerLimit()) {
             throw new MessageException(i18n.asString("fakeplayer.command.spawn.error.ip-limit"));
         }
     }
