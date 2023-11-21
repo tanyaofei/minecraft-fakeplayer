@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -107,6 +108,11 @@ public class FakeplayerListener implements Listener {
         } finally {
             manager.cleanup(target);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onTeleport(@NotNull PlayerTeleportEvent event) {
+        System.out.println(event.getTo());
     }
 
 }

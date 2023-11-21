@@ -16,6 +16,8 @@ public class NMSNetworkImpl implements NMSNetwork {
 
     private final @NotNull EmptyConnection connection;
 
+    private NMSServerGamePacketListener serverGamePacketListener;
+
     public NMSNetworkImpl(
             @NotNull InetAddress address
     ) {
@@ -35,7 +37,17 @@ public class NMSNetworkImpl implements NMSNetwork {
                 this.connection,
                 handle
         );
+        this.serverGamePacketListener = listener;
         return listener;
+    }
+
+    @NotNull
+    @Override
+    public NMSServerGamePacketListener getServerGamePacketListener() throws IllegalStateException {
+        if (this.serverGamePacketListener == null) {
+            throw new IllegalStateException("not initialized");
+        }
+        return this.serverGamePacketListener;
     }
 
 }

@@ -136,7 +136,7 @@ public interface NMSServerPlayer {
     void copyTexture(@NotNull Player from);
 
     /**
-     * 获取时刻计数
+     * 获取时刻计数, 尽管假人会退出游戏, 但服务器重启前这个值不会重置
      *
      * @return 时刻计数
      */
