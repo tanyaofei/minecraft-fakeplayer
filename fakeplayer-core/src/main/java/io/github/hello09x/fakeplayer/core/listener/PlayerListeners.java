@@ -22,11 +22,17 @@ public class PlayerListeners implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onSneak(@NotNull PlayerToggleSneakEvent event) {
         var player = event.getPlayer();
-        for (var passenger : player.getPassengers()) {
-            if (passenger instanceof Player target) {
-                if (manager.isFake(target)) {
-                    player.removePassenger(target);
-                }
+        var passengers = player.getPassengers();
+        if (passengers.isEmpty()) {
+            return;
+        }
+
+        for (var passenger : passengers) {
+            if (!(passenger instanceof Player target)) {
+                continue;
+            }
+            if (manager.isFake(target)) {
+                player.removePassenger(target);
             }
         }
     }

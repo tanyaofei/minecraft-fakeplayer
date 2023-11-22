@@ -7,7 +7,6 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
-import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
@@ -68,7 +67,7 @@ public class FakeplayerManager {
         timer.scheduleWithFixedDelay(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                            if (FakeplayerManager.this.removeAll("low tps") > 0) {
+                            if (this.removeAll("low tps") > 0) {
                                 Bukkit.broadcast(i18n.translate("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
                             }
                         });
