@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
-import io.github.hello09x.fakeplayer.core.common.ConstantPool;
+import io.github.hello09x.fakeplayer.core.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.core.util.Reflections;
 import io.github.hello09x.fakeplayer.v1_20_R2.network.EmptyAdvancements;
 import lombok.Getter;
