@@ -139,7 +139,7 @@ public class CommandRegistry {
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withPermission(Permission.set)
                                 .withArguments(
-                                        config("config", Config::hasConfigurer),
+                                        config("config", Config::hasAccessor),
                                         configValue("config", "value")
                                 )
                                 .withOptionalArguments(target("name"))
@@ -153,9 +153,9 @@ public class CommandRegistry {
                                                         configValue("config", "value"))
                                                 .executesPlayer(ConfigCommand.instance::setConfig),
                                         command("list")
-                                                .executesPlayer(ConfigCommand.instance::listConfig)
+                                                .executes(ConfigCommand.instance::listConfig)
                                 )
-                                .executesPlayer(ConfigCommand.instance::listConfig),
+                                .executes(ConfigCommand.instance::listConfig),
 
                         command("expme")
                                 .withPermission(Permission.expme)

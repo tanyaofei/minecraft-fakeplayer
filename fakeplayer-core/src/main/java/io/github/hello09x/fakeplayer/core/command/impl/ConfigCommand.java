@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -9,9 +11,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +37,12 @@ public class ConfigCommand extends AbstractCommand {
     /**
      * 设置配置
      */
-    public void setConfig(@NotNull Player sender, @NotNull CommandArguments args) {
+    public void setConfig(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         @SuppressWarnings("unchecked")
         var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
 
         if (!config.hasPermission(sender)) {
-            sender.sendMessage(i18n.translate("fakeplayer.command.config.set.error.no-permission", RED));
-            return;
+            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.config.set.error.no-permission"));
         }
 
         var value = Objects.requireNonNull(args.get("value"));
@@ -56,7 +57,7 @@ public class ConfigCommand extends AbstractCommand {
     /**
      * 获取所有配置
      */
-    public void listConfig(@NotNull Player sender, @NotNull CommandArguments args) {
+    public void listConfig(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         CompletableFuture.runAsync(() -> {
             var components = Arrays.stream(Config.values()).map(config -> {
                 var options = new ArrayList<>(config.options());

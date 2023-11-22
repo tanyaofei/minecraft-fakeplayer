@@ -13,6 +13,9 @@ public class RespawnCommand extends AbstractCommand {
 
     public final static RespawnCommand instance = new RespawnCommand();
 
+    /**
+     * 重生
+     */
     public void respawn(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args, Entity::isDead);
         bridge.fromPlayer(target).respawn();
