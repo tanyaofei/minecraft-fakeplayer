@@ -37,25 +37,26 @@ public abstract class BaseActionTicker implements ActionTicker {
 
 
     @Override
-    public void tick() {
+    public boolean tick() {
         if (setting.wait > 0) {
-            setting.wait--;
-            inactiveTick();
-            return;
+            this.setting.wait--;
+            this.inactiveTick();
+            return false;
         }
 
-        if (setting.remains == 0) {
-            inactiveTick();
-            return;
+        if (this.setting.remains == 0) {
+            this.inactiveTick();
+            return true;
         }
 
-        var valid = action.tick();
+        var valid = this.action.tick();
         if (valid) {
-            if (setting.remains > 0) {
-                setting.remains--;
+            if (this.setting.remains > 0) {
+                this.setting.remains--;
             }
-            setting.wait = setting.interval;
+            this.setting.wait = this.setting.interval;
         }
+        return false;
     }
 
     @Override

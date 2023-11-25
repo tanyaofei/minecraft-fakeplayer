@@ -4,8 +4,10 @@ public interface ActionTicker {
 
     /**
      * 时刻计算
+     *
+     * @return 是否已经完成, 不再需要继续执行
      */
-    void tick();
+    boolean tick();
 
     /**
      * 非活跃时刻计算

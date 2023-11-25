@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager.action;
 
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
+import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,10 +18,11 @@ public class ActionManager {
 
     private final Map<UUID, Map<Action.ActionType, ActionTicker>> managers = new HashMap<>();
 
+    private final NMSBridge bridge = Main.getBridge();
+
     public ActionManager() {
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::tick, 0, 1);
     }
-
 
     public void setAction(
             @NotNull Player player,
@@ -28,7 +30,7 @@ public class ActionManager {
             @NotNull Action.ActionSetting setting
     ) {
         var managers = this.managers.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
-        managers.put(action, Main.getBridge().createAction(player, action, setting));
+        managers.put(action, bridge.createAction(player, action, setting));
     }
 
     public void tick() {
@@ -47,8 +49,9 @@ public class ActionManager {
             }
 
             // do tick
-            for (var ticker : entry.getValue().values()) {
-                ticker.tick();
+            entry.getValue().values().removeIf(ActionTicker::tick);
+            if (entry.getValue().isEmpty()) {
+                itr.remove();
             }
         }
     }

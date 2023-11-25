@@ -59,6 +59,7 @@ public class MineAction extends TraceAction {
                     -1
             );
             current.freeze = 5;
+            broken = true;
         } else if (current.pos == null || !current.pos.equals(pos)) {
             if (current.pos != null) {
                 player.gameMode.handleBlockBreakAction(
