@@ -5,6 +5,8 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class Worlds {
 
     private final static String WORLD_OVERWORLD = "world";
@@ -17,6 +19,15 @@ public class Worlds {
      */
     public static boolean isOverworld(@NotNull World world) {
         return world.getName().equals(WORLD_OVERWORLD);
+    }
+
+    /**
+     * 获取主世界
+     *
+     * @return 主世界
+     */
+    public static @NotNull World getOverworld() {
+        return Objects.requireNonNull(Bukkit.getWorld("world"), "No world named 'world' on this server");
     }
 
     /**

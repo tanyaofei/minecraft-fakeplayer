@@ -12,10 +12,6 @@ import java.util.Objects;
 
 public class NMSServerLevelImpl implements NMSServerLevel {
 
-    public final static NMSServerLevelImpl OVERWORLD = new NMSServerLevelImpl(
-            Objects.requireNonNull(Bukkit.getWorld("world"))
-    );
-
     @Getter
     private final ServerLevel handle;
 
