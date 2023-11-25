@@ -20,10 +20,10 @@ import java.util.logging.Logger;
 
 public abstract class AbstractCommand {
 
-    protected final FakeplayerManager manager = FakeplayerManager.instance;
-    protected final FakeplayerConfig config = FakeplayerConfig.instance;
-    protected final NMSBridge bridge = Main.getBridge();
-    protected final I18n i18n = Main.getI18n();
+    protected final static FakeplayerManager manager = FakeplayerManager.instance;
+    protected final static FakeplayerConfig config = FakeplayerConfig.instance;
+    protected final static NMSBridge bridge = Main.getBridge();
+    protected final static I18n i18n = Main.getI18n();
     protected final static Logger log = Main.getInstance().getLogger();
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {

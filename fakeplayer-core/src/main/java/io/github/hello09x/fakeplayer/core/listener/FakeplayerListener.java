@@ -29,9 +29,9 @@ public class FakeplayerListener implements Listener {
 
     public final static FakeplayerListener instance = new FakeplayerListener();
     private final static Logger log = Main.getInstance().getLogger();
-    private final FakeplayerManager manager = FakeplayerManager.instance;
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
-    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
+    private final static FakeplayerManager manager = FakeplayerManager.instance;
+    private final static FakeplayerConfig config = FakeplayerConfig.instance;
+    private final static UsedIdRepository usedIdRepository = UsedIdRepository.instance;
 
     private final I18n i18n = Main.getI18n();
 

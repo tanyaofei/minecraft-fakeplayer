@@ -5,9 +5,9 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
-import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
@@ -68,7 +68,7 @@ public class FakeplayerManager {
         timer.scheduleWithFixedDelay(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                            if (FakeplayerManager.this.removeAll("low tps") > 0) {
+                            if (this.removeAll("low tps") > 0) {
                                 Bukkit.broadcast(i18n.translate("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
                             }
                         });
@@ -357,9 +357,9 @@ public class FakeplayerManager {
      */
     public void setReplenish(@NotNull Player target, boolean replenish) {
         if (!replenish) {
-            target.removeMetadata("fakeplayer:replenish", Main.getInstance());
+            target.removeMetadata(MetadataKeys.REPLENISH, Main.getInstance());
         } else {
-            target.setMetadata("fakeplayer:replenish", new FixedMetadataValue(Main.getInstance(), true));
+            target.setMetadata(MetadataKeys.REPLENISH, new FixedMetadataValue(Main.getInstance(), true));
         }
     }
 
@@ -370,7 +370,7 @@ public class FakeplayerManager {
      * @return 是否自动补货
      */
     public boolean isReplenish(@NotNull Player target) {
-        return target.hasMetadata("fakeplayer:replenish");
+        return target.hasMetadata(MetadataKeys.REPLENISH);
     }
 
     /**
@@ -381,7 +381,7 @@ public class FakeplayerManager {
      */
     public void setSelection(@NotNull Player creator, @Nullable Player target) {
         if (target == null) {
-            creator.removeMetadata("fakeplayer:selection", Main.getInstance());
+            creator.removeMetadata(MetadataKeys.SELECTION, Main.getInstance());
             return;
         }
 
@@ -389,7 +389,7 @@ public class FakeplayerManager {
             return;
         }
 
-        creator.setMetadata("fakeplayer:selection", new FixedMetadataValue(Main.getInstance(), target.getUniqueId()));
+        creator.setMetadata(MetadataKeys.SELECTION, new FixedMetadataValue(Main.getInstance(), target.getUniqueId()));
     }
 
     /**
@@ -402,21 +402,22 @@ public class FakeplayerManager {
         if (!(creator instanceof Player p)) {
             return null;
         }
-        if (!p.hasMetadata("fakeplayer:selection")) {
+        if (!p.hasMetadata(MetadataKeys.SELECTION)) {
             return null;
         }
 
-        var uuid = (UUID) p.getMetadata("fakeplayer:selection")
+        var uuid = (UUID) p.getMetadata(MetadataKeys.SELECTION)
                 .stream()
                 .map(MetadataValue::value)
                 .filter(Objects::nonNull)
+                .filter(v -> v.getClass() == UUID.class)
                 .findAny()
                 .orElse(null);
         if (uuid == null) {
             return null;
         }
 
-        var target = Optional.ofNullable(playerList.getByUUID(uuid)).map(FakePlayer::getPlayer).orElse(null);
+        var target = Optional.ofNullable(this.playerList.getByUUID(uuid)).map(FakePlayer::getPlayer).orElse(null);
         if (target == null) {
             this.setSelection(p, null);
         }
@@ -494,7 +495,8 @@ public class FakeplayerManager {
         }
 
         this.invsee.openInventory(creator, target);
-        creator.playSound(target.getLocation(), Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
+        var pos = target.getLocation();
+        pos.getWorld().playSound(pos, Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
         return true;
     }
 

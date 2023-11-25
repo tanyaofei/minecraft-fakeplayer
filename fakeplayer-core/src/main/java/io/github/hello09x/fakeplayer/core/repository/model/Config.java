@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.repository.model;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import net.kyori.adventure.translation.Translatable;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,11 +18,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * @param key           配置项 key
+ * @param key            配置项 key
  * @param translationKey 翻译 key
  * @param defaultValue   默认值
  * @param options        可选值
  * @param converter      转换器
+ * @param accessor       访问器, 访问或者设置假人当前配置
  */
 public record Config<T>(
 
@@ -46,10 +48,7 @@ public record Config<T>(
         Function<String, T> converter,
 
         @UnknownNullability
-        Function<Player, T> current,
-
-        @UnknownNullability
-        BiConsumer<Player, T> configurer
+        Accessor<T> accessor
 
 ) implements Translatable {
 
@@ -63,8 +62,7 @@ public record Config<T>(
             List.of("true", "false"),
             null,
             Boolean::valueOf,
-            LivingEntity::isCollidable,
-            LivingEntity::setCollidable
+            new Accessor<>(LivingEntity::isCollidable, LivingEntity::setCollidable)
     );
 
     /**
@@ -78,8 +76,7 @@ public record Config<T>(
             List.of("true", "false"),
             null,
             Boolean::valueOf,
-            LivingEntity::isInvulnerable,
-            LivingEntity::setInvulnerable
+            new Accessor<>(LivingEntity::isInvulnerable, LivingEntity::setInvulnerable)
     );
 
     /**
@@ -93,7 +90,6 @@ public record Config<T>(
             List.of("true", "false"),
             null,
             Boolean::valueOf,
-            null,
             null
     );
 
@@ -108,8 +104,7 @@ public record Config<T>(
             List.of("true", "false"),
             null,
             Boolean::valueOf,
-            LivingEntity::getCanPickupItems,
-            LivingEntity::setCanPickupItems
+            new Accessor<>(LivingEntity::getCanPickupItems, LivingEntity::setCanPickupItems)
     );
 
     /**
@@ -123,7 +118,6 @@ public record Config<T>(
             List.of("true", "false"),
             null,
             Boolean::valueOf,
-            null,
             null
     );
 
@@ -138,8 +132,7 @@ public record Config<T>(
             List.of("true", "false"),
             Permission.replenish,
             Boolean::valueOf,
-            FakeplayerManager.instance::isReplenish,
-            FakeplayerManager.instance::setReplenish
+            new Accessor<>(FakeplayerManager.instance::isReplenish, FakeplayerManager.instance::setReplenish)
     );
 
     @SuppressWarnings("unchecked")
@@ -164,15 +157,14 @@ public record Config<T>(
             @NotNull List<String> options,
             @Nullable String permission,
             @NotNull Function<String, T> converter,
-            @Nullable Function<Player, T> descriptor,
-            @Nullable BiConsumer<Player, T> configurer
+            @Nullable Accessor<T> accessor
     ) {
-        var config = new Config<>(name, translationKey, type, defaultValue, options, permission, converter, descriptor, configurer);
+        var config = new Config<>(name, translationKey, type, defaultValue, options, permission, converter, accessor);
         values.put(name, config);
         return config;
     }
 
-    public boolean hasPermission(@NotNull Player player) {
+    public boolean hasPermission(@NotNull CommandSender player) {
         return this.permission == null || player.hasPermission(this.permission);
     }
 
@@ -181,7 +173,16 @@ public record Config<T>(
         return this.translationKey;
     }
 
-    public boolean hasConfigurer() {
-        return this.configurer != null;
+    public boolean hasAccessor() {
+        return this.accessor != null;
     }
+
+    public record Accessor<T>(
+            @NotNull Function<Player, T> getter,
+            @NotNull BiConsumer<Player, T> setter
+    ) {
+
+    }
+
+
 }

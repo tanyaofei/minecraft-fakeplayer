@@ -122,12 +122,12 @@ public class StatusCommand extends AbstractCommand {
     }
 
     private @NotNull Component getConfigLine(@NotNull Player target) {
-        var configs = Arrays.stream(Config.values()).filter(Config::hasConfigurer).toList();
+        var configs = Arrays.stream(Config.values()).filter(Config::hasAccessor).toList();
         var messages = new ArrayList<Component>();
         for (var config : configs) {
             var name = i18n.translate(config.translationKey());
             var options = config.options();
-            var status = config.current().apply(target).toString();
+            var status = config.accessor().getter().apply(target).toString();
 
             messages.add(textOfChildren(
                     name,

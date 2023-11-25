@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.core.common;
+package io.github.hello09x.fakeplayer.core.constant;
 
 public interface ConstantPool {
 
