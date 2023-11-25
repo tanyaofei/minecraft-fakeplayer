@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.core.util.Teleportor;
+import io.github.hello09x.bedrock.util.Teleportor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;

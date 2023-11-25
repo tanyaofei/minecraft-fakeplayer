@@ -1,9 +1,9 @@
 package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 
 import com.mojang.authlib.GameProfile;
+import io.github.hello09x.bedrock.util.Worlds;
 import io.github.hello09x.fakeplayer.api.spi.NMSServer;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
-import io.github.hello09x.fakeplayer.core.util.Worlds;
 import lombok.Getter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;

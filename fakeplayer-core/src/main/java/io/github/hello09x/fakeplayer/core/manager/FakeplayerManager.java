@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager;
 
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.bedrock.util.AddressUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -14,7 +15,6 @@ import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
-import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
