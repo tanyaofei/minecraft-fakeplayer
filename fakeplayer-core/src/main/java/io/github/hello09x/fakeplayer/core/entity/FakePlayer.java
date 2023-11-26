@@ -172,46 +172,37 @@ public class FakePlayer {
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
-                    var spawnAt = option.spawnAt().clone();
-
-                    // 假人需要穿越一次纬度才能让区块知道该区域有假人
-                    // 假人在创建时会在主世界出生点出生, 如果目标点是其他世界, 则已经完成了一次纬度传送
-                    // 但是如果目标点是主世界, 则需要另外进行一次纬度传送
-                    if (Worlds.isOverworld(spawnAt.getWorld())) {
-                        this.teleportToSpawnpointAfterChangingDimension(spawnAt);
-                    } else {
-                        this.teleportToSpawnpoint(spawnAt);
-                    }
-
+                    this.teleportToSpawnpoint(option.spawnAt().clone());
                     this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
                 }));
     }
 
     /**
-     * 让假人完成一次维度旅行, 只有跨越过维度的假人才有刷怪能力(bug)
+     * 将假人传送到指定位置
      *
-     * @param spawnpoint 最终目的地, 即出生点
+     * @param to 目标位置
      */
-    private void teleportToSpawnpointAfterChangingDimension(@NotNull Location spawnpoint) {
-        var world = Worlds.getNonOverworld();
-        if (world == null || !player.teleport(world.getSpawnLocation())) {
-            this.creator.sendMessage(i18n.translate(
-                    "fakeplayer.command.spawn.error.no-mob-spawning-ability", GRAY,
-                    Placeholder.component("name", text(player.getName(), WHITE))
-            ));
-            return;
+    private void teleportToSpawnpoint(@NotNull Location to) {
+        var from = this.player.getLocation();
+        if (from.getWorld().equals(to.getWorld())) {
+            // 如果生成世界等于目的世界, 则需要穿越一次维度才能获取刷怪能力
+            var otherWorld = Worlds.getOtherWorld(from.getWorld());
+            if (otherWorld == null || !player.teleport(otherWorld.getSpawnLocation())) {
+                this.creator.sendMessage(i18n.translate(
+                        "fakeplayer.command.spawn.error.no-mob-spawning-ability", GRAY,
+                        Placeholder.component("name", text(player.getName(), WHITE))
+                ));
+            }
         }
 
-        Bukkit.getScheduler().runTask(Main.getInstance(), () -> teleportToSpawnpoint(spawnpoint));
-    }
-
-    private void teleportToSpawnpoint(@NotNull Location spawnpoint) {
-        if (!Teleportor.teleportAndSound(player, spawnpoint)) {
-            this.creator.sendMessage(i18n.translate(
-                    "fakeplayer.command.spawn.error.teleport-failed", GRAY,
-                    Placeholder.component("name", text(player.getName(), WHITE))
-            ));
-        }
+        Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+            if (!Teleportor.teleportAndSound(player, to)) {
+                this.creator.sendMessage(i18n.translate(
+                        "fakeplayer.command.spawn.error.teleport-failed", GRAY,
+                        Placeholder.component("name", text(player.getName(), WHITE))
+                ));
+            }
+        });
     }
 
     public boolean isOnline() {

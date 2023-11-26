@@ -496,7 +496,7 @@ public class FakeplayerManager {
 
         this.invsee.openInventory(creator, target);
         var pos = target.getLocation();
-        pos.getWorld().playSound(pos, Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.5f, 1.0f);
+        pos.getWorld().playSound(pos, Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.3f, 1.0f);
         return true;
     }
 

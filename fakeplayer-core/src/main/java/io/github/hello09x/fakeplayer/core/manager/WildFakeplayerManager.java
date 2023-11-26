@@ -30,7 +30,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
     private final Set<String> bungeeCordPlayers = new HashSet<>();
 
     public WildFakeplayerManager() {
-        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, 100);
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, 6000);
     }
 
     @Override

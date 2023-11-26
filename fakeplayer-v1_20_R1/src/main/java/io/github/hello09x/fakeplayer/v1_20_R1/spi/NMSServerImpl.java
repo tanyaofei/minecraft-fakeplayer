@@ -28,7 +28,7 @@ public class NMSServerImpl implements NMSServer {
     public @NotNull NMSServerPlayer newPlayer(@NotNull UUID uuid, @NotNull String name) {
         var handle = new ServerPlayer(
                 new NMSServerImpl(Bukkit.getServer()).getHandle(),
-                new NMSServerLevelImpl(Worlds.getOverworld()).getHandle(),
+                new NMSServerLevelImpl(Worlds.getMainWorld()).getHandle(),
                 new GameProfile(uuid, name)
         );
         return new NMSServerPlayerImpl(handle.getBukkitEntity());
