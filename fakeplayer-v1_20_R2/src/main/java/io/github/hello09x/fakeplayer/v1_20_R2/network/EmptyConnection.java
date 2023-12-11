@@ -14,6 +14,7 @@ public class EmptyConnection extends Connection {
         super(PacketFlow.SERVERBOUND);
         this.channel = new EmptyChannel(null, address);
         this.address = this.channel.remoteAddress();
+        Connection.configureSerialization(this.channel.pipeline(), PacketFlow.SERVERBOUND, null);
     }
 
     @Override
@@ -31,6 +32,7 @@ public class EmptyConnection extends Connection {
 
     public void setProtocolAttr(@NotNull ConnectionProtocol protocol) {
         this.channel.attr(Connection.ATTRIBUTE_SERVERBOUND_PROTOCOL).set(protocol.codec(PacketFlow.SERVERBOUND));
+        this.channel.attr(Connection.ATTRIBUTE_CLIENTBOUND_PROTOCOL).set(protocol.codec(PacketFlow.CLIENTBOUND));
     }
 
 }
