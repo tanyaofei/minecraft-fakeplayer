@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.v1_20_R2.network;
 
 import io.netty.channel.*;
+import io.netty.util.ReferenceCountUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +43,14 @@ public class EmptyChannel extends AbstractChannel {
     }
 
     @Override
-    protected void doWrite(ChannelOutboundBuffer arg0) throws Exception {
+    protected void doWrite(ChannelOutboundBuffer in) throws Exception {
+        for (;;) {
+            Object msg = in.current();
+            if (msg == null) {
+                break;
+            }
+            in.remove();
+        }
     }
 
     @Override
