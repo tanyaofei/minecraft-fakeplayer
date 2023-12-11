@@ -38,7 +38,7 @@ public class UserConfigManager {
         if (value == null) {
             return config.defaultValue();
         }
-        return config.converter().apply(value);
+        return config.parser().apply(value);
     }
 
     /**
@@ -61,7 +61,7 @@ public class UserConfigManager {
             if (key == null || !key.hasPermission(player)) {
                 continue;
             }
-            values.put(key, key.converter().apply(config.value()));
+            values.put(key, key.parser().apply(config.value()));
         }
         return new Configs(values);
     }

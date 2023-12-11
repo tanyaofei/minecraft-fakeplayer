@@ -149,7 +149,7 @@ public abstract class CommandSupports {
             if (!config.options().contains(arg)) {
                 throw CustomArgument.CustomArgumentException.fromString(i18n.asString("fakeplayer.command.config.set.error.invalid-value"));
             }
-            return config.converter().apply(arg);
+            return config.parser().apply(arg);
         }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
             var config = Objects.requireNonNull((Config<?>) info.previousArgs().get(configNodeName));
             var arg = info.currentArg().toLowerCase();
