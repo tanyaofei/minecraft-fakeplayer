@@ -2,8 +2,8 @@ package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerGamePacketListener;
-import io.github.hello09x.fakeplayer.v1_20_R2.network.EmptyConnection;
-import io.github.hello09x.fakeplayer.v1_20_R2.network.EmptyServerGamePacketListenerImpl;
+import io.github.hello09x.fakeplayer.v1_20_R2.network.DummyConnection;
+import io.github.hello09x.fakeplayer.v1_20_R2.network.DummyServerGamePacketListenerImpl;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.server.network.CommonListenerCookie;
 import org.bukkit.Server;
@@ -17,14 +17,14 @@ import java.net.InetAddress;
 public class NMSNetworkImpl implements NMSNetwork {
 
     @NotNull
-    private final EmptyConnection connection;
+    private final DummyConnection connection;
 
     private NMSServerGamePacketListener serverGamePacketListener;
 
     public NMSNetworkImpl(
             @NotNull InetAddress address
     ) {
-        this.connection = new EmptyConnection(address);
+        this.connection = new DummyConnection(address);
     }
 
     @NotNull
@@ -36,7 +36,7 @@ public class NMSNetworkImpl implements NMSNetwork {
         this.connection.setProtocolAttr(ConnectionProtocol.PLAY);
         var handle = ((CraftPlayer) player).getHandle();
         var cookie = CommonListenerCookie.createInitial(((CraftPlayer) player).getProfile());
-        var listener = new EmptyServerGamePacketListenerImpl(
+        var listener = new DummyServerGamePacketListenerImpl(
                 ((CraftServer) server).getServer(),
                 this.connection,
                 handle,

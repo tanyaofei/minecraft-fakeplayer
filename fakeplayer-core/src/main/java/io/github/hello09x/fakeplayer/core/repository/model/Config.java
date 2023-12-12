@@ -22,7 +22,7 @@ import java.util.function.Function;
  * @param translationKey 翻译 key
  * @param defaultValue   默认值
  * @param options        可选值
- * @param parser      转换器
+ * @param parser         转换器
  * @param accessor       访问器, 访问或者设置假人当前配置
  */
 public record Config<T>(

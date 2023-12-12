@@ -2,8 +2,8 @@ package io.github.hello09x.fakeplayer.v1_20_R1.spi;
 
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerGamePacketListener;
-import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyConnection;
-import io.github.hello09x.fakeplayer.v1_20_R1.network.EmptyServerGamePacketListenerImpl;
+import io.github.hello09x.fakeplayer.v1_20_R1.network.DummyConnection;
+import io.github.hello09x.fakeplayer.v1_20_R1.network.DummyServerGamePacketListenerImpl;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
@@ -14,20 +14,20 @@ import java.net.InetAddress;
 
 public class NMSNetworkImpl implements NMSNetwork {
 
-    private final @NotNull EmptyConnection connection;
+    private final @NotNull DummyConnection connection;
 
     private NMSServerGamePacketListener serverGamePacketListener;
 
     public NMSNetworkImpl(
             @NotNull InetAddress address
     ) {
-        this.connection = new EmptyConnection(address);
+        this.connection = new DummyConnection(address);
     }
 
     @Override
     public @NotNull NMSServerGamePacketListener placeNewPlayer(@NotNull Server server, @NotNull Player player) {
         var handle = ((CraftPlayer) player).getHandle();
-        var listener = new EmptyServerGamePacketListenerImpl(
+        var listener = new DummyServerGamePacketListenerImpl(
                 ((CraftServer) server).getServer(),
                 this.connection,
                 handle

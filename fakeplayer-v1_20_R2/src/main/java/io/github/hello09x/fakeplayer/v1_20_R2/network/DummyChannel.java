@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.v1_20_R2.network;
 
 import io.netty.channel.*;
-import io.netty.util.ReferenceCountUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,13 +8,13 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
-public class EmptyChannel extends AbstractChannel {
+public class DummyChannel extends AbstractChannel {
     private final static EventLoop EVENT_LOOP = new DefaultEventLoop();
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
     private final InetAddress address;
 
-    public EmptyChannel(@Nullable Channel parent, @NotNull InetAddress address) {
+    public DummyChannel(@Nullable Channel parent, @NotNull InetAddress address) {
         super(parent);
         this.address = address;
     }

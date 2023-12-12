@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.constant.ConstantPool;
 import io.github.hello09x.fakeplayer.core.util.Reflections;
-import io.github.hello09x.fakeplayer.v1_20_R2.network.EmptyAdvancements;
+import io.github.hello09x.fakeplayer.v1_20_R2.network.DummyPlayerAdvancements;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -171,7 +171,7 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
         try {
             ServerPlayer$advancements.set(
                     handle,
-                    new EmptyAdvancements(
+                    new DummyPlayerAdvancements(
                             server.getFixerUpper(),
                             server.getPlayerList(),
                             server.getAdvancements(),
