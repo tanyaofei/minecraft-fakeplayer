@@ -91,7 +91,7 @@ public class NameManager {
      * @param name    自定义名称
      * @return 序列名
      */
-    public @NotNull SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
+    public @NotNull SequenceName specify(@NotNull CommandSender creator, @NotNull String name) {
         if (name.startsWith("-")) {
             throw new IllegalCustomNameException(i18n.translate(
                     "fakeplayer.spawn.error.name.start-with-illegal-character", RED,
@@ -117,14 +117,19 @@ public class NameManager {
             throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.invalid", RED));
         }
 
-        if (Bukkit.getPlayerExact(name) != null || Bukkit.getOfflinePlayer(name).hasPlayedBefore()) {
+        if (Bukkit.getPlayerExact(name) != null) {
+            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
+        }
+
+        var player = Bukkit.getOfflinePlayer(name);
+        if (player.hasPlayedBefore() && !usedIdRepository.contains(player.getUniqueId())) {
             throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
         }
 
         return new SequenceName(
                 "custom",
                 0,
-                uuidFromName(creator.getName() + ":" + name),
+                this.uuidFromName(name),
                 name
         );
     }
