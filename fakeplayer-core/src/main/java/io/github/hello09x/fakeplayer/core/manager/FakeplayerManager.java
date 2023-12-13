@@ -96,7 +96,7 @@ public class FakeplayerManager {
 
         SequenceName sn;
         try {
-            sn = name == null ? nameManager.register(creator) : nameManager.specify(creator, name);
+            sn = name == null ? nameManager.register(creator) : nameManager.specify(name);
         } catch (IllegalCustomNameException e) {
             throw new MessageException(e.getMessage());
         }
