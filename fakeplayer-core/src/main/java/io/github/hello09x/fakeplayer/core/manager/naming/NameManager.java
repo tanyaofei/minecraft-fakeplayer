@@ -42,7 +42,7 @@ public class NameManager {
 
     public NameManager() {
         var file = new File(Main.getInstance().getDataFolder(), "serverid");
-        serverId = Optional.ofNullable(readServerId(file)).orElseGet(() -> {
+        serverId = Optional.ofNullable(loadServerId(file)).orElseGet(() -> {
             var uuid = UUID.randomUUID().toString();
             try (var out = new FileWriter(file, StandardCharsets.UTF_8)) {
                 IOUtils.write(uuid, out);
@@ -53,7 +53,7 @@ public class NameManager {
         });
     }
 
-    private static @Nullable String readServerId(@NotNull File file) {
+    private static @Nullable String loadServerId(@NotNull File file) {
         if (!file.exists()) {
             return null;
         }
@@ -87,11 +87,10 @@ public class NameManager {
     /**
      * 通过自定义名称获取序列名
      *
-     * @param creator 创建者
-     * @param name    自定义名称
+     * @param name 自定义名称
      * @return 序列名
      */
-    public @NotNull SequenceName custom(@NotNull CommandSender creator, @NotNull String name) {
+    public @NotNull SequenceName specify(@NotNull String name) {
         if (name.startsWith("-")) {
             throw new IllegalCustomNameException(i18n.translate(
                     "fakeplayer.spawn.error.name.start-with-illegal-character", RED,
@@ -117,14 +116,19 @@ public class NameManager {
             throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.invalid", RED));
         }
 
-        if (Bukkit.getPlayerExact(name) != null || Bukkit.getOfflinePlayer(name).hasPlayedBefore()) {
+        if (Bukkit.getPlayerExact(name) != null) {
+            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
+        }
+
+        var player = Bukkit.getOfflinePlayer(name);
+        if (player.hasPlayedBefore() && !usedIdRepository.contains(player.getUniqueId())) {
             throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
         }
 
         return new SequenceName(
                 "custom",
                 0,
-                uuidFromName(creator.getName() + ":" + name),
+                this.uuidFromName(name),
                 name
         );
     }

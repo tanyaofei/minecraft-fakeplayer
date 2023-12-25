@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.naming;
 
+import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
