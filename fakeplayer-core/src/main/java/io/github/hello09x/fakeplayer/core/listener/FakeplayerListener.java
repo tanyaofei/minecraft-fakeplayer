@@ -6,7 +6,6 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -15,7 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,36 +28,33 @@ public class FakeplayerListener implements Listener {
 
     public final static FakeplayerListener instance = new FakeplayerListener();
     private final static Logger log = Main.getInstance().getLogger();
-    private final static FakeplayerManager manager = FakeplayerManager.instance;
-    private final static FakeplayerConfig config = FakeplayerConfig.instance;
-    private final static UsedIdRepository usedIdRepository = UsedIdRepository.instance;
+    private final FakeplayerManager manager = FakeplayerManager.instance;
+    private final FakeplayerConfig config = FakeplayerConfig.instance;
+    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
 
     private final I18n i18n = Main.getI18n();
 
     /**
-     * 拒绝假人用过的 ID 上线
+     * 拒绝真实玩家使用假人用过的 ID 登陆
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onPreLogin(@NotNull AsyncPlayerPreLoginEvent event) {
-        if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+    public void onLogin(@NotNull PlayerLoginEvent event) {
+        var player = event.getPlayer();
+
+        if (event.getPlayer().hasMetadata("fakeplayer.dummy")) {
             return;
         }
 
-        if (InternalAddressGenerator.canBeGenerate(event.getAddress())) {
-            // 假人模拟登陆的 ip 地址
-            return;
-        }
-
-        if (usedIdRepository.contains(event.getUniqueId())) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, textOfChildren(
-                    i18n.translate("fakeplayer.listener.prelogin.deny-used-uuid"),
+        if (usedIdRepository.contains(player.getUniqueId())) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, textOfChildren(
+                    i18n.translate("fakeplayer.listener.login.deny-used-uuid"),
                     newline(),
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)
             ));
             log.info("%s(%s) was refused to login cause his UUID was used by fake player".formatted(
-                    event.getName(),
-                    event.getUniqueId()
+                    player.getName(),
+                    player.getUniqueId()
             ));
         }
     }
@@ -69,7 +65,7 @@ public class FakeplayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onDead(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
-        if (manager.isNotFake(player)) {
+        if (manager.notContains(player)) {
             return;
         }
         if (!config.isKickOnDead()) {
@@ -91,7 +87,7 @@ public class FakeplayerListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onQuit(@NotNull PlayerQuitEvent event) {
         var target = event.getPlayer();
-        if (manager.isNotFake(target)) {
+        if (manager.notContains(target)) {
             return;
         }
 

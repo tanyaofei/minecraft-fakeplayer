@@ -16,7 +16,7 @@ public class InternalAddressGenerator {
      * @param address 地址
      * @return 能否生成
      */
-    public static boolean canBeGenerate(@NotNull InetAddress address) {
+    public static boolean canBeGenerated(@NotNull InetAddress address) {
         return address.getAddress()[0] == 127;
     }
 

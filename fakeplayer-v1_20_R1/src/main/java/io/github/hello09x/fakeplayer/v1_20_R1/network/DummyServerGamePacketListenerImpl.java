@@ -49,7 +49,7 @@ public class DummyServerGamePacketListenerImpl extends ServerGamePacketListenerI
         var recipient = Bukkit
                 .getOnlinePlayers()
                 .stream()
-                .filter(manager::isNotFake)
+                .filter(manager::notContains)
                 .findAny()
                 .orElse(null);
         if (recipient == null) {

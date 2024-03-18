@@ -31,7 +31,7 @@ public class PlayerListeners implements Listener {
             if (!(passenger instanceof Player target)) {
                 continue;
             }
-            if (manager.isFake(target)) {
+            if (manager.contains(target)) {
                 player.removePassenger(target);
             }
         }
@@ -42,7 +42,7 @@ public class PlayerListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void invsee(@NotNull PlayerInteractAtEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Player target) || manager.isNotFake(target)) {
+        if (!(event.getRightClicked() instanceof Player target) || manager.notContains(target)) {
             return;
         }
 
@@ -55,7 +55,7 @@ public class PlayerListeners implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onDragInventory(@NotNull InventoryDragEvent event) {
         var top = event.getView().getTopInventory();
-        if (top.getType() == InventoryType.PLAYER && top.getHolder() instanceof Player player && manager.isFake(player)) {
+        if (top.getType() == InventoryType.PLAYER && top.getHolder() instanceof Player player && manager.contains(player)) {
             if (event.getNewItems().keySet().stream().anyMatch(slot -> slot > 35)) {   // > 35 表示从假人背包移动到玩家背包
                 event.setCancelled(true);
             }

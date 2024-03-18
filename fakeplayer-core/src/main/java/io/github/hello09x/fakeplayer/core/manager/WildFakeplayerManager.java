@@ -8,29 +8,37 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class WildFakeplayerManager implements PluginMessageListener {
 
-
     public final static WildFakeplayerManager instance = new WildFakeplayerManager();
     private final static Logger log = Main.getInstance().getLogger();
-    private final static boolean IS_BUNGEE_CORD = Bukkit.getServer().spigot().getSpigotConfig().getBoolean("settings.bungeecord", false);
+    private final static boolean IS_BUNGEECORD = Bukkit
+            .getServer()
+            .spigot()
+            .getSpigotConfig()
+            .getBoolean("settings.bungeecord", false);
     private final static String CHANNEL = "BungeeCord";
     private final static String SUB_CHANNEL = "PlayerList";
 
+    /**
+     * 定义探测到连续 n 次不在线时进行清理
+     * <br>
+     * 仅在 {@link #IS_BUNGEECORD} 为 {@code true} 时生效
+     */
+    private final static int CLEANUP_THRESHOLD = 2;
+    private final static int CLEANUP_PERIOD = 6000;
+
     private final FakeplayerManager manager = FakeplayerManager.instance;
     private final FakeplayerConfig config = FakeplayerConfig.instance;
-
-    @NotNull
-    private final Set<String> bungeeCordPlayers = new HashSet<>();
+    private final Map<String, AtomicInteger> offline = new HashMap<>();
 
     public WildFakeplayerManager() {
-        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, 6000);
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, CLEANUP_PERIOD);
     }
 
     @Override
@@ -53,12 +61,18 @@ public class WildFakeplayerManager implements PluginMessageListener {
             return;
         }
 
-        this.bungeeCordPlayers.clear();
-        this.bungeeCordPlayers.addAll(Arrays.asList(in.readUTF().split(", ")));
-        this.cleanup0();
+        var players = new HashSet<String>();
+        players.addAll(Arrays.asList(in.readUTF().split(", ")));
+        players.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+        this.cleanup0(players);
     }
 
-    public void cleanup0() {
+    /**
+     * 清除所有不在 {@code online} 列表中的玩家的假人
+     *
+     * @param online 在线玩家
+     */
+    public void cleanup0(@NotNull Set<String> online) {
         @SuppressWarnings("all")
         var group = manager.getAll()
                 .stream()
@@ -67,23 +81,31 @@ public class WildFakeplayerManager implements PluginMessageListener {
         for (var entry : group.entrySet()) {
             var creator = entry.getKey();
             var targets = entry.getValue();
-            if (targets.isEmpty() || this.isOnline(creator)) {
+            if (targets.isEmpty() || online.contains(creator)) {
                 continue;
             }
 
-            Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                for (var target : targets) {
-                    manager.remove(target.getName(), "Creator offline");
-                }
-                log.info("%s is offline, removing %d fake players".formatted(creator, targets.size()));
-            });
+            if (offline.computeIfAbsent(creator, x -> new AtomicInteger()).incrementAndGet() < CLEANUP_THRESHOLD) {
+                continue;
+            }
+
+            for (var target : targets) {
+                manager.remove(target.getName(), "Creator offline");
+            }
+            log.info("%s is offline more than %d ticks, removing %d fake players".formatted(
+                    creator,
+                    CLEANUP_PERIOD * CLEANUP_THRESHOLD,
+                    targets.size())
+            );
+        }
+
+        for (var player : online) {
+            offline.remove(player);
         }
     }
 
     /**
      * 清理召唤者下线的假人
-     *
-     * @see #onPluginMessageReceived(String, Player, byte[]) 如果是 BungeeCord 服务器则执行这个方法时才清理
      */
     public void cleanup() {
         if (!config.isFollowQuiting()) {
@@ -91,8 +113,8 @@ public class WildFakeplayerManager implements PluginMessageListener {
         }
 
         // 非 bungeeCord 服务器立即清理
-        if (!IS_BUNGEE_CORD) {
-            this.cleanup0();
+        if (!IS_BUNGEECORD) {
+            this.cleanup0(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
             return;
         }
 
@@ -102,7 +124,7 @@ public class WildFakeplayerManager implements PluginMessageListener {
                 .getServer()
                 .getOnlinePlayers()
                 .stream()
-                .filter(manager::isNotFake)
+                .filter(manager::notContains)
                 .findAny()
                 .orElse(null);
 
@@ -119,12 +141,6 @@ public class WildFakeplayerManager implements PluginMessageListener {
                 CHANNEL,
                 out.toByteArray()
         );
-    }
-
-    private boolean isOnline(@NotNull String name) {
-        return Bukkit.getConsoleSender().getName().equals(name)
-                || this.bungeeCordPlayers.contains(name)
-                || Bukkit.getServer().getPlayerExact(name) != null;
     }
 
 }

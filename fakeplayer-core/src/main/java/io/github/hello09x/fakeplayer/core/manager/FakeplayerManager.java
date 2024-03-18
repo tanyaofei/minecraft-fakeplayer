@@ -312,7 +312,7 @@ public class FakeplayerManager {
      * @param target 玩家
      * @return 是否是假人
      */
-    public boolean isFake(@NotNull Player target) {
+    public boolean contains(@NotNull Player target) {
         return this.playerList.getByUUID(target.getUniqueId()) != null;
     }
 
@@ -322,7 +322,7 @@ public class FakeplayerManager {
      * @param target 玩家
      * @return 是否不是假人
      */
-    public boolean isNotFake(@NotNull Player target) {
+    public boolean notContains(@NotNull Player target) {
         return this.playerList.getByUUID(target.getUniqueId()) == null;
     }
 
@@ -385,7 +385,7 @@ public class FakeplayerManager {
             return;
         }
 
-        if (!this.isFake(target)) {
+        if (!this.contains(target)) {
             return;
         }
 
@@ -434,7 +434,7 @@ public class FakeplayerManager {
         if (commands.isEmpty()) {
             return;
         }
-        if (this.isNotFake(target)) {
+        if (this.notContains(target)) {
             return;
         }
 
@@ -458,7 +458,7 @@ public class FakeplayerManager {
             return;
         }
 
-        if (this.isNotFake(player)) {
+        if (this.notContains(player)) {
             return;
         }
 
