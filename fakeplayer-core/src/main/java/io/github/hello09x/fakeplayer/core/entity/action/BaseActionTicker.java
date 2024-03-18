@@ -38,6 +38,12 @@ public abstract class BaseActionTicker implements ActionTicker {
 
     @Override
     public boolean tick() {
+        // 修复使用盾牌无法停止
+        if (this.setting.equals(Action.ActionSetting.stop())) {
+            this.action.stop();
+            return true;
+        }
+
         if (setting.wait > 0) {
             this.setting.wait--;
             this.inactiveTick();
