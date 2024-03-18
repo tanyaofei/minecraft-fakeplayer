@@ -13,15 +13,16 @@
     <modules>
         <module>fakeplayer-api</module>
         <module>fakeplayer-core</module>
+        <module>fakeplayer-dist</module>
         <module>fakeplayer-v1_20_R1</module>
         <module>fakeplayer-v1_20_R2</module>
-        <module>fakeplayer-dist</module>
+        <module>fakeplayer-v1_20_R4</module>
     </modules>
 
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <plugin.version>0.2.8</plugin.version>
+        <plugin.version>0.2.9</plugin.version>
     </properties>
 
     <repositories>
@@ -104,6 +105,12 @@
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-v1_20_R2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x.fakeplayer</groupId>
+                <artifactId>fakeplayer-v1_20_R4</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

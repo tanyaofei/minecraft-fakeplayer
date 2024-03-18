@@ -39,6 +39,11 @@
             <artifactId>fakeplayer-v1_20_R2</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_20_R4</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -77,13 +82,13 @@
                         <id>copy</id>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <copy todir="../server/plugins">
                                     <fileset dir="${project.build.directory}">
                                         <include name="fakeplayer-${plugin.version}.jar"/>
                                     </fileset>
                                 </copy>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

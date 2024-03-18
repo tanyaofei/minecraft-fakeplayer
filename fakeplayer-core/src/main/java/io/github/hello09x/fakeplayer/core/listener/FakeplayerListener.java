@@ -6,6 +6,7 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
+import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -41,7 +42,7 @@ public class FakeplayerListener implements Listener {
     public void onLogin(@NotNull PlayerLoginEvent event) {
         var player = event.getPlayer();
 
-        if (event.getPlayer().hasMetadata("fakeplayer.dummy")) {
+        if (InternalAddressGenerator.canBeGenerated(event.getAddress())) {
             return;
         }
 
@@ -52,7 +53,7 @@ public class FakeplayerListener implements Listener {
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)
             ));
-            log.info("%s(%s) was refused to login cause his UUID was used by fake player".formatted(
+            log.info("%s(%s) was refused to login cause his UUID was used by [Fakeplayer]".formatted(
                     player.getName(),
                     player.getUniqueId()
             ));
