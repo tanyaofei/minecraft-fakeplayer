@@ -79,7 +79,6 @@ public class UseAction extends TraceAction {
 
     @Override
     public void inactiveTick() {
-        this.stop();
     }
 
     @Override
