@@ -17,6 +17,7 @@
         <module>fakeplayer-v1_20_R1</module>
         <module>fakeplayer-v1_20_R2</module>
         <module>fakeplayer-v1_20_R4</module>
+        <module>fakeplayer-v1_21_R1</module>
     </modules>
 
     <properties>
@@ -111,6 +112,12 @@
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-v1_20_R4</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x.fakeplayer</groupId>
+                <artifactId>fakeplayer-v1_21_R1</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
