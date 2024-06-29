@@ -128,4 +128,4 @@ fabric.properties
 /purpur/
 /server
 
-./buildtool
+buildtool/

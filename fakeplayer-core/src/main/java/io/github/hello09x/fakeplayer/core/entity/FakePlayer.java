@@ -217,10 +217,8 @@ public class FakePlayer {
         var event = new AsyncPlayerPreLoginEvent(
                 this.name,
                 address,
-                address,
                 this.uuid,
-                player.getPlayerProfile(),
-                address.getHostAddress()
+                false
         );
         Bukkit.getPluginManager().callEvent(event);
         return event;

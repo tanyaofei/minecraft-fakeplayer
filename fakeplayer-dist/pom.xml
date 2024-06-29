@@ -12,8 +12,8 @@
     <artifactId>fakeplayer-dist</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -31,17 +31,7 @@
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R1</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R4</artifactId>
+            <artifactId>fakeplayer-v1_21_R1</artifactId>
         </dependency>
 
     </dependencies>
