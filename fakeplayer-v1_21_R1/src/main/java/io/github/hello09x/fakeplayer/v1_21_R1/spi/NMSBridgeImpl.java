@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class NMSBridgeImpl implements NMSBridge {
 
-    private final static Set<String> SUPPORTS = Set.of("1.20.3", "1.20.4");
+    private final static Set<String> SUPPORTS = Set.of("1.21", "1.21.0");
 
     @Override
     public @NotNull NMSEntity fromEntity(@NotNull Entity entity) {

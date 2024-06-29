@@ -6,8 +6,11 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ClientboundCustomReportDetailsPacket;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,12 +42,14 @@ public class DummyServerGamePacketListenerImpl extends ServerGamePacketListenerI
     @Override
     public void send(Packet<?> packet) {
         if (packet instanceof ClientboundCustomPayloadPacket p) {
-            this.handleCustomPayloadPacket(p.payload());
+            this.handleCustomPayloadPacket(p);
         }
     }
 
-    private void handleCustomPayloadPacket(@NotNull CustomPacketPayload payload) {
-        var channel = payload.id().getNamespace() + ":" + payload.id().getPath();
+    private void handleCustomPayloadPacket(@NotNull ClientboundCustomPayloadPacket packet) {
+        var payload = packet.payload();
+        var resourceLocation = payload.type().id();
+        var channel = resourceLocation.getNamespace() + ":" + resourceLocation.getPath();
         if (!channel.equals(BUNGEE_CORD_CHANNEL)) {
             return;
         }
@@ -59,10 +64,10 @@ public class DummyServerGamePacketListenerImpl extends ServerGamePacketListenerI
             return;
         }
 
-        var buf = new FriendlyByteBuf(Unpooled.buffer(0, 1048576));
-        payload.write(buf);
-        var message = buf.array();
+        var buf = RegistryFriendlyByteBuf.decorator(server.registryAccess()).apply(Unpooled.buffer(0, 1048576));
+        ClientboundCustomPayloadPacket.GAMEPLAY_STREAM_CODEC.encode(buf, packet);
 
+        var message = buf.array();
         recipient.sendPluginMessage(Main.getInstance(), channel, message);
     }
 

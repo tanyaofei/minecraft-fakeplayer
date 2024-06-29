@@ -14,16 +14,13 @@
         <module>fakeplayer-api</module>
         <module>fakeplayer-core</module>
         <module>fakeplayer-dist</module>
-        <module>fakeplayer-v1_20_R1</module>
-        <module>fakeplayer-v1_20_R2</module>
-        <module>fakeplayer-v1_20_R4</module>
         <module>fakeplayer-v1_21_R1</module>
     </modules>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <plugin.version>0.2.9</plugin.version>
+        <plugin.version>0.3.1</plugin.version>
     </properties>
 
     <repositories>
@@ -54,14 +51,14 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.20.1-R0.1-SNAPSHOT</version>
+                <version>1.21-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.28</version>
+                <version>1.18.34</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -94,24 +91,6 @@
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.hello09x.fakeplayer</groupId>
-                <artifactId>fakeplayer-v1_20_R1</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.hello09x.fakeplayer</groupId>
-                <artifactId>fakeplayer-v1_20_R2</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.hello09x.fakeplayer</groupId>
-                <artifactId>fakeplayer-v1_20_R4</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

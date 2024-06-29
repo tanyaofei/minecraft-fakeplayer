@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.v1_21_R1.network;
 
 import net.minecraft.network.Connection;
-import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -14,7 +13,7 @@ public class DummyConnection extends Connection {
         super(PacketFlow.SERVERBOUND);
         this.channel = new DummyChannel(null, address);
         this.address = this.channel.remoteAddress();
-        Connection.configureSerialization(this.channel.pipeline(), PacketFlow.SERVERBOUND, null);
+        Connection.configureSerialization(this.channel.pipeline(), PacketFlow.SERVERBOUND, false, null);
     }
 
     @Override
@@ -30,9 +29,9 @@ public class DummyConnection extends Connection {
     public void send(Packet<?> packet) {
     }
 
-    public void setProtocolAttr(@NotNull ConnectionProtocol protocol) {
-        this.channel.attr(Connection.ATTRIBUTE_SERVERBOUND_PROTOCOL).set(protocol.codec(PacketFlow.SERVERBOUND));
-        this.channel.attr(Connection.ATTRIBUTE_CLIENTBOUND_PROTOCOL).set(protocol.codec(PacketFlow.CLIENTBOUND));
-    }
+//    public void setProtocolAttr(@NotNull ConnectionProtocol protocol) {
+//        this.channel.attr(Connection.ATTRIBUTE_SERVERBOUND_PROTOCOL).set(protocol.codec(PacketFlow.SERVERBOUND));
+//        this.channel.attr(Connection.ATTRIBUTE_CLIENTBOUND_PROTOCOL).set(protocol.codec(PacketFlow.CLIENTBOUND));
+//    }
 
 }
