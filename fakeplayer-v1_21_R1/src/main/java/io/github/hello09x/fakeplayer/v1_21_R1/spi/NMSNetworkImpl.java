@@ -2,9 +2,8 @@ package io.github.hello09x.fakeplayer.v1_21_R1.spi;
 
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerGamePacketListener;
-import io.github.hello09x.fakeplayer.v1_21_R1.network.DummyConnection;
-import io.github.hello09x.fakeplayer.v1_21_R1.network.DummyServerGamePacketListenerImpl;
-import net.minecraft.network.ConnectionProtocol;
+import io.github.hello09x.fakeplayer.v1_21_R1.network.FakeConnection;
+import io.github.hello09x.fakeplayer.v1_21_R1.network.FakeServerGamePacketListenerImpl;
 import net.minecraft.server.network.CommonListenerCookie;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
@@ -17,14 +16,14 @@ import java.net.InetAddress;
 public class NMSNetworkImpl implements NMSNetwork {
 
     @NotNull
-    private final DummyConnection connection;
+    private final FakeConnection connection;
 
     private NMSServerGamePacketListener serverGamePacketListener;
 
     public NMSNetworkImpl(
             @NotNull InetAddress address
     ) {
-        this.connection = new DummyConnection(address);
+        this.connection = new FakeConnection(address);
     }
 
     @NotNull
@@ -39,7 +38,7 @@ public class NMSNetworkImpl implements NMSNetwork {
         // false 应该是 1.21 新增的玩家跨服标识符
         var cookie = CommonListenerCookie.createInitial(((CraftPlayer) player).getProfile(), false);
 
-        var listener = new DummyServerGamePacketListenerImpl(
+        var listener = new FakeServerGamePacketListenerImpl(
                 ((CraftServer) server).getServer(),
                 this.connection,
                 handle,

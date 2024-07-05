@@ -5,13 +5,9 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.Connection;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.ClientboundCustomReportDetailsPacket;
-import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -23,11 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class DummyServerGamePacketListenerImpl extends ServerGamePacketListenerImpl implements NMSServerGamePacketListener {
+public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl implements NMSServerGamePacketListener {
 
     private final static FakeplayerManager manager = FakeplayerManager.instance;
 
-    public DummyServerGamePacketListenerImpl(
+    public FakeServerGamePacketListenerImpl(
             @NotNull MinecraftServer server,
             @NotNull Connection connection,
             @NotNull ServerPlayer player,

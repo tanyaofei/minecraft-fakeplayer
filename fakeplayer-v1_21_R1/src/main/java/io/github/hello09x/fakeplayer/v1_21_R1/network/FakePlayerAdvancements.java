@@ -10,9 +10,9 @@ import net.minecraft.server.players.PlayerList;
 
 import java.nio.file.Path;
 
-public class DummyPlayerAdvancements extends PlayerAdvancements {
+public class FakePlayerAdvancements extends PlayerAdvancements {
 
-    public DummyPlayerAdvancements(
+    public FakePlayerAdvancements(
             DataFixer datafixer,
             PlayerList playerlist,
             ServerAdvancementManager manager,
