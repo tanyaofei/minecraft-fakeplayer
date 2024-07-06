@@ -7,9 +7,9 @@ spawning.
 
 Only for `Paper` and it's downstream such as `Purpur`.
 
-+ 1.20 / 1.20.1 (Test passed)
-+ 1.20.2 (Test passed)
-+ 1.20.3 / 1.20.4 (Un-Test)
++ Version 0.2.x is supported for Minecraft 1.20 ~ 1.20.4
++ Version 0.3.x is supported for Minecraft 1.21
+
 
 ## Depend:
 
