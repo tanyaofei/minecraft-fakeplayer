@@ -124,9 +124,8 @@ fabric.properties
 
 *.iml
 .idea/
-/folia/
-/purpur/
-/server
+server-*/
+server/
 
 buildtool/
 
