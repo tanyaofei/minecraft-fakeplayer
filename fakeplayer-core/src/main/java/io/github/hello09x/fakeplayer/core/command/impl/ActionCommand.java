@@ -1,12 +1,12 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -15,12 +15,15 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class ActionCommand extends AbstractCommand {
 
-    public final static ActionCommand instance = new ActionCommand();
+    private final ActionManager actionManager;
 
-    private final ActionManager actionManager = ActionManager.instance;
+    @Inject
+    public ActionCommand(ActionManager actionManager) {
+        this.actionManager = actionManager;
+    }
 
     public @NotNull CommandExecutor action(@NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
         return (sender, args) -> action(sender, args, action, setting.clone());

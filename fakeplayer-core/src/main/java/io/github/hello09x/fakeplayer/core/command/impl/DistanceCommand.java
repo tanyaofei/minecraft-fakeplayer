@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.util.Mth;
@@ -16,10 +17,8 @@ import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class DistanceCommand extends AbstractCommand {
-
-    public final static DistanceCommand instance = new DistanceCommand();
 
     /**
      * 查看距离

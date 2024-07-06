@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
@@ -18,10 +19,8 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class RideCommand extends AbstractCommand {
-
-    public final static RideCommand instance = new RideCommand();
 
     /**
      * 骑最近的实体

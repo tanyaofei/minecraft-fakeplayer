@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -16,13 +17,12 @@ import java.util.Objects;
 
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
+@Singleton
 public class SkinCommand extends AbstractCommand {
-
-    public final static SkinCommand instance = new SkinCommand();
 
     private final Map<CommandSender, MutableInt> spams = new HashMap<>();
 
-    private SkinCommand() {
+    public SkinCommand() {
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
             spams.entrySet().removeIf(counter -> counter.getValue().decrementAndGet() <= 0);
         }, 0, 1);

@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.io.Experiences;
@@ -13,11 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class ExpmeCommand extends AbstractCommand {
-
-
-    public final static ExpmeCommand instance = new ExpmeCommand();
 
     public void expme(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);

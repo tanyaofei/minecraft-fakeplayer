@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager.action;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -12,15 +14,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Singleton
 public class ActionManager {
-
-    public final static ActionManager instance = new ActionManager();
 
     private final Map<UUID, Map<Action.ActionType, ActionTicker>> managers = new HashMap<>();
 
-    private final NMSBridge bridge = Main.getBridge();
+    private final NMSBridge bridge;
 
-    public ActionManager() {
+    @Inject
+    public ActionManager(NMSBridge bridge) {
+        this.bridge = bridge;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::tick, 0, 1);
     }
 

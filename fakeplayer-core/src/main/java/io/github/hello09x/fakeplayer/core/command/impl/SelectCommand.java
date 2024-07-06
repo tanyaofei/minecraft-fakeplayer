@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
@@ -9,9 +10,8 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
+@Singleton
 public class SelectCommand extends AbstractCommand {
-
-    public final static SelectCommand instance = new SelectCommand();
 
     public void select(@NotNull Player sender, @NotNull CommandArguments args) {
         var target = this.getTargetNullable(sender, args);

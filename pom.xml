@@ -107,6 +107,12 @@
                 <scope>provided</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>7.0.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

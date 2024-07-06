@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.util.Teleportor;
@@ -11,10 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class TeleportCommand extends AbstractCommand {
-
-    public final static TeleportCommand instance = new TeleportCommand();
 
     /**
      * 传送到假人

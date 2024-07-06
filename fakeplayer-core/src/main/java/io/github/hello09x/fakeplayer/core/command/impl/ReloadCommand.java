@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import lombok.AccessLevel;
@@ -9,12 +11,15 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class ReloadCommand extends AbstractCommand {
 
-    public final static ReloadCommand instance = new ReloadCommand();
+    private final FakeplayerConfig config;
 
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
+    @Inject
+    public ReloadCommand(FakeplayerConfig config) {
+        this.config = config;
+    }
 
     public void reload(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         config.reload(true);

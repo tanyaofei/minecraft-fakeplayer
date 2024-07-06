@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import lombok.AccessLevel;
@@ -12,10 +13,8 @@ import java.util.StringJoiner;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class KillCommand extends AbstractCommand {
-
-    public final static KillCommand instance = new KillCommand();
 
     /**
      * 移除假人

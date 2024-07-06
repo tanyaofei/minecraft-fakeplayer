@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
@@ -14,10 +15,8 @@ import java.util.Objects;
 
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class CmdCommand extends AbstractCommand {
-
-    public final static CmdCommand instance = new CmdCommand();
 
     /**
      * 假人执行命令

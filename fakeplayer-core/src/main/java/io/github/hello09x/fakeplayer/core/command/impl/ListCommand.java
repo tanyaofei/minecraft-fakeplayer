@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.page.Page;
 import io.github.hello09x.fakeplayer.core.command.Permission;
@@ -17,10 +18,9 @@ import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class ListCommand extends AbstractCommand {
 
-    public final static ListCommand instance = new ListCommand();
 
     private static String toLocationString(@NotNull Location location) {
         return location.getWorld().getName()

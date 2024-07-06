@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.io.Experiences;
@@ -30,10 +31,8 @@ import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class StatusCommand extends AbstractCommand {
-
-    public final static StatusCommand instance = new StatusCommand();
 
     private final static Component LINE_SPLITTER = text(StringUtils.repeat("-", 20), GRAY);
 

@@ -36,7 +36,6 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         );
     }
 
-
     /**
      * 每位玩家最多多少个假人
      */
@@ -146,10 +145,10 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.nameTemplate = getNameTemplate(file);
         this.lifespan = getLifespan(file);
         this.allowCommands = file.getStringList("allow-commands")
-                .stream()
-                .map(c -> c.startsWith("/") ? c.substring(1) : c)
-                .filter(c -> !c.isBlank())
-                .collect(Collectors.toSet());
+                                 .stream()
+                                 .map(c -> c.startsWith("/") ? c.substring(1) : c)
+                                 .filter(c -> !c.isBlank())
+                                 .collect(Collectors.toSet());
     }
 
     private @Nullable Duration getLifespan(@NotNull FileConfiguration file) {
@@ -164,7 +163,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private @NotNull Pattern getNamePattern(@NotNull FileConfiguration file) {
         try {
             return Pattern.compile(file.getString("name-pattern", defaultNameChars));
-        } catch (PatternSyntaxException e) {
+        } catch(PatternSyntaxException e) {
             log.warning("Invalid name-pattern: " + file.getString("name-chars"));
             return Pattern.compile(defaultNameChars);
         }

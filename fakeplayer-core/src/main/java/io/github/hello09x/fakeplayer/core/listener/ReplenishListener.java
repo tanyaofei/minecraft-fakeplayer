@@ -2,6 +2,8 @@ package io.github.hello09x.fakeplayer.core.listener;
 
 
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.util.Blocks;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
@@ -28,12 +30,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+@Singleton
 public class ReplenishListener implements Listener {
 
-    public final static ReplenishListener instance = new ReplenishListener();
+    private final FakeplayerManager manager;
 
-    private final FakeplayerManager manager = FakeplayerManager.instance;
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
+    @Inject
+    public ReplenishListener(FakeplayerManager manager) {
+        this.manager = manager;
+    }
 
     /**
      * 消耗物品自动填装

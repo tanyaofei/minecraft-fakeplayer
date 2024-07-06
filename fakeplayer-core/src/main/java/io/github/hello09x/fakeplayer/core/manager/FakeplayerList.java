@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager;
 
+import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,9 +9,8 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.*;
 import java.util.stream.Stream;
 
+@Singleton
 public class FakeplayerList {
-
-    public final static FakeplayerList instance = new FakeplayerList();
 
     private final Map<String, FakePlayer> playersByName = new HashMap<>();
 

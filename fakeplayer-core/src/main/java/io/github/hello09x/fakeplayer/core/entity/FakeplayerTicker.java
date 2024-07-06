@@ -1,14 +1,13 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
+import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class FakeplayerTicker extends BukkitRunnable {
-
-    private final static FakeplayerManager manager = FakeplayerManager.instance;
 
     public final static long NO_REMOVE_AT = -1;
 
@@ -43,7 +42,7 @@ public class FakeplayerTicker extends BukkitRunnable {
         }
 
         if (this.removeAt != NO_REMOVE_AT && this.player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
-            manager.remove(player.getName(), "lifespan ends");
+            Main.getInjector().getInstance(FakeplayerManager.class).remove(player.getName(), "lifespan ends");
             super.cancel();
             return;
         }

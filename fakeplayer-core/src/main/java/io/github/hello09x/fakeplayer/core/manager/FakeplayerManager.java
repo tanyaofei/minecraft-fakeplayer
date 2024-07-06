@@ -1,9 +1,12 @@
 package io.github.hello09x.fakeplayer.core.manager;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.util.AddressUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
@@ -43,27 +46,30 @@ import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
+@Singleton
 public class FakeplayerManager {
 
-    public final static FakeplayerManager instance = new FakeplayerManager();
-
     private final static Logger log = Main.getInstance().getLogger();
-
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
-
-    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
-
-    private final NameManager nameManager = NameManager.instance;
-
-    private final FakeplayerList playerList = FakeplayerList.instance;
-
-    private final UserConfigManager configManager = UserConfigManager.instance;
-
     private final I18n i18n = Main.getI18n();
+    private final Invsee invsee;
 
-    private final Invsee invsee = Invsee.getInstance();
+    private final UsedIdRepository usedIdRepository;
+    private final NameManager nameManager;
+    private final FakeplayerList playerList;
+    private final UserConfigManager configManager;
+    private final NMSBridge nms;
+    private final FakeplayerConfig config;
 
-    private FakeplayerManager() {
+    @Inject
+    public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, FakeplayerConfig config) {
+        this.invsee = invsee;
+        this.usedIdRepository = usedIdRepository;
+        this.nameManager = nameManager;
+        this.playerList = playerList;
+        this.configManager = configManager;
+        this.nms = nms;
+        this.config = config;
+
         var timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleWithFixedDelay(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
@@ -273,7 +279,7 @@ public class FakeplayerManager {
         }
         this.nameManager.unregister(fakeplayer.getSequenceName());
         if (config.isDropInventoryOnQuiting()) {
-            Main.getBridge().createAction(
+            this.nms.createAction(
                     fakeplayer.getPlayer(),
                     Action.ActionType.DROP_INVENTORY,
                     Action.ActionSetting.once()

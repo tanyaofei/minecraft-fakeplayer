@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
@@ -7,8 +8,6 @@ import dev.jorel.commandapi.wrappers.Rotation;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import io.papermc.paper.entity.LookAnchor;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,11 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class RotationCommand extends AbstractCommand {
-
-    public final static RotationCommand instance = new RotationCommand();
 
     /**
      * 看向给定坐标

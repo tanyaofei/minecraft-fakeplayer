@@ -1,13 +1,12 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class MoveCommand extends AbstractCommand {
-
-    public final static MoveCommand instance = new MoveCommand();
 
     /**
      * 假人移动

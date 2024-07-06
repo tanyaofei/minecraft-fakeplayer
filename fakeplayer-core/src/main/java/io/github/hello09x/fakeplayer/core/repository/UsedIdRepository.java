@@ -1,6 +1,8 @@
 package io.github.hello09x.fakeplayer.core.repository;
 
 import com.google.common.base.Throwables;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +16,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+@Singleton
 public class UsedIdRepository {
-
 
     public final static UsedIdRepository instance = new UsedIdRepository();
     private final static Logger log = Main.getInstance().getLogger();
 
     private final Set<UUID> UUIDS = new HashSet<>();
 
+    @Inject
     public UsedIdRepository() {
         this.load();
         Main.getInstance().registerOnDisable(this::saveAll);

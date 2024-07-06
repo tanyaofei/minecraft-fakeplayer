@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import lombok.AccessLevel;
@@ -8,10 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class RespawnCommand extends AbstractCommand {
-
-    public final static RespawnCommand instance = new RespawnCommand();
 
     /**
      * 重生

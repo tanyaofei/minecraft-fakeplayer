@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Inject;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
@@ -20,11 +21,19 @@ import java.util.logging.Logger;
 
 public abstract class AbstractCommand {
 
-    protected final static FakeplayerManager manager = FakeplayerManager.instance;
-    protected final static FakeplayerConfig config = FakeplayerConfig.instance;
-    protected final static NMSBridge bridge = Main.getBridge();
-    protected final static I18n i18n = Main.getI18n();
     protected final static Logger log = Main.getInstance().getLogger();
+
+    protected final I18n i18n = Main.getI18n();
+
+    @Inject
+    protected NMSBridge bridge;
+
+    @Inject
+    protected FakeplayerManager manager;
+
+    @Inject
+    protected FakeplayerConfig config;
+
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         return this.getTarget(sender, args, null);

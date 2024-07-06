@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import lombok.NoArgsConstructor;
@@ -8,10 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@NoArgsConstructor
+@Singleton
 public class HoldCommand extends AbstractCommand {
-
-    public final static HoldCommand instance = new HoldCommand();
 
     public void hold(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);

@@ -12,16 +12,6 @@ import java.util.ServiceLoader;
 
 public interface NMSBridge {
 
-    static @Nullable NMSBridge getInstance() {
-        return ServiceLoader
-                .load(NMSBridge.class, NMSBridge.class.getClassLoader())
-                .stream()
-                .map(ServiceLoader.Provider::get)
-                .filter(NMSBridge::isSupported)
-                .findAny()
-                .orElse(null);
-    }
-
     @NotNull NMSEntity fromEntity(@NotNull Entity entity);
 
     @NotNull NMSServer fromServer(@NotNull Server server);

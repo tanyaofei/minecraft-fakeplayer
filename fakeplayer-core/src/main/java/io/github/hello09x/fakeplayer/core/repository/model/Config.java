@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.repository.model;
 
+import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import net.kyori.adventure.translation.Translatable;
@@ -132,7 +133,7 @@ public record Config<T>(
             List.of("true", "false"),
             Permission.replenish,
             Boolean::valueOf,
-            new Accessor<>(FakeplayerManager.instance::isReplenish, FakeplayerManager.instance::setReplenish)
+            new Accessor<>(Main.getInjector().getInstance(FakeplayerManager.class)::isReplenish, Main.getInjector().getInstance(FakeplayerManager.class)::setReplenish)
     );
 
     @SuppressWarnings("unchecked")

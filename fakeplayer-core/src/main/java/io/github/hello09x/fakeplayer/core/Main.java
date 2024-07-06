@@ -1,5 +1,8 @@
 package io.github.hello09x.fakeplayer.core;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.i18n.I18nSupported;
 import io.github.hello09x.bedrock.util.RegistrablePlugin;
@@ -22,40 +25,50 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
     @Getter
     private static Main instance;
 
-    @Getter
-    private static NMSBridge bridge;
-
     private I18n i18n;
+
+    private Injector injector;
+
+    @Inject
+    FakeplayerConfig config;
+
+    @Inject
+    WildFakeplayerManager wildFakeplayerManager;
+
+    @Inject
+    PlayerListeners playerListeners;
+
+    @Inject
+    FakeplayerListener fakeplayerListener;
+
+    @Inject
+    ReplenishListener replenishListener;
 
     @Override
     public void onLoad() {
-        bridge = NMSBridge.getInstance();
-        if (bridge == null) {
-            throw new ExceptionInInitializerError("Unsupported Minecraft version: " + Bukkit.getMinecraftVersion());
-        }
+        instance = this;
+        injector = Guice.createInjector(new FakeplayerGuiceModule());
         this.i18n = new I18n(this, "message/message");
     }
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        instance = this;
-
-        CommandRegistry.register();
+        injector.injectMembers(this);
+        injector.getInstance(CommandRegistry.class).register();
         {
             var messenger = getServer().getMessenger();
-            messenger.registerIncomingPluginChannel(this, "BungeeCord", WildFakeplayerManager.instance);
+            messenger.registerIncomingPluginChannel(this, "BungeeCord", wildFakeplayerManager);
             messenger.registerOutgoingPluginChannel(this, "BungeeCord");
         }
 
         {
             var manager = getServer().getPluginManager();
-            manager.registerEvents(PlayerListeners.instance, this);
-            manager.registerEvents(FakeplayerListener.instance, this);
-            manager.registerEvents(ReplenishListener.instance, this);
+            manager.registerEvents(playerListeners, this);
+            manager.registerEvents(fakeplayerListener, this);
+            manager.registerEvents(replenishListener, this);
         }
 
-        if (FakeplayerConfig.instance.isCheckForUpdates()) {
+        if (config.isCheckForUpdates()) {
             checkForUpdatesAsync();
         }
     }
@@ -106,6 +119,10 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
 
     public static @NotNull I18n getI18n() {
         return instance.i18n;
+    }
+
+    public static @NotNull Injector getInjector() {
+        return instance.injector;
     }
 
 }

@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
@@ -10,10 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class InvseeCommand extends AbstractCommand {
 
-    public final static InvseeCommand instance = new InvseeCommand();
 
     /**
      * 查看背包

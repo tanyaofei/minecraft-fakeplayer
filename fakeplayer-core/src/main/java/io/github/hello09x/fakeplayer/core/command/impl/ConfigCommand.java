@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
@@ -27,12 +29,15 @@ import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class ConfigCommand extends AbstractCommand {
 
-    public final static ConfigCommand instance = new ConfigCommand();
+    private final UserConfigManager configManager;
 
-    private final UserConfigManager configManager = UserConfigManager.instance;
+    @Inject
+    public ConfigCommand(UserConfigManager configManager) {
+        this.configManager = configManager;
+    }
 
     /**
      * 设置配置

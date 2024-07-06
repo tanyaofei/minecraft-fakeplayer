@@ -1,6 +1,8 @@
 package io.github.hello09x.fakeplayer.core.manager;
 
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import org.bukkit.Bukkit;
@@ -13,9 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Singleton
 public class WildFakeplayerManager implements PluginMessageListener {
 
-    public final static WildFakeplayerManager instance = new WildFakeplayerManager();
     private final static Logger log = Main.getInstance().getLogger();
     private final static boolean IS_BUNGEECORD = Bukkit
             .getServer()
@@ -33,11 +35,14 @@ public class WildFakeplayerManager implements PluginMessageListener {
     private final static int CLEANUP_THRESHOLD = 2;
     private final static int CLEANUP_PERIOD = 6000;
 
-    private final FakeplayerManager manager = FakeplayerManager.instance;
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
+    private final FakeplayerManager manager;
+    private final FakeplayerConfig config;
     private final Map<String, AtomicInteger> offline = new HashMap<>();
 
-    public WildFakeplayerManager() {
+    @Inject
+    public WildFakeplayerManager(FakeplayerManager manager, FakeplayerConfig config) {
+        this.manager = manager;
+        this.config = config;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, CLEANUP_PERIOD);
     }
 

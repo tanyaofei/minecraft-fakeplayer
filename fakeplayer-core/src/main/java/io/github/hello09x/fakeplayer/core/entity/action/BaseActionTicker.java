@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.entity.action;
 
+import com.google.inject.Inject;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -8,11 +9,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-import java.util.Objects;
-
 public abstract class BaseActionTicker implements ActionTicker {
 
-    protected final static NMSBridge bridge = Objects.requireNonNull(NMSBridge.getInstance(), "Unsupported");
+    protected final NMSBridge bridge;
 
     /**
      * 这个类无法初始化的动作, 由子类完成
@@ -23,14 +22,15 @@ public abstract class BaseActionTicker implements ActionTicker {
     @NotNull
     protected Action.ActionSetting setting;
 
-    public BaseActionTicker(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
+    public BaseActionTicker(NMSBridge nms, @NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
+        this.bridge = nms;
         this.setting = setting;
         this.action = switch (action) {
-            case JUMP -> new JumpAction(bridge.fromPlayer(player));
-            case LOOK_AT_NEAREST_ENTITY -> new LookAtEntityAction(bridge.fromPlayer(player));
-            case DROP_ITEM -> new DropItemAction(bridge.fromPlayer(player));
-            case DROP_STACK -> new DropStackAction(bridge.fromPlayer(player));
-            case DROP_INVENTORY -> new DropInventoryAction(bridge.fromPlayer(player));
+            case JUMP -> new JumpAction(nms.fromPlayer(player));
+            case LOOK_AT_NEAREST_ENTITY -> new LookAtEntityAction(nms.fromPlayer(player));
+            case DROP_ITEM -> new DropItemAction(nms.fromPlayer(player));
+            case DROP_STACK -> new DropStackAction(nms.fromPlayer(player));
+            case DROP_INVENTORY -> new DropInventoryAction(nms.fromPlayer(player));
             default -> null;    // 子类需要实现其他 Action
         };
     }

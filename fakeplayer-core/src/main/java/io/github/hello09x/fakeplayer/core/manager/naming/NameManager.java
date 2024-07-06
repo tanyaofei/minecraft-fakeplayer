@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager.naming;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -25,22 +27,26 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
+@Singleton
 public class NameManager {
 
-    public final static NameManager instance = new NameManager();
     private final static Logger log = Main.getInstance().getLogger();
     private final static int MAX_LENGTH = 16;   // mojang required
     private final static int MIN_LENGTH = 3; // mojang required
     private final static String FALLBACK_NAME = "_fp_";
 
-    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
+    private final UsedIdRepository usedIdRepository;
+    private final FakeplayerConfig config;
     private final Map<String, NameSource> nameSources = new HashMap<>();
     private final I18n i18n = Main.getI18n();
 
     private final String serverId;
 
-    public NameManager() {
+    @Inject
+    public NameManager(UsedIdRepository usedIdRepository, FakeplayerConfig config) {
+        this.usedIdRepository = usedIdRepository;
+        this.config = config;
+
         var file = new File(Main.getInstance().getDataFolder(), "serverid");
         serverId = Optional.ofNullable(loadServerId(file)).orElseGet(() -> {
             var uuid = UUID.randomUUID().toString();

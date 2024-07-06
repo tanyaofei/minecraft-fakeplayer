@@ -1,15 +1,14 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class KillallCommand extends AbstractCommand {
-
-    public final static KillallCommand instance = new KillallCommand();
 
     /**
      * 移除服务器所有假人

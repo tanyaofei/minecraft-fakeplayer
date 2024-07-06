@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,10 +13,15 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
 
+@Singleton
 public class PlayerListeners implements Listener {
 
-    public final static PlayerListeners instance = new PlayerListeners();
-    private final FakeplayerManager manager = FakeplayerManager.instance;
+    private final FakeplayerManager manager;
+
+    @Inject
+    public PlayerListeners(FakeplayerManager manager) {
+        this.manager = manager;
+    }
 
     /**
      * 玩家蹲伏时取消假人骑乘

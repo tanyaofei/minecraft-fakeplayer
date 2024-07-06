@@ -40,11 +40,11 @@ public class FakePlayer {
 
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
-    private final static FakeplayerConfig config = FakeplayerConfig.instance;
+    private final static FakeplayerConfig config = Main.getInjector().getInstance(FakeplayerConfig.class);
 
     private final static I18n i18n = Main.getI18n();
 
-    private final static NMSBridge bridge = Main.getBridge();
+    private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
 
     @NotNull
     @Getter
@@ -158,13 +158,13 @@ public class FakePlayer {
                     this.player.setCollidable(option.collidable());
                     this.player.setCanPickupItems(option.pickupItems());
                     if (option.lookAtEntity()) {
-                        ActionManager.instance.setAction(player, Action.ActionType.LOOK_AT_NEAREST_ENTITY, Action.ActionSetting.continuous());
+                        Main.getInjector().getInstance(ActionManager.class).setAction(player, Action.ActionType.LOOK_AT_NEAREST_ENTITY, Action.ActionSetting.continuous());
                     }
                     if (option.skin() && this.creator instanceof Player playerCreator) {
                         Skins.copySkin(playerCreator, this.player);
                     }
                     if (option.replenish()) {
-                        FakeplayerManager.instance.setReplenish(player, true);
+                        Main.getInjector().getInstance(FakeplayerManager.class).setReplenish(player, true);
                     }
 
                     this.network = bridge.createNetwork(address);

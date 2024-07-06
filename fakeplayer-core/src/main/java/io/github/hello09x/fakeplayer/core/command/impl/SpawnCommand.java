@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
 import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -25,10 +26,8 @@ import java.util.Optional;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class SpawnCommand extends AbstractCommand {
-
-    public final static SpawnCommand instance = new SpawnCommand();
 
     private final static DateTimeFormatter REMOVE_AT_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 

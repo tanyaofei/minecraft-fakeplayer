@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.util.Blocks;
@@ -9,10 +10,8 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class SleepCommand extends AbstractCommand {
-
-    public final static SleepCommand instance = new SleepCommand();
 
     /**
      * 睡觉

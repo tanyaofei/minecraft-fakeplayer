@@ -1,6 +1,8 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
 import com.google.common.base.Throwables;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -25,15 +27,23 @@ import java.util.logging.Logger;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
+@Singleton
 public class FakeplayerListener implements Listener {
 
-    public final static FakeplayerListener instance = new FakeplayerListener();
     private final static Logger log = Main.getInstance().getLogger();
-    private final FakeplayerManager manager = FakeplayerManager.instance;
-    private final FakeplayerConfig config = FakeplayerConfig.instance;
-    private final UsedIdRepository usedIdRepository = UsedIdRepository.instance;
+
+    private final FakeplayerManager manager;
+    private final UsedIdRepository usedIdRepository;
+    private final FakeplayerConfig config;
 
     private final I18n i18n = Main.getI18n();
+
+    @Inject
+    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakeplayerConfig config) {
+        this.manager = manager;
+        this.usedIdRepository = usedIdRepository;
+        this.config = config;
+    }
 
     /**
      * 拒绝真实玩家使用假人用过的 ID 登陆

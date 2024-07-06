@@ -1,5 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import lombok.AccessLevel;
@@ -12,12 +14,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Singleton
 public class UserConfigManager {
 
-    public final static UserConfigManager instance = new UserConfigManager();
+    private final UserConfigRepository repository;
 
-    private final UserConfigRepository repository = UserConfigRepository.instance;
+    @Inject
+    public UserConfigManager(UserConfigRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * 获取配置值
