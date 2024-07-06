@@ -6,7 +6,7 @@
 
     <groupId>io.github.hello09x.fakeplayer</groupId>
     <artifactId>fakeplayer-parent</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>fakeplayer-parent</name>
@@ -20,7 +20,7 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <plugin.version>0.3.2</plugin.version>
+        <revision>0.3.3</revision>
     </properties>
 
     <repositories>
@@ -85,19 +85,19 @@
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-api</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-core</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-v1_21_R1</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>

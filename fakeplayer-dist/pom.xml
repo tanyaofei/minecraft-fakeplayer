@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.hello09x.fakeplayer</groupId>
         <artifactId>fakeplayer-parent</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>fakeplayer-dist</artifactId>
@@ -38,7 +38,7 @@
 
     <build>
         <directory>../target</directory>
-        <finalName>fakeplayer-${plugin.version}</finalName>
+        <finalName>fakeplayer-${revision}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -75,7 +75,7 @@
                             <target>
                                 <copy todir="../server/plugins">
                                     <fileset dir="${project.build.directory}">
-                                        <include name="fakeplayer-${plugin.version}.jar"/>
+                                        <include name="fakeplayer-${revision}.jar"/>
                                     </fileset>
                                 </copy>
                             </target>

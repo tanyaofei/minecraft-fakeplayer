@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.hello09x.fakeplayer</groupId>
         <artifactId>fakeplayer-parent</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>fakeplayer-api</artifactId>
