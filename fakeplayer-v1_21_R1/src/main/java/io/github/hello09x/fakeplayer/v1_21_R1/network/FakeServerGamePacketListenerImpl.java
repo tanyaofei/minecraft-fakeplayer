@@ -4,7 +4,6 @@ import io.github.hello09x.fakeplayer.api.spi.NMSServerGamePacketListener;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.netty.buffer.Unpooled;
-import lombok.extern.slf4j.Slf4j;
 import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -56,7 +55,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
         var recipient = Bukkit
                 .getOnlinePlayers()
                 .stream()
-                .filter(manager::notContains)
+                .filter(manager::isNotFake)
                 .findAny()
                 .orElse(null);
         if (recipient == null) {
