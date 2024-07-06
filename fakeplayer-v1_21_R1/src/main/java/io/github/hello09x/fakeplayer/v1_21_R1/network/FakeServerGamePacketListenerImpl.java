@@ -4,6 +4,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSServerGamePacketListener;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.netty.buffer.Unpooled;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.network.Connection;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -18,10 +19,12 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl implements NMSServerGamePacketListener {
 
     private final static FakeplayerManager manager = FakeplayerManager.instance;
+    private final static Logger log = Main.getInstance().getLogger();
 
     public FakeServerGamePacketListenerImpl(
             @NotNull MinecraftServer server,
@@ -57,6 +60,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
                 .findAny()
                 .orElse(null);
         if (recipient == null) {
+            log.warning(String.format("Failed to forward a plugin message from [%s] cause non real players in the server", channel));
             return;
         }
 
