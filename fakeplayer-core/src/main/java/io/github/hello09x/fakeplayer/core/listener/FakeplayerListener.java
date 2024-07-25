@@ -85,7 +85,7 @@ public class FakeplayerListener implements Listener {
                   .anyMatch(metadata -> metadata.value() == FakePlayerStatus.SPAWNING)
         ) {
             event.setCancelled(true);
-            log.warning("Fake player '%s' was attempting to kick during the spawning which will be canceled because you enabled 'prevent-kicked-on-spawning'");
+            log.warning("Fake player '%s' was attempting to be kicked during the spawning which will be canceled cause you are enabled 'prevent-kicked-on-spawning'");
         }
     }
 
