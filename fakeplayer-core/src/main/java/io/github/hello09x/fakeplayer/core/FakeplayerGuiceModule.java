@@ -1,12 +1,10 @@
 package io.github.hello09x.fakeplayer.core;
 
-import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.invsee.DefaultInvseeImpl;
 import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
-import io.github.hello09x.fakeplayer.core.manager.invsee.OpenInvInvseeImpl;
 import org.bukkit.Bukkit;
 
 import java.util.ServiceLoader;
@@ -28,14 +26,6 @@ public class FakeplayerGuiceModule extends AbstractModule {
     }
 
     private Invsee invsee() {
-        if (Bukkit.getPluginManager().getPlugin("OpenInv") != null) {
-            try {
-                return new OpenInvInvseeImpl();
-            } catch(Throwable e) {
-                log.warning(Throwables.getStackTraceAsString(e));
-            }
-        }
-
         return new DefaultInvseeImpl();
     }
 

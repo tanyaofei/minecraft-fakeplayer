@@ -64,6 +64,12 @@ name-template: ''
 #   3. 如果你改了正则表达式, 请确保它以 `^` 开头并且以 `$` 结尾
 name-pattern: '^[a-zA-Z0-9_]+$'
 
+# 防止假人在登陆过程中由于其他插件的不兼容问题踢掉假人,
+# 开启这个选项可能可以解决一些登陆插件的兼容问题, 但是插件本身应该还是会打印错误日志
+# Prevent fake players from being kicked during spawning. Enabling this option may resolve some compatibility issues with login plugins.
+# But, these plugins may still print some error logs.
+prevent-kicked-on-spawning: false
+
 # 跟随下线
 # 假人创建者下线时是否也跟着下线
 # 如果玩家只是切换服务器, 那么不会触发跟随下线

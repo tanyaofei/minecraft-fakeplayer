@@ -102,6 +102,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private Pattern namePattern;
 
     /**
+     * 登陆时防止被踢
+     */
+    private Boolean preventKickedOnSpawning;
+
+    /**
      * 检测更新
      */
     private boolean checkForUpdates;
@@ -142,6 +147,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.kickOnDead = file.getBoolean("kick-on-dead", true);
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);
+        this.preventKickedOnSpawning = file.getBoolean("prevent-kicked-on-spawning", false);
         this.nameTemplate = getNameTemplate(file);
         this.lifespan = getLifespan(file);
         this.allowCommands = file.getStringList("allow-commands")

@@ -12,6 +12,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
@@ -25,6 +26,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -100,12 +102,13 @@ public class FakePlayer {
         this.sequenceName = sequenceName;
         this.handle = bridge.fromServer(Bukkit.getServer()).newPlayer(uuid, name);
         this.player = handle.getPlayer();
-        this.ticker = new FakeplayerTicker(this, lifespan);
 
-        player.setPersistent(config.isPersistData());
-        player.setSleepingIgnored(true);
-        handle.setPlayBefore(); // 可避免一些插件的第一次入服欢迎信息
-        handle.disableAdvancements(Main.getInstance()); // 不提示成就信息
+        this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.PENDING));
+        this.ticker = new FakeplayerTicker(this, lifespan);
+        this.player.setPersistent(config.isPersistData());
+        this.player.setSleepingIgnored(true);
+        this.handle.setPlayBefore(); // 可避免一些插件的第一次入服欢迎信息
+        this.handle.disableAdvancements(Main.getInstance()); // 不提示成就信息
     }
 
     /**
@@ -113,6 +116,7 @@ public class FakePlayer {
      */
     public CompletableFuture<Void> spawnAsync(@NotNull SpawnOption option) {
         var address = ipGen.next();
+        this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNING));
         return CompletableTask
                 .joinAsync(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);
@@ -174,6 +178,7 @@ public class FakePlayer {
 
                     this.teleportToSpawnpoint(option.spawnAt().clone());
                     this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
+                    this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNED));
                 }));
     }
 

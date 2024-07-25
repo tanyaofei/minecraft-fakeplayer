@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
@@ -17,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +69,23 @@ public class FakeplayerListener implements Listener {
                     player.getName(),
                     player.getUniqueId()
             ));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void preventBeingKickedOnSpawning(@NotNull PlayerKickEvent event) {
+        var player = event.getPlayer();
+
+        if (!config.getPreventKickedOnSpawning()) {
+            return;
+        }
+
+        if (player.getMetadata(FakePlayerStatus.METADATA_KEY)
+                  .stream()
+                  .anyMatch(metadata -> metadata.value() == FakePlayerStatus.SPAWNING)
+        ) {
+            event.setCancelled(true);
+            log.warning("Fake player '%s' was attempting to kick during the spawning which will be canceled because you enabled 'prevent-kicked-on-spawning'");
         }
     }
 
