@@ -76,7 +76,7 @@ public class FakeplayerListener implements Listener {
     public void preventBeingKickedOnSpawning(@NotNull PlayerKickEvent event) {
         var player = event.getPlayer();
 
-        if (!config.getPreventKickedOnSpawning()) {
+        if (!config.isPreventKickedOnSpawning()) {
             return;
         }
 

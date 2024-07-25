@@ -104,7 +104,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     /**
      * 登陆时防止被踢
      */
-    private Boolean preventKickedOnSpawning;
+    private boolean preventKickedOnSpawning;
 
     /**
      * 检测更新
