@@ -32,11 +32,14 @@ public class NMSNetworkImpl implements NMSNetwork {
             @NotNull Server server,
             @NotNull Player player
     ) {
-//        this.connection.setProtocolAttr(ConnectionProtocol.PLAY);
         var handle = ((CraftPlayer) player).getHandle();
-
-        // false 应该是 1.21 新增的玩家跨服标识符
         var cookie = CommonListenerCookie.createInitial(((CraftPlayer) player).getProfile(), false);
+
+        ((CraftServer) server).getHandle().placeNewPlayer(
+                this.connection,
+                handle,
+                cookie
+        );
 
         var listener = new FakeServerGamePacketListenerImpl(
                 ((CraftServer) server).getServer(),
@@ -44,13 +47,8 @@ public class NMSNetworkImpl implements NMSNetwork {
                 handle,
                 cookie
         );
-        handle.connection = listener;
-        ((CraftServer) server).getHandle().placeNewPlayer(
-                this.connection,
-                handle,
-                cookie
-        );
         this.serverGamePacketListener = listener;
+        handle.connection = listener;
         return listener;
     }
 

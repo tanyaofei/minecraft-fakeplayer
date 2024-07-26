@@ -27,11 +27,37 @@
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_20_R1</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_20_R2</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_20_R3_R4</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_20_R5_R6</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
             <artifactId>fakeplayer-v1_21_R1</artifactId>
+            <version>${revision}</version>
         </dependency>
 
     </dependencies>
@@ -73,7 +99,12 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy todir="../server-1.21/plugins">
+                                <copy tofile="../server-1.20.6/plugins/fakeplayer.jar">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="fakeplayer-${revision}.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy tofile="../server-1.21/plugins/fakeplayer.jar">
                                     <fileset dir="${project.build.directory}">
                                         <include name="fakeplayer-${revision}.jar"/>
                                     </fileset>

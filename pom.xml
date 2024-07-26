@@ -14,6 +14,10 @@
         <module>fakeplayer-api</module>
         <module>fakeplayer-core</module>
         <module>fakeplayer-dist</module>
+        <module>fakeplayer-v1_20_R1</module>
+        <module>fakeplayer-v1_20_R2</module>
+        <module>fakeplayer-v1_20_R3_R4</module>
+        <module>fakeplayer-v1_20_R5_R6</module>
         <module>fakeplayer-v1_21_R1</module>
     </modules>
 
@@ -51,7 +55,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.21-R0.1-SNAPSHOT</version>
+                <version>1.20-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -91,12 +95,6 @@
             <dependency>
                 <groupId>io.github.hello09x.fakeplayer</groupId>
                 <artifactId>fakeplayer-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.hello09x.fakeplayer</groupId>
-                <artifactId>fakeplayer-v1_21_R1</artifactId>
                 <version>${revision}</version>
             </dependency>
 

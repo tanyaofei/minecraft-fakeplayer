@@ -8,8 +8,8 @@ import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
-import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -25,7 +25,7 @@ import static io.github.hello09x.fakeplayer.core.command.CommandSupports.*;
 public class CommandRegistry {
 
     private final static I18n i18n = Main.getI18n();
-    
+
     @Inject
     private ActionCommand actionCommand;
     @Inject
@@ -40,7 +40,7 @@ public class CommandRegistry {
     private HoldCommand holdCommand;
     @Inject
     private InvseeCommand invseeCommand;
-    @Inject 
+    @Inject
     private KillCommand killCommand;
     @Inject
     private KillallCommand killallCommand;
@@ -50,7 +50,7 @@ public class CommandRegistry {
     private MoveCommand moveCommand;
     @Inject
     private ReloadCommand reloadCommand;
-    @Inject 
+    @Inject
     private RespawnCommand respawnCommand;
     @Inject
     private RideCommand rideCommand;
@@ -74,7 +74,11 @@ public class CommandRegistry {
     private SwapCommand swapCommand;
     @Inject
     private TeleportCommand teleportCommand;
+    @Inject
+    private DebugCommand debugCommand;
 
+    @Inject
+    private FakeplayerConfig config;
 
     public void register() {
         command("fakeplayer")
@@ -90,41 +94,41 @@ public class CommandRegistry {
                 .withPermission(Permission.spawn)
                 .withSubcommands(
                         helpCommand("/fp",
-                                Usage.of("select", i18n.asString("fakeplayer.command.select.description"), Permission.select, CommandSupports::needSelect),
-                                Usage.of("selection", i18n.asString("fakeplayer.command.selection.description"), Permission.selection, CommandSupports::needSelect),
-                                Usage.of("spawn", i18n.asString("fakeplayer.command.spawn.description"), Permission.spawn),
-                                Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.kill),
-                                Usage.of("killall", i18n.asString("fakeplayer.command.killall.description"), Permission.op),
-                                Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.list),
-                                Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.distance),
-                                Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.drop),
-                                Usage.of("dropstack", i18n.asString("fakeplayer.command.dropstack.description"), Permission.dropstack),
-                                Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.dropinv),
-                                Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.skin),
-                                Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.invsee),
-                                Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.sleep),
-                                Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.wakeup),
-                                Usage.of("status", i18n.asString("fakeplayer.command.status.description"), Permission.status),
-                                Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, CommandSupports::hasDeadTarget),
-                                Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
-                                Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
-                                Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
-                                Usage.of("set", i18n.asString("fakeplayer.command.set.description"), Permission.set),
-                                Usage.of("config", i18n.asString("fakeplayer.command.config.description"), Permission.config),
-                                Usage.of("expme", i18n.asString("fakeplayer.command.expme.description"), Permission.expme),
-                                Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.attack),
-                                Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.mine),
-                                Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.use),
-                                Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.jump),
-                                Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.look),
-                                Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.turn),
-                                Usage.of("move", i18n.asString("fakeplayer.command.move.description"), Permission.move),
-                                Usage.of("ride", i18n.asString("fakeplayer.command.ride.description"), Permission.ride),
-                                Usage.of("sneak", i18n.asString("fakeplayer.command.sneak.description"), Permission.sneak),
-                                Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.swap),
-                                Usage.of("hold", i18n.asString("fakeplayer.command.hold.description"), Permission.hold),
-                                Usage.of("cmd", i18n.asString("fakeplayer.command.cmd.description"), Permission.cmd),
-                                Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), Permission.op)
+                                    Usage.of("select", i18n.asString("fakeplayer.command.select.description"), Permission.select, CommandSupports::needSelect),
+                                    Usage.of("selection", i18n.asString("fakeplayer.command.selection.description"), Permission.selection, CommandSupports::needSelect),
+                                    Usage.of("spawn", i18n.asString("fakeplayer.command.spawn.description"), Permission.spawn),
+                                    Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.kill),
+                                    Usage.of("killall", i18n.asString("fakeplayer.command.killall.description"), Permission.op),
+                                    Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.list),
+                                    Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.distance),
+                                    Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.drop),
+                                    Usage.of("dropstack", i18n.asString("fakeplayer.command.dropstack.description"), Permission.dropstack),
+                                    Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.dropinv),
+                                    Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.skin),
+                                    Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.invsee),
+                                    Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.sleep),
+                                    Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.wakeup),
+                                    Usage.of("status", i18n.asString("fakeplayer.command.status.description"), Permission.status),
+                                    Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, CommandSupports::hasDeadTarget),
+                                    Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
+                                    Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
+                                    Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
+                                    Usage.of("set", i18n.asString("fakeplayer.command.set.description"), Permission.set),
+                                    Usage.of("config", i18n.asString("fakeplayer.command.config.description"), Permission.config),
+                                    Usage.of("expme", i18n.asString("fakeplayer.command.expme.description"), Permission.expme),
+                                    Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.attack),
+                                    Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.mine),
+                                    Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.use),
+                                    Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.jump),
+                                    Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.look),
+                                    Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.turn),
+                                    Usage.of("move", i18n.asString("fakeplayer.command.move.description"), Permission.move),
+                                    Usage.of("ride", i18n.asString("fakeplayer.command.ride.description"), Permission.ride),
+                                    Usage.of("sneak", i18n.asString("fakeplayer.command.sneak.description"), Permission.sneak),
+                                    Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.swap),
+                                    Usage.of("hold", i18n.asString("fakeplayer.command.hold.description"), Permission.hold),
+                                    Usage.of("cmd", i18n.asString("fakeplayer.command.cmd.description"), Permission.cmd),
+                                    Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), Permission.op)
                         ),
 
                         command("select")
@@ -423,7 +427,21 @@ public class CommandRegistry {
                                 .executes(killallCommand::killall),
                         command("reload")
                                 .withPermission(CommandPermission.OP)
-                                .executes(reloadCommand::reload)
+                                .executes(reloadCommand::reload),
+
+                        // developer debug
+                        command("debug")
+                                .withPermission(CommandPermission.OP)
+                                .withRequirement(sender -> config.isDebug())
+                                .withSubcommands(
+                                        command("send-plugin-message")
+                                                .withArguments(
+                                                        player("player"),
+                                                        text("channel"),
+                                                        text("message")
+                                                )
+                                                .executes(debugCommand::sendPluginMessage)
+                                )
 
                 ).register();
     }

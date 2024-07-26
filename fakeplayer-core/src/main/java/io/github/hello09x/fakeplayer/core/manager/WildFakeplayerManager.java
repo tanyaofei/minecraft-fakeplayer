@@ -85,6 +85,10 @@ public class WildFakeplayerManager implements PluginMessageListener {
 
         for (var entry : group.entrySet()) {
             var creator = entry.getKey();
+            if (creator.equals("CONSOLE")) {
+                continue;
+            }
+
             var targets = entry.getValue();
             if (targets.isEmpty() || online.contains(creator)) {
                 continue;

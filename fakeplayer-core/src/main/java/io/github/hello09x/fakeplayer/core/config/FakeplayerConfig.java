@@ -122,6 +122,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     @Nullable
     private Duration lifespan;
 
+    /**
+     * 开发者调试模式
+     */
+    private boolean debug;
+
     public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
         reload(false);
@@ -155,6 +160,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
                                  .map(c -> c.startsWith("/") ? c.substring(1) : c)
                                  .filter(c -> !c.isBlank())
                                  .collect(Collectors.toSet());
+        this.debug = file.getBoolean("debug", false);
     }
 
     private @Nullable Duration getLifespan(@NotNull FileConfiguration file) {
@@ -169,7 +175,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private @NotNull Pattern getNamePattern(@NotNull FileConfiguration file) {
         try {
             return Pattern.compile(file.getString("name-pattern", defaultNameChars));
-        } catch(PatternSyntaxException e) {
+        } catch (PatternSyntaxException e) {
             log.warning("Invalid name-pattern: " + file.getString("name-chars"));
             return Pattern.compile(defaultNameChars);
         }
