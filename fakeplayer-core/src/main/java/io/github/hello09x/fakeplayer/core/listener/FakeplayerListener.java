@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
@@ -73,22 +74,31 @@ public class FakeplayerListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void preventBeingKickedOnSpawning(@NotNull PlayerKickEvent event) {
+    public void preventKicking(@NotNull PlayerKickEvent event) {
         var player = event.getPlayer();
 
-        if (!config.isPreventKickedOnSpawning()) {
-            return;
-        }
-
-        if (player.getMetadata(FakePlayerStatus.METADATA_KEY)
-                  .stream()
-                  .anyMatch(metadata -> metadata.value() == FakePlayerStatus.SPAWNING)
-        ) {
-            event.setCancelled(true);
-            log.warning(String.format(
-                    "Fake player '%s' was attempting to be kicked during the spawning which will be canceled cause you are enabled 'prevent-kicked-on-spawning'",
-                    player.getName())
-            );
+        switch (config.getPreventKicking()) {
+            case ON_SPAWNING -> {
+                if (player.getMetadata(FakePlayerStatus.METADATA_KEY)
+                          .stream()
+                          .anyMatch(metadata -> metadata.value() == FakePlayerStatus.SPAWNING)
+                ) {
+                    event.setCancelled(true);
+                    log.warning(String.format(
+                            "Canceled kicking fake player '%s' on spawning due to your configuration",
+                            player.getName()
+                    ));
+                }
+            }
+            case ALWAYS -> {
+                if (!Components.asString(event.reason()).startsWith("[fakeplayer]")) {
+                    event.setCancelled(true);
+                    log.warning(String.format(
+                            "Canceled kicking fake player '%s' due to your configuration",
+                            player.getName()
+                    ));
+                }
+            }
         }
     }
 

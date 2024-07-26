@@ -1,6 +1,6 @@
 # 配置文件版本, 不要修改这个值
 # THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT
-version: 14
+version: 15
 
 # 多国语言配置
 # 可选项: zh, en
@@ -64,11 +64,17 @@ name-template: ''
 #   3. 如果你改了正则表达式, 请确保它以 `^` 开头并且以 `$` 结尾
 name-pattern: '^[a-zA-Z0-9_]+$'
 
-# 防止假人在登陆过程中由于其他插件的不兼容问题踢掉假人,
-# 开启这个选项可能可以解决一些登陆插件的兼容问题, 但是插件本身应该还是会打印错误日志
-# Prevent fake players from being kicked during spawning. Enabling this option may resolve some compatibility issues with login plugins.
-# But, these plugins may still print some error logs.
-prevent-kicked-on-spawning: false
+# 防止假人被其他插件踢掉, 这个选项用来兼容一些插件因为某些问题而踢掉假人
+# 可选项:
+#   NEVER: 不进行任何处理
+#   ON_SPAWNING: 创建时防止被踢出, 某些登陆插件会在加入时踢掉, 但不支持某些插件会在下 1 tick 时才踢的情况
+#   ALWAYS: 永远, 即除了本插件以外任何插件包括 /kick 命令都无法将假人踢掉
+# Prevent some plugins kick our fake players, enabling this option may resolve some compatibility issues with login plugins.
+# Options:
+#   NEVER: do not prevent kicking
+#   ON_SPAWNING: only prevent kicking when fake players is spawning, but some plugin will kick them on the next tick, in such causes you should use `ALWAYS`
+#   ALWAYS: always prevent kicking from other plugins and command `/kick`
+prevent-kicking: NEVER
 
 # 跟随下线
 # 假人创建者下线时是否也跟着下线

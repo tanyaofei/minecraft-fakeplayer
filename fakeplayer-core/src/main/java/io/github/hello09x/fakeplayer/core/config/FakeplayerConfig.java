@@ -32,7 +32,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         log = Main.getInstance().getLogger();
         instance = new FakeplayerConfig(
                 Main.getInstance(),
-                "14"
+                "15"
         );
     }
 
@@ -102,11 +102,6 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
     private Pattern namePattern;
 
     /**
-     * 登陆时防止被踢
-     */
-    private boolean preventKickedOnSpawning;
-
-    /**
      * 检测更新
      */
     private boolean checkForUpdates;
@@ -126,6 +121,11 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
      * 开发者调试模式
      */
     private boolean debug;
+
+    /**
+     * 防止踢出
+     */
+    private PreventKicking preventKicking;
 
     public FakeplayerConfig(@NotNull JavaPlugin plugin, @NotNull String version) {
         super(plugin, version);
@@ -152,7 +152,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         this.kickOnDead = file.getBoolean("kick-on-dead", true);
         this.checkForUpdates = file.getBoolean("check-for-updates", true);
         this.namePattern = getNamePattern(file);
-        this.preventKickedOnSpawning = file.getBoolean("prevent-kicked-on-spawning", false);
+        this.preventKicking = this.getPreventKicking(file);
         this.nameTemplate = getNameTemplate(file);
         this.lifespan = getLifespan(file);
         this.allowCommands = file.getStringList("allow-commands")
@@ -188,6 +188,15 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
             return "";
         }
         return tmpl;
+    }
+
+    private @NotNull PreventKicking getPreventKicking(@NotNull FileConfiguration file) {
+        if (file.getBoolean("prevent-kicked-on-spawning", false)) {
+            log.warning("prevent-kicked-on-spawning is deprecated, use prevent-kick instead");
+            return PreventKicking.ON_SPAWNING;
+        }
+
+        return PreventKicking.valueOf(file.getString("prevent-kicking", PreventKicking.NEVER.toString()));
     }
 
 }
