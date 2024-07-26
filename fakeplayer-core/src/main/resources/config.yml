@@ -1,6 +1,6 @@
 # 配置文件版本, 不要修改这个值
 # THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT
-version: 13
+version: 14
 
 # 多国语言配置
 # 可选项: zh, en

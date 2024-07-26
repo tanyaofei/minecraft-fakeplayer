@@ -32,7 +32,7 @@ public class FakeplayerConfig extends Config<FakeplayerConfig> {
         log = Main.getInstance().getLogger();
         instance = new FakeplayerConfig(
                 Main.getInstance(),
-                "13"
+                "14"
         );
     }
 
