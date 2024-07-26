@@ -8,9 +8,8 @@ This plugin can help you to spawn fake players, with them, you can keep chunk lo
 
 Only supports `Paper` and derivatives like (`Purpur`).
 
-Version 0.2.9 supports Minecraft versions 1.20.1 - 1.20.4. Please check the Release for historical versions.
-
-Version 0.3.x supports Minecraft version 1.21.1 and later.
++ supports `1.20`, `1.20.2`, `1.20.3`, `1.20.4`, `1.20.5`, `1.20.6`
++ supports `1.21`
 
 ## Features
 
