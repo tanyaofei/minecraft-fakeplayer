@@ -215,14 +215,12 @@ public class ReplenishListener implements Listener {
                         );
                         if (!event.callEvent()) {
                             // 无法操作箱子
-                            target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
-                            return;
+                            break;
                         }
 
                         target.getInventory().setItem(slot, replacement);
                         inv.setItem(i, null);
-                        target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
-                        return;
+                        break;
                     }
                 }
                 target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
