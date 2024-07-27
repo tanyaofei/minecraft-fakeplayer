@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager.naming;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.devtools.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;

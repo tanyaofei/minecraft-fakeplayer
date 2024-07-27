@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;

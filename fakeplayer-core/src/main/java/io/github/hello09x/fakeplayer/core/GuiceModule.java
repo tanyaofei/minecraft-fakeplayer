@@ -3,9 +3,9 @@ package io.github.hello09x.fakeplayer.core;
 import com.google.inject.AbstractModule;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.devtools.database.jdbc.JdbcTemplate;
-import io.github.hello09x.devtools.transaction.PluginTranslator;
-import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.invsee.DefaultInvseeImpl;
@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.util.ServiceLoader;
 
-public class FakeplayerGuiceModule extends AbstractModule {
+public class GuiceModule extends AbstractModule {
 
 
     @Override
@@ -42,6 +42,7 @@ public class FakeplayerGuiceModule extends AbstractModule {
         config.setDriverClassName("org.sqlite.JDBC");
         config.setMaximumPoolSize(1);
         config.setJdbcUrl("jdbc:sqlite:" + new File(Main.getInstance().getDataFolder(), "data.db").getAbsolutePath());
+        config.setConnectionTimeout(1000L);
         return new HikariDataSource(config);
     }
 

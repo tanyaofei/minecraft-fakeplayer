@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.invsee;
 
-import io.github.hello09x.devtools.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

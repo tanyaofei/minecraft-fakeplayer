@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager.invsee;
 
-import io.github.hello09x.devtools.transaction.PluginTranslator;
-import io.github.hello09x.devtools.utils.ComponentUtils;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;

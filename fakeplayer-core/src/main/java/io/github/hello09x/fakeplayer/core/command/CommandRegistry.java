@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandPermission;
 import io.github.hello09x.bedrock.command.Usage;
-import io.github.hello09x.devtools.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;

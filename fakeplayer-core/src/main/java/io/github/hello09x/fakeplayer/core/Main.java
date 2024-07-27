@@ -25,7 +25,7 @@ public final class Main extends RegistrablePlugin {
     @Override
     public void onLoad() {
         instance = this;
-        injector = Guice.createInjector(new FakeplayerGuiceModule());
+        injector = Guice.createInjector(new GuiceModule());
     }
 
     @Override

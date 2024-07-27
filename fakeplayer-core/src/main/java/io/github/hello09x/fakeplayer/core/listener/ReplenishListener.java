@@ -4,7 +4,7 @@ package io.github.hello09x.fakeplayer.core.listener;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.devtools.utils.BlockUtils;
+import io.github.hello09x.devtools.core.utils.BlockUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
@@ -225,6 +225,7 @@ public class ReplenishListener implements Listener {
                         return;
                     }
                 }
+                target.closeInventory(InventoryCloseEvent.Reason.PLAYER);
             }, 20);
             return;
         }

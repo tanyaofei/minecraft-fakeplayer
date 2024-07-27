@@ -4,7 +4,7 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

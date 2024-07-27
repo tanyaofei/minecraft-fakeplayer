@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
-import io.github.hello09x.devtools.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

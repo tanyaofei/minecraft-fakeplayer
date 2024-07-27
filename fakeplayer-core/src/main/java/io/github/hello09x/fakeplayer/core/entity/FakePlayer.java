@@ -2,10 +2,10 @@ package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.task.CompletableTask;
-import io.github.hello09x.devtools.transaction.PluginTranslator;
-import io.github.hello09x.devtools.transaction.TranslatorUtils;
-import io.github.hello09x.devtools.utils.EntityUtils;
-import io.github.hello09x.devtools.utils.WorldUtils;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.EntityUtils;
+import io.github.hello09x.devtools.core.utils.WorldUtils;
 import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;

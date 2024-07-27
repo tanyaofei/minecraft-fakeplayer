@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
-import io.github.hello09x.devtools.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
