@@ -6,7 +6,7 @@ This is a plugin inspired by Carpet Mod which allows you to spawn fake players t
 
 ## Supported Versions
 
-Only supports `Paper` and derivatives like (`Purpur`).
+Only supports [Paper](https://papermc.io) and [Purpur](http://purpurmc.org)
 
 Required JAVA 21+
 
