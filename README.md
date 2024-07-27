@@ -4,6 +4,8 @@
 
 This is a plugin inspired by Carpet Mod which allows you to spawn fake players to keep chunk loading.
 
+[Click here](https://youtu.be/ql0ztNhtMLE) to visit a damon video.
+
 ## Supported Versions
 
 Only supports [Paper](https://papermc.io) and [Purpur](http://purpurmc.org)
