@@ -43,7 +43,12 @@
 
         <dependency>
             <groupId>io.github.hello09x</groupId>
-            <artifactId>devtools</artifactId>
+            <artifactId>devtools-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x</groupId>
+            <artifactId>devtools-database</artifactId>
         </dependency>
 
         <dependency>

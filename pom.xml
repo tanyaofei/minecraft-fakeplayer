@@ -74,7 +74,13 @@
 
             <dependency>
                 <groupId>io.github.hello09x</groupId>
-                <artifactId>devtools</artifactId>
+                <artifactId>devtools-core</artifactId>
+                <version>0.1.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.hello09x</groupId>
+                <artifactId>devtools-database</artifactId>
                 <version>0.1.1-SNAPSHOT</version>
             </dependency>
 
