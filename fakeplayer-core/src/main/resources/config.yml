@@ -3,9 +3,9 @@
 version: 15
 
 # 多国语言配置
-# 可选项: zh, en
+# 可选项: en, zh, zh_cn, zh_tw, zh_hk
 # Language
-# options: zh, en
+# Options: en, zh, zh_cn, zh_tw, zh_hk
 i18n:
   locale: zh
 
