@@ -14,12 +14,12 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
 
 @Singleton
-public class PlayerListeners implements Listener {
+public class PlayerListener implements Listener {
 
     private final FakeplayerManager manager;
 
     @Inject
-    public PlayerListeners(FakeplayerManager manager) {
+    public PlayerListener(FakeplayerManager manager) {
         this.manager = manager;
     }
 

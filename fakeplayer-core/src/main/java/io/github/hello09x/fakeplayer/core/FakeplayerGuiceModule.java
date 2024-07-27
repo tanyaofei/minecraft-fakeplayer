@@ -18,7 +18,7 @@ public class FakeplayerGuiceModule extends AbstractModule {
     protected void configure() {
         super.bind(FakeplayerConfig.class).toProvider(this::fakeplayerConfig);
         super.bind(Invsee.class).toProvider(this::invsee);
-        super.bind(NMSBridge.class).toInstance(nmsBridge());
+        super.bind(NMSBridge.class).toInstance(this.nmsBridge());
     }
 
     private FakeplayerConfig fakeplayerConfig() {

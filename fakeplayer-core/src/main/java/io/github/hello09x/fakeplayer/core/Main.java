@@ -1,21 +1,18 @@
 package io.github.hello09x.fakeplayer.core;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.i18n.I18nSupported;
 import io.github.hello09x.bedrock.util.RegistrablePlugin;
-import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
-import io.github.hello09x.fakeplayer.core.listener.PlayerListeners;
+import io.github.hello09x.fakeplayer.core.listener.PlayerListener;
 import io.github.hello09x.fakeplayer.core.listener.ReplenishListener;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,21 +25,6 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
     private I18n i18n;
 
     private Injector injector;
-
-    @Inject
-    FakeplayerConfig config;
-
-    @Inject
-    WildFakeplayerManager wildFakeplayerManager;
-
-    @Inject
-    PlayerListeners playerListeners;
-
-    @Inject
-    FakeplayerListener fakeplayerListener;
-
-    @Inject
-    ReplenishListener replenishListener;
 
     @Override
     public void onLoad() {
@@ -57,18 +39,18 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
         injector.getInstance(CommandRegistry.class).register();
         {
             var messenger = getServer().getMessenger();
-            messenger.registerIncomingPluginChannel(this, "BungeeCord", wildFakeplayerManager);
+            messenger.registerIncomingPluginChannel(this, "BungeeCord", injector.getInstance(WildFakeplayerManager.class));
             messenger.registerOutgoingPluginChannel(this, "BungeeCord");
         }
 
         {
             var manager = getServer().getPluginManager();
-            manager.registerEvents(playerListeners, this);
-            manager.registerEvents(fakeplayerListener, this);
-            manager.registerEvents(replenishListener, this);
+            manager.registerEvents(injector.getInstance(PlayerListener.class), this);
+            manager.registerEvents(injector.getInstance(FakeplayerListener.class), this);
+            manager.registerEvents(injector.getInstance(ReplenishListener.class), this);
         }
 
-        if (config.isCheckForUpdates()) {
+        if (injector.getInstance(FakeplayerConfig.class).isCheckForUpdates()) {
             checkForUpdatesAsync();
         }
     }
