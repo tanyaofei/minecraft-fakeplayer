@@ -149,6 +149,16 @@ Command examples:
 
 # FAQs (Important - Must Read)
 
+
+## lost connection: PacketEvents 2.0 failed to inject
+Some plugin change the `Connection` of the fake player, You can set `prevent-kicking` to `ALWAYS` to solve it.
+```yaml
+# config.yml
+prevent-kicking: ALWAYS
+```
+
+
+
 ## Fake players do not attract aggression
 
 By default, fake players are in invincible mode. Players need to manually turn off invincible mode with `/fp config set invulnerable false` to attract aggression. After turning it off, they will
@@ -164,3 +174,4 @@ plugin from kicking out players for being idle:
 self-commands:
   - '/register abc123! abc123!'
   - '/login abc123!'
+```
