@@ -1,24 +1,27 @@
 package io.github.hello09x.fakeplayer.core.repository;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.database.Repository;
-import io.github.hello09x.fakeplayer.core.Main;
+import io.github.hello09x.devtools.database.jdbc.JdbcTemplate;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.repository.model.UserConfig;
+import io.github.hello09x.fakeplayer.core.repository.model.UserConfigRowMapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
-public class UserConfigRepository extends Repository<UserConfig> {
+public class UserConfigRepository {
 
-    public UserConfigRepository() {
-        super(Main.getInstance());
+    private final JdbcTemplate jdbc;
+
+    @Inject
+    public UserConfigRepository(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+        this.initTables();
     }
 
     public @Nullable String select(@NotNull UUID playerId, @NotNull Config<?> config) {
@@ -28,15 +31,15 @@ public class UserConfigRepository extends Repository<UserConfig> {
                 and `key` = ?
                 """;
 
-        return execute(connection -> {
-            try (PreparedStatement stm = connection.prepareStatement(sql)) {
-                stm.setString(1, playerId.toString());
-                stm.setString(2, config.key());
-                return Optional.ofNullable(mapOne(stm.executeQuery()))
-                               .map(UserConfig::value)
-                               .orElse(null);
-            }
-        });
+        return Optional
+                .ofNullable(jdbc.queryForObject(
+                        sql,
+                        UserConfigRowMapper.instance,
+                        playerId.toString(),
+                        config.key())
+                )
+                .map(UserConfig::value)
+                .orElse(null);
     }
 
     public @NotNull List<UserConfig> selectList(@NotNull UUID playerId) {
@@ -44,12 +47,8 @@ public class UserConfigRepository extends Repository<UserConfig> {
                 select * from user_config
                 where player_id = ?
                 """;
-        return execute(connection -> {
-            try (PreparedStatement stm = connection.prepareStatement(sql)) {
-                stm.setString(1, playerId.toString());
-                return mapMany(stm.executeQuery());
-            }
-        });
+
+        return jdbc.query(sql, UserConfigRowMapper.instance, playerId.toString());
     }
 
     public <T> int saveOrUpdate(@NotNull UUID playerId, @NotNull Config<T> config, @NotNull T value) {
@@ -62,41 +61,32 @@ public class UserConfigRepository extends Repository<UserConfig> {
                     ?,
                     ?
                   )
-                  """;
+                """;
 
-        return execute(connection -> {
-            try (PreparedStatement stm = connection.prepareStatement(sql)) {
-                int i = 1;
-                stm.setString(i++, playerId.toString());
-                stm.setString(i++, config.key());
-                stm.setString(i++, playerId.toString());
-                stm.setString(i++, config.key());
-                stm.setString(i++, value.toString());
-                return stm.executeUpdate();
-            }
-        });
+        return jdbc.update(
+                sql,
+                playerId.toString(),
+                config.key(),
+                playerId.toString(),
+                config.key(),
+                value.toString()
+        );
     }
 
-
-    @Override
     protected void initTables() {
+        jdbc.execute("""
+                             create table if not exists user_config
+                                 (
+                                     id        integer  not null primary key autoincrement,
+                                     player_id text(36) not null,
+                                     `key`       text     not null,
+                                     `value`     text     not null
+                                 );
+                             """);
 
-        execute(connection -> {
-            try (Statement stm = connection.createStatement()) {
-                stm.execute("""
-                        create table if not exists user_config
-                         (
-                             id        integer  not null primary key autoincrement,
-                             player_id text(36) not null,
-                             `key`       text     not null,
-                             `value`     text     not null
-                         );
-                        """);
-                stm.execute("""
-                        create unique index if not exists table_name_player_id_key_uindex
-                            on user_config (player_id, `key`);
-                            """);
-            }
-        });
+        jdbc.execute("""
+                             create unique index if not exists table_name_player_id_key_uindex
+                                        on user_config (player_id, `key`);
+                             """);
     }
 }
