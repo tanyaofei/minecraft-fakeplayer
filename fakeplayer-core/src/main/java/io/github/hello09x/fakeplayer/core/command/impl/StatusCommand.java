@@ -4,11 +4,10 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.io.Experiences;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.Mth;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,9 +19,11 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,30 +58,31 @@ public class StatusCommand extends AbstractCommand {
      * 查看假人状态
      */
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        var locale = TranslatorUtils.getLocale(sender);
         var target = super.getTarget(sender, args);
-        var title = i18n.translate(
-                "fakeplayer.command.status.title", GRAY,
+        var title = translator.translate(
+                "fakeplayer.command.status.title", locale, GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE))
         );
 
         var lines = new ArrayList<Component>(6);
         lines.add(title);
-        lines.add(this.getHealthLine(target));
-        lines.add(this.getFoodLine(target));
+        lines.add(this.getHealthLine(target, locale));
+        lines.add(this.getFoodLine(target, locale));
         if (sender.hasPermission(Permission.expme)) {
-            lines.add(this.getExperienceLine(target));
+            lines.add(this.getExperienceLine(target, locale));
         }
         lines.add(LINE_SPLITTER);
-        lines.add(getConfigLine(target));
+        lines.add(getConfigLine(target, locale));
 
         sender.sendMessage(join(JoinConfiguration.newlines(), lines));
     }
 
-    private @NotNull Component getFoodLine(@NotNull Player target) {
+    private @NotNull Component getFoodLine(@NotNull Player target, @Nullable Locale locale) {
         var food = target.getFoodLevel();
         var max = 20.0;
-        return i18n.translate(
-                "fakeplayer.command.status.food", WHITE,
+        return translator.translate(
+                "fakeplayer.command.status.food", locale, WHITE,
                 Placeholder.component("food", textOfChildren(
                         text(Mth.floor(food, 0.5), color(food, max)),
                         text("/", GRAY),
@@ -89,14 +91,14 @@ public class StatusCommand extends AbstractCommand {
         );
     }
 
-    private @NotNull Component getHealthLine(@NotNull Player target) {
+    private @NotNull Component getHealthLine(@NotNull Player target, @Nullable Locale locale) {
         var health = target.getHealth();
         double max = Optional.ofNullable(target.getAttribute(Attribute.GENERIC_MAX_HEALTH))
                 .map(AttributeInstance::getValue)
                 .orElse(20D);
 
-        return i18n.translate(
-                "fakeplayer.command.status.health", WHITE,
+        return translator.translate(
+                "fakeplayer.command.status.health", locale, WHITE,
                 Placeholder.component("health", textOfChildren(
                         text(Mth.floor(health, 0.5), color(health, max)),
                         text("/", GRAY),
@@ -105,26 +107,26 @@ public class StatusCommand extends AbstractCommand {
         );
     }
 
-    private @NotNull Component getExperienceLine(@NotNull Player target) {
+    private @NotNull Component getExperienceLine(@NotNull Player target, @Nullable Locale locale) {
         var level = target.getLevel();
         var points = Experiences.getExp(target);
 
         return textOfChildren(
-                i18n.translate(
-                        "fakeplayer.command.status.exp", WHITE,
+                translator.translate(
+                        "fakeplayer.command.status.exp", locale, WHITE,
                         Placeholder.component("level", text(level, GREEN)),
                         Placeholder.component("points", text(points, GREEN))
                 ),
                 space(),
-                i18n.translate("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
+                translator.translate("fakeplayer.command.status.exp.withdraw", locale, AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
         );
     }
 
-    private @NotNull Component getConfigLine(@NotNull Player target) {
+    private @NotNull Component getConfigLine(@NotNull Player target, @Nullable Locale locale) {
         var configs = Arrays.stream(Config.values()).filter(Config::hasAccessor).toList();
         var messages = new ArrayList<Component>();
         for (var config : configs) {
-            var name = i18n.translate(config.translationKey());
+            var name = translator.translate(config.translationKey(), locale, WHITE);
             var options = config.options();
             var status = config.accessor().getter().apply(target).toString();
 

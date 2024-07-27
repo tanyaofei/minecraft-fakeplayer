@@ -3,10 +3,9 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.page.Page;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.util.Mth;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -34,6 +33,7 @@ public class ListCommand extends AbstractCommand {
     public void list(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var page = (int) args.getOptional("page").orElse(1);
         var size = (int) args.getOptional("size").orElse(10);
+        var locale = TranslatorUtils.getLocale(sender);
 
         var fakers = sender.isOp()
                 ? manager.getAll()
@@ -43,13 +43,13 @@ public class ListCommand extends AbstractCommand {
 
         var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.asComponent(
-                text(i18n.asString("fakeplayer.command.list.title"), AQUA, BOLD),
+                text(translator.asString("fakeplayer.command.list.title", locale), AQUA, BOLD),
                 fakeplayer -> {
                     var partTp = allowsTp
-                            ? textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.teleport", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())))
+                            ? textOfChildren(space(), translator.translate("fakeplayer.command.list.button.teleport", locale, AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())))
                             : empty();
 
-                    var partKill = textOfChildren(space(), i18n.translate("fakeplayer.command.list.button.kill", RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()));
+                    var partKill = textOfChildren(space(), translator.translate("fakeplayer.command.list.button.kill", locale, RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()));
 
                     return textOfChildren(
                             text(fakeplayer.getName() + " (" + manager.getCreatorName(fakeplayer) + ")", GOLD),

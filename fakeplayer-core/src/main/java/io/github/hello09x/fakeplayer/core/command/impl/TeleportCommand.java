@@ -4,8 +4,7 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.util.Teleportor;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +44,9 @@ public class TeleportCommand extends AbstractCommand {
     }
 
     private void teleport(@NotNull CommandSender sender, @NotNull Player from, @NotNull Player to) {
+        var locale = TranslatorUtils.getLocale(sender);
         if (!Teleportor.teleportAndSound(from, to.getLocation())) {
-            sender.sendMessage(i18n.translate("fakeplayer.command.teleport.error.canceled", RED));
+            sender.sendMessage(translator.translate("fakeplayer.command.teleport.error.canceled", locale, RED));
         }
     }
 

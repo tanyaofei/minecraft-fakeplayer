@@ -42,6 +42,11 @@
         </dependency>
 
         <dependency>
+            <groupId>io.github.hello09x</groupId>
+            <artifactId>devtools</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <scope>provided</scope>

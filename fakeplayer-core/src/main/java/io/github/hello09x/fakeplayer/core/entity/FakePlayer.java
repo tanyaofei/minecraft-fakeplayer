@@ -1,10 +1,11 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.bedrock.command.MessageException;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.task.CompletableTask;
 import io.github.hello09x.bedrock.util.Teleportor;
 import io.github.hello09x.bedrock.util.Worlds;
+import io.github.hello09x.devtools.transaction.PluginTranslator;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -31,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.net.InetAddress;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,7 +46,7 @@ public class FakePlayer {
 
     private final static FakeplayerConfig config = Main.getInjector().getInstance(FakeplayerConfig.class);
 
-    private final static I18n i18n = Main.getI18n();
+    private final static PluginTranslator translator = Main.getInjector().getInstance(PluginTranslator.class);
 
     private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
 
@@ -114,15 +116,16 @@ public class FakePlayer {
     /**
      * 让假人诞生
      */
-    public CompletableFuture<Void> spawnAsync(@NotNull SpawnOption option) {
+    public CompletableFuture<Void> spawnAsync(@NotNull CommandSender creator, @NotNull SpawnOption option) {
+        var locale = TranslatorUtils.getLocale(creator);
         var address = ipGen.next();
         this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNING));
         return CompletableTask
                 .joinAsync(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(i18n.translate(
-                                "fakeplayer.command.spawn.error.disallowed", RED,
+                        throw new MessageException(translator.translate(
+                                "fakeplayer.command.spawn.error.disallowed", locale, RED,
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
@@ -132,8 +135,8 @@ public class FakePlayer {
                     {
                         var event = this.callLoginEvent(address);
                         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-                            throw new MessageException(i18n.translate(
-                                    "fakeplayer.command.spawn.error.disallowed", RED,
+                            throw new MessageException(translator.translate(
+                                    "fakeplayer.command.spawn.error.disallowed", locale, RED,
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("reason", event.kickMessage())
                             ));
@@ -143,8 +146,8 @@ public class FakePlayer {
                     {
                         var event = this.callSpawnEvent();
                         if (event.isCancelled()) {
-                            throw new MessageException(i18n.translate(
-                                    "fakeplayer.command.spawn.error.disallowed", RED,
+                            throw new MessageException(translator.translate(
+                                    "fakeplayer.command.spawn.error.disallowed", locale, RED,
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("reason", event.getReason())
                             ));
@@ -176,7 +179,7 @@ public class FakePlayer {
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
-                    this.teleportToSpawnpoint(option.spawnAt().clone());
+                    this.teleportToSpawnpoint(option.spawnAt().clone(), locale);
                     this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
                     this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNED));
                 }));
@@ -187,14 +190,14 @@ public class FakePlayer {
      *
      * @param to 目标位置
      */
-    private void teleportToSpawnpoint(@NotNull Location to) {
+    private void teleportToSpawnpoint(@NotNull Location to, @NotNull Locale locale) {
         var from = this.player.getLocation();
         if (from.getWorld().equals(to.getWorld())) {
             // 如果生成世界等于目的世界, 则需要穿越一次维度才能获取刷怪能力
             var otherWorld = Worlds.getOtherWorld(from.getWorld());
             if (otherWorld == null || !player.teleport(otherWorld.getSpawnLocation())) {
-                this.creator.sendMessage(i18n.translate(
-                        "fakeplayer.command.spawn.error.no-mob-spawning-ability", GRAY,
+                this.creator.sendMessage(translator.translate(
+                        "fakeplayer.command.spawn.error.no-mob-spawning-ability", locale, GRAY,
                         Placeholder.component("name", text(player.getName(), WHITE))
                 ));
             }
@@ -202,8 +205,8 @@ public class FakePlayer {
 
         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
             if (!Teleportor.teleportAndSound(player, to)) {
-                this.creator.sendMessage(i18n.translate(
-                        "fakeplayer.command.spawn.error.teleport-failed", GRAY,
+                this.creator.sendMessage(translator.translate(
+                        "fakeplayer.command.spawn.error.teleport-failed", locale, GRAY,
                         Placeholder.component("name", text(player.getName(), WHITE))
                 ));
             }

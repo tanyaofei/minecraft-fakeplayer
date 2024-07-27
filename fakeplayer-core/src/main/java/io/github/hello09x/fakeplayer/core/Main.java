@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.core;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.i18n.I18nSupported;
 import io.github.hello09x.bedrock.util.RegistrablePlugin;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
@@ -22,15 +21,12 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
     @Getter
     private static Main instance;
 
-    private I18n i18n;
-
     private Injector injector;
 
     @Override
     public void onLoad() {
         instance = this;
         injector = Guice.createInjector(new FakeplayerGuiceModule());
-        this.i18n = new I18n(this, "message/message");
     }
 
     @Override
@@ -97,10 +93,6 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
     @Override
     public @NotNull ClassLoader classLoader() {
         return getClassLoader();
-    }
-
-    public static @NotNull I18n getI18n() {
-        return instance.i18n;
     }
 
     public static @NotNull Injector getInjector() {

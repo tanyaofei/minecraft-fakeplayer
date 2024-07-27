@@ -4,8 +4,7 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -70,14 +69,15 @@ public class RideCommand extends AbstractCommand {
      */
     public void rideMe(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
+        var locale = TranslatorUtils.getLocale(sender);
         if (!target.getWorld().equals(sender.getWorld())) {
-            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.ride.me.error.too-far"));
+            throw CommandAPI.failWithString(translator.asString("fakeplayer.command.ride.me.error.too-far", locale));
         }
 
         var distance = target.getLocation().distance(sender.getLocation());
         if (distance > Bukkit.getViewDistance()) {
-            sender.sendMessage(i18n.translate(
-                    "fakeplayer.command.ride.me.error.too-far", GRAY,
+            sender.sendMessage(translator.translate(
+                    "fakeplayer.command.ride.me.error.too-far", locale, GRAY,
                     Placeholder.component("name", text(target.getName(), WHITE))
             ));
             return;

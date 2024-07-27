@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -38,6 +39,7 @@ public class ActionCommand extends AbstractCommand {
             @NotNull Action.ActionType action,
             @NotNull Action.ActionSetting setting
     ) throws WrapperCommandSyntaxException {
+        var locale = TranslatorUtils.getLocale(sender);
         var target = super.getTarget(sender, args);
         actionManager.setAction(target, action, setting);
 
@@ -50,11 +52,12 @@ public class ActionCommand extends AbstractCommand {
             translationKey = "fakeplayer.command.action.continuous";
         }
 
-        sender.sendMessage(i18n.translate(
+        sender.sendMessage(translator.translate(
                 translationKey,
+                TranslatorUtils.getLocale(sender),
                 GRAY,
                 Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("action", i18n.translate(action, WHITE))
+                Placeholder.component("action", translator.translate(action, locale, WHITE))
         ));
     }
 

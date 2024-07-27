@@ -4,8 +4,7 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +20,10 @@ public class InvseeCommand extends AbstractCommand {
     public void invsee(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         if (!Objects.equals(sender.getLocation().getWorld(), target.getLocation().getWorld())) {
-            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.invsee.error.not-the-same-world"));
+            throw CommandAPI.failWithString(translator.asString(
+                    "fakeplayer.command.invsee.error.not-the-same-world",
+                    TranslatorUtils.getLocale(sender)
+            ));
         }
         manager.openInventory(sender, target);
     }

@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager.naming;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.devtools.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
@@ -37,15 +37,16 @@ public class NameManager {
 
     private final UsedIdRepository usedIdRepository;
     private final FakeplayerConfig config;
+    private final PluginTranslator translator;
     private final Map<String, NameSource> nameSources = new HashMap<>();
-    private final I18n i18n = Main.getI18n();
 
     private final String serverId;
 
     @Inject
-    public NameManager(UsedIdRepository usedIdRepository, FakeplayerConfig config) {
+    public NameManager(UsedIdRepository usedIdRepository, FakeplayerConfig config, PluginTranslator translator) {
         this.usedIdRepository = usedIdRepository;
         this.config = config;
+        this.translator = translator;
 
         var file = new File(Main.getInstance().getDataFolder(), "serverid");
         serverId = Optional.ofNullable(loadServerId(file)).orElseGet(() -> {
@@ -98,37 +99,37 @@ public class NameManager {
      */
     public @NotNull SequenceName specify(@NotNull String name) {
         if (name.startsWith("-")) {
-            throw new IllegalCustomNameException(i18n.translate(
-                    "fakeplayer.spawn.error.name.start-with-illegal-character", RED,
+            throw new IllegalCustomNameException(translator.translate(
+                    "fakeplayer.spawn.error.name.start-with-illegal-character", null, RED,
                     Placeholder.component("character", text("-", WHITE))
             ));
         }
 
         if (name.length() > MAX_LENGTH) {
-            throw new IllegalCustomNameException(i18n.translate(
-                    "fakeplayer.spawn.error.name.too-long", RED,
+            throw new IllegalCustomNameException(translator.translate(
+                    "fakeplayer.spawn.error.name.too-long", null, RED,
                     Placeholder.component("length", text(MAX_LENGTH, WHITE))
             ));
         }
 
         if (name.length() < MIN_LENGTH) {
-            throw new IllegalCustomNameException(i18n.translate(
-                    "fakeplayer.spawn.error.name.too-short", RED,
+            throw new IllegalCustomNameException(translator.translate(
+                    "fakeplayer.spawn.error.name.too-short", null, RED,
                     Placeholder.component("length", text(MIN_LENGTH, WHITE))
             ));
         }
 
         if (!config.getNamePattern().asPredicate().test(name)) {
-            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.invalid", RED));
+            throw new IllegalCustomNameException(translator.translate("fakeplayer.spawn.error.name.invalid", null, RED));
         }
 
         if (Bukkit.getPlayerExact(name) != null) {
-            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
+            throw new IllegalCustomNameException(translator.translate("fakeplayer.spawn.error.name.existed", null, RED));
         }
 
         var player = Bukkit.getOfflinePlayer(name);
         if (player.hasPlayedBefore() && !usedIdRepository.contains(player.getUniqueId())) {
-            throw new IllegalCustomNameException(i18n.translate("fakeplayer.spawn.error.name.existed", RED));
+            throw new IllegalCustomNameException(translator.translate("fakeplayer.spawn.error.name.existed", null, RED));
         }
 
         return new SequenceName(

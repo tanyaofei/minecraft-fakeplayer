@@ -4,9 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandPermission;
 import io.github.hello09x.bedrock.command.Usage;
-import io.github.hello09x.bedrock.i18n.I18n;
+import io.github.hello09x.devtools.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.api.spi.Action;
-import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
@@ -23,8 +22,6 @@ import static io.github.hello09x.fakeplayer.core.command.CommandSupports.*;
 @Singleton
 @SuppressWarnings("SameParameterValue")
 public class CommandRegistry {
-
-    private final static I18n i18n = Main.getI18n();
 
     @Inject
     private ActionCommand actionCommand;
@@ -79,13 +76,15 @@ public class CommandRegistry {
 
     @Inject
     private FakeplayerConfig config;
+    @Inject
+    private PluginTranslator translator;
 
     public void register() {
         command("fakeplayer")
                 .withAliases("fp")
                 .withHelp(
-                        i18n.asString("fakeplayer.command.fp.short-description"),
-                        i18n.asString("fakeplayer.command.fp.full-description")
+                        translator.asString("fakeplayer.command.fp.short-description", null),
+                        translator.asString("fakeplayer.command.fp.full-description", null)
                 )
                 .withUsage(
                         "type fp ? for more information",
@@ -94,41 +93,41 @@ public class CommandRegistry {
                 .withPermission(Permission.spawn)
                 .withSubcommands(
                         helpCommand("/fp",
-                                    Usage.of("select", i18n.asString("fakeplayer.command.select.description"), Permission.select, CommandSupports::needSelect),
-                                    Usage.of("selection", i18n.asString("fakeplayer.command.selection.description"), Permission.selection, CommandSupports::needSelect),
-                                    Usage.of("spawn", i18n.asString("fakeplayer.command.spawn.description"), Permission.spawn),
-                                    Usage.of("kill", i18n.asString("fakeplayer.command.kill.description"), Permission.kill),
-                                    Usage.of("killall", i18n.asString("fakeplayer.command.killall.description"), Permission.op),
-                                    Usage.of("list", i18n.asString("fakeplayer.command.list.description"), Permission.list),
-                                    Usage.of("distance", i18n.asString("fakeplayer.command.distance.description"), Permission.distance),
-                                    Usage.of("drop", i18n.asString("fakeplayer.command.drop.description"), Permission.drop),
-                                    Usage.of("dropstack", i18n.asString("fakeplayer.command.dropstack.description"), Permission.dropstack),
-                                    Usage.of("dropinv", i18n.asString("fakeplayer.command.dropinv.description"), Permission.dropinv),
-                                    Usage.of("skin", i18n.asString("fakeplayer.command.skin.description"), Permission.skin),
-                                    Usage.of("invsee", i18n.asString("fakeplayer.command.invsee.description"), Permission.invsee),
-                                    Usage.of("sleep", i18n.asString("fakeplayer.command.sleep.description"), Permission.sleep),
-                                    Usage.of("wakeup", i18n.asString("fakeplayer.command.wakeup.description"), Permission.wakeup),
-                                    Usage.of("status", i18n.asString("fakeplayer.command.status.description"), Permission.status),
-                                    Usage.of("respawn", i18n.asString("fakeplayer.command.respawn.description"), Permission.respawn, CommandSupports::hasDeadTarget),
-                                    Usage.of("tp", i18n.asString("fakeplayer.command.tp.description"), Permission.tp),
-                                    Usage.of("tphere", i18n.asString("fakeplayer.command.tphere.description"), Permission.tphere),
-                                    Usage.of("tps", i18n.asString("fakeplayer.command.tps.description"), Permission.tps),
-                                    Usage.of("set", i18n.asString("fakeplayer.command.set.description"), Permission.set),
-                                    Usage.of("config", i18n.asString("fakeplayer.command.config.description"), Permission.config),
-                                    Usage.of("expme", i18n.asString("fakeplayer.command.expme.description"), Permission.expme),
-                                    Usage.of("attack", i18n.asString("fakeplayer.command.attack.description"), Permission.attack),
-                                    Usage.of("mine", i18n.asString("fakeplayer.command.mine.description"), Permission.mine),
-                                    Usage.of("use", i18n.asString("fakeplayer.command.use.description"), Permission.use),
-                                    Usage.of("jump", i18n.asString("fakeplayer.command.jump.description"), Permission.jump),
-                                    Usage.of("look", i18n.asString("fakeplayer.command.look.description"), Permission.look),
-                                    Usage.of("turn", i18n.asString("fakeplayer.command.turn.description"), Permission.turn),
-                                    Usage.of("move", i18n.asString("fakeplayer.command.move.description"), Permission.move),
-                                    Usage.of("ride", i18n.asString("fakeplayer.command.ride.description"), Permission.ride),
-                                    Usage.of("sneak", i18n.asString("fakeplayer.command.sneak.description"), Permission.sneak),
-                                    Usage.of("swap", i18n.asString("fakeplayer.command.swap.description"), Permission.swap),
-                                    Usage.of("hold", i18n.asString("fakeplayer.command.hold.description"), Permission.hold),
-                                    Usage.of("cmd", i18n.asString("fakeplayer.command.cmd.description"), Permission.cmd),
-                                    Usage.of("reload", i18n.asString("fakeplayer.command.reload.description"), Permission.op)
+                                    Usage.of("select", translator.asString("fakeplayer.command.select.description", null), Permission.select, CommandSupports::needSelect),
+                                    Usage.of("selection", translator.asString("fakeplayer.command.selection.description", null), Permission.selection, CommandSupports::needSelect),
+                                    Usage.of("spawn", translator.asString("fakeplayer.command.spawn.description", null), Permission.spawn),
+                                    Usage.of("kill", translator.asString("fakeplayer.command.kill.description", null), Permission.kill),
+                                    Usage.of("killall", translator.asString("fakeplayer.command.killall.description", null), Permission.op),
+                                    Usage.of("list", translator.asString("fakeplayer.command.list.description", null), Permission.list),
+                                    Usage.of("distance", translator.asString("fakeplayer.command.distance.description", null), Permission.distance),
+                                    Usage.of("drop", translator.asString("fakeplayer.command.drop.description", null), Permission.drop),
+                                    Usage.of("dropstack", translator.asString("fakeplayer.command.dropstack.description", null), Permission.dropstack),
+                                    Usage.of("dropinv", translator.asString("fakeplayer.command.dropinv.description", null), Permission.dropinv),
+                                    Usage.of("skin", translator.asString("fakeplayer.command.skin.description", null), Permission.skin),
+                                    Usage.of("invsee", translator.asString("fakeplayer.command.invsee.description", null), Permission.invsee),
+                                    Usage.of("sleep", translator.asString("fakeplayer.command.sleep.description", null), Permission.sleep),
+                                    Usage.of("wakeup", translator.asString("fakeplayer.command.wakeup.description", null), Permission.wakeup),
+                                    Usage.of("status", translator.asString("fakeplayer.command.status.description", null), Permission.status),
+                                    Usage.of("respawn", translator.asString("fakeplayer.command.respawn.description", null), Permission.respawn, CommandSupports::hasDeadTarget),
+                                    Usage.of("tp", translator.asString("fakeplayer.command.tp.description", null), Permission.tp),
+                                    Usage.of("tphere", translator.asString("fakeplayer.command.tphere.description", null), Permission.tphere),
+                                    Usage.of("tps", translator.asString("fakeplayer.command.tps.description", null), Permission.tps),
+                                    Usage.of("set", translator.asString("fakeplayer.command.set.description", null), Permission.set),
+                                    Usage.of("config", translator.asString("fakeplayer.command.config.description", null), Permission.config),
+                                    Usage.of("expme", translator.asString("fakeplayer.command.expme.description", null), Permission.expme),
+                                    Usage.of("attack", translator.asString("fakeplayer.command.attack.description", null), Permission.attack),
+                                    Usage.of("mine", translator.asString("fakeplayer.command.mine.description", null), Permission.mine),
+                                    Usage.of("use", translator.asString("fakeplayer.command.use.description", null), Permission.use),
+                                    Usage.of("jump", translator.asString("fakeplayer.command.jump.description", null), Permission.jump),
+                                    Usage.of("look", translator.asString("fakeplayer.command.look.description", null), Permission.look),
+                                    Usage.of("turn", translator.asString("fakeplayer.command.turn.description", null), Permission.turn),
+                                    Usage.of("move", translator.asString("fakeplayer.command.move.description", null), Permission.move),
+                                    Usage.of("ride", translator.asString("fakeplayer.command.ride.description", null), Permission.ride),
+                                    Usage.of("sneak", translator.asString("fakeplayer.command.sneak.description", null), Permission.sneak),
+                                    Usage.of("swap", translator.asString("fakeplayer.command.swap.description", null), Permission.swap),
+                                    Usage.of("hold", translator.asString("fakeplayer.command.hold.description", null), Permission.hold),
+                                    Usage.of("cmd", translator.asString("fakeplayer.command.cmd.description", null), Permission.cmd),
+                                    Usage.of("reload", translator.asString("fakeplayer.command.reload.description", null), Permission.op)
                         ),
 
                         command("select")
@@ -309,14 +308,14 @@ public class CommandRegistry {
                                                 .withSubcommands(newActionCommands(Action.ActionType.LOOK_AT_NEAREST_ENTITY)),
                                         helpCommand(
                                                 "/fp look",
-                                                Usage.of("north", i18n.asString("fakeplayer.command.look.north.description")),
-                                                Usage.of("south", i18n.asString("fakeplayer.command.look.south.description")),
-                                                Usage.of("west", i18n.asString("fakeplayer.command.look.west.description")),
-                                                Usage.of("east", i18n.asString("fakeplayer.command.look.east.description")),
-                                                Usage.of("up", i18n.asString("fakeplayer.command.look.up.description")),
-                                                Usage.of("down", i18n.asString("fakeplayer.command.look.down.description")),
-                                                Usage.of("at", i18n.asString("fakeplayer.command.look.at.description")),
-                                                Usage.of("entity (once | continuous | interval | stop)", i18n.asString("fakeplayer.command.look.entity.description"))
+                                                Usage.of("north", translator.asString("fakeplayer.command.look.north.description", null)),
+                                                Usage.of("south", translator.asString("fakeplayer.command.look.south.description", null)),
+                                                Usage.of("west", translator.asString("fakeplayer.command.look.west.description", null)),
+                                                Usage.of("east", translator.asString("fakeplayer.command.look.east.description", null)),
+                                                Usage.of("up", translator.asString("fakeplayer.command.look.up.description", null)),
+                                                Usage.of("down", translator.asString("fakeplayer.command.look.down.description", null)),
+                                                Usage.of("at", translator.asString("fakeplayer.command.look.at.description", null)),
+                                                Usage.of("entity (once | continuous | interval | stop)", translator.asString("fakeplayer.command.look.entity.description", null))
                                         )
                                 ),
                         command("turn")
@@ -338,10 +337,10 @@ public class CommandRegistry {
                                                 .executes(rotationCommand::turnTo),
                                         helpCommand(
                                                 "/fp turn",
-                                                Usage.of("left", i18n.asString("fakeplayer.command.turn.left.description")),
-                                                Usage.of("right", i18n.asString("fakeplayer.command.turn.right.description")),
-                                                Usage.of("back", i18n.asString("fakeplayer.command.turn.back.description")),
-                                                Usage.of("to", i18n.asString("fakeplayer.command.turn.to.description"))
+                                                Usage.of("left", translator.asString("fakeplayer.command.turn.left.description", null)),
+                                                Usage.of("right", translator.asString("fakeplayer.command.turn.right.description", null)),
+                                                Usage.of("back", translator.asString("fakeplayer.command.turn.back.description", null)),
+                                                Usage.of("to", translator.asString("fakeplayer.command.turn.to.description", null))
                                         )
                                 ),
                         command("move")
@@ -362,10 +361,10 @@ public class CommandRegistry {
                                                 .executes(moveCommand.move(0, -1)),
                                         helpCommand(
                                                 "/fp move",
-                                                Usage.of("forward", i18n.asString("fakeplayer.command.move.forward.description")),
-                                                Usage.of("backward", i18n.asString("fakeplayer.command.move.backward.description")),
-                                                Usage.of("left", i18n.asString("fakeplayer.command.move.left.description")),
-                                                Usage.of("right", i18n.asString("fakeplayer.command.move.right.description"))
+                                                Usage.of("forward", translator.asString("fakeplayer.command.move.forward.description", null)),
+                                                Usage.of("backward", translator.asString("fakeplayer.command.move.backward.description", null)),
+                                                Usage.of("left", translator.asString("fakeplayer.command.move.left.description", null)),
+                                                Usage.of("right", translator.asString("fakeplayer.command.move.right.description", null))
                                         )
                                 )
                                 .executes(moveCommand.move(1, 0)),
@@ -391,11 +390,11 @@ public class CommandRegistry {
                                                 .executes(rideCommand::stopRiding),
                                         helpCommand(
                                                 "/fp ride",
-                                                Usage.of("me", i18n.asString("fakeplayer.command.ride.me.description")),
-                                                Usage.of("target", i18n.asString("fakeplayer.command.ride.target.description")),
-                                                Usage.of("anything", i18n.asString("fakeplayer.command.ride.anything.description")),
-                                                Usage.of("vehicle", i18n.asString("fakeplayer.command.ride.vehicle.description")),
-                                                Usage.of("stop", i18n.asString("fakeplayer.command.ride.stop.description"))
+                                                Usage.of("me", translator.asString("fakeplayer.command.ride.me.description", null)),
+                                                Usage.of("target", translator.asString("fakeplayer.command.ride.target.description", null)),
+                                                Usage.of("anything", translator.asString("fakeplayer.command.ride.anything.description", null)),
+                                                Usage.of("vehicle", translator.asString("fakeplayer.command.ride.vehicle.description", null)),
+                                                Usage.of("stop", translator.asString("fakeplayer.command.ride.stop.description", null))
                                         )
                                 ),
                         command("swap")

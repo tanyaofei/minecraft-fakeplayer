@@ -3,8 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +20,10 @@ public class KillCommand extends AbstractCommand {
      */
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var targets = super.getTargets(sender, args);
+        var locale = TranslatorUtils.getLocale(sender);
 
         if (targets.isEmpty()) {
-            sender.sendMessage(text(i18n.asString("fakeplayer.command.kill.error.non-removed"), GRAY));
+            sender.sendMessage(translator.translate("fakeplayer.command.kill.error.non-removed", locale, GRAY));
             return;
         }
 
@@ -34,7 +34,7 @@ public class KillCommand extends AbstractCommand {
             }
         }
         sender.sendMessage(textOfChildren(
-                i18n.translate("fakeplayer.command.kill.success.removed", GRAY),
+                translator.translate("fakeplayer.command.kill.success.removed", locale, GRAY),
                 space(),
                 text(names.toString())
         ));

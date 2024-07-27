@@ -3,8 +3,8 @@ package io.github.hello09x.fakeplayer.core.listener;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.i18n.I18n;
 import io.github.hello09x.bedrock.util.Components;
+import io.github.hello09x.devtools.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 @Singleton
 public class FakeplayerListener implements Listener {
@@ -38,14 +39,14 @@ public class FakeplayerListener implements Listener {
     private final FakeplayerManager manager;
     private final UsedIdRepository usedIdRepository;
     private final FakeplayerConfig config;
-
-    private final I18n i18n = Main.getI18n();
+    private final PluginTranslator translator;
 
     @Inject
-    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakeplayerConfig config) {
+    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakeplayerConfig config, PluginTranslator translator) {
         this.manager = manager;
         this.usedIdRepository = usedIdRepository;
         this.config = config;
+        this.translator = translator;
     }
 
     /**
@@ -61,7 +62,7 @@ public class FakeplayerListener implements Listener {
 
         if (usedIdRepository.contains(player.getUniqueId())) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, textOfChildren(
-                    i18n.translate("fakeplayer.listener.login.deny-used-uuid"),
+                    translator.translate("fakeplayer.listener.login.deny-used-uuid", null, RED),
                     newline(),
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)

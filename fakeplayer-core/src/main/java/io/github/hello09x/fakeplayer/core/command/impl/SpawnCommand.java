@@ -4,10 +4,9 @@ import com.google.common.base.Throwables;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.command.MessageException;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +43,7 @@ public class SpawnCommand extends AbstractCommand {
      * 创建假人
      */
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
+        var locale = TranslatorUtils.getLocale(sender);
         var name = (String) args.get("name");
         if (name != null && name.isEmpty()) {
             name = null;
@@ -74,14 +74,18 @@ public class SpawnCommand extends AbstractCommand {
                         }
                         Component message;
                         if (removedAt == null) {
-                            message = i18n.translate(
-                                    "fakeplayer.command.spawn.success.without-lifespan", GRAY,
+                            message = translator.translate(
+                                    "fakeplayer.command.spawn.success.without-lifespan",
+                                    locale,
+                                    GRAY,
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
                             );
                         } else {
-                            message = i18n.translate(
-                                    "fakeplayer.command.spawn.success.with-lifespan", GRAY,
+                            message = translator.translate(
+                                    "fakeplayer.command.spawn.success.with-lifespan",
+                                    locale,
+                                    GRAY,
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
                                     Placeholder.component("remove-at", text(REMOVE_AT_FORMATTER.format(removedAt)))
@@ -98,7 +102,7 @@ public class SpawnCommand extends AbstractCommand {
                         if (Throwables.getRootCause(e) instanceof MessageException me) {
                             Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.asComponent()));
                         } else {
-                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(i18n.translate("fakeplayer.command.spawn.error.unknown", RED)));
+                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(translator.translate("fakeplayer.command.spawn.error.unknown", locale, RED)));
                             log.severe(Throwables.getStackTraceAsString(e));
                         }
                         return null;

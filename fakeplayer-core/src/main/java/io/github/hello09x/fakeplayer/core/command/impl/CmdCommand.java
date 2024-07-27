@@ -5,9 +5,8 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
+import io.github.hello09x.devtools.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,18 +26,31 @@ public class CmdCommand extends AbstractCommand {
 
         var name = command.command().getName();
         if (!sender.hasPermission(Permission.cmd) && !config.getAllowCommands().contains(name)) {
-            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.no-permission"));
+            throw CommandAPI.failWithString(translator.asString(
+                    "fakeplayer.command.cmd.error.no-permission",
+                    TranslatorUtils.getLocale(sender)
+            ));
         }
 
         if (!sender.isOp() && (name.equals("fakeplayer") || name.equals("fp"))) {
-            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.no-permission"));
+            throw CommandAPI.failWithString(translator.asString(
+                    "fakeplayer.command.cmd.error.no-permission",
+                    TranslatorUtils.getLocale(sender)
+            ));
         }
 
         if (!command.execute(target)) {
-            throw CommandAPI.failWithString(i18n.asString("fakeplayer.command.cmd.error.execute-failed"));
+            throw CommandAPI.failWithString(translator.asString(
+                    "fakeplayer.command.cmd.error.execute-failed",
+                    TranslatorUtils.getLocale(sender)
+            ));
         }
 
-        sender.sendMessage(i18n.translate("fakeplayer.command.cmd.success.execute", GRAY));
+        sender.sendMessage(translator.translate(
+                "fakeplayer.command.cmd.success.execute",
+                TranslatorUtils.getLocale(sender),
+                GRAY
+        ));
     }
 
 }
