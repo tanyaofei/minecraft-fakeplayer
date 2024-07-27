@@ -3,9 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.util.Blocks;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import io.github.hello09x.devtools.utils.BlockUtils;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +16,7 @@ public class SleepCommand extends AbstractCommand {
      */
     public void sleep(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var bed = Blocks.getNearbyBlock(target.getLocation(), 4, block -> {
+        var bed = BlockUtils.getNearbyBlock(target.getLocation(), 4, block -> {
             if (!(block.getBlockData() instanceof Bed data)) {
                 return false;
             }

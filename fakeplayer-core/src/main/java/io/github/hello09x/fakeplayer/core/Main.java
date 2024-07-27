@@ -2,7 +2,6 @@ package io.github.hello09x.fakeplayer.core;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import io.github.hello09x.bedrock.i18n.I18nSupported;
 import io.github.hello09x.bedrock.util.RegistrablePlugin;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class Main extends RegistrablePlugin implements I18nSupported {
+public final class Main extends RegistrablePlugin {
 
     @Getter
     private static Main instance;
@@ -88,11 +87,6 @@ public final class Main extends RegistrablePlugin implements I18nSupported {
             messenger.unregisterIncomingPluginChannel(this);
             messenger.unregisterOutgoingPluginChannel(this);
         }
-    }
-
-    @Override
-    public @NotNull ClassLoader classLoader() {
-        return getClassLoader();
     }
 
     public static @NotNull Injector getInjector() {

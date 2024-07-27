@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager.invsee;
 
-import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.devtools.transaction.PluginTranslator;
+import io.github.hello09x.devtools.utils.ComponentUtils;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
@@ -23,7 +23,7 @@ public abstract class AbstractInvsee implements Invsee {
             return;
         }
 
-        view.setTitle(Components.asString(translator.translate(
+        view.setTitle(ComponentUtils.asString(translator.translate(
                 "fakeplayer.manager.inventory.title",
                 null,
                 Placeholder.component("name", text(owner.getName()))

@@ -2,10 +2,10 @@ package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.task.CompletableTask;
-import io.github.hello09x.bedrock.util.Teleportor;
-import io.github.hello09x.bedrock.util.Worlds;
 import io.github.hello09x.devtools.transaction.PluginTranslator;
 import io.github.hello09x.devtools.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.utils.EntityUtils;
+import io.github.hello09x.devtools.utils.WorldUtils;
 import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -194,7 +194,7 @@ public class FakePlayer {
         var from = this.player.getLocation();
         if (from.getWorld().equals(to.getWorld())) {
             // 如果生成世界等于目的世界, 则需要穿越一次维度才能获取刷怪能力
-            var otherWorld = Worlds.getOtherWorld(from.getWorld());
+            var otherWorld = WorldUtils.getOtherWorld(from.getWorld());
             if (otherWorld == null || !player.teleport(otherWorld.getSpawnLocation())) {
                 this.creator.sendMessage(translator.translate(
                         "fakeplayer.command.spawn.error.no-mob-spawning-ability", locale, GRAY,
@@ -204,7 +204,7 @@ public class FakePlayer {
         }
 
         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-            if (!Teleportor.teleportAndSound(player, to)) {
+            if (!EntityUtils.teleportAndSound(player, to)) {
                 this.creator.sendMessage(translator.translate(
                         "fakeplayer.command.spawn.error.teleport-failed", locale, GRAY,
                         Placeholder.component("name", text(player.getName(), WHITE))

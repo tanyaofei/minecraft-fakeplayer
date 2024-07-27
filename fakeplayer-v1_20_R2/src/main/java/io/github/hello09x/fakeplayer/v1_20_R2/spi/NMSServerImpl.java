@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.v1_20_R2.spi;
 
 import com.mojang.authlib.GameProfile;
-import io.github.hello09x.bedrock.util.Worlds;
+import io.github.hello09x.devtools.utils.WorldUtils;
 import io.github.hello09x.fakeplayer.api.spi.NMSServer;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class NMSServerImpl implements NMSServer {
     public @NotNull NMSServerPlayer newPlayer(@NotNull UUID uuid, @NotNull String name) {
         var handle = new ServerPlayer(
                 new NMSServerImpl(Bukkit.getServer()).getHandle(),
-                new NMSServerLevelImpl(Worlds.getMainWorld()).getHandle(),
+                new NMSServerLevelImpl(WorldUtils.getMainWorld()).getHandle(),
                 new GameProfile(uuid, name),
                 ClientInformation.createDefault()
         );

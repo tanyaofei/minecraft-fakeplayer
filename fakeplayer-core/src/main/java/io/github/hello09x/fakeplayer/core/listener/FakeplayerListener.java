@@ -3,8 +3,8 @@ package io.github.hello09x.fakeplayer.core.listener;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.devtools.transaction.PluginTranslator;
+import io.github.hello09x.devtools.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
@@ -92,7 +92,7 @@ public class FakeplayerListener implements Listener {
                 }
             }
             case ALWAYS -> {
-                if (!Components.asString(event.reason()).startsWith("[fakeplayer]")) {
+                if (!ComponentUtils.asString(event.reason()).startsWith("[fakeplayer]")) {
                     event.setCancelled(true);
                     log.warning(String.format(
                             "Canceled kicking fake player '%s' due to your configuration",

@@ -4,10 +4,9 @@ package io.github.hello09x.fakeplayer.core.listener;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.util.Blocks;
+import io.github.hello09x.devtools.utils.BlockUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -179,7 +178,7 @@ public class ReplenishListener implements Listener {
      * @param item   需要补货的物品
      */
     public void replenishFromNearbyChest(@NotNull Player target, @NotNull EquipmentSlot slot, @NotNull ItemStack item) {
-        var blocks = Blocks.getNearbyBlocks(target.getLocation(), 4, Material.CHEST);
+        var blocks = BlockUtils.getNearbyBlocks(target.getLocation(), 4, Material.CHEST);
         for (var block : blocks) {
             var openEvent = new PlayerInteractEvent(
                     target,
