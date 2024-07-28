@@ -22,5 +22,5 @@ Steps to reproduce the behavior: / 触发的步骤
  - Java: [e.g. 21]
  - Version / 版本 [e.g. 0.3.1]
 
-**Additional context**
-Add any other context about the problem here.
+**Additional context / 更多信息**
+Add any other context about the problem here. Such as log and plugin list / 添加更多有帮助的信息，如插件列表、日志
