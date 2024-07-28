@@ -2,7 +2,14 @@ package io.github.hello09x.fakeplayer.core;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.zaxxer.hikari.HikariConfig;
 import io.github.hello09x.bedrock.util.RegistrablePlugin;
+import io.github.hello09x.devtools.core.PluginEventModule;
+import io.github.hello09x.devtools.core.TranslationModule;
+import io.github.hello09x.devtools.core.transaction.TranslationConfig;
+import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.Lambdas;
+import io.github.hello09x.devtools.database.DatabaseModule;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
@@ -13,6 +20,7 @@ import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public final class Main extends RegistrablePlugin {
@@ -25,7 +33,20 @@ public final class Main extends RegistrablePlugin {
     @Override
     public void onLoad() {
         instance = this;
-        injector = Guice.createInjector(new GuiceModule());
+
+        injector = Guice.createInjector(
+                new PluginEventModule(this),
+                new DatabaseModule(this, Lambdas.configure(new HikariConfig(), config -> {
+                    config.setDriverClassName("org.sqlite.JDBC");
+                    config.setMaximumPoolSize(1);
+                    config.setJdbcUrl("jdbc:sqlite:" + new File(this.getDataFolder(), "data.db").getAbsolutePath());
+                    config.setConnectionTimeout(1000L);
+                })),
+                new TranslationModule(Main.getInstance(), new TranslationConfig(
+                        "message/message",
+                        TranslatorUtils.getDefaultLocale(Main.getInstance()))),
+                new FakeplayerModule()
+        );
     }
 
     @Override

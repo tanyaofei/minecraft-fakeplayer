@@ -1,11 +1,13 @@
 package io.github.hello09x.fakeplayer.core.manager.invsee;
 
+import com.google.inject.Inject;
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultInvseeImpl extends AbstractInvsee {
 
+    @Inject
     public DefaultInvseeImpl(PluginTranslator translator) {
         super(translator);
     }

@@ -99,13 +99,13 @@ public class Config {
     private Duration lifespan;
 
     /**
-     * 开发者调试模式
-     */
-    private boolean debug;
-
-    /**
      * 防止踢出
      */
     private PreventKicking preventKicking;
+
+    /**
+     * 开发者调试模式
+     */
+    private boolean debug;
 
 }
