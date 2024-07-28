@@ -30,8 +30,11 @@ public final class Main extends RegistrablePlugin {
 
     private Injector injector;
 
+    private long loadAt;
+
     @Override
     public void onLoad() {
+        loadAt = System.currentTimeMillis();
         instance = this;
 
         injector = Guice.createInjector(
@@ -69,6 +72,8 @@ public final class Main extends RegistrablePlugin {
         if (injector.getInstance(FakeplayerConfig.class).isCheckForUpdates()) {
             checkForUpdatesAsync();
         }
+
+        getLogger().info("Enabled in %d ms".formatted(System.currentTimeMillis() - loadAt));
     }
 
     public void checkForUpdatesAsync() {
