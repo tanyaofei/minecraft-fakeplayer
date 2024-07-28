@@ -3,8 +3,8 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.util.Teleportor;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.EntityUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,13 +39,13 @@ public class TeleportCommand extends AbstractCommand {
         var l1 = sender.getLocation();
         var l2 = target.getLocation();
 
-        Teleportor.teleportAndSound(target, l1);
-        Teleportor.teleportAndSound(sender, l2);
+        EntityUtils.teleportAndSound(target, l1);
+        EntityUtils.teleportAndSound(sender, l2);
     }
 
     private void teleport(@NotNull CommandSender sender, @NotNull Player from, @NotNull Player to) {
         var locale = TranslatorUtils.getLocale(sender);
-        if (!Teleportor.teleportAndSound(from, to.getLocation())) {
+        if (!EntityUtils.teleportAndSound(from, to.getLocation())) {
             sender.sendMessage(translator.translate("fakeplayer.command.teleport.error.canceled", locale, RED));
         }
     }

@@ -3,8 +3,8 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.io.Experiences;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.ExperienceUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.Mth;
@@ -109,7 +109,7 @@ public class StatusCommand extends AbstractCommand {
 
     private @NotNull Component getExperienceLine(@NotNull Player target, @Nullable Locale locale) {
         var level = target.getLevel();
-        var points = Experiences.getExp(target);
+        var points = ExperienceUtils.getExp(target);
 
         return textOfChildren(
                 translator.translate(
