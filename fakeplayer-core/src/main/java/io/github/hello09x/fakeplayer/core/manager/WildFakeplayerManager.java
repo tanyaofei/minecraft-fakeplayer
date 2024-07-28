@@ -4,7 +4,7 @@ import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -36,11 +36,11 @@ public class WildFakeplayerManager implements PluginMessageListener {
     private final static int CLEANUP_PERIOD = 6000;
 
     private final FakeplayerManager manager;
-    private final FakeplayerConfig config;
+    private final Config config;
     private final Map<String, AtomicInteger> offline = new HashMap<>();
 
     @Inject
-    public WildFakeplayerManager(FakeplayerManager manager, FakeplayerConfig config) {
+    public WildFakeplayerManager(FakeplayerManager manager, Config config) {
         this.manager = manager;
         this.config = config;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::cleanup, 0, CLEANUP_PERIOD);

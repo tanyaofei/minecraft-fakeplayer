@@ -1,21 +1,35 @@
 package io.github.hello09x.fakeplayer.core.config;
 
+
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import lombok.Data;
+import io.github.hello09x.devtools.core.config.PluginConfig;
+import io.github.hello09x.devtools.core.event.PluginEventRegistry;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
+import io.github.hello09x.fakeplayer.core.Main;
+import lombok.Getter;
+import lombok.ToString;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
-/**
- * @author tanyaofei
- * @since 2024/7/27
- **/
-@Data
+@Getter
+@ToString
 @Singleton
-public class Config {
+public class Config extends PluginConfig {
+
+    private final static Logger log = Main.getInstance().getLogger();
+
+    private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";
 
     /**
      * 每位玩家最多多少个假人
@@ -99,13 +113,96 @@ public class Config {
     private Duration lifespan;
 
     /**
+     * 开发者调试模式
+     */
+    private boolean debug;
+
+    /**
      * 防止踢出
      */
     private PreventKicking preventKicking;
 
-    /**
-     * 开发者调试模式
-     */
-    private boolean debug;
+    private final PluginTranslator translator;
+
+    @Inject
+    public Config(@NotNull PluginEventRegistry pluginEventRegistry, @NotNull PluginTranslator translator) {
+        super(Main.getInstance(), pluginEventRegistry);
+        this.translator = translator;
+    }
+
+    private static int maxIfZero(int value) {
+        return value <= 0 ? Integer.MAX_VALUE : value;
+    }
+
+    @Override
+    protected void reload(@NotNull FileConfiguration file) {
+        this.playerLimit = maxIfZero(file.getInt("player-limit", 1));
+        this.serverLimit = maxIfZero(file.getInt("server-limit", 1000));
+        this.followQuiting = file.getBoolean("follow-quiting", true);
+        this.detectIp = file.getBoolean("detect-ip", false);
+        this.kaleTps = file.getInt("kale-tps", 0);
+        this.selfCommands = file.getStringList("self-commands");
+        this.preparingCommands = file.getStringList("preparing-commands");
+        this.destroyCommands = file.getStringList("destroy-commands");
+        this.nameTemplate = file.getString("name-template", "");
+        this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
+        this.persistData = file.getBoolean("persist-data", true);
+        this.kickOnDead = file.getBoolean("kick-on-dead", true);
+        this.checkForUpdates = file.getBoolean("check-for-updates", true);
+        this.namePattern = getNamePattern(file);
+        this.preventKicking = this.getPreventKicking(file);
+        this.nameTemplate = getNameTemplate(file);
+        this.lifespan = getLifespan(file);
+        this.allowCommands = file.getStringList("allow-commands")
+                                 .stream()
+                                 .map(c -> c.startsWith("/") ? c.substring(1) : c)
+                                 .filter(c -> !c.isBlank())
+                                 .collect(Collectors.toSet());
+        this.debug = file.getBoolean("debug", false);
+
+        if (this.isFileConfigurationOutOfDate()) {
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                if (Main.getInstance().isEnabled()) {
+                    log.info(translator.asString("fakeplayer.configuration.outofdate", null));
+                }
+            }, 1);
+        }
+    }
+
+    private @Nullable Duration getLifespan(@NotNull FileConfiguration file) {
+        var minutes = file.getLong("lifespan");
+        if (minutes <= 0) {
+            return null;
+        }
+        return Duration.ofMinutes(minutes);
+    }
+
+
+    private @NotNull Pattern getNamePattern(@NotNull FileConfiguration file) {
+        try {
+            return Pattern.compile(file.getString("name-pattern", defaultNameChars));
+        } catch (PatternSyntaxException e) {
+            log.warning("Invalid name-pattern: " + file.getString("name-chars"));
+            return Pattern.compile(defaultNameChars);
+        }
+    }
+
+    private @NotNull String getNameTemplate(@NotNull FileConfiguration file) {
+        var tmpl = file.getString("name-template", "");
+        if (tmpl.startsWith("-") || tmpl.startsWith("@")) {
+            log.warning("Invalid name template: " + this.nameTemplate);
+            return "";
+        }
+        return tmpl;
+    }
+
+    private @NotNull PreventKicking getPreventKicking(@NotNull FileConfiguration file) {
+        if (file.getBoolean("prevent-kicked-on-spawning", false)) {
+            log.warning("prevent-kicked-on-spawning is deprecated, use prevent-kick instead");
+            return PreventKicking.ON_SPAWNING;
+        }
+
+        return PreventKicking.valueOf(file.getString("prevent-kicking", PreventKicking.NEVER.toString()));
+    }
 
 }

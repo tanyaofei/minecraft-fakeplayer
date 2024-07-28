@@ -9,7 +9,7 @@ import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
@@ -18,7 +18,6 @@ import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -58,11 +57,11 @@ public class FakeplayerManager {
     private final FakeplayerList playerList;
     private final UserConfigManager configManager;
     private final NMSBridge nms;
-    private final FakeplayerConfig config;
+    private final Config config;
     private final PluginTranslator translator;
 
     @Inject
-    public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, FakeplayerConfig config, PluginTranslator translator) {
+    public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config, PluginTranslator translator) {
         this.invsee = invsee;
         this.usedIdRepository = usedIdRepository;
         this.nameManager = nameManager;
@@ -122,12 +121,12 @@ public class FakeplayerManager {
                     var configs = configManager.getConfigs(creator);
                     return new SpawnOption(
                             spawnAt,
-                            configs.getOrDefault(Config.invulnerable),
-                            configs.getOrDefault(Config.collidable),
-                            configs.getOrDefault(Config.look_at_entity),
-                            configs.getOrDefault(Config.pickup_items),
-                            configs.getOrDefault(Config.skin),
-                            configs.getOrDefault(Config.replenish)
+                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.invulnerable),
+                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.collidable),
+                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.look_at_entity),
+                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.pickup_items),
+                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.skin),
+                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.replenish)
                     );
                 })
                 .thenComposeAsync(options -> fp.spawnAsync(creator, options))

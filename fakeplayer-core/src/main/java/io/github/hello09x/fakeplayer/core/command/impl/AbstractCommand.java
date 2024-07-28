@@ -8,7 +8,7 @@ import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public abstract class AbstractCommand {
     protected FakeplayerManager manager;
 
     @Inject
-    protected FakeplayerConfig config;
+    protected Config config;
 
     @Inject
     protected PluginTranslator translator;

@@ -9,9 +9,8 @@ import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.ActionCommand;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ public abstract class CommandSupports {
 
     private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
 
-    private final static FakeplayerConfig config =  Main.getInjector().getInstance(FakeplayerConfig.class);
+    private final static Config config =  Main.getInjector().getInstance(Config.class);
     private static final PluginTranslator translator = Main.getInjector().getInstance(PluginTranslator.class);
 
     private static final ActionCommand actionCommand = Main.getInjector().getInstance(ActionCommand.class);
@@ -122,16 +121,16 @@ public abstract class CommandSupports {
         }));
     }
 
-    public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {
+    public static @NotNull Argument<io.github.hello09x.fakeplayer.core.repository.model.Config<Object>> config(@NotNull String nodeName) {
         return config(nodeName, null);
     }
 
-    public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName, @Nullable Predicate<Config<Object>> predicate) {
+    public static @NotNull Argument<io.github.hello09x.fakeplayer.core.repository.model.Config<Object>> config(@NotNull String nodeName, @Nullable Predicate<io.github.hello09x.fakeplayer.core.repository.model.Config<Object>> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
-            Config<Object> config;
+            io.github.hello09x.fakeplayer.core.repository.model.Config<Object> config;
             try {
-                config = Config.valueOf(arg);
+                config = io.github.hello09x.fakeplayer.core.repository.model.Config.valueOf(arg);
             } catch (Exception e) {
                 throw CustomArgument.CustomArgumentException.fromString(translator.asString("fakeplayer.command.config.set.error.invalid-option", null));
             }
@@ -139,20 +138,20 @@ public abstract class CommandSupports {
                 throw CustomArgument.CustomArgumentException.fromString(translator.asString("fakeplayer.command.config.set.error.invalid-option", null));
             }
             return config;
-        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Config.values()).map(Config::key).toList()));
+        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(io.github.hello09x.fakeplayer.core.repository.model.Config.values()).map(io.github.hello09x.fakeplayer.core.repository.model.Config::key).toList()));
     }
 
     public static @NotNull Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             @SuppressWarnings("unchecked")
-            var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));
+            var config = Objects.requireNonNull((io.github.hello09x.fakeplayer.core.repository.model.Config<Object>) info.previousArgs().get(configNodeName));
             var arg = info.currentInput();
             if (!config.options().contains(arg)) {
                 throw CustomArgument.CustomArgumentException.fromString(translator.asString("fakeplayer.command.config.set.error.invalid-value", null));
             }
             return config.parser().apply(arg);
         }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var config = Objects.requireNonNull((Config<?>) info.previousArgs().get(configNodeName));
+            var config = Objects.requireNonNull((io.github.hello09x.fakeplayer.core.repository.model.Config<?>) info.previousArgs().get(configNodeName));
             var arg = info.currentArg().toLowerCase();
             var options = config.options().stream();
             if (!arg.isEmpty()) {

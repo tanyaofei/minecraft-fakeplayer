@@ -12,7 +12,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
@@ -44,7 +44,7 @@ public class FakePlayer {
 
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
-    private final static FakeplayerConfig config = Main.getInjector().getInstance(FakeplayerConfig.class);
+    private final static Config config = Main.getInjector().getInstance(Config.class);
 
     private final static PluginTranslator translator = Main.getInjector().getInstance(PluginTranslator.class);
 

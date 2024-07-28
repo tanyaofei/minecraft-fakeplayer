@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -36,14 +36,14 @@ public class NameManager {
     private final static String FALLBACK_NAME = "_fp_";
 
     private final UsedIdRepository usedIdRepository;
-    private final FakeplayerConfig config;
+    private final Config config;
     private final PluginTranslator translator;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
     private final String serverId;
 
     @Inject
-    public NameManager(UsedIdRepository usedIdRepository, FakeplayerConfig config, PluginTranslator translator) {
+    public NameManager(UsedIdRepository usedIdRepository, Config config, PluginTranslator translator) {
         this.usedIdRepository = usedIdRepository;
         this.config = config;
         this.translator = translator;

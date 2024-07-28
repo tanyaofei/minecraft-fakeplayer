@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
@@ -38,11 +38,11 @@ public class FakeplayerListener implements Listener {
 
     private final FakeplayerManager manager;
     private final UsedIdRepository usedIdRepository;
-    private final FakeplayerConfig config;
+    private final Config config;
     private final PluginTranslator translator;
 
     @Inject
-    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakeplayerConfig config, PluginTranslator translator) {
+    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, Config config, PluginTranslator translator) {
         this.manager = manager;
         this.usedIdRepository = usedIdRepository;
         this.config = config;

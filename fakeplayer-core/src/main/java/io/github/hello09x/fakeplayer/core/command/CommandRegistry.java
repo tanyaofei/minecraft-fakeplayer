@@ -7,9 +7,8 @@ import io.github.hello09x.bedrock.command.Usage;
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
-import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
@@ -75,7 +74,7 @@ public class CommandRegistry {
     private DebugCommand debugCommand;
 
     @Inject
-    private FakeplayerConfig config;
+    private Config config;
     @Inject
     private PluginTranslator translator;
 
@@ -195,7 +194,7 @@ public class CommandRegistry {
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withPermission(Permission.set)
                                 .withArguments(
-                                        config("config", Config::hasAccessor),
+                                        config("config", io.github.hello09x.fakeplayer.core.repository.model.Config::hasAccessor),
                                         configValue("config", "value")
                                 )
                                 .withOptionalArguments(target("name"))
