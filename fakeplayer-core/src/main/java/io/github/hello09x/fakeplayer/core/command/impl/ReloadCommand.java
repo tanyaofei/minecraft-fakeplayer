@@ -25,7 +25,7 @@ public class ReloadCommand extends AbstractCommand {
         config.reload();
         sender.sendMessage(translator.translate("fakeplayer.command.reload.success", locale, GRAY));
         if (config.isFileConfigurationOutOfDate()) {
-            sender.sendMessage(translator.translate("fakeplayer.configuration.outofdate", locale, GRAY));
+            sender.sendMessage(translator.translate("fakeplayer.configuration.out-of-date", locale, GRAY));
         }
     }
 

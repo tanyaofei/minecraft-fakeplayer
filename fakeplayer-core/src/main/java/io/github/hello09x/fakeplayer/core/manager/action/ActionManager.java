@@ -36,6 +36,19 @@ public class ActionManager {
         managers.put(action, bridge.createAction(player, action, setting));
     }
 
+    public void stop(@NotNull Player player) {
+        var managers = this.managers.get(player.getUniqueId());
+        if (managers == null || managers.isEmpty()) {
+            return;
+        }
+
+        for (var entry : managers.entrySet()) {
+            if (!entry.getValue().equals(Action.ActionSetting.stop())) {
+                entry.setValue(bridge.createAction(player, entry.getKey(), Action.ActionSetting.stop()));
+            }
+        }
+    }
+
     public void tick() {
         var itr = managers.entrySet().iterator();
         while (itr.hasNext()) {

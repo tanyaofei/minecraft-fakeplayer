@@ -72,6 +72,8 @@ public class CommandRegistry {
     private TeleportCommand teleportCommand;
     @Inject
     private DebugCommand debugCommand;
+    @Inject
+    private StopCommand stopCommand;
 
     @Inject
     private Config config;
@@ -125,6 +127,7 @@ public class CommandRegistry {
                                     Usage.of("sneak", translator.asString("fakeplayer.command.sneak.description", null), Permission.sneak),
                                     Usage.of("swap", translator.asString("fakeplayer.command.swap.description", null), Permission.swap),
                                     Usage.of("hold", translator.asString("fakeplayer.command.hold.description", null), Permission.hold),
+                                    Usage.of("stop", translator.asString("fakeplayer.command.stop.description", null), Permission.stop),
                                     Usage.of("cmd", translator.asString("fakeplayer.command.cmd.description", null), Permission.cmd),
                                     Usage.of("reload", translator.asString("fakeplayer.command.reload.description", null), Permission.op)
                         ),
@@ -411,6 +414,11 @@ public class CommandRegistry {
                                 .withRequirement(CommandSupports::hasTarget)
                                 .withOptionalArguments(target("name", LivingEntity::isSleeping))
                                 .executes(sleepCommand::wakeup),
+                        command("stop")
+                                .withPermission(Permission.stop)
+                                .withRequirement(CommandSupports::hasTarget)
+                                .withOptionalArguments(target("name"))
+                                .executes(stopCommand::stop),
 
                         command("cmd")
                                 .withRequirement(CommandSupports::isCmdAvailable)
