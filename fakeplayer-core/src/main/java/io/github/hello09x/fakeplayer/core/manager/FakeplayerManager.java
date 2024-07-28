@@ -2,8 +2,9 @@ package io.github.hello09x.fakeplayer.core.manager;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.command.MessageException;
 import io.github.hello09x.bedrock.util.AddressUtils;
+import io.github.hello09x.devtools.core.message.MessageException;
+import io.github.hello09x.devtools.core.message.RuntimeMessageException;
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
@@ -105,7 +106,7 @@ public class FakeplayerManager {
         try {
             sn = name == null ? nameManager.register(creator) : nameManager.specify(name);
         } catch (IllegalCustomNameException e) {
-            throw new MessageException(e.getMessage());
+            throw new RuntimeMessageException(e.getMessage());
         }
 
         var fp = new FakePlayer(

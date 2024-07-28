@@ -3,7 +3,8 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.common.base.Throwables;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.command.MessageException;
+import io.github.hello09x.devtools.core.message.IMessageException;
+import io.github.hello09x.devtools.core.message.MessageException;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
@@ -99,8 +100,8 @@ public class SpawnCommand extends AbstractCommand {
                             }
                         });
                     }).exceptionally(e -> {
-                        if (Throwables.getRootCause(e) instanceof MessageException me) {
-                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.asComponent()));
+                       if (Throwables.getRootCause(e) instanceof IMessageException me) {
+                           Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.getComponent()));
                         } else {
                             Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(translator.translate("fakeplayer.command.spawn.error.unknown", locale, RED)));
                             log.severe(Throwables.getStackTraceAsString(e));
@@ -108,7 +109,7 @@ public class SpawnCommand extends AbstractCommand {
                         return null;
                     });
         } catch (MessageException e) {
-            sender.sendMessage(e.asComponent());
+            sender.sendMessage(e.getComponent());
         }
 
     }

@@ -1,11 +1,11 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
-import io.github.hello09x.bedrock.command.MessageException;
-import io.github.hello09x.bedrock.task.CompletableTask;
+import io.github.hello09x.devtools.core.message.RuntimeMessageException;
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.EntityUtils;
 import io.github.hello09x.devtools.core.utils.WorldUtils;
+import io.github.hello09x.devtools.core.utils.task.Tasks;
 import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -13,6 +13,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.PreventKicking;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
@@ -29,6 +30,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.net.InetAddress;
@@ -120,22 +122,22 @@ public class FakePlayer {
         var locale = TranslatorUtils.getLocale(creator);
         var address = ipGen.next();
         this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNING));
-        return CompletableTask
-                .joinAsync(Main.getInstance(), () -> {
+        return Tasks
+                .runTaskAsynchronously(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                        throw new MessageException(translator.translate(
+                        throw new RuntimeMessageException(translator.translate(
                                 "fakeplayer.command.spawn.error.disallowed", locale, RED,
                                 Placeholder.component("name", text(player.getName(), WHITE)),
                                 Placeholder.component("reason", event.kickMessage())
                         ));
                     }
                 })
-                .thenComposeAsync(nul -> CompletableTask.join(Main.getInstance(), () -> {
+                .thenComposeAsync(nul -> Tasks.runTask(Main.getInstance(), () -> {
                     {
                         var event = this.callLoginEvent(address);
-                        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-                            throw new MessageException(translator.translate(
+                        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
+                            throw new RuntimeMessageException(translator.translate(
                                     "fakeplayer.command.spawn.error.disallowed", locale, RED,
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("reason", event.kickMessage())
@@ -145,8 +147,8 @@ public class FakePlayer {
 
                     {
                         var event = this.callSpawnEvent();
-                        if (event.isCancelled()) {
-                            throw new MessageException(translator.translate(
+                        if (event.isCancelled() && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
+                            throw new RuntimeMessageException(translator.translate(
                                     "fakeplayer.command.spawn.error.disallowed", locale, RED,
                                     Placeholder.component("name", text(player.getName(), WHITE)),
                                     Placeholder.component("reason", event.getReason())
@@ -190,7 +192,7 @@ public class FakePlayer {
      *
      * @param to 目标位置
      */
-    private void teleportToSpawnpoint(@NotNull Location to, @NotNull Locale locale) {
+    private void teleportToSpawnpoint(@NotNull Location to, @Nullable Locale locale) {
         var from = this.player.getLocation();
         if (from.getWorld().equals(to.getWorld())) {
             // 如果生成世界等于目的世界, 则需要穿越一次维度才能获取刷怪能力
