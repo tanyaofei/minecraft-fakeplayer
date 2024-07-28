@@ -163,7 +163,7 @@ public class Config extends PluginConfig {
         if (this.isFileConfigurationOutOfDate()) {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 if (Main.getInstance().isEnabled()) {
-                    log.info(translator.asString("fakeplayer.configuration.outofdate", null));
+                    log.warning(translator.asString("fakeplayer.configuration.outofdate", null));
                 }
             }, 1);
         }
