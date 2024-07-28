@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.util;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import io.github.hello09x.devtools.core.utils.task.Tasks;
+import io.github.hello09x.devtools.core.utils.task.SchedulerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,7 +41,7 @@ public class Skins {
         var profile = from.getPlayerProfile();
         return CompletableFuture
                 .supplyAsync(profile::complete)
-                .thenComposeAsync(completed -> Tasks.runTask(plugin, () -> {
+                .thenComposeAsync(completed -> SchedulerUtils.runTask(plugin, () -> {
                     if (!completed) {
                         return false;
                     }

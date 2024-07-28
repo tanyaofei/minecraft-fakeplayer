@@ -23,7 +23,7 @@ public abstract class AbstractInvsee implements Invsee {
             return;
         }
 
-        view.setTitle(ComponentUtils.asString(translator.translate(
+        view.setTitle(ComponentUtils.toString(translator.translate(
                 "fakeplayer.manager.inventory.title",
                 null,
                 Placeholder.component("name", text(owner.getName()))

@@ -92,7 +92,7 @@ public class FakeplayerListener implements Listener {
                 }
             }
             case ALWAYS -> {
-                if (!ComponentUtils.asString(event.reason()).startsWith("[fakeplayer]")) {
+                if (!ComponentUtils.toString(event.reason()).startsWith("[fakeplayer]")) {
                     event.setCancelled(true);
                     log.warning(String.format(
                             "Canceled kicking fake player '%s' due to your configuration",

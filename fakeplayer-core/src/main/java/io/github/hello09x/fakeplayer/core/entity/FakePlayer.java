@@ -5,7 +5,7 @@ import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.EntityUtils;
 import io.github.hello09x.devtools.core.utils.WorldUtils;
-import io.github.hello09x.devtools.core.utils.task.Tasks;
+import io.github.hello09x.devtools.core.utils.task.SchedulerUtils;
 import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -122,7 +122,7 @@ public class FakePlayer {
         var locale = TranslatorUtils.getLocale(creator);
         var address = ipGen.next();
         this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNING));
-        return Tasks
+        return SchedulerUtils
                 .runTaskAsynchronously(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
@@ -133,7 +133,7 @@ public class FakePlayer {
                         ));
                     }
                 })
-                .thenComposeAsync(nul -> Tasks.runTask(Main.getInstance(), () -> {
+                .thenComposeAsync(nul -> SchedulerUtils.runTask(Main.getInstance(), () -> {
                     {
                         var event = this.callLoginEvent(address);
                         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
