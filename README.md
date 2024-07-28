@@ -22,8 +22,8 @@ Required JAVA 21+
 ## Features
 
 1. You can spawn some fake players that look like real to the server.
-2. Most commands can work on them such as `/ban`, `/kick`, `/pay`
-3. You can open their backpack and put your stuff into it.
+2. They can be recolonized by commands from other plugins, such as `/ban`, `/tp`, `/pay`
+3. You can edit their inventory
 4. You can have them perform actions like moving, jumping, attacking, and eating. What's better? You can make it periodical!
 5. Let your imagination run wild, have them do more things.
 
