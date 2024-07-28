@@ -5,12 +5,11 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.bedrock.util.Components;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.UserConfigManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
-import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -24,6 +23,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.JoinConfiguration.separator;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
@@ -75,7 +75,7 @@ public class ConfigCommand extends AbstractCommand {
                 return textOfChildren(
                         translator.translate(config, TranslatorUtils.getLocale(sender), GOLD),
                         text(": ", GRAY),
-                        join(JoinConfiguration.separator(space()), options.stream().map(option -> {
+                        join(separator(space()), options.stream().map(option -> {
                             var style = option.equals(value) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);
                             return text("[" + option + "]").style(style).clickEvent(
                                     runCommand("/fp config set " + config.key() + " " + option)
@@ -84,7 +84,7 @@ public class ConfigCommand extends AbstractCommand {
                 );
             }).toList();
 
-            var message = Components.join(components, newline());
+            var message = Component.join(separator(newline()), components);
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(message));
         });
     }
