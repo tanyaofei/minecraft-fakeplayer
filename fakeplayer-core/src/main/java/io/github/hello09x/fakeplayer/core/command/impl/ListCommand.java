@@ -25,9 +25,9 @@ public class ListCommand extends AbstractCommand {
         return location.getWorld().getName()
                 + ": "
                 + StringUtils.joinWith(", ",
-                Mth.floor(location.getX(), 0.5),
-                Mth.floor(location.getY(), 0.5),
-                Mth.floor(location.getZ(), 0.5));
+                                       Mth.floor(location.getX(), 0.5),
+                                       Mth.floor(location.getY(), 0.5),
+                                       Mth.floor(location.getZ(), 0.5));
     }
 
     public void list(@NotNull CommandSender sender, @NotNull CommandArguments args) {

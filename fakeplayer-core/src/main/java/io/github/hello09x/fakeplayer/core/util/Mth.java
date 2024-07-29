@@ -23,9 +23,10 @@ public class Mth {
 
     /**
      * 将一个数约束在范围以内
+     *
      * @param value 数
-     * @param min 最小值
-     * @param max 最大值
+     * @param min   最小值
+     * @param max   最大值
      * @return 约束后的数
      */
     public static float clamp(float value, float min, float max) {

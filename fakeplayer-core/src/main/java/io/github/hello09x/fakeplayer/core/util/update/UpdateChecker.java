@@ -56,9 +56,9 @@ public class UpdateChecker {
         var url = String.format("https://api.github.com/repos/%s/%s/releases/latest", this.author, this.repository);
         var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
+                                 .uri(URI.create(url))
+                                 .GET()
+                                 .build();
 
         var response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         if (response.statusCode() != 200) {

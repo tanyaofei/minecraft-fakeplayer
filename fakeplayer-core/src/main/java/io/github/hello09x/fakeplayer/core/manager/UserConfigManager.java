@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

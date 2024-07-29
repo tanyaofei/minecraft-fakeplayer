@@ -1,6 +1,5 @@
 package io.github.hello09x.fakeplayer.core.entity.action;
 
-import com.google.inject.Inject;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;

@@ -53,10 +53,10 @@ public class RideCommand extends AbstractCommand {
     public void rideVehicle(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
         var entity = target.getNearbyEntities(4.5, 4.5, 4.5)
-                .stream()
-                .filter(e -> e instanceof Minecart || e instanceof Boat || e instanceof AbstractHorse)
-                .findFirst()
-                .orElse(null);
+                           .stream()
+                           .filter(e -> e instanceof Minecart || e instanceof Boat || e instanceof AbstractHorse)
+                           .findFirst()
+                           .orElse(null);
 
         if (entity == null) {
             return;

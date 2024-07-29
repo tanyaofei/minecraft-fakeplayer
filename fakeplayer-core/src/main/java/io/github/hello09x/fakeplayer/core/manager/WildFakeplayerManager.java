@@ -80,8 +80,8 @@ public class WildFakeplayerManager implements PluginMessageListener {
     public void cleanup0(@NotNull Set<String> online) {
         @SuppressWarnings("all")
         var group = manager.getAll()
-                .stream()
-                .collect(Collectors.groupingBy(manager::getCreatorName));
+                           .stream()
+                           .collect(Collectors.groupingBy(manager::getCreatorName));
 
         for (var entry : group.entrySet()) {
             var creator = entry.getKey();

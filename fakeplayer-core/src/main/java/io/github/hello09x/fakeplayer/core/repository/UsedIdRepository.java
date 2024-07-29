@@ -39,7 +39,6 @@ public class UsedIdRepository {
     }
 
 
-
     public boolean exists(@NotNull UUID uuid) {
         return UUIDS.contains(uuid);
     }

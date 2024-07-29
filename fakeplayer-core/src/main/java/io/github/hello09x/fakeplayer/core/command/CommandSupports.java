@@ -31,7 +31,7 @@ public abstract class CommandSupports {
 
     private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
 
-    private final static Config config =  Main.getInjector().getInstance(Config.class);
+    private final static Config config = Main.getInjector().getInstance(Config.class);
 
     private static final ActionCommand actionCommand = Main.getInjector().getInstance(ActionCommand.class);
 

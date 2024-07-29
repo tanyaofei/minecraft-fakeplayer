@@ -35,9 +35,9 @@ public class SpawnCommand extends AbstractCommand {
         return location.getWorld().getName()
                 + ": "
                 + StringUtils.joinWith(", ",
-                Mth.floor(location.getX(), 0.5),
-                Mth.floor(location.getY(), 0.5),
-                Mth.floor(location.getZ(), 0.5));
+                                       Mth.floor(location.getX(), 0.5),
+                                       Mth.floor(location.getY(), 0.5),
+                                       Mth.floor(location.getZ(), 0.5));
     }
 
     /**
@@ -69,43 +69,43 @@ public class SpawnCommand extends AbstractCommand {
         var removedAt = Optional.ofNullable(config.getLifespan()).map(lifespan -> LocalDateTime.now().plus(lifespan)).orElse(null);
         try {
             manager.spawnAsync(sender, name, spawnpoint, Optional.ofNullable(config.getLifespan()).map(Duration::toMillis).orElse(-1L))
-                    .thenAcceptAsync(player -> {
-                        if (player == null) {
-                            return;
-                        }
-                        Component message;
-                        if (removedAt == null) {
-                            message = translatable(
-                                    "fakeplayer.command.spawn.success.without-lifespan",
-                                    GRAY,
-                                    text(player.getName(), WHITE),
-                                    text(toLocationString(spawnpoint), WHITE)
-                            );
-                        } else {
-                            message = translatable(
-                                    "fakeplayer.command.spawn.success.with-lifespan",
-                                    GRAY,
-                                    text(player.getName(), WHITE),
-                                    text(toLocationString(spawnpoint), WHITE),
-                                    text(REMOVE_AT_FORMATTER.format(removedAt))
-                            );
-                        }
-                        Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                            sender.sendMessage(message);
-                            if (sender instanceof Player p && manager.countByCreator(sender) == 1) {
-                                // 有些命令在有假人的时候才会显示, 因此需要强制刷新一下
-                                p.updateCommands();
-                            }
-                        });
-                    }).exceptionally(e -> {
+                   .thenAcceptAsync(player -> {
+                       if (player == null) {
+                           return;
+                       }
+                       Component message;
+                       if (removedAt == null) {
+                           message = translatable(
+                                   "fakeplayer.command.spawn.success.without-lifespan",
+                                   GRAY,
+                                   text(player.getName(), WHITE),
+                                   text(toLocationString(spawnpoint), WHITE)
+                           );
+                       } else {
+                           message = translatable(
+                                   "fakeplayer.command.spawn.success.with-lifespan",
+                                   GRAY,
+                                   text(player.getName(), WHITE),
+                                   text(toLocationString(spawnpoint), WHITE),
+                                   text(REMOVE_AT_FORMATTER.format(removedAt))
+                           );
+                       }
+                       Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                           sender.sendMessage(message);
+                           if (sender instanceof Player p && manager.countByCreator(sender) == 1) {
+                               // 有些命令在有假人的时候才会显示, 因此需要强制刷新一下
+                               p.updateCommands();
+                           }
+                       });
+                   }).exceptionally(e -> {
                        if (Throwables.getRootCause(e) instanceof IMessageException me) {
                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.getComponent()));
-                        } else {
+                       } else {
                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(translatable("fakeplayer.command.spawn.error.unknown", RED)));
-                            log.severe(Throwables.getStackTraceAsString(e));
-                        }
-                        return null;
-                    });
+                           log.severe(Throwables.getStackTraceAsString(e));
+                       }
+                       return null;
+                   });
         } catch (MessageException e) {
             sender.sendMessage(e.getComponent());
         }
