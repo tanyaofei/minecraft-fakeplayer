@@ -1,6 +1,6 @@
 # FakePlayer
 
-[简体中文](README_zh.md)
+English | [简体中文](README_zh.md)
 
 This is a plugin inspired by Carpet Mod which allows you to spawn fake players to keep chunk loading.
 

@@ -1,6 +1,6 @@
 # FakePlayer - 假人插件
 
-[English](README_en.md)
+[English](README_en.md) | 简体中文
 
 这个插件模拟出真实的玩家来保证区块的加载以及怪物的生成，生电服利器。
 
