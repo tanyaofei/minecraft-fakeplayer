@@ -94,9 +94,9 @@ public final class Main extends JavaPlugin {
 
                 if (UpdateChecker.isNew(current, other)) {
                     var log = getLogger();
-                    log.info("检测到新的版本: " + release.getTagName());
-                    log.info("前往此处下载 " + meta.getWebsite());
-                    log.info("更新日志");
+                    log.info("New version: " + release.getTagName());
+                    log.info("Address" + meta.getWebsite());
+                    log.info("Update Log");
                     for (var line : release.getBody().split("\n")) {
                         log.info("\t" + line);
                     }
