@@ -75,6 +75,8 @@ public class CommandRegistry {
     private DebugCommand debugCommand;
     @Inject
     private StopCommand stopCommand;
+    @Inject
+    private TranslationCommand translationCommand;
 
     @Inject
     private Config config;
@@ -128,7 +130,8 @@ public class CommandRegistry {
                                     Usage.of("hold", ComponentUtils.toString(translatable("fakeplayer.command.hold.description"), null), Permission.hold),
                                     Usage.of("stop", ComponentUtils.toString(translatable("fakeplayer.command.stop.description"), null), Permission.stop),
                                     Usage.of("cmd", ComponentUtils.toString(translatable("fakeplayer.command.cmd.description"), null), Permission.cmd),
-                                    Usage.of("reload", ComponentUtils.toString(translatable("fakeplayer.command.reload.description"), null), Permission.op)
+                                    Usage.of("reload", ComponentUtils.toString(translatable("fakeplayer.command.reload.description"), null), Permission.op),
+                                    Usage.of("reload-translation", ComponentUtils.toString(translatable("fakeplayer.command.reload-translation.description"), null), Permission.op)
                         ),
 
                         command("select")
@@ -433,6 +436,9 @@ public class CommandRegistry {
                         command("reload")
                                 .withPermission(CommandPermission.OP)
                                 .executes(reloadCommand::reload),
+                        command("reload-translation")
+                                .withPermission(CommandPermission.OP)
+                                .executes(translationCommand::reloadTranslation),
 
                         // developer debug
                         command("debug")
