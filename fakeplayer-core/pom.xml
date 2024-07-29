@@ -38,12 +38,12 @@
 
         <dependency>
             <groupId>io.github.hello09x</groupId>
-            <artifactId>bedrock</artifactId>
+            <artifactId>devtools-core</artifactId>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x</groupId>
-            <artifactId>devtools-core</artifactId>
+            <artifactId>devtools-command</artifactId>
         </dependency>
 
         <dependency>

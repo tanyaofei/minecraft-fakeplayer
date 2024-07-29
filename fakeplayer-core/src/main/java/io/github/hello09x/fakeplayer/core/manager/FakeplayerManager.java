@@ -2,9 +2,9 @@ package io.github.hello09x.fakeplayer.core.manager;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.bedrock.util.AddressUtils;
 import io.github.hello09x.devtools.core.message.MessageException;
 import io.github.hello09x.devtools.core.message.RuntimeMessageException;
+import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -17,6 +17,7 @@ import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
+import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -36,6 +37,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -56,6 +58,7 @@ public class FakeplayerManager {
     private final UserConfigManager configManager;
     private final NMSBridge nms;
     private final Config config;
+    private final ScheduledExecutorService lagMonitor;
 
     @Inject
     public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config) {
@@ -67,8 +70,8 @@ public class FakeplayerManager {
         this.nms = nms;
         this.config = config;
 
-        var timer = Executors.newSingleThreadScheduledExecutor();
-        timer.scheduleWithFixedDelay(() -> {
+        this.lagMonitor = Executors.newSingleThreadScheduledExecutor();
+        this.lagMonitor.scheduleWithFixedDelay(() -> {
                                          if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                                              Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                                                  if (this.removeAll("low tps") > 0) {
@@ -78,9 +81,6 @@ public class FakeplayerManager {
                                          }
                                      }, 0, 60, TimeUnit.SECONDS
         );
-
-        Main.getInstance().registerOnDisable(() -> this.removeAll("Plugin disabled"));
-        Main.getInstance().registerOnDisable(timer::shutdown);
     }
 
     /**
@@ -527,5 +527,9 @@ public class FakeplayerManager {
         }
     }
 
+    public void onDisable() {
+        Exceptions.suppress(Main.getInstance(), () -> this.removeAll("Plugin disabled"));
+        Exceptions.suppress(Main.getInstance(), this.lagMonitor::shutdownNow);
+    }
 
 }

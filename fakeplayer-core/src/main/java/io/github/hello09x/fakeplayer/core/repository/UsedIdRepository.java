@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.repository;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.fakeplayer.core.Main;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,6 @@ public class UsedIdRepository {
     @Inject
     public UsedIdRepository() {
         this.load();
-        Main.getInstance().registerOnDisable(this::saveAll);
     }
 
     public boolean contains(@NotNull UUID uuid) {
@@ -83,6 +83,10 @@ public class UsedIdRepository {
         } catch (IOException e) {
             log.warning("无法保存 used-uuids.txt\n" + Throwables.getStackTraceAsString(e));
         }
+    }
+
+    public void onDisable() {
+        Exceptions.suppress(Main.getInstance(), this::saveAll);
     }
 
 

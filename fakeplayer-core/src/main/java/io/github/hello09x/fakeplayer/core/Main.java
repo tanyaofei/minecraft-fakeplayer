@@ -3,11 +3,11 @@ package io.github.hello09x.fakeplayer.core;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.zaxxer.hikari.HikariConfig;
-import io.github.hello09x.bedrock.util.RegistrablePlugin;
 import io.github.hello09x.devtools.core.PluginEventModule;
 import io.github.hello09x.devtools.core.TranslationModule;
 import io.github.hello09x.devtools.core.transaction.TranslationConfig;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.core.utils.Lambdas;
 import io.github.hello09x.devtools.database.DatabaseModule;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
@@ -15,15 +15,18 @@ import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListener;
 import io.github.hello09x.fakeplayer.core.listener.ReplenishListener;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
+import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
-public final class Main extends RegistrablePlugin {
+public final class Main extends JavaPlugin {
 
     @Getter
     private static Main instance;
@@ -107,11 +110,16 @@ public final class Main extends RegistrablePlugin {
 
     @Override
     public void onDisable() {
-        super.onDisable();
         {
-            var messenger = getServer().getMessenger();
-            messenger.unregisterIncomingPluginChannel(this);
-            messenger.unregisterOutgoingPluginChannel(this);
+            Exceptions.suppress(this, () -> injector.getInstance(FakeplayerManager.class).onDisable());
+            Exceptions.suppress(this, () -> injector.getInstance(UsedIdRepository.class).onDisable());
+        }
+        {
+            Exceptions.suppress(this, () -> {
+                var messenger = getServer().getMessenger();
+                messenger.unregisterIncomingPluginChannel(this);
+                messenger.unregisterOutgoingPluginChannel(this);
+            });
         }
     }
 

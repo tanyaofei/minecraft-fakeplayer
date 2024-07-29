@@ -68,13 +68,13 @@
 
             <dependency>
                 <groupId>io.github.hello09x</groupId>
-                <artifactId>bedrock</artifactId>
-                <version>0.0.1</version>
+                <artifactId>devtools-core</artifactId>
+                <version>0.1.1-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.hello09x</groupId>
-                <artifactId>devtools-core</artifactId>
+                <artifactId>devtools-command</artifactId>
                 <version>0.1.1-SNAPSHOT</version>
             </dependency>
 

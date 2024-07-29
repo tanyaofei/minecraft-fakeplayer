@@ -23,8 +23,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.github.hello09x.bedrock.command.Commands.command;
-import static io.github.hello09x.bedrock.command.Commands.int32;
+import static io.github.hello09x.devtools.command.exception.Commands.command;
+import static io.github.hello09x.devtools.command.exception.Commands.int32;
 import static net.kyori.adventure.text.Component.translatable;
 
 public abstract class CommandSupports {
