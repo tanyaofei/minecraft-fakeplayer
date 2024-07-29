@@ -154,6 +154,8 @@ Command examples:
 4. Edit your `config.yml`, set `i18n.locale` to the name suffix which you just created such as `en_us`
 5. Restart your server
 
+**Make sure the translation file is encoding with UTF-8**
+
 # FAQs (Important - Must Read)
 
 
