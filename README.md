@@ -147,6 +147,13 @@ Command examples:
 | replenish          | Whether to auto-replenish                                                                                                           |
 
 
+# Custom Translation
+1. Create a `message` folder in `plugins/fakeplayer`
+2. Copy [this file](fakeplayer-core/src/main/resources/message/message.properties) to `message` folder
+3. Rename the file as `message_language_region.properties` such as `message_en_us.properties`
+4. Edit your `config.yml`, set `i18n.locale` to the suffix which you just created such as `en_us`
+5. Restart your server
+
 # FAQs (Important - Must Read)
 
 
