@@ -6,12 +6,12 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.UserConfigManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,21 +46,19 @@ public class ConfigCommand extends AbstractCommand {
         var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
 
         if (!config.hasPermission(sender)) {
-            throw CommandAPI.failWithString(translator.asString(
-                    "fakeplayer.command.config.set.error.no-permission",
+            throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.config.set.error.no-permission"),
                     TranslatorUtils.getLocale(sender)
             ));
         }
 
-        var locale = TranslatorUtils.getLocale(sender);
         var value = Objects.requireNonNull(args.get("value"));
         configManager.setConfig(sender, config, value);
-        sender.sendMessage(translator.translate(
+        sender.sendMessage(translatable(
                 "fakeplayer.command.config.set.success",
-                locale,
                 GRAY,
-                Placeholder.component("config", translator.translate(config.translationKey(), locale, GOLD)),
-                Placeholder.component("value", text(value.toString(), WHITE))
+                translatable(config.translationKey(), GOLD),
+                text(value.toString(), WHITE)
         ));
     }
 
@@ -73,7 +71,7 @@ public class ConfigCommand extends AbstractCommand {
                 var options = new ArrayList<>(config.options());
                 var value = String.valueOf(configManager.getConfig(sender, config));
                 return textOfChildren(
-                        translator.translate(config, TranslatorUtils.getLocale(sender), GOLD),
+                        translatable(config, GOLD),
                         text(": ", GRAY),
                         join(separator(space()), options.stream().map(option -> {
                             var style = option.equals(value) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);

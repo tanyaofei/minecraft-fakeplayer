@@ -1,11 +1,9 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
 import io.github.hello09x.devtools.core.message.RuntimeMessageException;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.EntityUtils;
+import io.github.hello09x.devtools.core.utils.SchedulerUtils;
 import io.github.hello09x.devtools.core.utils.WorldUtils;
-import io.github.hello09x.devtools.core.utils.task.SchedulerUtils;
 import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -21,7 +19,6 @@ import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import io.github.hello09x.fakeplayer.core.util.Skins;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -30,15 +27,14 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.net.InetAddress;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
@@ -47,8 +43,6 @@ public class FakePlayer {
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
     private final static Config config = Main.getInjector().getInstance(Config.class);
-
-    private final static PluginTranslator translator = Main.getInjector().getInstance(PluginTranslator.class);
 
     private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
 
@@ -118,18 +112,17 @@ public class FakePlayer {
     /**
      * 让假人诞生
      */
-    public CompletableFuture<Void> spawnAsync(@NotNull CommandSender creator, @NotNull SpawnOption option) {
-        var locale = TranslatorUtils.getLocale(creator);
+    public CompletableFuture<Void> spawnAsync(@NotNull SpawnOption option) {
         var address = ipGen.next();
         this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNING));
         return SchedulerUtils
                 .runTaskAsynchronously(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                        throw new RuntimeMessageException(translator.translate(
-                                "fakeplayer.command.spawn.error.disallowed", locale, RED,
-                                Placeholder.component("name", text(player.getName(), WHITE)),
-                                Placeholder.component("reason", event.kickMessage())
+                        throw new RuntimeMessageException(translatable(
+                                "fakeplayer.command.spawn.error.disallowed", RED,
+                                text(player.getName(), WHITE),
+                                event.kickMessage()
                         ));
                     }
                 })
@@ -137,10 +130,10 @@ public class FakePlayer {
                     {
                         var event = this.callLoginEvent(address);
                         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
-                            throw new RuntimeMessageException(translator.translate(
-                                    "fakeplayer.command.spawn.error.disallowed", locale, RED,
-                                    Placeholder.component("name", text(player.getName(), WHITE)),
-                                    Placeholder.component("reason", event.kickMessage())
+                            throw new RuntimeMessageException(translatable(
+                                    "fakeplayer.command.spawn.error.disallowed", RED,
+                                    text(player.getName(), WHITE),
+                                    event.kickMessage()
                             ));
                         }
                     }
@@ -148,10 +141,10 @@ public class FakePlayer {
                     {
                         var event = this.callSpawnEvent();
                         if (event.isCancelled() && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
-                            throw new RuntimeMessageException(translator.translate(
-                                    "fakeplayer.command.spawn.error.disallowed", locale, RED,
-                                    Placeholder.component("name", text(player.getName(), WHITE)),
-                                    Placeholder.component("reason", event.getReason())
+                            throw new RuntimeMessageException(translatable(
+                                    "fakeplayer.command.spawn.error.disallowed", RED,
+                                    text(player.getName(), WHITE),
+                                    event.getReason()
                             ));
                         }
                     }
@@ -181,7 +174,7 @@ public class FakePlayer {
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
-                    this.teleportToSpawnpoint(option.spawnAt().clone(), locale);
+                    this.teleportToSpawnpoint(option.spawnAt().clone());
                     this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
                     this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNED));
                 }));
@@ -192,24 +185,24 @@ public class FakePlayer {
      *
      * @param to 目标位置
      */
-    private void teleportToSpawnpoint(@NotNull Location to, @Nullable Locale locale) {
+    private void teleportToSpawnpoint(@NotNull Location to) {
         var from = this.player.getLocation();
         if (from.getWorld().equals(to.getWorld())) {
             // 如果生成世界等于目的世界, 则需要穿越一次维度才能获取刷怪能力
             var otherWorld = WorldUtils.getOtherWorld(from.getWorld());
             if (otherWorld == null || !player.teleport(otherWorld.getSpawnLocation())) {
-                this.creator.sendMessage(translator.translate(
-                        "fakeplayer.command.spawn.error.no-mob-spawning-ability", locale, GRAY,
-                        Placeholder.component("name", text(player.getName(), WHITE))
+                this.creator.sendMessage(translatable(
+                        "fakeplayer.command.spawn.error.no-mob-spawning-ability", GRAY,
+                        text(player.getName(), WHITE)
                 ));
             }
         }
 
         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
             if (!EntityUtils.teleportAndSound(player, to)) {
-                this.creator.sendMessage(translator.translate(
-                        "fakeplayer.command.spawn.error.teleport-failed", locale, GRAY,
-                        Placeholder.component("name", text(player.getName(), WHITE))
+                this.creator.sendMessage(translatable(
+                        "fakeplayer.command.spawn.error.teleport-failed", GRAY,
+                        text(player.getName(), WHITE)
                 ));
             }
         });

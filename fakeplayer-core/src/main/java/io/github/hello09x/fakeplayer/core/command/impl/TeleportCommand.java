@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 @Singleton
@@ -46,7 +47,7 @@ public class TeleportCommand extends AbstractCommand {
     private void teleport(@NotNull CommandSender sender, @NotNull Player from, @NotNull Player to) {
         var locale = TranslatorUtils.getLocale(sender);
         if (!EntityUtils.teleportAndSound(from, to.getLocation())) {
-            sender.sendMessage(translator.translate("fakeplayer.command.teleport.error.canceled", locale, RED));
+            sender.sendMessage(translatable("fakeplayer.command.teleport.error.canceled", RED));
         }
     }
 

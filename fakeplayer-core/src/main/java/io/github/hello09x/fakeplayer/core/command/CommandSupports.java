@@ -5,7 +5,6 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.ActionCommand;
@@ -26,13 +25,13 @@ import java.util.stream.Stream;
 
 import static io.github.hello09x.bedrock.command.Commands.command;
 import static io.github.hello09x.bedrock.command.Commands.int32;
+import static net.kyori.adventure.text.Component.translatable;
 
 public abstract class CommandSupports {
 
     private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
 
     private final static Config config =  Main.getInjector().getInstance(Config.class);
-    private static final PluginTranslator translator = Main.getInjector().getInstance(PluginTranslator.class);
 
     private static final ActionCommand actionCommand = Main.getInjector().getInstance(ActionCommand.class);
 
@@ -132,10 +131,10 @@ public abstract class CommandSupports {
             try {
                 config = io.github.hello09x.fakeplayer.core.repository.model.Config.valueOf(arg);
             } catch (Exception e) {
-                throw CustomArgument.CustomArgumentException.fromString(translator.asString("fakeplayer.command.config.set.error.invalid-option", null));
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-option"));
             }
             if (predicate != null && !predicate.test(config)) {
-                throw CustomArgument.CustomArgumentException.fromString(translator.asString("fakeplayer.command.config.set.error.invalid-option", null));
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-option"));
             }
             return config;
         }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(io.github.hello09x.fakeplayer.core.repository.model.Config.values()).map(io.github.hello09x.fakeplayer.core.repository.model.Config::key).toList()));
@@ -147,7 +146,7 @@ public abstract class CommandSupports {
             var config = Objects.requireNonNull((io.github.hello09x.fakeplayer.core.repository.model.Config<Object>) info.previousArgs().get(configNodeName));
             var arg = info.currentInput();
             if (!config.options().contains(arg)) {
-                throw CustomArgument.CustomArgumentException.fromString(translator.asString("fakeplayer.command.config.set.error.invalid-value", null));
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-value"));
             }
             return config.parser().apply(arg);
         }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {

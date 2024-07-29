@@ -2,13 +2,13 @@ package io.github.hello09x.fakeplayer.core.manager.invsee;
 
 import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 
 public abstract class AbstractInvsee implements Invsee {
 
@@ -23,10 +23,9 @@ public abstract class AbstractInvsee implements Invsee {
             return;
         }
 
-        view.setTitle(ComponentUtils.toString(translator.translate(
+        view.setTitle(ComponentUtils.toString(translatable(
                 "fakeplayer.manager.inventory.title",
-                null,
-                Placeholder.component("name", text(owner.getName()))
+                text(owner.getName())
         )));
     }
 

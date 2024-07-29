@@ -6,12 +6,14 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.wrappers.CommandResult;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 @Singleton
@@ -26,29 +28,28 @@ public class CmdCommand extends AbstractCommand {
 
         var name = command.command().getName();
         if (!sender.hasPermission(Permission.cmd) && !config.getAllowCommands().contains(name)) {
-            throw CommandAPI.failWithString(translator.asString(
-                    "fakeplayer.command.cmd.error.no-permission",
+            throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.cmd.error.no-permission"),
                     TranslatorUtils.getLocale(sender)
             ));
         }
 
         if (!sender.isOp() && (name.equals("fakeplayer") || name.equals("fp"))) {
-            throw CommandAPI.failWithString(translator.asString(
-                    "fakeplayer.command.cmd.error.no-permission",
+            throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.cmd.error.no-permission"),
                     TranslatorUtils.getLocale(sender)
             ));
         }
 
         if (!command.execute(target)) {
-            throw CommandAPI.failWithString(translator.asString(
-                    "fakeplayer.command.cmd.error.execute-failed",
+            throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.cmd.error.execute-failed"),
                     TranslatorUtils.getLocale(sender)
             ));
         }
 
-        sender.sendMessage(translator.translate(
+        sender.sendMessage(translatable(
                 "fakeplayer.command.cmd.success.execute",
-                TranslatorUtils.getLocale(sender),
                 GRAY
         ));
     }

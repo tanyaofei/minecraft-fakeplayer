@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
+import static net.kyori.adventure.text.Component.translatable;
+
 public abstract class AbstractCommand {
 
     protected final static Logger log = Main.getInstance().getLogger();
@@ -32,10 +34,6 @@ public abstract class AbstractCommand {
 
     @Inject
     protected Config config;
-
-    @Inject
-    protected PluginTranslator translator;
-
 
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         return this.getTarget(sender, args, null);
@@ -72,19 +70,19 @@ public abstract class AbstractCommand {
             case 1 -> all.get(0);
             case 0 -> {
                 if (predicate == null) {
-                    throw CommandAPI.failWithString(translator.asString(
-                            "fakeplayer.command.generic.error.non-fake-player",
+                    throw CommandAPI.failWithString(ComponentUtils.toString(
+                            translatable("fakeplayer.command.generic.error.non-fake-player"),
                             locale
                     ));
                 } else {
-                    throw CommandAPI.failWithString(translator.asString(
-                            "fakeplayer.command.generic.error.non-matching-fake-player",
+                    throw CommandAPI.failWithString(ComponentUtils.toString(
+                            translatable("fakeplayer.command.generic.error.non-matching-fake-player"),
                             locale
                     ));
                 }
             }
-            default -> throw CommandAPI.failWithString(translator.asString(
-                    "fakeplayer.command.generic.error.name-required",
+            default -> throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.generic.error.name-required"),
                     locale
             ));
         };
@@ -111,12 +109,12 @@ public abstract class AbstractCommand {
             var fakeplayers = manager.getAll(sender);
             return switch (fakeplayers.size()) {
                 case 1 -> fakeplayers;
-                case 0 -> throw CommandAPI.failWithString(translator.asString(
-                        "fakeplayer.command.generic.error.non-fake-player",
+                case 0 -> throw CommandAPI.failWithString(ComponentUtils.toString(
+                        translatable("fakeplayer.command.generic.error.non-fake-player"),
                         TranslatorUtils.getLocale(sender)
                 ));
-                default -> throw CommandAPI.failWithString(translator.asString(
-                        "fakeplayer.command.generic.error.name-required",
+                default -> throw CommandAPI.failWithString(ComponentUtils.toString(
+                        translatable("fakeplayer.command.generic.error.name-required"),
                         TranslatorUtils.getLocale(sender)
                 ));
             };

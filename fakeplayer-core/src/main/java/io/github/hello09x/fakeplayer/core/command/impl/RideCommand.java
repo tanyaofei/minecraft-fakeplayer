@@ -5,7 +5,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
@@ -71,14 +72,14 @@ public class RideCommand extends AbstractCommand {
         var target = getTarget(sender, args);
         var locale = TranslatorUtils.getLocale(sender);
         if (!target.getWorld().equals(sender.getWorld())) {
-            throw CommandAPI.failWithString(translator.asString("fakeplayer.command.ride.me.error.too-far", locale));
+            throw CommandAPI.failWithString(ComponentUtils.toString(translatable("fakeplayer.command.ride.me.error.too-far"), locale));
         }
 
         var distance = target.getLocation().distance(sender.getLocation());
         if (distance > Bukkit.getViewDistance()) {
-            sender.sendMessage(translator.translate(
-                    "fakeplayer.command.ride.me.error.too-far", locale, GRAY,
-                    Placeholder.component("name", text(target.getName(), WHITE))
+            sender.sendMessage(translatable(
+                    "fakeplayer.command.ride.me.error.too-far", GRAY,
+                    text(target.getName(), WHITE)
             ));
             return;
         }

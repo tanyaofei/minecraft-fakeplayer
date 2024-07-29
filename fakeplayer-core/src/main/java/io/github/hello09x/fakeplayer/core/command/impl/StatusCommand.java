@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -60,9 +59,9 @@ public class StatusCommand extends AbstractCommand {
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var locale = TranslatorUtils.getLocale(sender);
         var target = super.getTarget(sender, args);
-        var title = translator.translate(
-                "fakeplayer.command.status.title", locale, GRAY,
-                Placeholder.component("name", text(target.getName(), WHITE))
+        var title = translatable(
+                "fakeplayer.command.status.title", GRAY,
+                text(target.getName(), WHITE)
         );
 
         var lines = new ArrayList<Component>(6);
@@ -81,13 +80,13 @@ public class StatusCommand extends AbstractCommand {
     private @NotNull Component getFoodLine(@NotNull Player target, @Nullable Locale locale) {
         var food = target.getFoodLevel();
         var max = 20.0;
-        return translator.translate(
-                "fakeplayer.command.status.food", locale, WHITE,
-                Placeholder.component("food", textOfChildren(
+        return translatable(
+                "fakeplayer.command.status.food", WHITE,
+                textOfChildren(
                         text(Mth.floor(food, 0.5), color(food, max)),
                         text("/", GRAY),
                         text(max, WHITE)
-                ))
+                )
         );
     }
 
@@ -97,13 +96,13 @@ public class StatusCommand extends AbstractCommand {
                 .map(AttributeInstance::getValue)
                 .orElse(20D);
 
-        return translator.translate(
-                "fakeplayer.command.status.health", locale, WHITE,
-                Placeholder.component("health", textOfChildren(
+        return translatable(
+                "fakeplayer.command.status.health", WHITE,
+                textOfChildren(
                         text(Mth.floor(health, 0.5), color(health, max)),
                         text("/", GRAY),
                         text(max, WHITE)
-                ))
+                )
         );
     }
 
@@ -112,13 +111,13 @@ public class StatusCommand extends AbstractCommand {
         var points = ExperienceUtils.getExp(target);
 
         return textOfChildren(
-                translator.translate(
-                        "fakeplayer.command.status.exp", locale, WHITE,
-                        Placeholder.component("level", text(level, GREEN)),
-                        Placeholder.component("points", text(points, GREEN))
+                translatable(
+                        "fakeplayer.command.status.exp", WHITE,
+                        text(level, GREEN),
+                        text(points, GREEN)
                 ),
                 space(),
-                translator.translate("fakeplayer.command.status.exp.withdraw", locale, AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
+                translatable("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
         );
     }
 
@@ -126,7 +125,7 @@ public class StatusCommand extends AbstractCommand {
         var configs = Arrays.stream(Config.values()).filter(Config::hasAccessor).toList();
         var messages = new ArrayList<Component>();
         for (var config : configs) {
-            var name = translator.translate(config.translationKey(), locale, WHITE);
+            var name = translatable(config.translationKey(), WHITE);
             var options = config.options();
             var status = config.accessor().getter().apply(target).toString();
 

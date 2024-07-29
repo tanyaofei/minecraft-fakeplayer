@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
+import static net.kyori.adventure.text.Component.translatable;
+
 @Getter
 @ToString
 @Singleton
@@ -163,7 +165,7 @@ public class Config extends PluginConfig {
         if (this.isFileConfigurationOutOfDate()) {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 if (Main.getInstance().isEnabled()) {
-                    log.warning(translator.asString("fakeplayer.configuration.out-of-date", null));
+                    Main.getInstance().getComponentLogger().warn(translatable("fakeplayer.configuration.out-of-date"));
                 }
             }, 1);
         }

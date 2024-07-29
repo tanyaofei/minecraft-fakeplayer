@@ -6,11 +6,11 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.ExperienceUtils;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @Singleton
@@ -22,21 +22,20 @@ public class ExpmeCommand extends AbstractCommand {
         var local = TranslatorUtils.getLocale(sender);
 
         if (exp == 0) {
-            sender.sendMessage(translator.translate(
+            sender.sendMessage(translatable(
                     "fakeplayer.command.expme.error.non-experience",
-                    local,
                     GRAY,
-                    Placeholder.component("name", text(target.getName(), WHITE)))
+                    text(target.getName(), WHITE))
             );
             return;
         }
 
         ExperienceUtils.clean(target);
         sender.giveExp(exp, false);
-        sender.sendMessage(translator.translate(
-                "fakeplayer.command.expme.success", local, GRAY,
-                Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("experience", text(exp, DARK_GREEN))
+        sender.sendMessage(translatable(
+                "fakeplayer.command.expme.success", GRAY,
+                text(target.getName(), WHITE),
+                text(exp, DARK_GREEN)
         ));
     }
 

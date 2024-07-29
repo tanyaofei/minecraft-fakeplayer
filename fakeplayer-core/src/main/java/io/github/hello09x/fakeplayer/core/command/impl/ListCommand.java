@@ -43,13 +43,13 @@ public class ListCommand extends AbstractCommand {
 
         var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.asComponent(
-                text(translator.asString("fakeplayer.command.list.title", locale), AQUA, BOLD),
+                translatable("fakeplayer.command.list.title", AQUA, BOLD),
                 fakeplayer -> {
                     var partTp = allowsTp
-                            ? textOfChildren(space(), translator.translate("fakeplayer.command.list.button.teleport", locale, AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())))
+                            ? textOfChildren(space(), translatable("fakeplayer.command.list.button.teleport", AQUA).clickEvent(runCommand("/fp tp " + fakeplayer.getName())))
                             : empty();
 
-                    var partKill = textOfChildren(space(), translator.translate("fakeplayer.command.list.button.kill", locale, RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()));
+                    var partKill = textOfChildren(space(), translatable("fakeplayer.command.list.button.kill", RED)).clickEvent(runCommand("/fp kill " + fakeplayer.getName()));
 
                     return textOfChildren(
                             text(fakeplayer.getName() + " (" + manager.getCreatorName(fakeplayer) + ")", GOLD),

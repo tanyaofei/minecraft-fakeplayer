@@ -9,7 +9,6 @@ import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @Singleton
@@ -75,21 +75,19 @@ public class SpawnCommand extends AbstractCommand {
                         }
                         Component message;
                         if (removedAt == null) {
-                            message = translator.translate(
+                            message = translatable(
                                     "fakeplayer.command.spawn.success.without-lifespan",
-                                    locale,
                                     GRAY,
-                                    Placeholder.component("name", text(player.getName(), WHITE)),
-                                    Placeholder.component("location", text(toLocationString(spawnpoint), WHITE))
+                                    text(player.getName(), WHITE),
+                                    text(toLocationString(spawnpoint), WHITE)
                             );
                         } else {
-                            message = translator.translate(
+                            message = translatable(
                                     "fakeplayer.command.spawn.success.with-lifespan",
-                                    locale,
                                     GRAY,
-                                    Placeholder.component("name", text(player.getName(), WHITE)),
-                                    Placeholder.component("location", text(toLocationString(spawnpoint), WHITE)),
-                                    Placeholder.component("remove-at", text(REMOVE_AT_FORMATTER.format(removedAt)))
+                                    text(player.getName(), WHITE),
+                                    text(toLocationString(spawnpoint), WHITE),
+                                    text(REMOVE_AT_FORMATTER.format(removedAt))
                             );
                         }
                         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
@@ -103,7 +101,7 @@ public class SpawnCommand extends AbstractCommand {
                        if (Throwables.getRootCause(e) instanceof IMessageException me) {
                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(me.getComponent()));
                         } else {
-                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(translator.translate("fakeplayer.command.spawn.error.unknown", locale, RED)));
+                           Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(translatable("fakeplayer.command.spawn.error.unknown", RED)));
                             log.severe(Throwables.getStackTraceAsString(e));
                         }
                         return null;

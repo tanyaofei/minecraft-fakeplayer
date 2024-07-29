@@ -2,12 +2,10 @@ package io.github.hello09x.fakeplayer.core.manager.naming;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.Bukkit;
@@ -24,6 +22,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
@@ -37,16 +36,14 @@ public class NameManager {
 
     private final UsedIdRepository usedIdRepository;
     private final Config config;
-    private final PluginTranslator translator;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
     private final String serverId;
 
     @Inject
-    public NameManager(UsedIdRepository usedIdRepository, Config config, PluginTranslator translator) {
+    public NameManager(UsedIdRepository usedIdRepository, Config config) {
         this.usedIdRepository = usedIdRepository;
         this.config = config;
-        this.translator = translator;
 
         var file = new File(Main.getInstance().getDataFolder(), "serverid");
         serverId = Optional.ofNullable(loadServerId(file)).orElseGet(() -> {
@@ -99,37 +96,37 @@ public class NameManager {
      */
     public @NotNull SequenceName specify(@NotNull String name) {
         if (name.startsWith("-")) {
-            throw new IllegalCustomNameException(translator.translate(
-                    "fakeplayer.spawn.error.name.start-with-illegal-character", null, RED,
-                    Placeholder.component("character", text("-", WHITE))
+            throw new IllegalCustomNameException(translatable(
+                    "fakeplayer.spawn.error.name.start-with-illegal-character", RED,
+                    text("-", WHITE)
             ));
         }
 
         if (name.length() > MAX_LENGTH) {
-            throw new IllegalCustomNameException(translator.translate(
-                    "fakeplayer.spawn.error.name.too-long", null, RED,
-                    Placeholder.component("length", text(MAX_LENGTH, WHITE))
+            throw new IllegalCustomNameException(translatable(
+                    "fakeplayer.spawn.error.name.too-long", RED,
+                    text(MAX_LENGTH, WHITE)
             ));
         }
 
         if (name.length() < MIN_LENGTH) {
-            throw new IllegalCustomNameException(translator.translate(
-                    "fakeplayer.spawn.error.name.too-short", null, RED,
-                    Placeholder.component("length", text(MIN_LENGTH, WHITE))
+            throw new IllegalCustomNameException(translatable(
+                    "fakeplayer.spawn.error.name.too-short", RED,
+                    text(MIN_LENGTH, WHITE)
             ));
         }
 
         if (!config.getNamePattern().asPredicate().test(name)) {
-            throw new IllegalCustomNameException(translator.translate("fakeplayer.spawn.error.name.invalid", null, RED));
+            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.invalid", RED));
         }
 
         if (Bukkit.getPlayerExact(name) != null) {
-            throw new IllegalCustomNameException(translator.translate("fakeplayer.spawn.error.name.existed", null, RED));
+            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.existed", RED));
         }
 
         var player = Bukkit.getOfflinePlayer(name);
         if (player.hasPlayedBefore() && !usedIdRepository.contains(player.getUniqueId())) {
-            throw new IllegalCustomNameException(translator.translate("fakeplayer.spawn.error.name.existed", null, RED));
+            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.existed", RED));
         }
 
         return new SequenceName(

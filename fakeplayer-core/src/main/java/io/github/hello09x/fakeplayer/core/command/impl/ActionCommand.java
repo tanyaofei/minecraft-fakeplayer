@@ -8,11 +8,11 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
@@ -52,12 +52,11 @@ public class ActionCommand extends AbstractCommand {
             translationKey = "fakeplayer.command.action.continuous";
         }
 
-        sender.sendMessage(translator.translate(
+        sender.sendMessage(translatable(
                 translationKey,
-                TranslatorUtils.getLocale(sender),
                 GRAY,
-                Placeholder.component("name", text(target.getName(), WHITE)),
-                Placeholder.component("action", translator.translate(action, locale, WHITE))
+                text(target.getName(), WHITE),
+                translatable(action, WHITE)
         ));
     }
 

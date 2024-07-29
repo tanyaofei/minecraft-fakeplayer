@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Skins;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -16,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 @Singleton
@@ -33,7 +33,6 @@ public class SkinCommand extends AbstractCommand {
      * 复制皮肤
      */
     public void skin(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var locale = TranslatorUtils.getLocale(sender);
         var target = getTarget(sender, args);
         var player = Objects.requireNonNull((OfflinePlayer) args.get("player"));
 
@@ -44,7 +43,7 @@ public class SkinCommand extends AbstractCommand {
         // 调用 Mojang API 来拷贝皮肤
         if (!sender.isOp() && spams.computeIfAbsent(sender, k -> new MutableInt()).getValue() != 0) {
             // 限制请求数, 防止 mojang api 限流
-            sender.sendMessage(translator.translate("fakeplayer.command.skin.error.too-many-operations", locale, RED));
+            sender.sendMessage(translatable("fakeplayer.command.skin.error.too-many-operations", RED));
             return;
         }
         try {

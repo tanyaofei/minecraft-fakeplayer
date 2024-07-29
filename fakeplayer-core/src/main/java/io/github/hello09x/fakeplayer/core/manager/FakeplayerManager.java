@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.util.AddressUtils;
 import io.github.hello09x.devtools.core.message.MessageException;
 import io.github.hello09x.devtools.core.message.RuntimeMessageException;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
@@ -42,8 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
@@ -59,10 +57,9 @@ public class FakeplayerManager {
     private final UserConfigManager configManager;
     private final NMSBridge nms;
     private final Config config;
-    private final PluginTranslator translator;
 
     @Inject
-    public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config, PluginTranslator translator) {
+    public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config) {
         this.invsee = invsee;
         this.usedIdRepository = usedIdRepository;
         this.nameManager = nameManager;
@@ -70,14 +67,13 @@ public class FakeplayerManager {
         this.configManager = configManager;
         this.nms = nms;
         this.config = config;
-        this.translator = translator;
 
         var timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleWithFixedDelay(() -> {
                     if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
                         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                             if (this.removeAll("low tps") > 0) {
-                                Bukkit.broadcast(text(translator.asString("fakeplayer.manager.remove-all-on-low-tps", null), GRAY, ITALIC));
+                                Bukkit.broadcast(translatable("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
                             }
                         });
                     }
@@ -130,7 +126,7 @@ public class FakeplayerManager {
                             configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.replenish)
                     );
                 })
-                .thenComposeAsync(options -> fp.spawnAsync(creator, options))
+                .thenComposeAsync(fp::spawnAsync)
                 .thenApply(nul -> {
                     Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                         this.playerList.add(fp);
@@ -521,15 +517,15 @@ public class FakeplayerManager {
         }
 
         if (this.playerList.count() >= this.config.getServerLimit()) {
-            throw new MessageException(translator.asString("fakeplayer.command.spawn.error.server-limit", locale));
+            throw new MessageException(translatable("fakeplayer.command.spawn.error.server-limit"));
         }
 
         if (this.playerList.getByCreator(creator.getName()).size() >= this.config.getPlayerLimit()) {
-            throw new MessageException(translator.asString("fakeplayer.command.spawn.error.player-limit", locale));
+            throw new MessageException(translatable("fakeplayer.command.spawn.error.player-limit"));
         }
 
         if (this.config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= this.config.getPlayerLimit()) {
-            throw new MessageException(translator.asString("fakeplayer.command.spawn.error.ip-limit", locale));
+            throw new MessageException(translatable("fakeplayer.command.spawn.error.ip-limit"));
         }
     }
 

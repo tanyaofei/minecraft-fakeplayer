@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.util;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import io.github.hello09x.devtools.core.utils.task.SchedulerUtils;
+import io.github.hello09x.devtools.core.utils.SchedulerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

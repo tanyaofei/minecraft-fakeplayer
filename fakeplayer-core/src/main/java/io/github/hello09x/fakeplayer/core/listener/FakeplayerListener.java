@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.listener;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
@@ -39,14 +38,12 @@ public class FakeplayerListener implements Listener {
     private final FakeplayerManager manager;
     private final UsedIdRepository usedIdRepository;
     private final Config config;
-    private final PluginTranslator translator;
 
     @Inject
-    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, Config config, PluginTranslator translator) {
+    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, Config config) {
         this.manager = manager;
         this.usedIdRepository = usedIdRepository;
         this.config = config;
-        this.translator = translator;
     }
 
     /**
@@ -62,7 +59,7 @@ public class FakeplayerListener implements Listener {
 
         if (usedIdRepository.contains(player.getUniqueId())) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, textOfChildren(
-                    translator.translate("fakeplayer.listener.login.deny-used-uuid", null, RED),
+                    translatable("fakeplayer.listener.login.deny-used-uuid", RED),
                     newline(),
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)
