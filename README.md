@@ -152,7 +152,7 @@ Command examples:
 2. Copy [this file](fakeplayer-core/src/main/resources/message/message.properties) to `message` folder
 3. Rename the file to `message_language_region.properties` such as `message_en_us.properties`
 4. Edit your `config.yml`, set `i18n.locale` to the name suffix which you just created such as `en_us`
-5. Restart your server
+5. Type `/fp reload-translation` to reload translation file. If you change `i18n.local`, you should `/fp reload` first
 
 **Make sure the translation file is encoding with UTF-8**
 
