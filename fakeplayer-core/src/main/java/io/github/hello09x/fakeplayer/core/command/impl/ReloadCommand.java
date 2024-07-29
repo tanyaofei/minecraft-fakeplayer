@@ -22,7 +22,7 @@ public class ReloadCommand extends AbstractCommand {
 
     public void reload(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         config.reload();
-        sender.sendMessage(translatable("fakeplayer.command.reload.success", GRAY));
+        sender.sendMessage(translatable("fakeplayer.command.generic.success", GRAY));
         if (config.isFileConfigurationOutOfDate()) {
             sender.sendMessage(translatable("fakeplayer.configuration.out-of-date", GRAY));
         }

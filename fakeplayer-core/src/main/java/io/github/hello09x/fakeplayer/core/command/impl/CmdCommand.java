@@ -49,7 +49,7 @@ public class CmdCommand extends AbstractCommand {
         }
 
         sender.sendMessage(translatable(
-                "fakeplayer.command.cmd.success.execute",
+                "fakeplayer.command.generic.success",
                 GRAY
         ));
     }
