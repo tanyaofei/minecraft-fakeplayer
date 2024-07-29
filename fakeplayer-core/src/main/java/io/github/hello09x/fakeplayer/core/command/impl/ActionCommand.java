@@ -8,6 +8,7 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.translatable;
@@ -37,7 +38,9 @@ public class ActionCommand extends AbstractCommand {
     ) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         actionManager.setAction(target, action, setting);
-        sender.sendMessage(translatable("fakeplayer.command.generic.success"));
+        if (!setting.equals(Action.ActionSetting.once()) || sender instanceof ConsoleCommandSender) {
+            sender.sendMessage(translatable("fakeplayer.command.generic.success"));
+        }
     }
 
 }

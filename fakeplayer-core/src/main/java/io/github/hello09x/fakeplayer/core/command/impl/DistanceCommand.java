@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +24,6 @@ public class DistanceCommand extends AbstractCommand {
         var target = super.getTarget(sender, args);
         var from = target.getLocation().toBlockLocation();
         var to = sender.getLocation().toBlockLocation();
-        var locale = TranslatorUtils.getLocale(sender);
 
         if (!Objects.equals(from.getWorld(), to.getWorld())) {
             sender.sendMessage(translatable(

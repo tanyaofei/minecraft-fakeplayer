@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.ExperienceUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
@@ -18,11 +17,9 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,7 +54,6 @@ public class StatusCommand extends AbstractCommand {
      * 查看假人状态
      */
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var locale = TranslatorUtils.getLocale(sender);
         var target = super.getTarget(sender, args);
         var title = translatable(
                 "fakeplayer.command.status.title", GRAY,
@@ -66,18 +62,18 @@ public class StatusCommand extends AbstractCommand {
 
         var lines = new ArrayList<Component>(6);
         lines.add(title);
-        lines.add(this.getHealthLine(target, locale));
-        lines.add(this.getFoodLine(target, locale));
+        lines.add(this.getHealthLine(target));
+        lines.add(this.getFoodLine(target));
         if (sender.hasPermission(Permission.expme)) {
-            lines.add(this.getExperienceLine(target, locale));
+            lines.add(this.getExperienceLine(target));
         }
         lines.add(LINE_SPLITTER);
-        lines.add(getConfigLine(target, locale));
+        lines.add(getConfigLine(target));
 
         sender.sendMessage(join(JoinConfiguration.newlines(), lines));
     }
 
-    private @NotNull Component getFoodLine(@NotNull Player target, @Nullable Locale locale) {
+    private @NotNull Component getFoodLine(@NotNull Player target) {
         var food = target.getFoodLevel();
         var max = 20.0;
         return translatable(
@@ -90,7 +86,7 @@ public class StatusCommand extends AbstractCommand {
         );
     }
 
-    private @NotNull Component getHealthLine(@NotNull Player target, @Nullable Locale locale) {
+    private @NotNull Component getHealthLine(@NotNull Player target) {
         var health = target.getHealth();
         double max = Optional.ofNullable(target.getAttribute(Attribute.GENERIC_MAX_HEALTH))
                              .map(AttributeInstance::getValue)
@@ -106,7 +102,7 @@ public class StatusCommand extends AbstractCommand {
         );
     }
 
-    private @NotNull Component getExperienceLine(@NotNull Player target, @Nullable Locale locale) {
+    private @NotNull Component getExperienceLine(@NotNull Player target) {
         var level = target.getLevel();
         var points = ExperienceUtils.getExp(target);
 
@@ -121,7 +117,7 @@ public class StatusCommand extends AbstractCommand {
         );
     }
 
-    private @NotNull Component getConfigLine(@NotNull Player target, @Nullable Locale locale) {
+    private @NotNull Component getConfigLine(@NotNull Player target) {
         var configs = Arrays.stream(Config.values()).filter(Config::hasAccessor).toList();
         var messages = new ArrayList<Component>();
         for (var config : configs) {

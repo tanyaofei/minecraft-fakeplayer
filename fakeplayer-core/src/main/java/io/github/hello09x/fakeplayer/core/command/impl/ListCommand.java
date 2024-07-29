@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.bedrock.page.Page;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +32,6 @@ public class ListCommand extends AbstractCommand {
     public void list(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         var page = (int) args.getOptional("page").orElse(1);
         var size = (int) args.getOptional("size").orElse(10);
-        var locale = TranslatorUtils.getLocale(sender);
 
         var fakers = sender.isOp()
                 ? manager.getAll()

@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.message.IMessageException;
 import io.github.hello09x.devtools.core.message.MessageException;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
@@ -44,7 +43,6 @@ public class SpawnCommand extends AbstractCommand {
      * 创建假人
      */
     public void spawn(@NotNull CommandSender sender, @NotNull CommandArguments args) {
-        var locale = TranslatorUtils.getLocale(sender);
         var name = (String) args.get("name");
         if (name != null && name.isEmpty()) {
             name = null;

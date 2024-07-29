@@ -1,11 +1,8 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
 import com.google.inject.Singleton;
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
-import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -20,16 +17,17 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 public class SetCommand extends AbstractCommand {
 
     public void set(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var locale = TranslatorUtils.getLocale(sender);
         var target = super.getTarget(sender, args);
 
         @SuppressWarnings("unchecked")
         var config = Objects.requireNonNull((Config<Object>) args.get("config"));
         if (!config.hasPermission(sender)) {
-            throw CommandAPI.failWithString(ComponentUtils.toString(translatable("fakeplayer.command.config.set.error.no-permission"), locale));
+            sender.sendMessage(translatable("fakeplayer.command.config.set.error.no-permission", RED));
+            return;
         }
         if (!config.hasAccessor()) {
-            throw CommandAPI.failWithString(ComponentUtils.toString(translatable("fakeplayer.command.config.set.error.invalid-option"), locale));
+            sender.sendMessage(translatable("fakeplayer.command.config.set.error.invalid-option", RED));
+            return;
         }
         var value = Objects.requireNonNull(args.get("value"));
 

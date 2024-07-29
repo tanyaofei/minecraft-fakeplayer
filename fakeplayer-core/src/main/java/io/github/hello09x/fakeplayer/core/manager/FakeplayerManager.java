@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import io.github.hello09x.bedrock.util.AddressUtils;
 import io.github.hello09x.devtools.core.message.MessageException;
 import io.github.hello09x.devtools.core.message.RuntimeMessageException;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -511,7 +510,6 @@ public class FakeplayerManager {
      * @throws MessageException 消息
      */
     private void checkLimit(@NotNull CommandSender creator) throws MessageException {
-        var locale = TranslatorUtils.getLocale(creator);
         if (creator.isOp()) {
             return;
         }

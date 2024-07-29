@@ -1,11 +1,8 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
 import com.google.inject.Singleton;
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
-import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
@@ -16,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @Singleton
 public class RideCommand extends AbstractCommand {
@@ -70,9 +66,9 @@ public class RideCommand extends AbstractCommand {
      */
     public void rideMe(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = getTarget(sender, args);
-        var locale = TranslatorUtils.getLocale(sender);
         if (!target.getWorld().equals(sender.getWorld())) {
-            throw CommandAPI.failWithString(ComponentUtils.toString(translatable("fakeplayer.command.ride.me.error.too-far"), locale));
+            sender.sendMessage(translatable("fakeplayer.command.ride.me.error.too-far", RED));
+            return;
         }
 
         var distance = target.getLocation().distance(sender.getLocation());
