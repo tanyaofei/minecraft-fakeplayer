@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.config.PluginConfig;
 import io.github.hello09x.devtools.core.event.PluginEventRegistry;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.Main;
 import lombok.Getter;
 import lombok.ToString;
@@ -124,12 +123,9 @@ public class Config extends PluginConfig {
      */
     private PreventKicking preventKicking;
 
-    private final PluginTranslator translator;
-
     @Inject
-    public Config(@NotNull PluginEventRegistry pluginEventRegistry, @NotNull PluginTranslator translator) {
+    public Config(@NotNull PluginEventRegistry pluginEventRegistry) {
         super(Main.getInstance(), pluginEventRegistry);
-        this.translator = translator;
     }
 
     private static int maxIfZero(int value) {
