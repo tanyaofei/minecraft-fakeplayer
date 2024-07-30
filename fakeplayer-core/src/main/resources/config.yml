@@ -1,5 +1,8 @@
-# 配置文件版本, 不要修改这个值
-# THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT
+#  DO NOT EDIT HERE, copy this file and rename as config.yml and use it instead.
+# 【 不要直接修改此文件 】将这份文件复制并重命名为 config.yml 来修改配置文件
+
+# 配置文件版本, 不要修改这个值除非你在升级配置文件
+# THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT UNLESS YOU ARE UPGRADING CONFIG FILE
 version: 15
 
 # 多国语言配置
