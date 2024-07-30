@@ -56,7 +56,7 @@ public abstract class AbstractCommand {
      */
     protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args, @Nullable Predicate<Player> predicate) throws WrapperCommandSyntaxException {
         var target = (Player) args.get("name");
-        if (target == null && sender instanceof Player p) {
+        if (target == null && sender instanceof Player p && args.getRaw("name") == null) {
             target = manager.getSelection(p);
         }
         if (target != null) {

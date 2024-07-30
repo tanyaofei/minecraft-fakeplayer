@@ -406,7 +406,7 @@ public class CommandRegistry {
                                 .withRequirement(CommandSupports::isCmdAvailable)
                                 .withArguments(
                                         target("name"),
-                                        cmd("command")
+                                        new FakePlayerCommandArgument("command")
                                 )
                                 .executes(cmdCommand::cmd),
 

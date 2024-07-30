@@ -63,6 +63,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.1.8</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
