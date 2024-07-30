@@ -105,6 +105,7 @@ public class Config extends PluginConfig {
     /**
      * 允许执行的命令
      */
+    @Deprecated
     private Set<String> allowCommands;
 
     /**
@@ -165,6 +166,10 @@ public class Config extends PluginConfig {
                 }
             }, 1);
         }
+
+        if (!this.allowCommands.isEmpty()) {
+            log.warning("allow-commands is deprecated which will be removed at 0.4.0, you should use Permissions Plugin to assign permission groups to fake players.");
+        }
     }
 
     private @Nullable Duration getLifespan(@NotNull FileConfiguration file) {
@@ -196,7 +201,7 @@ public class Config extends PluginConfig {
 
     private @NotNull PreventKicking getPreventKicking(@NotNull FileConfiguration file) {
         if (file.getBoolean("prevent-kicked-on-spawning", false)) {
-            log.warning("prevent-kicked-on-spawning is deprecated, use prevent-kick instead");
+            log.warning("prevent-kicked-on-spawning is deprecated which will be removed at 0.4.0, use prevent-kick instead");
             return PreventKicking.ON_SPAWNING;
         }
 
