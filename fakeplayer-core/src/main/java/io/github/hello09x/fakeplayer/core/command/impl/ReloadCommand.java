@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
+import io.github.hello09x.devtools.core.transaction.PluginTranslator;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +16,12 @@ public class ReloadCommand extends AbstractCommand {
 
     private final Config config;
 
+    private final PluginTranslator translator;
+
     @Inject
-    public ReloadCommand(Config config) {
+    public ReloadCommand(Config config, PluginTranslator translator) {
         this.config = config;
+        this.translator = translator;
     }
 
     public void reload(@NotNull CommandSender sender, @NotNull CommandArguments args) {
@@ -26,6 +30,13 @@ public class ReloadCommand extends AbstractCommand {
         if (config.isFileConfigurationOutOfDate()) {
             sender.sendMessage(translatable("fakeplayer.configuration.out-of-date", GRAY));
         }
+    }
+
+    public void reloadTranslation(@NotNull CommandSender sender, @NotNull CommandArguments args) {
+        translator.reload();
+        sender.sendMessage(translatable(
+                "fakeplayer.command.generic.success"
+        ));
     }
 
 }
