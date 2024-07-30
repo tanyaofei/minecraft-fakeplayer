@@ -56,9 +56,9 @@ public class StatusCommand extends AbstractCommand {
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
         var title = translatable(
-                "fakeplayer.command.status.title", GRAY,
+                "fakeplayer.command.status.title",
                 text(target.getName(), WHITE)
-        );
+        ).color(GRAY);
 
         var lines = new ArrayList<Component>(6);
         lines.add(title);
@@ -77,13 +77,13 @@ public class StatusCommand extends AbstractCommand {
         var food = target.getFoodLevel();
         var max = 20.0;
         return translatable(
-                "fakeplayer.command.status.food", WHITE,
+                "fakeplayer.command.status.food",
                 textOfChildren(
                         text(Mth.floor(food, 0.5), color(food, max)),
                         text("/", GRAY),
                         text(max, WHITE)
                 )
-        );
+        ).color(WHITE);
     }
 
     private @NotNull Component getHealthLine(@NotNull Player target) {
@@ -93,12 +93,12 @@ public class StatusCommand extends AbstractCommand {
                              .orElse(20D);
 
         return translatable(
-                "fakeplayer.command.status.health", WHITE,
+                "fakeplayer.command.status.health",
                 textOfChildren(
                         text(Mth.floor(health, 0.5), color(health, max)),
                         text("/", GRAY),
                         text(max, WHITE)
-                )
+                ).color(WHITE)
         );
     }
 
@@ -108,10 +108,10 @@ public class StatusCommand extends AbstractCommand {
 
         return textOfChildren(
                 translatable(
-                        "fakeplayer.command.status.exp", WHITE,
+                        "fakeplayer.command.status.exp",
                         text(level, GREEN),
                         text(points, GREEN)
-                ),
+                ).color(WHITE),
                 space(),
                 translatable("fakeplayer.command.status.exp.withdraw", AQUA).clickEvent(runCommand("/fp expme " + target.getName()))
         );

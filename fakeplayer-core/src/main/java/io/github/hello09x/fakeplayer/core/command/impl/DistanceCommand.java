@@ -40,9 +40,9 @@ public class DistanceCommand extends AbstractCommand {
 
         sender.sendMessage(textOfChildren(
                 translatable(
-                        "fakeplayer.command.distance.title", GRAY,
+                        "fakeplayer.command.distance.title",
                         text(target.getName(), WHITE)
-                ),
+                ).color(GRAY),
                 newline(),
                 translatable("fakeplayer.command.distance.euclidean", GRAY), space(), text(euclidean, WHITE), newline(),
                 translatable("fakeplayer.command.distance.x", GRAY), space(), text(x, WHITE), newline(),

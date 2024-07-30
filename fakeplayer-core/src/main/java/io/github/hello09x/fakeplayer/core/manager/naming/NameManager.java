@@ -97,23 +97,23 @@ public class NameManager {
     public @NotNull SequenceName specify(@NotNull String name) {
         if (name.startsWith("-")) {
             throw new IllegalCustomNameException(translatable(
-                    "fakeplayer.spawn.error.name.start-with-illegal-character", RED,
+                    "fakeplayer.spawn.error.name.start-with-illegal-character",
                     text("-", WHITE)
-            ));
+            ).color(RED));
         }
 
         if (name.length() > MAX_LENGTH) {
             throw new IllegalCustomNameException(translatable(
-                    "fakeplayer.spawn.error.name.too-long", RED,
+                    "fakeplayer.spawn.error.name.too-long",
                     text(MAX_LENGTH, WHITE)
-            ));
+            ).color(RED));
         }
 
         if (name.length() < MIN_LENGTH) {
             throw new IllegalCustomNameException(translatable(
-                    "fakeplayer.spawn.error.name.too-short", RED,
+                    "fakeplayer.spawn.error.name.too-short",
                     text(MIN_LENGTH, WHITE)
-            ));
+            ).color(RED));
         }
 
         if (!config.getNamePattern().asPredicate().test(name)) {

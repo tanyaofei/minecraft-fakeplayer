@@ -20,10 +20,11 @@ public class ExpmeCommand extends AbstractCommand {
         var exp = ExperienceUtils.getExp(target);
 
         if (exp == 0) {
-            sender.sendMessage(translatable(
-                    "fakeplayer.command.expme.error.non-experience",
-                    GRAY,
-                    text(target.getName(), WHITE))
+            sender.sendMessage(
+                    translatable(
+                            "fakeplayer.command.expme.error.non-experience",
+                            text(target.getName(), WHITE)
+                    ).color(GRAY)
             );
             return;
         }
@@ -31,10 +32,10 @@ public class ExpmeCommand extends AbstractCommand {
         ExperienceUtils.clean(target);
         sender.giveExp(exp, false);
         sender.sendMessage(translatable(
-                "fakeplayer.command.expme.success", GRAY,
+                "fakeplayer.command.expme.success",
                 text(target.getName(), WHITE),
                 text(exp, DARK_GREEN)
-        ));
+        ).color(GRAY));
     }
 
 

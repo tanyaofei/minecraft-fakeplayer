@@ -74,9 +74,9 @@ public class RideCommand extends AbstractCommand {
         var distance = target.getLocation().distance(sender.getLocation());
         if (distance > Bukkit.getViewDistance()) {
             sender.sendMessage(translatable(
-                    "fakeplayer.command.ride.me.error.too-far", GRAY,
+                    "fakeplayer.command.ride.me.error.too-far",
                     text(target.getName(), WHITE)
-            ));
+            ).color(GRAY));
             return;
         }
 

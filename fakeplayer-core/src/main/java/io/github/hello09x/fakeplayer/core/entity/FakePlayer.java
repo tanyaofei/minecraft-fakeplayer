@@ -120,10 +120,10 @@ public class FakePlayer {
                     var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
                         throw new RuntimeMessageException(translatable(
-                                "fakeplayer.command.spawn.error.disallowed", RED,
+                                "fakeplayer.command.spawn.error.disallowed",
                                 text(player.getName(), WHITE),
                                 event.kickMessage()
-                        ));
+                        ).color(RED));
                     }
                 })
                 .thenComposeAsync(nul -> SchedulerUtils.runTask(Main.getInstance(), () -> {
@@ -192,18 +192,18 @@ public class FakePlayer {
             var otherWorld = WorldUtils.getOtherWorld(from.getWorld());
             if (otherWorld == null || !player.teleport(otherWorld.getSpawnLocation())) {
                 this.creator.sendMessage(translatable(
-                        "fakeplayer.command.spawn.error.no-mob-spawning-ability", GRAY,
+                        "fakeplayer.command.spawn.error.no-mob-spawning-ability",
                         text(player.getName(), WHITE)
-                ));
+                ).color(GRAY));
             }
         }
 
         Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
             if (!EntityUtils.teleportAndSound(player, to)) {
                 this.creator.sendMessage(translatable(
-                        "fakeplayer.command.spawn.error.teleport-failed", GRAY,
+                        "fakeplayer.command.spawn.error.teleport-failed",
                         text(player.getName(), WHITE)
-                ));
+                ).color(GRAY));
             }
         });
     }

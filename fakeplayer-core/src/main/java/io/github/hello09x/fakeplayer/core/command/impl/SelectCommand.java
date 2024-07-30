@@ -20,9 +20,9 @@ public class SelectCommand extends AbstractCommand {
             sender.sendMessage(translatable("fakeplayer.command.select.success.clear", GRAY));
         } else {
             sender.sendMessage(translatable(
-                    "fakeplayer.command.select.success.selected", GRAY,
+                    "fakeplayer.command.select.success.selected",
                     text(target.getName(), WHITE)
-            ));
+            ).color(GRAY));
         }
     }
 
@@ -32,9 +32,9 @@ public class SelectCommand extends AbstractCommand {
             sender.sendMessage(translatable("fakeplayer.command.selection.error.none", GRAY));
         } else {
             sender.sendMessage(translatable(
-                    "fakeplayer.command.selection.success", GRAY,
+                    "fakeplayer.command.selection.success",
                     text(selection.getName(), WHITE)
-            ));
+            ).color(GRAY));
         }
     }
 

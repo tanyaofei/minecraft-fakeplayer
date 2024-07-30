@@ -33,11 +33,11 @@ public class SetCommand extends AbstractCommand {
 
         config.accessor().setter().accept(target, value);
         sender.sendMessage(translatable(
-                "fakeplayer.command.set.success", GRAY,
+                "fakeplayer.command.set.success",
                 text(target.getName(), WHITE),
                 translatable(config, GOLD),
                 text(value.toString(), WHITE)
-        ));
+        ).color(GRAY));
     }
 
 }

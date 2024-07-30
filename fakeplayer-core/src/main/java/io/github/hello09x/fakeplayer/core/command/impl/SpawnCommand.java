@@ -75,18 +75,16 @@ public class SpawnCommand extends AbstractCommand {
                        if (removedAt == null) {
                            message = translatable(
                                    "fakeplayer.command.spawn.success.without-lifespan",
-                                   GRAY,
                                    text(player.getName(), WHITE),
                                    text(toLocationString(spawnpoint), WHITE)
-                           );
+                           ).color(GRAY);
                        } else {
                            message = translatable(
                                    "fakeplayer.command.spawn.success.with-lifespan",
-                                   GRAY,
                                    text(player.getName(), WHITE),
                                    text(toLocationString(spawnpoint), WHITE),
                                    text(REMOVE_AT_FORMATTER.format(removedAt))
-                           );
+                           ).color(GRAY);
                        }
                        Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                            sender.sendMessage(message);
