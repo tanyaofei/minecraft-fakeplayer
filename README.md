@@ -2,30 +2,24 @@
 
 English | [简体中文](README_zh.md)
 
-This is a plugin inspired by Carpet Mod which allows you to spawn fake players to keep chunk loading.
+This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon/fabric-carpet) for Minecraft `1.20.x` and `1.21.x` and above.
 
 [Click me](https://youtu.be/NePaDz-P5nI) to visit a demo video.
 
-## Supported Versions
+## Feature
 
-Only supports [Paper](https://papermc.io) and [Purpur](http://purpurmc.org)
++ Lets you spawn fake players who look like real to the server, they can keep chunk loading
++ Fake players can be recolonized by vanilla commands and plugin commands, such as `/ban`, `/tp`
++ You can open and edit their inventory via `/fp invsee` or Right-Clicking on them
++ You can fully control their moving, jumping, attacking... What's better ? Make it periodical
++ Each player can configure his personal configuration
 
-Required JAVA 21+
+## Requirement
 
-+ supports `1.20`, `1.20.2`, `1.20.3`, `1.20.4`, `1.20.5`, `1.20.6`
-+ supports `1.21`
++ JAVA 21+
++ [Paper](https://papermc.io) or [Purpur](http://purpurmc.org) software
++ [CommandAPI](https://commandapi.jorel.dev) Plugin
 
-## Requirement plugins:
-
-- [CommandAPI](https://commandapi.jorel.dev)
-
-## Features
-
-1. You can spawn some fake players that look like real to the server.
-2. They can be recolonized by commands from other plugins, such as `/ban`, `/tp`, `/pay`
-3. You can edit their inventory
-4. You can have them perform actions like moving, jumping, attacking, and eating. What's better? You can make it periodical!
-5. Let your imagination run wild, have them do more things.
 
 ## Commands
 
@@ -34,14 +28,14 @@ Required JAVA 21+
 | /fp spawn     | Spawn a fake player                       | fakeplayer.command.spawn     |                                                                    |
 | /fp kill      | Kill a fake player                        | fakeplayer.command.kill      |                                                                    |
 | /fp killall   | Kill all fake players on the server       | OP                           |                                                                    |
-| /fp select    | Select a fake player                      | fakeplayer.command.select    | Appears only when player spawned more then 1 fake players          |
+| /fp select    | Select a fake player as default           | fakeplayer.command.select    | Appears only when player spawned more then 1 fake players          |
 | /fp selection | View selected fake player                 | fakeplayer.command.selection | Appears only when player spawned more then 1 fake players          |
 | /fp list      | List spawned fake players                 | fakeplayer.command.list      |                                                                    |
 | /fp distance  | Show distance to a fake player            | fakeplayer.command.distance  |                                                                    |
 | /fp drop      | Drop held item                            | fakeplayer.command.drop      |                                                                    |
 | /fp dropstack | Drop entire stack of the held item        | fakeplayer.command.dropstack |                                                                    |
 | /fp dropinv   | Drop all items in the inventory           | fakeplayer.command.dropinv   |                                                                    |
-| /fp skin      | Copy skin of another player               | fakeplayer.command.skin      | 60 seconds cooldown if copy from a offline player                  | 
+| /fp skin      | Copy skin from another player             | fakeplayer.command.skin      | 60 seconds cooldown if copy from a offline player                  | 
 | /fp invsee    | Open an inventory of a fake player        | fakeplayer.command.invsee    | Right-clicking on fake players has the same effect                 |
 | /fp sleep     | Sleep                                     | fakeplayer.command.sleep     |                                                                    |
 | /fp wakeup    | Wake up                                   | fakeplayer.command.wakeup    |                                                                    |
@@ -52,7 +46,7 @@ Required JAVA 21+
 | /fp tps       | Swap positions with fake player           | fakeplayer.command.tps       |                                                                    |
 | /fp set       | Change the configuration of a fake player | fakeplayer.command.set       |                                                                    |
 | /fp config    | Change default configuration              | fakeplayer.command.config    |                                                                    |
-| /fp expme     | Transfer exp of a fake player to you      | fakeplayer.command.expme     |                                                                    |
+| /fp expme     | Transfer exp to you                       | fakeplayer.command.expme     |                                                                    |
 | /fp attack    | Attack                                    | fakeplayer.command.attack    |                                                                    |
 | /fp mine      | Mine                                      | fakeplayer.command.mine      |                                                                    |
 | /fp use       | Use/Interact/Place                        | fakeplayer.command.use       |                                                                    |
@@ -67,13 +61,33 @@ Required JAVA 21+
 | /fp cmd       | Execute command                           | fakeplayer.command.cmd       |                                                                    |
 | /fp reload    | Reload config file                        | OP                           |                                                                    |
 
-_In addition, fake players are recognized by any command, such as `kick`, `tp`, `ban`, etc._
+## Personal Configuration
+
+Each player can configure his own configuration, it will take effect on the next spawning
+
+Command examples:
+
++ `/fp config list` - View all personalized configurations
++ `/fp config set collidable false` - Set personalized configuration
+
+| Configuration Item | Note                                                                                                                                |
+|--------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| collidable         | Whether collision box is enabled                                                                                                    |
+| invulnerable       | Whether invincible mode is enabled                                                                                                  |
+| look_at_entity     | Automatically look at nearby attackable entities (including players), can be combined with `attack` to automatically fight monsters |
+| pickup_items       | Whether to pick up items                                                                                                            |
+| skin               | Whether to use your skin                                                                                                            |
+| replenish          | Whether to auto-replenish                                                                                                           |
+
+## Plugin configuration
+
+[Click to visit](fakeplayer-core/src/main/resources/config.yml)
 
 ## Permissions
 
-In fact, each command has its permission. But you still can use the following permission packs.
+Each command has its own permission node, but we provided some permissions packs
 
-### Basic Command Group Permissions
+### Permission `fakeplayer.spawn`
 
 `fakeplayer.spawn` includes the following permissions:
 
@@ -93,7 +107,7 @@ In fact, each command has its permission. But you still can use the following pe
 - fakeplayer.command.config - Set default settings
 - fakeplayer.command.set - Set fake player settings
 
-### Teleportation Group Permissions
+### Permission `fakeplayer.tp`
 
 `fakeplayer.tp` includes the following permissions:
 
@@ -101,7 +115,7 @@ In fact, each command has its permission. But you still can use the following pe
 - fakeplayer.command.tphere
 - fakeplayer.command.tps
 
-### Action Control Permissions
+### `fakeplayer.action`
 
 `fakeplayer.action` includes the following permissions:
 
@@ -124,28 +138,6 @@ In fact, each command has its permission. But you still can use the following pe
 If your server does not restrict various player commands, you can use this directly.
 `fakeplayer.basic` includes all secure permissions, except for `/fp cmd` commands.
 
-## Interaction
-
-+ Right-clicking on a fake player allows you to view their inventory.
-
-## Player Personalized Configuration
-
-This is the personalized configuration of each player's created fake player. After modifying the configuration, the next time a fake player is created, it will take effect.
-
-Command examples:
-
-+ `/fp config list` - View all personalized configurations
-+ `/fp config set collidable false` - Set personalized configuration
-
-| Configuration Item | Note                                                                                                                                |
-|--------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| collidable         | Whether collision box is enabled                                                                                                    |
-| invulnerable       | Whether invincible mode is enabled                                                                                                  |
-| look_at_entity     | Automatically look at nearby attackable entities (including players), can be combined with `attack` to automatically fight monsters |
-| pickup_items       | Whether to pick up items                                                                                                            |
-| skin               | Whether to use your skin                                                                                                            |
-| replenish          | Whether to auto-replenish                                                                                                           |
-
 
 # Custom Translation
 1. Create a `message` folder in `plugins/fakeplayer`
@@ -156,17 +148,14 @@ Command examples:
 
 **Make sure the translation file is encoding with UTF-8**
 
-# FAQs (Important - Must Read)
+# FAQs
 
-
-## lost connection: PacketEvents 2.0 failed to inject
+## xxx lost connection: PacketEvents 2.0 failed to inject
 Some plugin change the `Connection` of the fake player, You can set `prevent-kicking` to `ALWAYS` to solve it.
 ```yaml
 # config.yml
 prevent-kicking: ALWAYS
 ```
-
-
 
 ## Fake players do not attract aggression
 
@@ -184,3 +173,4 @@ self-commands:
   - '/register abc123! abc123!'
   - '/login abc123!'
 ```
+
