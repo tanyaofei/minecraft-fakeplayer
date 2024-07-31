@@ -60,11 +60,11 @@ public class UsedIdRepository {
                     }
                     this.UUIDS.add(UUID.fromString(line));
                 } catch (Throwable ignored) {
-                    log.warning("文件 used-uuids.txt 存在非法的 UUID: " + line);
+                    log.warning("used-uuids.txt contains illegal UUID: " + line);
                 }
             }
         } catch (IOException e) {
-            log.warning("无法读取 used-uuids.txt\n" + Throwables.getStackTraceAsString(e));
+            log.warning("Failed to read used-uuids.txt\n" + Throwables.getStackTraceAsString(e));
         }
     }
 
@@ -81,7 +81,7 @@ public class UsedIdRepository {
         try (var out = new FileWriter(file)) {
             IOUtils.writeLines(UUIDS, null, out);
         } catch (IOException e) {
-            log.warning("无法保存 used-uuids.txt\n" + Throwables.getStackTraceAsString(e));
+            log.warning("Failed to save used-uuids.txt\n" + Throwables.getStackTraceAsString(e));
         }
     }
 

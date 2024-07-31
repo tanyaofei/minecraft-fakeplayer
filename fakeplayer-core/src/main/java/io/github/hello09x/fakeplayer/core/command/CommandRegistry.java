@@ -20,7 +20,6 @@ import static net.kyori.adventure.text.Component.translatable;
 
 
 @Singleton
-@SuppressWarnings("SameParameterValue")
 public class CommandRegistry {
 
     @Inject
