@@ -135,7 +135,7 @@ permissions:
       - fakeplayer.config.replenish.chest
 
   fakeplayer.*:
-    description: 'All permissions'
+    description: 'Includes all permissions'
     children:
       - fakeplayer.spawn
       - fakeplayer.tp
