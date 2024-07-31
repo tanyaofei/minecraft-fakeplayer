@@ -7,89 +7,84 @@ website: 'https://github.com/tanyaofei/minecraft-fakeplayer'
 depend:
   - CommandAPI
 
-softdepend:
-  - OpenInv
-
 permissions:
-  # ------ 命令单独权限
   fakeplayer.command.spawn:
-    description: 'spawn 命令权限'
+    description: 'Allow player to run /fp spawn'
   fakeplayer.command.spawn.name:
-    description: 'spawn 命令可以指定名称'
+    description: 'Allow player to run /fp spawn and specify a name'
   fakeplayer.command.spawn.location:
-    description: 'spawn 命令可以指定坐标'
+    description: 'Allow player to run /fp spawn and specify a spawn location'
   fakeplayer.command.kill:
-    description: 'kill 命令权限'
+    description: 'Allow player to run /fp kill'
   fakeplayer.command.list:
-    description: 'list 命令权限'
+    description: 'Allow player to run /fp list'
   fakeplayer.command.select:
-    description: 'select 权限命令'
+    description: 'Allow player to run /fp select'
   fakeplayer.command.selection:
-    description: 'selection 权限命令'
+    description: 'Allow player to run /fp selection'
   fakeplayer.command.distance:
-    description: 'distance 命令权限'
+    description: 'Allow player to run /fp distance'
   fakeplayer.command.drop:
-    description: 'drop 命令权限'
+    description: 'Allow player to run /fp drop'
   fakeplayer.command.dropstack:
-    description: 'dropstack 命令权限'
+    description: 'Allow player to run /fp dropstack'
   fakeplayer.command.dropinv:
-    description: 'dropinv 命令权限'
+    description: 'Allow player to run /fp dropinv'
   fakeplayer.command.skin:
-    description: 'skin 命令权限'
+    description: 'Allow player to run /fp skin'
   fakeplayer.command.invsee:
-    description: 'invsee 命令权限'
+    description: 'Allow player to run /fp invsee'
   fakeplayer.command.status:
-    description: 'status 命令权限'
+    description: 'Allow player to run /fp status'
   fakeplayer.command.respawn:
-    description: 'respawn 命令权限'
+    description: 'Allow player to run /fp respawn'
   fakeplayer.command.expme:
-    description: 'expme 命令权限'
+    description: 'Allow player to run /fp expme'
   fakeplayer.command.tp:
-    description: 'tp 命令权限'
+    description: 'Allow player to run /fp tp'
   fakeplayer.command.tphere:
-    description: 'tphere 命令权限'
+    description: 'Allow player to run /fp tphere'
   fakeplayer.command.tps:
-    description: 'tps 命令权限'
+    description: 'Allow player to run /fp tps'
   fakeplayer.command.config:
-    description: 'config 命令权限'
+    description: 'Allow player to run /fp config'
   fakeplayer.command.set:
-    description: 'set 命令权限'
+    description: 'Allow player to run /fp set'
   fakeplayer.command.attack:
-    description: 'attack 命令权限'
+    description: 'Allow player to run /fp attack'
   fakeplayer.command.mine:
-    description: 'mine 命令权限'
+    description: 'Allow player to run /fp mine'
   fakeplayer.command.use:
-    description: 'use 命令权限'
+    description: 'Allow player to run /fp use'
   fakeplayer.command.jump:
-    description: 'jump 命令权限'
+    description: 'Allow player to run /fp jump'
   fakeplayer.command.sneak:
-    description: 'sneak 命令权限'
+    description: 'Allow player to run /fp sneak'
   fakeplayer.command.look:
-    description: 'look 命令权限'
+    description: 'Allow player to run /fp look'
   fakeplayer.command.turn:
-    description: 'turn 命令权限'
+    description: 'Allow player to run /fp turn'
   fakeplayer.command.move:
-    description: 'move 命令权限'
+    description: 'Allow player to run /fp move'
   fakeplayer.command.ride:
-    description: 'ride 命令权限'
+    description: 'Allow player to run /fp ride'
   fakeplayer.command.swap:
-    description: 'swap 命令权限'
+    description: 'Allow player to run /fp swap'
   fakeplayer.command.sleep:
-    description: 'sleep 命令权限'
+    description: 'Allow player to run /fp sleep'
   fakeplayer.command.wakeup:
-    description: 'wakeup 命令权限'
+    description: 'Allow player to run /fp wakeup'
   fakeplayer.command.hold:
-    description: 'hold 命令权限'
+    description: 'Allow player to run /fp hold'
   fakeplayer.command.cmd:
-    description: 'cmd 命令权限'
+    description: 'Allow player to run /fp cmd'
   fakeplayer.config.replenish:
-    description: '自动补货权限'
+    description: 'Allow player to configure fake players can replenish'
   fakeplayer.config.replenish.chest:
-    description: '补货时允许从附近箱子里补'
+    description: 'Allow player to configure fake players can replenish from nearby chest'
 
-  # ------ 根据命令的分类聚合成一个权限组
   fakeplayer.spawn:
-    description: '所有最基本的命令权限'
+    description: 'Includes all basic permissions'
     children:
       - fakeplayer.command.spawn
       - fakeplayer.command.kill
@@ -108,7 +103,7 @@ permissions:
       - fakeplayer.command.set
 
   fakeplayer.tp:
-    description: '所有关于传送的命令权限'
+    description: 'Includes all permissions about teleport'
     children:
       - fakeplayer.command.tp
       - fakeplayer.command.tphere
@@ -120,7 +115,7 @@ permissions:
       - fakeplayer.command.expme
 
   fakeplayer.action:
-    description: '所有操作假人行为的命令权限'
+    description: 'Includes all permissions about controlling action'
     children:
       - fakeplayer.command.attack
       - fakeplayer.command.mine
@@ -135,33 +130,15 @@ permissions:
       - fakeplayer.command.sleep
       - fakeplayer.command.wakeup
       - fakeplayer.command.hold
+      - fakeplayer.command.stop
       - fakeplayer.config.replenish
       - fakeplayer.config.replenish.chest
 
-  fakeplayer.cmd:
-    description: '假人所有关于命令的权限'
-    children:
-      - fakeplayer.command.exp
-
-  # ------ 根据使用场景将组权限再次聚合
   fakeplayer.*:
-    description: '假人所有权限'
+    description: 'All permissions'
     children:
       - fakeplayer.spawn
       - fakeplayer.tp
       - fakeplayer.exp
       - fakeplayer.action
       - fakeplayer.cmd
-
-  fakeplayer.basic:
-    description: '假人所有基础权限'
-    children:
-      - fakeplayer.spawn
-      - fakeplayer.tp
-      - fakeplayer.exp
-      - fakeplayer.action
-
-  fakeplayer.all:
-    description: '假人所有基础权限(即将删除, 请替换成 `fakeplayer.basic`)'
-    children:
-      - fakeplayer.basic
