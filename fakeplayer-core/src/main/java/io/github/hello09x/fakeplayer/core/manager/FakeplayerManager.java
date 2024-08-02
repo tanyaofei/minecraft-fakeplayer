@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.message.MessageException;
 import io.github.hello09x.devtools.core.message.RuntimeMessageException;
 import io.github.hello09x.devtools.core.utils.Exceptions;
+import io.github.hello09x.devtools.core.utils.MetadataUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
@@ -409,13 +410,12 @@ public class FakeplayerManager {
             return null;
         }
 
-        var uuid = (UUID) p.getMetadata(MetadataKeys.SELECTION)
-                           .stream()
-                           .map(MetadataValue::value)
-                           .filter(Objects::nonNull)
-                           .filter(v -> v.getClass() == UUID.class)
-                           .findAny()
-                           .orElse(null);
+        var uuid = MetadataUtils
+                .find(Main.getInstance(), p, MetadataKeys.SELECTION, UUID.class)
+                .map(MetadataValue::value)
+                .map(UUID.class::cast)
+                .orElse(null);
+
         if (uuid == null) {
             return null;
         }

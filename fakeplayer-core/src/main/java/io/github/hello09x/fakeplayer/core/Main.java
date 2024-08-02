@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.zaxxer.hikari.HikariConfig;
-import io.github.hello09x.devtools.core.PluginEventModule;
 import io.github.hello09x.devtools.core.TranslationModule;
 import io.github.hello09x.devtools.core.transaction.TranslationConfig;
 import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
@@ -41,7 +40,6 @@ public final class Main extends JavaPlugin {
         instance = this;
 
         injector = Guice.createInjector(
-                new PluginEventModule(this),
                 new DatabaseModule(this, Lambdas.configure(new HikariConfig(), config -> {
                     config.setDriverClassName("org.sqlite.JDBC");
                     config.setMaximumPoolSize(1);

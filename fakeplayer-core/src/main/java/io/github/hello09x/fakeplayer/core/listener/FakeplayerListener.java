@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
+import io.github.hello09x.devtools.core.utils.MetadataUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
@@ -21,6 +22,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -81,7 +83,10 @@ public class FakeplayerListener implements Listener {
 
         switch (config.getPreventKicking()) {
             case ON_SPAWNING -> {
-                var spawnAt = MetadataKeys.getSpawnedAt(player);
+                var spawnAt = MetadataUtils
+                        .find(Main.getInstance(), player, MetadataKeys.SPAWNED_AT, Integer.class)
+                        .map(MetadataValue::asInt)
+                        .orElse(null);
                 if (spawnAt != null && Bukkit.getCurrentTick() - spawnAt < 20) {
                     event.setCancelled(true);
                 }

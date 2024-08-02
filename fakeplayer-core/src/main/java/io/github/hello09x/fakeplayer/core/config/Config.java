@@ -4,7 +4,6 @@ package io.github.hello09x.fakeplayer.core.config;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.config.PluginConfig;
-import io.github.hello09x.devtools.core.event.PluginEventRegistry;
 import io.github.hello09x.fakeplayer.core.Main;
 import lombok.Getter;
 import lombok.ToString;
@@ -125,8 +124,8 @@ public class Config extends PluginConfig {
     private PreventKicking preventKicking;
 
     @Inject
-    public Config(@NotNull PluginEventRegistry pluginEventRegistry) {
-        super(Main.getInstance(), pluginEventRegistry);
+    public Config() {
+        super(Main.getInstance());
     }
 
     private static int maxIfZero(int value) {
