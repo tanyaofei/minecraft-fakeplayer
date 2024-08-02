@@ -13,6 +13,7 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.config.PreventKicking;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
+import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
@@ -114,7 +115,7 @@ public class FakePlayer {
      */
     public CompletableFuture<Void> spawnAsync(@NotNull SpawnOption option) {
         var address = ipGen.next();
-        this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNING));
+        this.player.setMetadata(MetadataKeys.SPAWNED_AT, new FixedMetadataValue(Main.getInstance(), Bukkit.getCurrentTick()));
         return SchedulerUtils
                 .runTaskAsynchronously(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);

@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
-import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
+import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
@@ -75,18 +75,20 @@ public class FakeplayerListener implements Listener {
     public void preventKicking(@NotNull PlayerKickEvent event) {
         var player = event.getPlayer();
 
+        if (manager.isNotFake(event.getPlayer())) {
+            return;
+        }
+
         switch (config.getPreventKicking()) {
             case ON_SPAWNING -> {
-                if (player.getMetadata(FakePlayerStatus.METADATA_KEY)
-                          .stream()
-                          .anyMatch(metadata -> metadata.value() == FakePlayerStatus.SPAWNING)
-                ) {
+                var spawnAt = MetadataKeys.getSpawnedAt(player);
+                if (spawnAt != null && Bukkit.getCurrentTick() - spawnAt < 20) {
                     event.setCancelled(true);
-                    log.warning(String.format(
-                            "Canceled kicking fake player '%s' on spawning due to your configuration",
-                            player.getName()
-                    ));
                 }
+                log.warning(String.format(
+                        "Canceled kicking fake player '%s' on spawning due to your configuration",
+                        player.getName()
+                ));
             }
             case ALWAYS -> {
                 if (!ComponentUtils.toString(event.reason()).startsWith("[fakeplayer]")) {
