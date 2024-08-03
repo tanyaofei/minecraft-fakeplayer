@@ -9,6 +9,7 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import org.bukkit.Bukkit;
@@ -39,12 +40,14 @@ public class FakeplayerListener implements Listener {
 
     private final FakeplayerManager manager;
     private final UsedIdRepository usedIdRepository;
+    private final FakePlayerProfileRepository profileRepository;
     private final Config config;
 
     @Inject
-    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, Config config) {
+    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakePlayerProfileRepository profileRepository, Config config) {
         this.manager = manager;
         this.usedIdRepository = usedIdRepository;
+        this.profileRepository = profileRepository;
         this.config = config;
     }
 
@@ -59,7 +62,7 @@ public class FakeplayerListener implements Listener {
             return;
         }
 
-        if (usedIdRepository.contains(player.getUniqueId())) {
+        if (usedIdRepository.contains(player.getUniqueId()) || profileRepository.existsByUUID(player.getUniqueId())) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, textOfChildren(
                     translatable("fakeplayer.listener.login.deny-used-uuid", RED),
                     newline(),

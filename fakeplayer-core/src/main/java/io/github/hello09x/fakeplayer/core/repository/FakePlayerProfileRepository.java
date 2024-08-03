@@ -33,7 +33,7 @@ public class FakePlayerProfileRepository {
 
     public boolean existsByUUID(@NotNull UUID uuid) {
         var sql = "SELECT EXISTS(SELECT 1 FROM fake_player_profile WHERE uuid = ?)";
-        return Boolean.TRUE.equals(jdbc.queryForObject(sql, new BooleanRowMapper()));
+        return Boolean.TRUE.equals(jdbc.queryForObject(sql, new BooleanRowMapper(), uuid.toString()));
     }
 
     public @Nullable UUID selectUUIDByName(@NotNull String name) {
