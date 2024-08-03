@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.devtools.core.transaction.TranslatorUtils;
+import io.github.hello09x.devtools.core.translation.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;

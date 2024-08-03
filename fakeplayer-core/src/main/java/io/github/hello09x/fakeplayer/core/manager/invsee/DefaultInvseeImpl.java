@@ -2,7 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager.invsee;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.translation.PluginTranslator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

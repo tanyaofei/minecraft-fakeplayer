@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.invsee;
 
-import io.github.hello09x.devtools.core.transaction.PluginTranslator;
+import io.github.hello09x.devtools.core.translation.PluginTranslator;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
