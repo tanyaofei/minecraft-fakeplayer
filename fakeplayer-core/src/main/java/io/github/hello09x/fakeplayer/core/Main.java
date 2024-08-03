@@ -2,13 +2,13 @@ package io.github.hello09x.fakeplayer.core;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.zaxxer.hikari.HikariConfig;
 import io.github.hello09x.devtools.core.TranslationModule;
 import io.github.hello09x.devtools.core.translation.TranslationConfig;
 import io.github.hello09x.devtools.core.translation.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.core.utils.Lambdas;
 import io.github.hello09x.devtools.database.DatabaseModule;
+import io.github.hello09x.devtools.database.DatasourceConfig;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
@@ -40,10 +40,10 @@ public final class Main extends JavaPlugin {
         instance = this;
 
         injector = Guice.createInjector(
-                new DatabaseModule(this, Lambdas.configure(new HikariConfig(), config -> {
+                new DatabaseModule(this, Lambdas.configure(new DatasourceConfig(this), config -> {
                     config.setDriverClassName("org.sqlite.JDBC");
-                    config.setMaximumPoolSize(1);
-                    config.setJdbcUrl("jdbc:sqlite:" + new File(this.getDataFolder(), "data.db").getAbsolutePath());
+                    config.setMaxPoolSize(1);
+                    config.setUrl("jdbc:sqlite:" + new File(this.getDataFolder(), "data.db").getAbsolutePath());
                     config.setConnectionTimeout(1000L);
                 })),
                 new TranslationModule(Main.getInstance(), new TranslationConfig(
