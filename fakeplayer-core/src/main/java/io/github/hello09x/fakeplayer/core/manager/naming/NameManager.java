@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
+import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -34,15 +35,17 @@ public class NameManager {
     private final static int MIN_LENGTH = 3; // mojang required
     private final static String FALLBACK_NAME = "_fp_";
 
-    private final UsedIdRepository usedIdRepository;
+    private final UsedIdRepository legacyUsedIdRepository;
+    private final FakePlayerProfileRepository profileRepository;
     private final Config config;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
     private final String serverId;
 
     @Inject
-    public NameManager(UsedIdRepository usedIdRepository, Config config) {
-        this.usedIdRepository = usedIdRepository;
+    public NameManager(UsedIdRepository legacyUsedIdRepository, FakePlayerProfileRepository profileRepository, Config config) {
+        this.legacyUsedIdRepository = legacyUsedIdRepository;
+        this.profileRepository = profileRepository;
         this.config = config;
 
         var file = new File(Main.getInstance().getDataFolder(), "serverid");
@@ -79,13 +82,37 @@ public class NameManager {
      * @return UUID
      */
     private @NotNull UUID uuidFromName(@NotNull String name) {
-        var base = serverId + ":" + name;
-        var uuid = UUID.nameUUIDFromBytes(base.getBytes(StandardCharsets.UTF_8));
-        if (!usedIdRepository.exists(uuid) && Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
-            uuid = UUID.randomUUID();
-            log.warning(String.format("Could not generate a UUID bound with name '%s' which is never played at this server, using random UUID as fallback: %s", name, uuid));
+        {
+            var uuid = profileRepository.selectUUIDByName(name);
+            if (uuid != null) {
+                return uuid;
+            }
         }
-        return uuid;
+
+        // 老数据迁移
+        {
+            var base = serverId + ":" + name;
+            var legacyUUID = UUID.nameUUIDFromBytes(base.getBytes(StandardCharsets.UTF_8));
+            if (legacyUsedIdRepository.contains(legacyUUID)) {
+                profileRepository.insert(name, legacyUUID);
+                legacyUsedIdRepository.remove(legacyUUID);
+                return legacyUUID;
+            }
+        }
+
+        // 新逻辑
+        for (int i = 0; i < 10; i++) {
+            var uuid = UUID.randomUUID();
+            if (profileRepository.existsByUUID(uuid) || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+                continue;
+            }
+            profileRepository.insert(name, uuid);
+            log.info("Fake player '%s' will use '%s' as his UUID".formatted(name, uuid));
+            return uuid;
+        }
+
+        throw new IllegalStateException("Failed to generate uuid for fake player after 10 attempts: " + name);
+
     }
 
     /**
@@ -125,7 +152,7 @@ public class NameManager {
         }
 
         var player = Bukkit.getOfflinePlayer(name);
-        if (player.hasPlayedBefore() && !usedIdRepository.contains(player.getUniqueId())) {
+        if (player.hasPlayedBefore() && !legacyUsedIdRepository.contains(player.getUniqueId())) {
             throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.existed", RED));
         }
 
@@ -171,7 +198,7 @@ public class NameManager {
             return new SequenceName(
                     source,
                     seq,
-                    uuidFromName(name),
+                    this.uuidFromName(name),
                     name
             );
         }

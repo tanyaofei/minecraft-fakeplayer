@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+@Deprecated
 @Singleton
 public class UsedIdRepository {
 
@@ -38,6 +39,9 @@ public class UsedIdRepository {
         UUIDS.add(uuid);
     }
 
+    public void remove(@NotNull UUID uuid) {
+        UUIDS.remove(uuid);
+    }
 
     public boolean exists(@NotNull UUID uuid) {
         return UUIDS.contains(uuid);

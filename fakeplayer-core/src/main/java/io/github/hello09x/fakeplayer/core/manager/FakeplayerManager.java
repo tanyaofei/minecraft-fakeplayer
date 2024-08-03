@@ -17,7 +17,6 @@ import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
-import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
@@ -53,7 +52,6 @@ public class FakeplayerManager {
     private final static Logger log = Main.getInstance().getLogger();
     private final Invsee invsee;
 
-    private final UsedIdRepository usedIdRepository;
     private final NameManager nameManager;
     private final FakeplayerList playerList;
     private final UserConfigManager configManager;
@@ -62,9 +60,8 @@ public class FakeplayerManager {
     private final ScheduledExecutorService lagMonitor;
 
     @Inject
-    public FakeplayerManager(Invsee invsee, UsedIdRepository usedIdRepository, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config) {
+    public FakeplayerManager(Invsee invsee, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config) {
         this.invsee = invsee;
-        this.usedIdRepository = usedIdRepository;
         this.nameManager = nameManager;
         this.playerList = playerList;
         this.configManager = configManager;
@@ -130,7 +127,6 @@ public class FakeplayerManager {
                 .thenApply(nul -> {
                     Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                         this.playerList.add(fp);
-                        this.usedIdRepository.add(target.getUniqueId());
                     });
 
                     Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
