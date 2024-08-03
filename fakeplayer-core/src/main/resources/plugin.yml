@@ -82,6 +82,8 @@ permissions:
     description: 'Allow player to configure fake players can replenish'
   fakeplayer.config.replenish.chest:
     description: 'Allow player to configure fake players can replenish from nearby chest'
+  fakeplayer.config.autofish:
+    description: 'Allow player to configure fake players to auto-fishing'
 
   fakeplayer.spawn:
     description: 'Includes all basic permissions'
@@ -133,6 +135,7 @@ permissions:
       - fakeplayer.command.stop
       - fakeplayer.config.replenish
       - fakeplayer.config.replenish.chest
+      - fakeplayer.config.autofish
 
   fakeplayer.*:
     description: 'Includes all permissions'
