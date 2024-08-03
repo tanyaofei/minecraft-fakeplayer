@@ -56,6 +56,8 @@ public class PlayerListener implements Listener {
         manager.openInventory(event.getPlayer(), target);
     }
 
+
+
     /**
      * 客户端操作假人背包时(将假人的背包物品移动到玩家背包时)的时候，如果是拖拽的, 会被处理成放置到假人的盔甲栏上
      */

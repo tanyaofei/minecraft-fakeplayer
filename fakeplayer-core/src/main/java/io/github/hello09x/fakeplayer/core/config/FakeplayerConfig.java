@@ -25,7 +25,7 @@ import static net.kyori.adventure.text.Component.translatable;
 @Getter
 @ToString
 @Singleton
-public class Config extends PluginConfig {
+public class FakeplayerConfig extends PluginConfig {
 
     private final static Logger log = Main.getInstance().getLogger();
 
@@ -124,7 +124,7 @@ public class Config extends PluginConfig {
     private PreventKicking preventKicking;
 
     @Inject
-    public Config() {
+    public FakeplayerConfig() {
         super(Main.getInstance());
     }
 

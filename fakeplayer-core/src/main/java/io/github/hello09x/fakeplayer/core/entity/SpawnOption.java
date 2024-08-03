@@ -25,7 +25,9 @@ public record SpawnOption(
 
         boolean skin,
 
-        boolean replenish
+        boolean replenish,
+
+        boolean autofish
 
 ) {
 }

@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.core.manager.naming;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
@@ -37,13 +37,13 @@ public class NameManager {
 
     private final UsedIdRepository legacyUsedIdRepository;
     private final FakePlayerProfileRepository profileRepository;
-    private final Config config;
+    private final FakeplayerConfig config;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
     private final String serverId;
 
     @Inject
-    public NameManager(UsedIdRepository legacyUsedIdRepository, FakePlayerProfileRepository profileRepository, Config config) {
+    public NameManager(UsedIdRepository legacyUsedIdRepository, FakePlayerProfileRepository profileRepository, FakeplayerConfig config) {
         this.legacyUsedIdRepository = legacyUsedIdRepository;
         this.profileRepository = profileRepository;
         this.config = config;

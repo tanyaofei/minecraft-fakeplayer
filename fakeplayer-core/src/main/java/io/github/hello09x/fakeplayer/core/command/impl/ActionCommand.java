@@ -7,6 +7,7 @@ import dev.jorel.commandapi.executors.CommandArguments;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,14 @@ public class ActionCommand extends AbstractCommand {
             @NotNull Action.ActionSetting setting
     ) throws WrapperCommandSyntaxException {
         var target = super.getTarget(sender, args);
+        if (action == Action.ActionType.USE
+                && target.getInventory().getItemInMainHand().getType() == Material.FISHING_ROD
+                && manager.isAutofish(target)
+        ) {
+            // 如果是自动钓鱼则改为 1 次
+            setting = Action.ActionSetting.once();
+        }
+
         actionManager.setAction(target, action, setting);
         if (!setting.equals(Action.ActionSetting.once()) || sender instanceof ConsoleCommandSender) {
             sender.sendMessage(translatable("fakeplayer.command.generic.success"));

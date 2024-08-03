@@ -8,7 +8,7 @@ import io.github.hello09x.devtools.core.translation.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.database.DatabaseModule;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
-import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListener;
 import io.github.hello09x.fakeplayer.core.listener.ReplenishListener;
@@ -62,7 +62,7 @@ public final class Main extends JavaPlugin {
             manager.registerEvents(injector.getInstance(ReplenishListener.class), this);
         }
 
-        if (injector.getInstance(Config.class).isCheckForUpdates()) {
+        if (injector.getInstance(FakeplayerConfig.class).isCheckForUpdates()) {
             checkForUpdatesAsync();
         }
 

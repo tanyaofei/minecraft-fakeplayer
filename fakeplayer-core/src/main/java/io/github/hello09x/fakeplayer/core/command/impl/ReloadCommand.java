@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.translation.PluginTranslator;
-import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,12 +14,12 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 @Singleton
 public class ReloadCommand extends AbstractCommand {
 
-    private final Config config;
+    private final FakeplayerConfig config;
 
     private final PluginTranslator translator;
 
     @Inject
-    public ReloadCommand(Config config, PluginTranslator translator) {
+    public ReloadCommand(FakeplayerConfig config, PluginTranslator translator) {
         this.config = config;
         this.translator = translator;
     }

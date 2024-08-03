@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.repository.model;
 
+import io.github.hello09x.devtools.core.utils.SingletonSupplier;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
@@ -54,6 +55,8 @@ public record Config<T>(
 ) implements Translatable {
 
     private static final Map<String, Config<?>> values = new HashMap<>();
+
+    private final static SingletonSupplier<FakeplayerManager> manager = new SingletonSupplier<>(() -> Main.getInjector().getInstance(FakeplayerManager.class));
 
     public static Config<Boolean> collidable = build(
             "collidable",
@@ -133,7 +136,18 @@ public record Config<T>(
             List.of("true", "false"),
             Permission.replenish,
             Boolean::valueOf,
-            new Accessor<>(Main.getInjector().getInstance(FakeplayerManager.class)::isReplenish, Main.getInjector().getInstance(FakeplayerManager.class)::setReplenish)
+            new Accessor<>(manager.get()::isReplenish, manager.get()::setReplenish)
+    );
+
+    public static Config<Boolean> autofish = build(
+            "autofish",
+            "fakeplayer.config.autofish",
+            Boolean.class,
+            false,
+            List.of("true", "false"),
+            Permission.autofish,
+            Boolean::valueOf,
+            new Accessor<>(Main.getInjector().getInstance(FakeplayerManager.class)::isAutofish, Main.getInjector().getInstance(FakeplayerManager.class)::setAutofish)
     );
 
     @SuppressWarnings("unchecked")

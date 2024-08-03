@@ -10,7 +10,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.config.PreventKicking;
 import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
@@ -43,9 +43,11 @@ public class FakePlayer {
 
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
 
-    private final static Config config = Main.getInjector().getInstance(Config.class);
+    private final static FakeplayerConfig config = Main.getInjector().getInstance(FakeplayerConfig.class);
 
     private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
+
+    private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
 
     @NotNull
     @Getter
@@ -167,7 +169,10 @@ public class FakePlayer {
                         Skins.copySkin(playerCreator, this.player);
                     }
                     if (option.replenish()) {
-                        Main.getInjector().getInstance(FakeplayerManager.class).setReplenish(player, true);
+                        manager.setReplenish(player, true);
+                    }
+                    if (option.autofish()) {
+                        manager.setAutofish(player, true);
                     }
 
                     this.network = bridge.createNetwork(address);

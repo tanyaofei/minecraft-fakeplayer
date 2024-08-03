@@ -5,10 +5,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.devtools.core.utils.MetadataUtils;
+import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
@@ -20,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -39,13 +42,15 @@ public class FakeplayerListener implements Listener {
     private final static Logger log = Main.getInstance().getLogger();
 
     private final FakeplayerManager manager;
+    private final ActionManager actionManager;
     private final UsedIdRepository usedIdRepository;
     private final FakePlayerProfileRepository profileRepository;
-    private final Config config;
+    private final FakeplayerConfig config;
 
     @Inject
-    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakePlayerProfileRepository profileRepository, Config config) {
+    public FakeplayerListener(FakeplayerManager manager, ActionManager actionManager, UsedIdRepository usedIdRepository, FakePlayerProfileRepository profileRepository, FakeplayerConfig config) {
         this.manager = manager;
+        this.actionManager = actionManager;
         this.usedIdRepository = usedIdRepository;
         this.profileRepository = profileRepository;
         this.config = config;
@@ -154,6 +159,29 @@ public class FakeplayerListener implements Listener {
         } finally {
             manager.cleanup(target);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void autoFish(@NotNull PlayerFishEvent event) {
+        if (event.getState() != PlayerFishEvent.State.BITE) {
+            return;
+        }
+
+        var player = event.getPlayer();
+        if (manager.isNotFake(player)) {
+            return;
+        }
+
+        if (!player.hasMetadata(MetadataKeys.AUTOFISH)) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            actionManager.setAction(player, Action.ActionType.USE, Action.ActionSetting.once());
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                actionManager.setAction(player, Action.ActionType.USE, Action.ActionSetting.once());
+            }, 10); // 3 ticks CD
+        }, 1);
     }
 
 }

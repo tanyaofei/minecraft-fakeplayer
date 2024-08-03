@@ -9,7 +9,7 @@ import io.github.hello09x.devtools.core.utils.MetadataUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.config.Config;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
@@ -17,6 +17,7 @@ import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
+import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
@@ -56,11 +57,11 @@ public class FakeplayerManager {
     private final FakeplayerList playerList;
     private final UserConfigManager configManager;
     private final NMSBridge nms;
-    private final Config config;
+    private final FakeplayerConfig config;
     private final ScheduledExecutorService lagMonitor;
 
     @Inject
-    public FakeplayerManager(Invsee invsee, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, Config config) {
+    public FakeplayerManager(Invsee invsee, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, FakeplayerConfig config) {
         this.invsee = invsee;
         this.nameManager = nameManager;
         this.playerList = playerList;
@@ -115,12 +116,13 @@ public class FakeplayerManager {
                     var configs = configManager.getConfigs(creator);
                     return new SpawnOption(
                             spawnAt,
-                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.invulnerable),
-                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.collidable),
-                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.look_at_entity),
-                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.pickup_items),
-                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.skin),
-                            configs.getOrDefault(io.github.hello09x.fakeplayer.core.repository.model.Config.replenish)
+                            configs.getOrDefault(Config.invulnerable),
+                            configs.getOrDefault(Config.collidable),
+                            configs.getOrDefault(Config.look_at_entity),
+                            configs.getOrDefault(Config.pickup_items),
+                            configs.getOrDefault(Config.skin),
+                            configs.getOrDefault(Config.replenish),
+                            configs.getOrDefault(Config.autofish)
                     );
                 })
                 .thenComposeAsync(fp::spawnAsync)
@@ -371,6 +373,18 @@ public class FakeplayerManager {
      */
     public boolean isReplenish(@NotNull Player target) {
         return target.hasMetadata(MetadataKeys.REPLENISH);
+    }
+
+    public boolean isAutofish(@NotNull Player target) {
+        return target.hasMetadata(MetadataKeys.AUTOFISH);
+    }
+
+    public void setAutofish(@NotNull Player target, boolean autofish) {
+        if (!autofish) {
+            target.removeMetadata(MetadataKeys.AUTOFISH, Main.getInstance());
+        } else {
+            target.setMetadata(MetadataKeys.AUTOFISH, new FixedMetadataValue(Main.getInstance(), true));
+        }
     }
 
     /**
