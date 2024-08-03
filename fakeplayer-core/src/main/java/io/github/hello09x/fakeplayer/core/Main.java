@@ -6,9 +6,7 @@ import io.github.hello09x.devtools.core.TranslationModule;
 import io.github.hello09x.devtools.core.translation.TranslationConfig;
 import io.github.hello09x.devtools.core.translation.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.Exceptions;
-import io.github.hello09x.devtools.core.utils.Lambdas;
 import io.github.hello09x.devtools.database.DatabaseModule;
-import io.github.hello09x.devtools.database.DatasourceConfig;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.Config;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
@@ -22,7 +20,6 @@ import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 public final class Main extends JavaPlugin {
@@ -40,16 +37,11 @@ public final class Main extends JavaPlugin {
         instance = this;
 
         injector = Guice.createInjector(
-                new DatabaseModule(this, Lambdas.configure(new DatasourceConfig(this), config -> {
-                    config.setDriverClassName("org.sqlite.JDBC");
-                    config.setMaxPoolSize(1);
-                    config.setUrl("jdbc:sqlite:" + new File(this.getDataFolder(), "data.db").getAbsolutePath());
-                    config.setConnectionTimeout(1000L);
-                })),
-                new TranslationModule(Main.getInstance(), new TranslationConfig(
+                new FakeplayerModule(),
+                new DatabaseModule(),
+                new TranslationModule(new TranslationConfig(
                         "message/message",
-                        TranslatorUtils.getDefaultLocale(Main.getInstance()))),
-                new FakeplayerModule()
+                        TranslatorUtils.getDefaultLocale(Main.getInstance())))
         );
     }
 
