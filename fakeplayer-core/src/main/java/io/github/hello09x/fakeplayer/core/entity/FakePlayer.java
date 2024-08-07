@@ -4,7 +4,6 @@ import io.github.hello09x.devtools.core.message.RuntimeMessageException;
 import io.github.hello09x.devtools.core.utils.EntityUtils;
 import io.github.hello09x.devtools.core.utils.SchedulerUtils;
 import io.github.hello09x.devtools.core.utils.WorldUtils;
-import io.github.hello09x.fakeplayer.api.event.FakePlayerSpawnEvent;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
@@ -141,17 +140,6 @@ public class FakePlayer {
                         }
                     }
 
-                    {
-                        var event = this.callSpawnEvent();
-                        if (event.isCancelled() && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
-                            throw new RuntimeMessageException(translatable(
-                                    "fakeplayer.command.spawn.error.disallowed", RED,
-                                    text(player.getName(), WHITE),
-                                    event.getReason()
-                            ));
-                        }
-                    }
-
                     if (config.isDropInventoryOnQuiting()) {
                         // 跨服背包同步插件可能导致假人既丢弃了一份到地上，在重新生成的时候又回来了
                         // 因此在生成的时候清空一次背包
@@ -238,12 +226,6 @@ public class FakePlayer {
                 address.getHostAddress(),
                 address
         );
-        Bukkit.getPluginManager().callEvent(event);
-        return event;
-    }
-
-    private @NotNull FakePlayerSpawnEvent callSpawnEvent() {
-        var event = new FakePlayerSpawnEvent(this.creator, this.player);
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }

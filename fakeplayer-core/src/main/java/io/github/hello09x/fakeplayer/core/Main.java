@@ -9,6 +9,7 @@ import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.database.DatabaseModule;
 import io.github.hello09x.fakeplayer.core.command.CommandRegistry;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
+import io.github.hello09x.fakeplayer.core.listener.FakeplayerLifecycleListener;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListener;
 import io.github.hello09x.fakeplayer.core.listener.ReplenishListener;
@@ -58,6 +59,7 @@ public final class Main extends JavaPlugin {
         {
             var manager = getServer().getPluginManager();
             manager.registerEvents(injector.getInstance(PlayerListener.class), this);
+            manager.registerEvents(injector.getInstance(FakeplayerLifecycleListener.class), this);
             manager.registerEvents(injector.getInstance(FakeplayerListener.class), this);
             manager.registerEvents(injector.getInstance(ReplenishListener.class), this);
         }

@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.core.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandPermission;
-import io.github.hello09x.devtools.command.exception.HelpCommand;
+import io.github.hello09x.devtools.command.HelpCommand;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
@@ -15,7 +15,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.List;
 
-import static io.github.hello09x.devtools.command.exception.Commands.*;
+import static io.github.hello09x.devtools.command.Commands.*;
 import static io.github.hello09x.fakeplayer.core.command.CommandSupports.*;
 import static net.kyori.adventure.text.Component.translatable;
 

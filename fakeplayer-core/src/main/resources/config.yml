@@ -111,50 +111,109 @@ kick-on-dead: true
 #    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
 
-# 预准备命令
-# 假人诞生时会以控制台的身份按顺序执行以下命令, 这些命令会比 `self-commands` 更早执行
-# 你可以用这个来实现权限组的分配之类的命令
-# 占位符:
-#   %p: 假人名称
-#   %u: 假人 uuid
-#   %c: 创建者的名称
-# Server will execute the following commands after the fake player was spawned
-# You can add some commands to give them permission, such as '/lp user %p permission set xxx true'
-# placeholder:
-#    %p: the name of the fake player
-#    %u: the uuid of the fake player
-#    %c: the name of creator
-preparing-commands:
+
+
+# Pre-Spawn-Commands
+# Server will execute the following commands BEFORE trying to spawn a fake player.
+# This is helpful for adding fake player into whitelist
+# Variables:
+#   %p: the name of the fake player
+#   %u: the UUID of the fake player
+#   %c: the name of the creator
+# 服务器会在假人创建前执行这些命令
+# 这里可以添加类似于白名单的命令来保证后续创建过程的正常执行
+# 变量:
+#   %p: 假人的名称
+#   %u: 假人的 UUID
+#   %c: 创建人的名称
+pre-spawn-commands:
   - ''
   - ''
 
-# 假人销毁时执行的命令
-# 与 `preparing-commands` 类似, 会在假人销毁时依次执行的命令
-# 也许可以用来销毁第三方插件的档案?
-# 占位符:
-#   %p: 假人名称
-#   %u: 假人 uuid
-#   %c: 创建者的名称
-# Server will execute the following commands before the fake player was quited(PlayerQuitEvent)
-# you can add some commands to clean up data
-# placeholder:
-#    %p: the name of the fake player
-#    %u: the uuid of the fake player
-#    %c: the name of creator
-destroy-commands:
+# Post-Spawn-Commands
+# Server will execute the following commands DURING spawning (in PlayerJoinEvent).
+# Variables:
+#   %p: the name of the fake player
+#   %u: the UUID of the fake player
+#   %c: the name of the creator
+# 服务器会在假人正在加入游戏中执行这些命令
+# 变量:
+#   %p: 假人的名称
+#   %u: 假人的 UUID
+#   %c: 创建人的名称
+post-spawn-commands:
   - ''
   - ''
 
-# 自执行命令
-# 假人在诞生时会以自己的身份按顺序执行命令
-# 你可以在这里做添加 /register 和 /login 命令来防止 `AuthMe` 等插件踢掉超时未登陆的玩家
-# The fake player will execute the following commands
-# You can add some command to make him to login
-# - '/register ANY_PASSWORD'
-# - '/login ANY_PASSWORD'
+# After-Spawn-Commands
+# Server will execute the following commands AFTER the fake player was spawned (after PlayerJoinEvent).
+# This is helpful for giving permission.
+# Variables:
+#   %p: the name of the fake player
+#   %u: the UUID of the fake player
+#   %c: the name of the creator
+# 服务器会在假人创建后执行这里的命令
+# 这里可以添加一些权限组分配之类的命令
+# 变量:
+#   %p: 假人的名称
+#   %u: 假人的 UUID
+#   %c: 创建人的名称
+after-spawn-commands:
+  - ''
+  - ''
+
+# Self-Commands
+# The fake player will execute the following commands AFTER they were joined the server.
+# This is helpful for them to execute some login command.
+# Ensure the password is complex enough otherwise the login plugin might reject it.
+# Variables:
+#   %p: the name of the fake player
+#   %u: the UUID of the fake player
+#   %c: the name of the creator
+# 假人在加入游戏后会执行以下命令
+# 你可以添加一些登陆命令来让他们完成登陆过程
+# 变量:
+#   %p: 假人的名称
+#   %u: 假人的 UUID
+#   %c: 创建人的名称
 self-commands:
   - ''
   - ''
+
+# Post-Destroy-Commands
+# Server will execute the following commands when the fake player is quiting but not quited (in PlayerQuitEvent)
+# This is helpful for cleaning up their inventory if you want it
+# Variables:
+#   %p: the name of the fake player
+#   %u: the UUID of the fake player
+#   %c: the name of the creator
+# 服务器会在假人正在退出时执行这些命令, 命令执行的那一刻假人还位于服务器
+# 你可以添加一些用来清空假人背包之类的命令
+# 变量:
+#   %p: 假人的名称
+#   %u: 假人的 UUID
+#   %c: 创建人的名称
+post-quit-commands:
+  - ''
+  - ''
+
+# Post-Destroy-Commands
+# Server will execute the following commands AFTER the fake player was quited. (after PlayerQuitEvent)
+# Variables:
+#   %p: the name of the fake player
+#   %u: the UUID of the fake player
+#   %c: the name of the creator
+# 销毁后命令
+# 服务器会在假人退出游戏之后执行这些命令
+# 你可以添加一些清理白名单、取消权限分配、清理某些插件数据等命令
+# 变量:
+#   %p: 假人的名称
+#   %u: 假人的 UUID
+#   %c: 创建人的名称
+after-quit-commands:
+  - ''
+  - ''
+
 
 # 允许玩家让假人执行的命令
 # 在这里你可以放一些你服务器的命令，玩家就可以执行

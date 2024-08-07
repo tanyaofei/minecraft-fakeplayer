@@ -1,6 +1,5 @@
 package io.github.hello09x.fakeplayer.core.listener;
 
-import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
@@ -60,7 +59,7 @@ public class FakeplayerListener implements Listener {
      * 拒绝真实玩家使用假人用过的 ID 登陆
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onLogin(@NotNull PlayerLoginEvent event) {
+    public void rejectForUsedUUID(@NotNull PlayerLoginEvent event) {
         var player = event.getPlayer();
 
         if (InternalAddressGenerator.canBeGenerated(event.getAddress())) {
@@ -119,7 +118,7 @@ public class FakeplayerListener implements Listener {
      * 死亡退出游戏
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onDead(@NotNull PlayerDeathEvent event) {
+    public void kickOnDead(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
         if (manager.isNotFake(player)) {
             return;
@@ -140,29 +139,24 @@ public class FakeplayerListener implements Listener {
     /**
      * 退出游戏掉落背包
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void onQuit(@NotNull PlayerQuitEvent event) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void cleanup(@NotNull PlayerQuitEvent event) {
         var target = event.getPlayer();
         if (manager.isNotFake(target)) {
             return;
         }
 
         try {
-            manager.dispatchCommands(target, config.getDestroyCommands());
-            // 如果移除玩家后没有假人, 则更新命令列表
-            // 这个方法需要在 cleanup 之前执行, 不然无法获取假人的创建者
             if (manager.getCreator(target) instanceof Player creator && manager.countByCreator(creator) == 1) {
                 Bukkit.getScheduler().runTaskLater(Main.getInstance(), creator::updateCommands, 1); // 需要下 1 tick 移除后才正确刷新
             }
-        } catch (Throwable e) {
-            log.warning("执行 destroy-commands 时发生错误: \n" + Throwables.getStackTraceAsString(e));
         } finally {
             manager.cleanup(target);
         }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void autoFish(@NotNull PlayerFishEvent event) {
+    public void autoFishing(@NotNull PlayerFishEvent event) {
         if (event.getState() != PlayerFishEvent.State.BITE) {
             return;
         }

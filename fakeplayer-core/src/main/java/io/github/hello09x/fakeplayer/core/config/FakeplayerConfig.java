@@ -62,19 +62,34 @@ public class FakeplayerConfig extends PluginConfig {
     private int kaleTps;
 
     /**
-     * 准备命令
+     * 创建前执行命令
      */
-    private List<String> preparingCommands;
+    private List<String> preSpawnCommands;
+
+    /**
+     * 创建时执行命令
+     */
+    private List<String> postSpawnCommands;
+
+    /**
+     * 创建后执行命令
+     */
+    private List<String> afterSpawnCommands;
+
+    /**
+     * 退出前执行命令
+     */
+    private List<String> postQuitCommands;
+
+    /**
+     * 退出后命令
+     */
+    private List<String> afterQuitCommands;
 
     /**
      * 自执行命令
      */
     private List<String> selfCommands;
-
-    /**
-     * 销毁命令
-     */
-    private List<String> destroyCommands;
 
     /**
      * 退出时是否丢弃背包物品
@@ -140,8 +155,14 @@ public class FakeplayerConfig extends PluginConfig {
         this.detectIp = file.getBoolean("detect-ip", false);
         this.kaleTps = file.getInt("kale-tps", 0);
         this.selfCommands = file.getStringList("self-commands");
-        this.preparingCommands = file.getStringList("preparing-commands");
-        this.destroyCommands = file.getStringList("destroy-commands");
+        this.preSpawnCommands = file.getStringList("pre-spawn-commands");
+        this.postSpawnCommands = file.getStringList("post-spawn-commands");
+        deprecated:
+        this.afterSpawnCommands = file.getStringList("after-spawn-commands");
+        this.postQuitCommands = file.getStringList("post-quit-commands");
+        this.afterQuitCommands = file.getStringList("after-quit-commands");
+//        this.preparingCommands = file.getStringList("preparing-commands");
+//        this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
         this.persistData = file.getBoolean("persist-data", true);
@@ -169,6 +190,19 @@ public class FakeplayerConfig extends PluginConfig {
         if (!this.allowCommands.isEmpty()) {
             log.warning("allow-commands is deprecated which will be removed at 0.4.0, you should use Permissions Plugin to assign permission groups to fake players.");
         }
+
+        var preparingCommands = file.getStringList("preparing-commands");
+        if (!preparingCommands.isEmpty()) {
+            log.warning("preparing-commands is deprecated, use post-spawn-commands instead.");
+            this.postSpawnCommands.addAll(preparingCommands);
+        }
+
+        var destroyCommands = file.getStringList("destroy-commands");
+        if (!destroyCommands.isEmpty()) {
+            log.warning("destroy-commands is deprecated, use post-quit-commands instead.");
+            this.postQuitCommands.addAll(destroyCommands);
+        }
+
     }
 
     private @Nullable Duration getLifespan(@NotNull FileConfiguration file) {

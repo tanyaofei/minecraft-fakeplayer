@@ -109,8 +109,10 @@ public class FakeplayerManager {
                 sn,
                 lifespan
         );
+
         var target = fp.getPlayer();    // 即使出现异常也不需要处理这个玩家, 最终会被 GC 掉
 
+        this.dispatchCommandsEarly(fp, this.config.getPreSpawnCommands());
         return CompletableFuture
                 .supplyAsync(() -> {
                     var configs = configManager.getConfigs(creator);
@@ -126,15 +128,8 @@ public class FakeplayerManager {
                     );
                 })
                 .thenComposeAsync(fp::spawnAsync)
-                .thenApply(nul -> {
-                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                        this.playerList.add(fp);
-                    });
-
-                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                        this.dispatchCommands(target, config.getPreparingCommands());
-                        this.issueCommands(target, config.getSelfCommands());
-                    }, 20);
+                .thenApply(ignored -> {
+                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> playerList.add(fp));
                     return target;
                 });
     }
@@ -451,11 +446,33 @@ public class FakeplayerManager {
             return;
         }
 
-        for (var cmd : Commands.formatCommands(commands)) {
+        var p = target.getName();
+        var u = target.getUniqueId().toString();
+        var c = Objects.requireNonNull(this.getCreatorName(target));
+        for (var cmd : Commands.formatCommands(commands, "%p", p, "%u", u, "%c", c)) {
             if (!target.performCommand(cmd)) {
                 log.warning(target.getName() + " failed to execute command: " + cmd);
             } else {
                 log.info(target.getName() + " issued command: " + cmd);
+            }
+        }
+    }
+
+    public void dispatchCommandsEarly(@NotNull FakePlayer fp, @NotNull List<String> commands) {
+        if (commands.isEmpty()) {
+            return;
+        }
+
+        var server = Bukkit.getServer();
+        var sender = Bukkit.getConsoleSender();
+        var p = fp.getName();
+        var u = fp.getUUID().toString();
+        var c = fp.getCreator().getName();
+        for (var cmd : Commands.formatCommands(commands, "%p", p, "%u", u, "%c", c)) {
+            if (!server.dispatchCommand(sender, cmd)) {
+                log.warning("Failed to execute command for %s: ".formatted(p) + cmd);
+            } else {
+                log.info("Dispatched command: " + cmd);
             }
         }
     }
@@ -471,20 +488,15 @@ public class FakeplayerManager {
             return;
         }
 
-        if (this.isNotFake(player)) {
-            return;
-        }
-
         var server = Bukkit.getServer();
         var sender = Bukkit.getConsoleSender();
-        for (var cmd : Commands.formatCommands(
-                commands,
-                "%p", player.getName(),
-                "%u", player.getUniqueId().toString(),
-                "%c", Objects.requireNonNull(this.getCreatorName(player)))
-        ) {
+
+        var p = player.getName();
+        var u = player.getUniqueId().toString();
+        var c = Objects.requireNonNull(this.getCreatorName(player));
+        for (var cmd : Commands.formatCommands(commands, "%p", p, "%u", u, "%c", c)) {
             if (!server.dispatchCommand(sender, cmd)) {
-                log.warning("Failed to execute command for %s: ".formatted(player.getName()) + cmd);
+                log.warning("Failed to execute command for %s: ".formatted(p) + cmd);
             } else {
                 log.info("Dispatched command: " + cmd);
             }
@@ -494,20 +506,20 @@ public class FakeplayerManager {
     /**
      * 让玩家打开假人背包
      *
-     * @param creator 玩家
+     * @param viewer 玩家
      * @param target  假人
      * @return 是否打开成功
      */
-    public boolean openInventory(@NotNull Player creator, @NotNull Player target) {
+    public boolean openInventory(@NotNull Player viewer, @NotNull Player target) {
         var fp = this.playerList.getByName(target.getName());
         if (fp == null) {
             return false;
         }
-        if (!creator.isOp() && !fp.isCreator(creator)) {
+        if (!viewer.isOp() && !fp.isCreator(viewer)) {
             return false;
         }
 
-        this.invsee.openInventory(creator, target);
+        this.invsee.openInventory(viewer, target);
         var pos = target.getLocation();
         pos.getWorld().playSound(pos, Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.3f, 1.0f);
         return true;

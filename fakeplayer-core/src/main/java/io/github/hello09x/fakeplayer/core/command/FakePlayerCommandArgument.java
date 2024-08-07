@@ -111,7 +111,8 @@ public class FakePlayerCommandArgument extends Argument<CommandResult> implement
             // Get location sender is looking at if they are a Player, matching vanilla behavior
             // No builtin Commands use the location parameter, but they could
             Location location = null;
-            if (sender instanceof Player player) {
+            if (sender instanceof Player) {
+                var player = (Player) sender;
                 Block block = player.getTargetBlockExact(5, FluidCollisionMode.NEVER);
                 if (block != null) {
                     location = block.getLocation();
