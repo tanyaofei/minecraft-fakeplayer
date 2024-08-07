@@ -24,16 +24,19 @@ server-limit: 1000
 # Default: 1
 player-limit: 1
 
+
 # 如果启用, 则一个 IP 只能创建 `player-limit` 个假人
 # 能够避免玩家开小号疯狂创建假人
 # Define whether to check if players with the same IP sharing `player-limit`
 detect-ip: true
+
 
 # 假人存活时间, 0 表示永久
 # 单位: 分钟
 # Define the maximum lifespan of fake players
 # Unit: minute, `0` represents permanent
 lifespan: 0
+
 
 # 假人默认名称模版
 # 如果为空, 则跟随创建者的名字并且加上后缀
@@ -58,6 +61,7 @@ lifespan: 0
 #   4. It's not recommended, players may give them RES privileges, or put some items into their inventory.
 name-template: ''
 
+
 # 假人自定义名称允许的字符
 #  格式: 正则表达式
 #  默认: '^[a-zA-Z0-9_]+$'
@@ -66,6 +70,7 @@ name-template: ''
 #   2. 自定义名称需要玩家具有 `fakeplayer.spawn.name` 权限
 #   3. 如果你改了正则表达式, 请确保它以 `^` 开头并且以 `$` 结尾
 name-pattern: '^[a-zA-Z0-9_]+$'
+
 
 # 防止假人被其他插件踢掉, 这个选项用来兼容一些插件因为某些问题而踢掉假人
 # 可选项:
@@ -77,7 +82,8 @@ name-pattern: '^[a-zA-Z0-9_]+$'
 #   NEVER: do not prevent kicking
 #   ON_SPAWNING: only prevent kicking when fake players is spawning, but some plugin will kick them on the next tick, in such causes you should use `ALWAYS`
 #   ALWAYS: always prevent kicking from other plugins and command `/kick`
-prevent-kicking: NEVER
+prevent-kicking: ON_SPAWNING
+
 
 # 跟随下线
 # 假人创建者下线时是否也跟着下线
@@ -85,9 +91,11 @@ prevent-kicking: NEVER
 # Define whether fake personas will be removed when the creator quited.
 follow-quiting: true
 
+
 # 退出时是否丢弃背包物品
 # Define whether fake players will drop items from their inventory when they remove.
 drop-inventory-on-quiting: false
+
 
 # 是否保存假人存档, 如果你将这个设置改成 `false`, 你可能还需要将 `drop-inventory-on-quiting` 设置为 `true` 以防玩家放置一些物品到假人的背包
 # 默认: true
@@ -96,11 +104,13 @@ drop-inventory-on-quiting: false
 # 默认: true
 persistent-data: true
 
+
 # 死亡时是否踢出游戏, 如果设置为 false, 那么玩家可以通过 /fp respawn 命令重生
 # 默认: true
 # Define whether kick the fake player who was dead, if this value is true, players can type command '/fp respawn' to respawn him
 # Default: true
 kick-on-dead: true
+
 
 # 服务器最近 5 分钟平均 TPS 低于这个值清除所有假人
 # 每 60 秒检测一次
@@ -110,7 +120,6 @@ kick-on-dead: true
 # Tips:
 #    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
-
 
 
 # Pre-Spawn-Commands
@@ -130,6 +139,7 @@ pre-spawn-commands:
   - ''
   - ''
 
+
 # Post-Spawn-Commands
 # Server will execute the following commands DURING spawning (in PlayerJoinEvent).
 # Variables:
@@ -144,6 +154,7 @@ pre-spawn-commands:
 post-spawn-commands:
   - ''
   - ''
+
 
 # After-Spawn-Commands
 # Server will execute the following commands AFTER the fake player was spawned (after PlayerJoinEvent).
@@ -161,6 +172,7 @@ post-spawn-commands:
 after-spawn-commands:
   - ''
   - ''
+
 
 # Self-Commands
 # The fake player will execute the following commands AFTER they were joined the server.
@@ -180,6 +192,7 @@ self-commands:
   - ''
   - ''
 
+
 # Post-Destroy-Commands
 # Server will execute the following commands when the fake player is quiting but not quited (in PlayerQuitEvent)
 # This is helpful for cleaning up their inventory if you want it
@@ -196,6 +209,7 @@ self-commands:
 post-quit-commands:
   - ''
   - ''
+
 
 # Post-Destroy-Commands
 # Server will execute the following commands AFTER the fake player was quited. (after PlayerQuitEvent)
