@@ -16,7 +16,6 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 
 ## Requirement
 
-+ JAVA 21+
 + [Paper](https://papermc.io) or [Purpur](http://purpurmc.org) software
 + [CommandAPI](https://commandapi.jorel.dev) Plugin
 
@@ -51,6 +50,7 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 | /fp mine      | Mine                                      | fakeplayer.command.mine      |                                                                    |
 | /fp use       | Use/Interact/Place                        | fakeplayer.command.use       |                                                                    |
 | /fp jump      | Jump                                      | fakeplayer.command.jump      |                                                                    |
+| /fp stop      | Stop all actions                          | fakeplayer.command.stop      |                                                                    |
 | /fp turn      | Turn around                               | fakeplayer.command.turn      |                                                                    |
 | /fp look      | Look at specified location                | fakeplayer.command.look      |                                                                    |
 | /fp move      | Move                                      | fakeplayer.command.mvoe      |                                                                    |
@@ -78,6 +78,7 @@ Command examples:
 | pickup_items       | Whether to pick up items                                                                                                            |
 | skin               | Whether to use your skin                                                                                                            |
 | replenish          | Whether to auto-replenish                                                                                                           |
+| autofish           | Whether to autofish                                                                                                                 |
 
 ## Plugin configuration
 
