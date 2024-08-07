@@ -24,8 +24,7 @@ import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @Singleton
 public class NameManager {
@@ -148,12 +147,17 @@ public class NameManager {
         }
 
         if (Bukkit.getPlayerExact(name) != null) {
-            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.existed", RED));
+            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.online", RED));
         }
 
         var player = Bukkit.getOfflinePlayer(name);
-        if (player.hasPlayedBefore() && !legacyUsedIdRepository.contains(player.getUniqueId())) {
-            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.existed", RED));
+        var uuid = player.getUniqueId();
+        if (player.hasPlayedBefore() && !legacyUsedIdRepository.contains(uuid) && !profileRepository.existsByUUID(uuid)) {
+            throw new IllegalCustomNameException(translatable(
+                    "fakeplayer.spawn.error.name.used",
+                    text(name, GOLD),
+                    text(uuid.toString(), GOLD)
+            ).color(RED));
         }
 
         return new SequenceName(
