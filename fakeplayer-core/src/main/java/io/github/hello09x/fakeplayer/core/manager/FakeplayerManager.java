@@ -111,6 +111,7 @@ public class FakeplayerManager {
         );
 
         var target = fp.getPlayer();    // 即使出现异常也不需要处理这个玩家, 最终会被 GC 掉
+        this.playerList.add(fp);
 
         this.dispatchCommandsEarly(fp, this.config.getPreSpawnCommands());
         return CompletableFuture
@@ -128,10 +129,7 @@ public class FakeplayerManager {
                     );
                 })
                 .thenComposeAsync(fp::spawnAsync)
-                .thenApply(ignored -> {
-                    Bukkit.getScheduler().runTask(Main.getInstance(), () -> playerList.add(fp));
-                    return target;
-                });
+                .thenApply(ignored -> target);
     }
 
     /**
