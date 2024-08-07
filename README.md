@@ -132,9 +132,11 @@ Each command has its own permission node, but we provided some permissions packs
 - fakeplayer.command.swap - Swap main and off-hand items
 - fakeplayer.command.sleep - Sleep
 - fakeplayer.command.wakeup - Wake up
+- fakeplayer.command.stop - Stop all actions
 - fakeplayer.command.hold - Switch hotbar
 - fakeplayer.config.replenish - Auto-replenish
 - fakeplayer.config.replenish.chest - Can replenish from nearby chests when auto-replenishing
+- fakeplayer.config.autofish - Autofish
 
 If your server does not restrict various player commands, you can use this directly.
 `fakeplayer.basic` includes all secure permissions, except for `/fp cmd` commands.
