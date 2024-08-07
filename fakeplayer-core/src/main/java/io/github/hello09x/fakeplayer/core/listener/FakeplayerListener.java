@@ -32,8 +32,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
 @Singleton
 public class FakeplayerListener implements Listener {
@@ -118,12 +119,20 @@ public class FakeplayerListener implements Listener {
      * 死亡退出游戏
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void kickOnDead(@NotNull PlayerDeathEvent event) {
+    public void kickOrNotifyOnDead(@NotNull PlayerDeathEvent event) {
         var player = event.getPlayer();
         if (manager.isNotFake(player)) {
             return;
         }
         if (!config.isKickOnDead()) {
+            var creator = manager.getCreator(player);
+            if (creator != null) {
+                creator.sendMessage(translatable(
+                        "fakeplayer.listener.death.notify",
+                        text(player.getName(), GOLD),
+                        text("/fp respawn", DARK_GREEN, UNDERLINED).clickEvent(runCommand("/fp respawn " + player.getName()))
+                ).color(RED));
+            }
             return;
         }
 

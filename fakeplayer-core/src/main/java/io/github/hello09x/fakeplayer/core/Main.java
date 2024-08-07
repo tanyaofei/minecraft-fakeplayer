@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.core;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.github.hello09x.devtools.command.CommandModule;
 import io.github.hello09x.devtools.core.TranslationModule;
 import io.github.hello09x.devtools.core.translation.TranslationConfig;
 import io.github.hello09x.devtools.core.translation.TranslatorUtils;
@@ -39,6 +40,7 @@ public final class Main extends JavaPlugin {
 
         injector = Guice.createInjector(
                 new FakeplayerModule(),
+                new CommandModule(),
                 new DatabaseModule(),
                 new TranslationModule(new TranslationConfig(
                         "message/message",

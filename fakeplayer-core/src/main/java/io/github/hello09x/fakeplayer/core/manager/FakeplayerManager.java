@@ -2,8 +2,7 @@ package io.github.hello09x.fakeplayer.core.manager;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.devtools.core.message.MessageException;
-import io.github.hello09x.devtools.core.message.RuntimeMessageException;
+import io.github.hello09x.devtools.command.exception.CommandException;
 import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.core.utils.MetadataUtils;
 import io.github.hello09x.fakeplayer.api.spi.Action;
@@ -15,8 +14,6 @@ import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
 import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
-import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
-import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
@@ -93,15 +90,10 @@ public class FakeplayerManager {
             @Nullable String name,
             @NotNull Location spawnAt,
             long lifespan
-    ) throws MessageException {
+    ) {
         this.checkLimit(creator);
 
-        SequenceName sn;
-        try {
-            sn = name == null ? nameManager.register(creator) : nameManager.specify(name);
-        } catch (IllegalCustomNameException e) {
-            throw new RuntimeMessageException(e.getMessage());
-        }
+        var sn = name == null ? nameManager.register(creator) : nameManager.specify(name);
 
         var fp = new FakePlayer(
                 creator,
@@ -527,23 +519,22 @@ public class FakeplayerManager {
      * 检测限制, 不满足条件则抛出异常
      *
      * @param creator 创建者
-     * @throws MessageException 消息
      */
-    private void checkLimit(@NotNull CommandSender creator) throws MessageException {
+    private void checkLimit(@NotNull CommandSender creator) throws CommandException {
         if (creator.isOp()) {
             return;
         }
 
         if (this.playerList.count() >= this.config.getServerLimit()) {
-            throw new MessageException(translatable("fakeplayer.command.spawn.error.server-limit"));
+            throw new CommandException(translatable("fakeplayer.command.spawn.error.server-limit"));
         }
 
         if (this.playerList.getByCreator(creator.getName()).size() >= this.config.getPlayerLimit()) {
-            throw new MessageException(translatable("fakeplayer.command.spawn.error.player-limit"));
+            throw new CommandException(translatable("fakeplayer.command.spawn.error.player-limit"));
         }
 
         if (this.config.isDetectIp() && this.countByAddress(AddressUtils.getAddress(creator)) >= this.config.getPlayerLimit()) {
-            throw new MessageException(translatable("fakeplayer.command.spawn.error.ip-limit"));
+            throw new CommandException(translatable("fakeplayer.command.spawn.error.ip-limit"));
         }
     }
 

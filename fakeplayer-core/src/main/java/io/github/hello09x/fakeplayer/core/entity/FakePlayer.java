@@ -1,6 +1,6 @@
 package io.github.hello09x.fakeplayer.core.entity;
 
-import io.github.hello09x.devtools.core.message.RuntimeMessageException;
+import io.github.hello09x.devtools.command.exception.CommandException;
 import io.github.hello09x.devtools.core.utils.EntityUtils;
 import io.github.hello09x.devtools.core.utils.SchedulerUtils;
 import io.github.hello09x.devtools.core.utils.WorldUtils;
@@ -121,7 +121,7 @@ public class FakePlayer {
                 .runTaskAsynchronously(Main.getInstance(), () -> {
                     var event = this.callPreLoginEvent(address);
                     if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                        throw new RuntimeMessageException(translatable(
+                        throw new CommandException(translatable(
                                 "fakeplayer.command.spawn.error.disallowed",
                                 text(player.getName(), WHITE),
                                 event.kickMessage()
@@ -132,7 +132,7 @@ public class FakePlayer {
                     {
                         var event = this.callLoginEvent(address);
                         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED && config.getPreventKicking().ordinal() < PreventKicking.ON_SPAWNING.ordinal()) {
-                            throw new RuntimeMessageException(translatable(
+                            throw new CommandException(translatable(
                                     "fakeplayer.command.spawn.error.disallowed", RED,
                                     text(player.getName(), WHITE),
                                     event.kickMessage()
