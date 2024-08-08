@@ -32,7 +32,6 @@ public class NameManager {
     private final static Logger log = Main.getInstance().getLogger();
     private final static int MAX_LENGTH = 16;   // mojang required
     private final static int MIN_LENGTH = 3; // mojang required
-    private final static String FALLBACK_NAME = "_fp_";
 
     private final UsedIdRepository legacyUsedIdRepository;
     private final FakePlayerProfileRepository profileRepository;
@@ -118,7 +117,7 @@ public class NameManager {
      * @param name 自定义名称
      * @return 序列名
      */
-    public @NotNull SequenceName specify(@NotNull String name) {
+    public @NotNull SequenceName getSpecifiedName(@NotNull String name) {
         if (name.startsWith("-")) {
             throw new IllegalCustomNameException(translatable(
                     "fakeplayer.spawn.error.name.start-with-illegal-character",
@@ -172,42 +171,42 @@ public class NameManager {
      * @param creator 创建者
      * @return 序列名
      */
-    public @NotNull SequenceName register(@NotNull CommandSender creator) {
+    public @NotNull SequenceName getRegularName(@NotNull CommandSender creator) {
         var source = config.getNameTemplate();
         if (source.isBlank()) {
             source = creator.getName();
         }
         source = source.replace("%c", creator.getName());
 
-        int tries = 10;
-        while (tries != 0) {
-            var seq = nameSources.computeIfAbsent(source, key -> new NameSource(config.getPlayerLimit())).pop();
+        for (int i = 0; i < 10; i++) {
+            var seq = nameSources.computeIfAbsent(source, ignored -> new NameSource(config.getPlayerLimit())).pop();
             var suffix = "_" + (seq + 1);
 
             String name;
             if (source.length() + suffix.length() > MAX_LENGTH) {
-                name = source.substring(0, (MAX_LENGTH - suffix.length()));
+                name = source.substring(0, (MAX_LENGTH - suffix.length())) + suffix;
             } else {
-                name = source;
+                name = source + suffix;
             }
-            name += suffix;
 
             if (Bukkit.getPlayerExact(name) != null) {
-                tries--;
                 continue;
             }
 
-            return new SequenceName(
-                    source,
-                    seq,
-                    this.getUUIDFromName(name),
-                    name
-            );
+            return new SequenceName(source, seq, this.getUUIDFromName(name), name);
         }
 
-        var name = FALLBACK_NAME + RandomStringUtils.random(MAX_LENGTH - FALLBACK_NAME.length(), true, true);
-        log.warning("Could not generate a regular name for the fake player after 10 tries, using a random name as fallback: " + name);
-        return new SequenceName("random", 0, this.getUUIDFromName(name), name);
+        String name;
+        for (int i = 0; i < 10; i++) {
+            name = RandomStringUtils.randomAlphanumeric(MAX_LENGTH);
+            if (Bukkit.getPlayerExact(name) != null) {
+                continue;
+            }
+            log.warning("Failed to generate a regular name for fake player after 10 attempts, using a random name as fallback: " + name);
+            return new SequenceName("random", 0, this.getUUIDFromName(name), name);
+        }
+
+        throw new IllegalStateException("Failed to generate a name for fake player based on creator '%s'".formatted(creator.getName()));
     }
 
     /**
