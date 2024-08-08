@@ -89,6 +89,10 @@ public class FakeplayerListener implements Listener {
             return;
         }
 
+        if (ComponentUtils.toString(event.reason()).startsWith(FakeplayerManager.REMOVAL_REASON_PREFIX)) {
+            return;
+        }
+
         switch (config.getPreventKicking()) {
             case ON_SPAWNING -> {
                 var spawnAt = MetadataUtils
@@ -97,20 +101,18 @@ public class FakeplayerListener implements Listener {
                         .orElse(null);
                 if (spawnAt != null && Bukkit.getCurrentTick() - spawnAt < 20) {
                     event.setCancelled(true);
-                }
-                log.warning(String.format(
-                        "Canceled kicking fake player '%s' on spawning due to your configuration",
-                        player.getName()
-                ));
-            }
-            case ALWAYS -> {
-                if (!ComponentUtils.toString(event.reason()).startsWith("[fakeplayer]")) {
-                    event.setCancelled(true);
                     log.warning(String.format(
-                            "Canceled kicking fake player '%s' due to your configuration",
+                            "Canceled kicking fake player '%s' on spawning due to your configuration",
                             player.getName()
                     ));
                 }
+            }
+            case ALWAYS -> {
+                event.setCancelled(true);
+                log.warning(String.format(
+                        "Canceled kicking fake player '%s' due to your configuration",
+                        player.getName()
+                ));
             }
         }
     }

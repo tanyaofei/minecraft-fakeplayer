@@ -47,6 +47,8 @@ import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 @Singleton
 public class FakeplayerManager {
 
+    public final static String REMOVAL_REASON_PREFIX = "[fakeplayer] ";
+
     private final static Logger log = Main.getInstance().getLogger();
     private final Invsee invsee;
 
@@ -225,7 +227,7 @@ public class FakeplayerManager {
     public int removeAll(@Nullable String reason) {
         var targets = getAll();
         for (var target : targets) {
-            target.kick(text("[fakeplayer] " + (reason == null ? "removed" : reason)));
+            target.kick(text(REMOVAL_REASON_PREFIX + (reason == null ? "removed" : reason)));
         }
         return targets.size();
     }
