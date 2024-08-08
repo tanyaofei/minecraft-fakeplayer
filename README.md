@@ -177,3 +177,7 @@ self-commands:
   - '/login abc123!'
 ```
 
+# Build Project
+See the [introduction](./BUILD.md).
+
+
