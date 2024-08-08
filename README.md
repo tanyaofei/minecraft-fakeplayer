@@ -6,6 +6,8 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 
 [Click me](https://youtu.be/NePaDz-P5nI) to visit a demo video.
 
+If you want more supports, join my [Discord](https://discord.gg/JUk5AZkr)
+
 ## Feature
 
 + Lets you spawn fake players who look like real to the server, they can keep chunk loading
