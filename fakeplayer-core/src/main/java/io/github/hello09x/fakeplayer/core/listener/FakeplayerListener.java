@@ -12,7 +12,6 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -60,10 +59,9 @@ public class FakeplayerListener implements Listener {
      * 拒绝真实玩家使用假人用过的 ID 登陆
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
-    public void rejectForUsedUUID(@NotNull PlayerLoginEvent event) {
+    public void disallowUsedUUIDLogin(@NotNull PlayerLoginEvent event) {
         var player = event.getPlayer();
-
-        if (InternalAddressGenerator.canBeGenerated(event.getAddress())) {
+        if (player.hasMetadata(MetadataKeys.SPAWNED_AT)) {
             return;
         }
 
@@ -74,7 +72,7 @@ public class FakeplayerListener implements Listener {
                     newline(),
                     text("<<---- fakeplayer ---->>", GRAY)
             ));
-            log.info("%s(%s) was refused to login cause his UUID was used by [Fakeplayer]".formatted(
+            log.info("%s(%s) was disallowed to login because his UUID was used by [Fakeplayer]".formatted(
                     player.getName(),
                     player.getUniqueId()
             ));
