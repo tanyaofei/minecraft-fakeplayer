@@ -23,9 +23,13 @@
 5. 发挥你的想象～
 
 
-# 前置插件:
+## 前置插件:
 
 - [CommandAPI](https://commandapi.jorel.dev)
+
+
+## 配置文件
+与其他插件不同，Fakeplayer 只会生成一份名为 `config.tmpl.yml` 的**模版**配置文件，你需要将它重命名为 `config.yml` 才能用作配置文件。这样的好处是升级的时候可以提前知道新的内容。
 
 ## 命令
 
@@ -387,3 +391,8 @@ allow-commands:
 
 
 ```
+
+# 构建项目
+
+看这个[指引](./BUILD.md)
+

@@ -22,6 +22,10 @@ If you want more supports, join my [Discord](https://discord.gg/JUk5AZkr)
 + [CommandAPI](https://commandapi.jorel.dev) Plugin
 
 
+## Config file
+Unlink other plugins, Fakeplayer only generates a template config file named `config.tmpl.yml`. You need to rename this file to `config.yml` as your configuration file. This approach can let you preview new content when you are upgrading it.
+
+
 ## Commands
 
 | Command       | Description                               | Permission                   | Note                                                               |
