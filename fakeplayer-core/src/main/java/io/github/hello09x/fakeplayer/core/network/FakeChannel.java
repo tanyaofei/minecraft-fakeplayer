@@ -1,4 +1,4 @@
-package io.github.hello09x.fakeplayer.v1_20_R2.network;
+package io.github.hello09x.fakeplayer.core.network;
 
 import io.netty.channel.*;
 import org.jetbrains.annotations.NotNull;
@@ -9,11 +9,9 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 public class FakeChannel extends AbstractChannel {
-
     private final static EventLoop EVENT_LOOP = new DefaultEventLoop();
-
     private final ChannelConfig config = new DefaultChannelConfig(this);
-
+    private final ChannelPipeline pipeline = new FakeChannelPipeline(this);
     private final InetAddress address;
 
     public FakeChannel(@Nullable Channel parent, @NotNull InetAddress address) {
@@ -45,7 +43,7 @@ public class FakeChannel extends AbstractChannel {
 
     @Override
     protected void doWrite(ChannelOutboundBuffer in) throws Exception {
-        for (;;) {
+        for (; ; ) {
             Object msg = in.current();
             if (msg == null) {
                 break;
@@ -67,6 +65,11 @@ public class FakeChannel extends AbstractChannel {
     @Override
     public boolean isOpen() {
         return true;
+    }
+
+    @Override
+    public ChannelPipeline pipeline() {
+        return pipeline;
     }
 
     @Override
