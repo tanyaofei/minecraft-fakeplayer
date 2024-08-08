@@ -61,9 +61,10 @@
 | /fp mine      | 挖掘        | fakeplayer.command.mine      |                         |
 | /fp use       | 使用/交互/放置  | fakeplayer.command.use       |                         |
 | /fp jump      | 跳跃        | fakeplayer.command.jump      |                         |
+| /fp stop      | 停止所有行为    | fakeplayer.command.stop      |                         |
 | /fp turn      | 转身        | fakeplayer.command.turn      |                         |
 | /fp look      | 看向指定位置    | fakeplayer.command.look      |                         |
-| /fp move      | 移动        | fakeplayer.command.move         |                         |
+| /fp move      | 移动        | fakeplayer.command.move      |                         |
 | /fp ride      | 骑乘        | fakeplayer.command.ride      |                         |
 | /fp sneak     | 潜行        | fakeplayer.command.sneak     |                         |
 | /fp swap      | 交换主副手物品   | fakeplayer.command.swap      |                         |
@@ -127,8 +128,10 @@ _此外，假人是一个模拟玩家，因此可以被任何指令所识别比�
 - fakeplayer.command.sleep - 睡觉
 - fakeplayer.command.wakeup - 起床
 - fakeplayer.command.hold - 切换快捷栏
+- fakeplayer.command.stop - 停止所有行为
 - fakeplayer.config.replenish - 自动补货
 - fakeplayer.config.replenish.chest - 自动补货时可以从附近箱子里补
+- fakeplayer.config.autofish - 允许自动钓鱼
 
 如果你服务器不限制玩家的各种命令，则可以直接使用这个
 `fakeplayer.basic`
