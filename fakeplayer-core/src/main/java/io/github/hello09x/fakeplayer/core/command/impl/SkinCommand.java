@@ -1,10 +1,11 @@
 package io.github.hello09x.fakeplayer.core.command.impl;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.util.Skins;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerSkinManager;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -23,7 +24,11 @@ public class SkinCommand extends AbstractCommand {
 
     private final Map<CommandSender, MutableInt> spams = new HashMap<>();
 
-    public SkinCommand() {
+    private final FakeplayerSkinManager manager;
+
+    @Inject
+    public SkinCommand(FakeplayerSkinManager manager) {
+        this.manager = manager;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
             spams.entrySet().removeIf(counter -> counter.getValue().decrementAndGet() <= 0);
         }, 0, 1);
@@ -36,20 +41,31 @@ public class SkinCommand extends AbstractCommand {
         var target = getTarget(sender, args);
         var player = Objects.requireNonNull((OfflinePlayer) args.get("player"));
 
-        if (Skins.copySkin(player, target)) {
+        if (manager.useSkin(target, player)) {
+            manager.rememberSkin(sender, target, player);
             return;
         }
 
-        // 调用 Mojang API 来拷贝皮肤
+        // 限制请求数, 防止 mojang api 限流
         if (!sender.isOp() && spams.computeIfAbsent(sender, k -> new MutableInt()).getValue() != 0) {
-            // 限制请求数, 防止 mojang api 限流
             sender.sendMessage(translatable("fakeplayer.command.skin.error.too-many-operations", RED));
             return;
         }
+
         try {
-            Skins.copySkinFromMojang(Main.getInstance(), player, target);
+            this.manager.useSkinAsync(target, player)
+                        .thenAcceptAsync(success -> {
+                            manager.rememberSkin(sender, target, player);
+                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                                if (success) {
+                                    target.sendMessage(translatable("fakeplayer.command.generic.success"));
+                                }
+                            });
+                        });
         } finally {
-            spams.put(sender, new MutableInt(1200));
+            if (!sender.isOp()) {
+                spams.put(sender, new MutableInt(1200));
+            }
         }
     }
 

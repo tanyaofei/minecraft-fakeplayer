@@ -11,13 +11,12 @@ import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.config.PreventKicking;
-import io.github.hello09x.fakeplayer.core.constant.FakePlayerStatus;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerSkinManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
-import io.github.hello09x.fakeplayer.core.util.Skins;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,6 +46,8 @@ public class FakePlayer {
     private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
 
     private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
+
+    private final static FakeplayerSkinManager skinManager = Main.getInjector().getInstance(FakeplayerSkinManager.class);
 
     @NotNull
     @Getter
@@ -103,7 +104,6 @@ public class FakePlayer {
         this.handle = bridge.fromServer(Bukkit.getServer()).newPlayer(uuid, name);
         this.player = handle.getPlayer();
 
-        this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.PENDING));
         this.ticker = new FakeplayerTicker(this, lifespan);
         this.player.setPersistent(config.isPersistData());
         this.player.setSleepingIgnored(true);
@@ -153,8 +153,8 @@ public class FakePlayer {
                     if (option.lookAtEntity()) {
                         Main.getInjector().getInstance(ActionManager.class).setAction(player, Action.ActionType.LOOK_AT_NEAREST_ENTITY, Action.ActionSetting.continuous());
                     }
-                    if (option.skin() && this.creator instanceof Player playerCreator) {
-                        Skins.copySkin(playerCreator, this.player);
+                    if (option.skin()) {
+                        skinManager.useDefaultSkin(creator, player);
                     }
                     if (option.replenish()) {
                         manager.setReplenish(player, true);
@@ -170,7 +170,6 @@ public class FakePlayer {
 
                     this.teleportToSpawnpoint(option.spawnAt().clone());
                     this.ticker.runTaskTimer(Main.getInstance(), 0, 1);
-                    this.player.setMetadata(FakePlayerStatus.METADATA_KEY, new FixedMetadataValue(Main.getInstance(), FakePlayerStatus.SPAWNED));
                 }));
     }
 
