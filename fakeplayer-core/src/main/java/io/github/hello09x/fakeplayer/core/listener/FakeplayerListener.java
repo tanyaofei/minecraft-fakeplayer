@@ -12,6 +12,7 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -183,7 +184,7 @@ public class FakeplayerListener implements Listener {
             actionManager.setAction(player, Action.ActionType.USE, Action.ActionSetting.once());
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 actionManager.setAction(player, Action.ActionType.USE, Action.ActionSetting.once());
-            }, 10); // 3 ticks CD
+            }, Ticks.TICKS_PER_SECOND);
         }, 1);
     }
 
