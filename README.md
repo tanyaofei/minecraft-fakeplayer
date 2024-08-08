@@ -8,7 +8,7 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 
 If you want more supports, join my [Discord](https://discord.gg/JUk5AZkr)
 
-## Feature
+## Features
 
 + Lets you spawn fake players who look like real to the server, they can keep chunk loading
 + Fake players can be recolonized by vanilla commands and plugin commands, such as `/ban`, `/tp`
@@ -16,14 +16,16 @@ If you want more supports, join my [Discord](https://discord.gg/JUk5AZkr)
 + You can fully control their moving, jumping, attacking... What's better ? Make it periodical
 + Each player can configure his personal configuration
 
-## Requirement
+## Requirements
 
 + [Paper](https://papermc.io) or [Purpur](http://purpurmc.org) software
 + [CommandAPI](https://commandapi.jorel.dev) Plugin
 
 
 ## Config file
-Unlink other plugins, Fakeplayer only generates a template config file named `config.tmpl.yml`. You need to rename this file to `config.yml` as your configuration file. This approach can let you preview new content when you are upgrading it.
+Unlink other plugins, Fakeplayer only generates a template config file named `config.tmpl.yml`.
+You need to rename this file to `config.yml` as your configuration file.
+This approach can let you preview new content when you are upgrading it.
 
 
 ## Commands
