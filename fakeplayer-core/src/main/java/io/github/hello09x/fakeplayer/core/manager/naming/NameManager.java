@@ -106,7 +106,6 @@ public class NameManager {
                 continue;
             }
             profileRepository.insert(name, uuid);
-            log.info("Fake player '%s' will use '%s' as his UUID".formatted(name, uuid));
             return uuid;
         }
 
