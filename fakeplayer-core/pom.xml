@@ -37,17 +37,17 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.hello09x</groupId>
+            <groupId>com.github.tanyaofei.devtools</groupId>
             <artifactId>devtools-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.hello09x</groupId>
+            <groupId>com.github.tanyaofei.devtools</groupId>
             <artifactId>devtools-command</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.hello09x</groupId>
+            <groupId>com.github.tanyaofei.devtools</groupId>
             <artifactId>devtools-database</artifactId>
         </dependency>
 
