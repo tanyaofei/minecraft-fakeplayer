@@ -137,7 +137,7 @@ public class FakeplayerManager {
     public @Nullable Player get(@NotNull CommandSender creator, @NotNull String name) {
         return Optional
                 .ofNullable(this.playerList.getByName(name))
-                .filter(p -> p.isCreator(creator))
+                .filter(p -> p.isCreatedBy(creator))
                 .map(FakePlayer::getPlayer)
                 .orElse(null);
     }
@@ -508,7 +508,7 @@ public class FakeplayerManager {
         if (fp == null) {
             return false;
         }
-        if (!viewer.isOp() && !fp.isCreator(viewer)) {
+        if (!viewer.isOp() && !fp.isCreatedBy(viewer)) {
             return false;
         }
 

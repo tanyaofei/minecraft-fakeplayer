@@ -236,7 +236,7 @@ public class FakePlayer {
      * @param sender 命令执行者
      * @return 是否是创建者
      */
-    public boolean isCreator(@NotNull CommandSender sender) {
+    public boolean isCreatedBy(@NotNull CommandSender sender) {
         if (this.creator instanceof Player pc && sender instanceof Player ps) {
             return pc.getUniqueId().equals(ps.getUniqueId());
         }
