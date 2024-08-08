@@ -80,7 +80,7 @@ public class NameManager {
      * @param name 名称
      * @return UUID
      */
-    private @NotNull UUID uuidFromName(@NotNull String name) {
+    private @NotNull UUID getUUIDFromName(@NotNull String name) {
         {
             var uuid = profileRepository.selectUUIDByName(name);
             if (uuid != null) {
@@ -102,15 +102,14 @@ public class NameManager {
         // 新逻辑
         for (int i = 0; i < 10; i++) {
             var uuid = UUID.randomUUID();
-            if (profileRepository.existsByUUID(uuid) || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+            if (legacyUsedIdRepository.contains(uuid) || profileRepository.existsByUUID(uuid) || Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
                 continue;
             }
             profileRepository.insert(name, uuid);
             return uuid;
         }
 
-        throw new IllegalStateException("Failed to generate uuid for fake player after 10 attempts: " + name);
-
+        throw new IllegalStateException("Failed to generate uuid for fake player '%s' after 10 attempts".formatted(name));
     }
 
     /**
@@ -162,7 +161,7 @@ public class NameManager {
         return new SequenceName(
                 "custom",
                 0,
-                this.uuidFromName(name),
+                this.getUUIDFromName(name),
                 name
         );
     }
@@ -201,14 +200,14 @@ public class NameManager {
             return new SequenceName(
                     source,
                     seq,
-                    this.uuidFromName(name),
+                    this.getUUIDFromName(name),
                     name
             );
         }
 
         var name = FALLBACK_NAME + RandomStringUtils.random(MAX_LENGTH - FALLBACK_NAME.length(), true, true);
         log.warning("Could not generate a regular name for the fake player after 10 tries, using a random name as fallback: " + name);
-        return new SequenceName("random", 0, uuidFromName(name), name);
+        return new SequenceName("random", 0, this.getUUIDFromName(name), name);
     }
 
     /**
