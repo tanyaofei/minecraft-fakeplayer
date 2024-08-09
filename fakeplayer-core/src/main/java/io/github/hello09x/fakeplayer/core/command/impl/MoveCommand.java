@@ -48,7 +48,7 @@ public class MoveCommand extends AbstractCommand {
                 }
             };
 
-            this.stopTasks.put(fakeId, stopping.runTaskLater(Main.getInstance(), 20));
+            this.stopTasks.put(fakeId, stopping.runTaskLater(Main.getInstance(), fake.isSprinting() ? 40 : 20));
         };
     }
 
