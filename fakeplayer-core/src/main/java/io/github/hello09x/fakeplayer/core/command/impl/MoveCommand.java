@@ -3,8 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.core.Main;
-import net.kyori.adventure.util.Ticks;
-import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
@@ -36,12 +35,20 @@ public class MoveCommand extends AbstractCommand {
                 task.cancel();
             }
 
-            // 只移动 1 秒
-            this.stopTasks.put(fake.getUniqueId(), Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                handle.setXxa(0);
-                handle.setZza(0);
-                this.stopTasks.remove(fake.getUniqueId());
-            }, Ticks.TICKS_PER_SECOND));
+            var fakeId = fake.getUniqueId();
+            var stopping = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    handle.setXxa(0);
+                    handle.setZza(0);
+                    var self = stopTasks.get(fakeId);
+                    if (self != null && self.getTaskId() == this.getTaskId()) {
+                        stopTasks.remove(fakeId);
+                    }
+                }
+            };
+
+            this.stopTasks.put(fakeId, stopping.runTaskLater(Main.getInstance(), 20));
         };
     }
 
