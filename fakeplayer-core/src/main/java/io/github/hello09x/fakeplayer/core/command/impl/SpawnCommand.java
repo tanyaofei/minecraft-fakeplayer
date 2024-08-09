@@ -6,6 +6,7 @@ import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.command.exception.CommandException;
 import io.github.hello09x.devtools.command.exception.HandleCommandException;
 import io.github.hello09x.fakeplayer.core.Main;
+import io.github.hello09x.fakeplayer.core.entity.FakeplayerTicker;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +69,7 @@ public class SpawnCommand extends AbstractCommand {
         }
 
         var removedAt = Optional.ofNullable(config.getLifespan()).map(lifespan -> LocalDateTime.now().plus(lifespan)).orElse(null);
-        manager.spawnAsync(sender, name, spawnpoint, Optional.ofNullable(config.getLifespan()).map(Duration::toMillis).orElse(-1L))
+        manager.spawnAsync(sender, name, spawnpoint, Optional.ofNullable(config.getLifespan()).map(Duration::toMillis).orElse(FakeplayerTicker.NON_REMOVE_AT))
                .thenAcceptAsync(player -> {
                    if (player == null) {
                        return;

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class FakeplayerTicker extends BukkitRunnable {
 
-    public final static long NO_REMOVE_AT = -1;
+    public final static long NON_REMOVE_AT = -1;
 
     @NotNull
     private final FakePlayer player;
@@ -30,7 +30,7 @@ public class FakeplayerTicker extends BukkitRunnable {
             long lifespan
     ) {
         this.player = player;
-        this.removeAt = lifespan > 0 ? System.currentTimeMillis() + lifespan : NO_REMOVE_AT;
+        this.removeAt = lifespan > 0 ? System.currentTimeMillis() + lifespan : NON_REMOVE_AT;
         this.firstTick = true;
     }
 
@@ -41,7 +41,7 @@ public class FakeplayerTicker extends BukkitRunnable {
             return;
         }
 
-        if (this.removeAt != NO_REMOVE_AT && this.player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
+        if (this.removeAt != NON_REMOVE_AT && this.player.getTickCount() % 20 == 0 && System.currentTimeMillis() > removeAt) {
             Main.getInjector().getInstance(FakeplayerManager.class).remove(player.getName(), "lifespan ends");
             super.cancel();
             return;
