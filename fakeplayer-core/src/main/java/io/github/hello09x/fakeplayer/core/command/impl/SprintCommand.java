@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 /**
  * @author tanyaofei
@@ -25,8 +26,8 @@ public class SprintCommand extends AbstractCommand {
                                       .orElse(!fake.isSprinting());
 
         var message = sprinting
-                ? translatable("fakeplayer.command.sprint.success.sprinting", text(fake.getName())).color(GRAY)
-                : translatable("fakeplayer.command.sprint.success.unsprinting", text(fake.getName())).color(GRAY);
+                ? translatable("fakeplayer.command.sprint.success.enabled", text(fake.getName(), WHITE)).color(GRAY)
+                : translatable("fakeplayer.command.sprint.success.disabled", text(fake.getName(), WHITE)).color(GRAY);
         fake.setSprinting(sprinting);
         sender.sendMessage(message);
     }
