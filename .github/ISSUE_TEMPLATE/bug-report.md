@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: 'Clear title is helpful for searching / 简要的标题有利于检索'
 labels: ''
 assignees: ''
 
