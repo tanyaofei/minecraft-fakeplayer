@@ -21,14 +21,14 @@ public class DistanceCommand extends AbstractCommand {
      * 查看距离
      */
     public void distance(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
-        var from = target.getLocation().toBlockLocation();
+        var fake = super.getFakeplayer(sender, args);
+        var from = fake.getLocation().toBlockLocation();
         var to = sender.getLocation().toBlockLocation();
 
         if (!Objects.equals(from.getWorld(), to.getWorld())) {
             sender.sendMessage(translatable(
                     "fakeplayer.command.distance.error.too-far",
-                    text(target.getName(), WHITE)
+                    text(fake.getName(), WHITE)
             ));
             return;
         }
@@ -41,7 +41,7 @@ public class DistanceCommand extends AbstractCommand {
         sender.sendMessage(textOfChildren(
                 translatable(
                         "fakeplayer.command.distance.title",
-                        text(target.getName(), WHITE)
+                        text(fake.getName(), WHITE)
                 ).color(GRAY),
                 newline(),
                 translatable("fakeplayer.command.distance.euclidean", GRAY), space(), text(euclidean, WHITE), newline(),

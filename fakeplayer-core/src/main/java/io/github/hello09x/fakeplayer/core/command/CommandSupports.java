@@ -36,18 +36,18 @@ public abstract class CommandSupports {
     public static @NotNull CommandAPICommand[] newActionCommands(@NotNull Action.ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
-                        .withOptionalArguments(target("name"))
+                        .withOptionalArguments(fakeplayer("name"))
                         .executes(actionCommand.action(action, Action.ActionSetting.once())),
                 command("continuous")
-                        .withOptionalArguments(target("name"))
+                        .withOptionalArguments(fakeplayer("name"))
                         .executes(actionCommand.action(action, Action.ActionSetting.continuous())),
                 command("stop")
-                        .withOptionalArguments(target("name"))
+                        .withOptionalArguments(fakeplayer("name"))
                         .executes(actionCommand.action(action, Action.ActionSetting.stop())),
                 command("interval")
                         .withOptionalArguments(
                                 int32("interval", 1),
-                                target("name"))
+                                fakeplayer("name"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
                     actionCommand.action(sender, args, action, Action.ActionSetting.interval(interval));
@@ -55,7 +55,7 @@ public abstract class CommandSupports {
         };
     }
 
-    public static @NotNull Argument<Player> target(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
+    public static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var target = sender.isOp()
@@ -83,8 +83,8 @@ public abstract class CommandSupports {
     }
 
 
-    public static @NotNull Argument<Player> target(@NotNull String nodeName) {
-        return target(nodeName, null);
+    public static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName) {
+        return fakeplayer(nodeName, null);
     }
 
     public static @NotNull Argument<List<Player>> targets(@NotNull String nodeName) {
@@ -157,23 +157,23 @@ public abstract class CommandSupports {
         })));
     }
 
-    public static boolean hasDeadTarget(@NotNull CommandSender sender) {
+    public static boolean hasFakeplayerForRespawn(@NotNull CommandSender sender) {
         if (config.isKickOnDead()) {
             return false;
         }
-        return hasTarget(sender);
+        return hasFakeplayer(sender);
     }
 
     public static boolean needSelect(@NotNull CommandSender sender) {
         return sender.isOp() || (config.getPlayerLimit() > 1 && manager.countByCreator(sender) > 0);
     }
 
-    public static boolean hasTarget(@NotNull CommandSender sender) {
+    public static boolean hasFakeplayer(@NotNull CommandSender sender) {
         return sender.isOp() || manager.countByCreator(sender) > 0;
     }
 
     public static boolean isCmdAvailable(@NotNull CommandSender sender) {
-        return hasTarget(sender) && (sender.hasPermission(Permission.cmd) || !config.getAllowCommands().isEmpty());
+        return hasFakeplayer(sender) && (sender.hasPermission(Permission.cmd) || !config.getAllowCommands().isEmpty());
     }
 
 }

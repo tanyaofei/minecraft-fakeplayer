@@ -35,8 +35,8 @@ public abstract class AbstractCommand {
     @Inject
     protected FakeplayerConfig config;
 
-    protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        return this.getTarget(sender, args, null);
+    protected @NotNull Player getFakeplayer(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        return this.getFakeplayer(sender, args, null);
     }
 
     /**
@@ -54,13 +54,13 @@ public abstract class AbstractCommand {
      * @return 假人
      * @throws WrapperCommandSyntaxException 找不到唯一的假人时抛出次异常
      */
-    protected @NotNull Player getTarget(@NotNull CommandSender sender, @NotNull CommandArguments args, @Nullable Predicate<Player> predicate) throws WrapperCommandSyntaxException {
-        var target = (Player) args.get("name");
-        if (target == null && sender instanceof Player p && args.getRaw("name") == null) {
-            target = manager.getSelection(p);
+    protected @NotNull Player getFakeplayer(@NotNull CommandSender sender, @NotNull CommandArguments args, @Nullable Predicate<Player> predicate) throws WrapperCommandSyntaxException {
+        var fake = (Player) args.get("name");
+        if (fake == null && sender instanceof Player p && args.getRaw("name") == null) {
+            fake = manager.getSelection(p);
         }
-        if (target != null) {
-            return target;
+        if (fake != null) {
+            return fake;
         }
         var locale = TranslatorUtils.getLocale(sender);
 
@@ -92,15 +92,15 @@ public abstract class AbstractCommand {
         return (Player) args.get("name");
     }
 
-    protected @NotNull List<Player> getTargets(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+    protected @NotNull List<Player> getFakeplayers(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         @SuppressWarnings("unchecked")
         var players = (List<Player>) args.get("names");
 
         // 优先选中的假人
         if (players == null || players.isEmpty()) {
-            var target = manager.getSelection(sender);
-            if (target != null) {
-                return Collections.singletonList(target);
+            var fake = manager.getSelection(sender);
+            if (fake != null) {
+                return Collections.singletonList(fake);
             }
         }
 

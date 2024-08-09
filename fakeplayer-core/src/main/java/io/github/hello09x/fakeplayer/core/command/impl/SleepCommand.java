@@ -15,8 +15,8 @@ public class SleepCommand extends AbstractCommand {
      * 睡觉
      */
     public void sleep(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
-        var bed = BlockUtils.getNearbyBlock(target.getLocation(), 4, block -> {
+        var fake = getFakeplayer(sender, args);
+        var bed = BlockUtils.getNearbyBlock(fake.getLocation(), 4, block -> {
             if (!(block.getBlockData() instanceof Bed data)) {
                 return false;
             }
@@ -27,14 +27,14 @@ public class SleepCommand extends AbstractCommand {
             return;
         }
 
-        target.sleep(bed.getLocation(), false);
+        fake.sleep(bed.getLocation(), false);
     }
 
     /**
      * 起床
      */
     public void wakeup(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var target = getFakeplayer(sender, args);
         if (!target.isSleeping()) {
             return;
         }

@@ -12,9 +12,9 @@ import java.util.Objects;
 public class HoldCommand extends AbstractCommand {
 
     public void hold(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
+        var fake = super.getFakeplayer(sender, args);
         var slot = (int) Objects.requireNonNull(args.get("slot"));
-        target.getInventory().setHeldItemSlot(slot - 1);
+        fake.getInventory().setHeldItemSlot(slot - 1);
     }
 
 }

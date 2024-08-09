@@ -21,14 +21,14 @@ public class InvseeCommand extends AbstractCommand {
      * 查看背包
      */
     public void invsee(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
-        if (!Objects.equals(sender.getLocation().getWorld(), target.getLocation().getWorld())) {
+        var fake = super.getFakeplayer(sender, args);
+        if (!Objects.equals(sender.getLocation().getWorld(), fake.getLocation().getWorld())) {
             throw CommandAPI.failWithString(ComponentUtils.toString(
                     translatable("fakeplayer.command.invsee.error.not-the-same-world"),
                     TranslatorUtils.getLocale(sender)
             ));
         }
-        manager.openInventory(sender, target);
+        manager.openInventory(sender, fake);
     }
 
 }

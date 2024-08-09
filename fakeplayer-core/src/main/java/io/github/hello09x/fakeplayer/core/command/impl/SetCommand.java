@@ -17,7 +17,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 public class SetCommand extends AbstractCommand {
 
     public void set(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
+        var target = super.getFakeplayer(sender, args);
 
         @SuppressWarnings("unchecked")
         var config = Objects.requireNonNull((Config<Object>) args.get("config"));

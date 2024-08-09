@@ -38,11 +38,11 @@ public class SkinCommand extends AbstractCommand {
      * 复制皮肤
      */
     public void skin(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var fake = getFakeplayer(sender, args);
         var player = Objects.requireNonNull((OfflinePlayer) args.get("player"));
 
-        if (manager.useSkin(target, player)) {
-            manager.rememberSkin(sender, target, player);
+        if (manager.useSkin(fake, player)) {
+            manager.rememberSkin(sender, fake, player);
             return;
         }
 
@@ -53,12 +53,12 @@ public class SkinCommand extends AbstractCommand {
         }
 
         try {
-            this.manager.useSkinAsync(target, player)
+            this.manager.useSkinAsync(fake, player)
                         .thenAcceptAsync(success -> {
-                            manager.rememberSkin(sender, target, player);
+                            manager.rememberSkin(sender, fake, player);
                             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
                                 if (success) {
-                                    target.sendMessage(translatable("fakeplayer.command.generic.success"));
+                                    fake.sendMessage(translatable("fakeplayer.command.generic.success"));
                                 }
                             });
                         });

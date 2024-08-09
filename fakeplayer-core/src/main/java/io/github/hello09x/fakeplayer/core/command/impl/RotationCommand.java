@@ -23,9 +23,9 @@ public class RotationCommand extends AbstractCommand {
      */
     @SuppressWarnings("UnstableApiUsage")
     public void lookAt(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var fake = getFakeplayer(sender, args);
         var location = Objects.requireNonNull((Location) args.get("location"));
-        target.lookAt(location, LookAnchor.EYES);
+        fake.lookAt(location, LookAnchor.EYES);
     }
 
     /**
@@ -33,33 +33,42 @@ public class RotationCommand extends AbstractCommand {
      */
     public CommandExecutor look(@NotNull Direction direction) {
         return (sender, args) -> {
-            var target = getTarget(sender, args);
-            look(target, direction);
+            var fake = getFakeplayer(sender, args);
+            look(fake, direction);
         };
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public void lookMe(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException{
+        var fake = getFakeplayer(sender, args);
+        if (!Objects.equals(fake.getWorld(), sender.getWorld())) {
+            return;
+        }
+        fake.lookAt(sender.getLocation(), LookAnchor.EYES);
     }
 
     /**
      * 看向给定方向
      */
     private void look(
-            @NotNull Player target,
+            @NotNull Player fake,
             @NotNull Direction direction
     ) {
         switch (direction) {
-            case NORTH -> look(target, 180, 0);
-            case SOUTH -> look(target, 0, 0);
-            case EAST -> look(target, -90, 0);
-            case WEST -> look(target, 90, 0);
-            case UP -> look(target, target.getLocation().getYaw(), -90);
-            case DOWN -> look(target, target.getLocation().getYaw(), 90);
+            case NORTH -> look(fake, 180, 0);
+            case SOUTH -> look(fake, 0, 0);
+            case EAST -> look(fake, -90, 0);
+            case WEST -> look(fake, 90, 0);
+            case UP -> look(fake, fake.getLocation().getYaw(), -90);
+            case DOWN -> look(fake, fake.getLocation().getYaw(), 90);
         }
     }
 
     /**
      * 看向指定方向
      */
-    private void look(@NotNull Player player, float yaw, float pitch) {
-        var handle = bridge.fromPlayer(player);
+    private void look(@NotNull Player fake, float yaw, float pitch) {
+        var handle = bridge.fromPlayer(fake);
         handle.setYRot(yaw % 360);
         handle.setXRot(Mth.clamp(pitch, -90, 90));
     }
@@ -69,8 +78,8 @@ public class RotationCommand extends AbstractCommand {
      */
     public CommandExecutor turn(float yaw, float pitch) {
         return (sender, args) -> {
-            var target = getTarget(sender, args);
-            this.turn(target, yaw, pitch);
+            var fake = getFakeplayer(sender, args);
+            this.turn(fake, yaw, pitch);
         };
     }
 
@@ -78,17 +87,17 @@ public class RotationCommand extends AbstractCommand {
      * 转向指定角度
      */
     public void turnTo(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = getTarget(sender, args);
+        var fake = getFakeplayer(sender, args);
         var rotation = Objects.requireNonNull((Rotation) args.get("rotation"));
-        this.turn(target, rotation.getYaw(), rotation.getPitch());
+        this.turn(fake, rotation.getYaw(), rotation.getPitch());
     }
 
     /**
      * 转向指定方向
      */
-    private void turn(@NotNull Player player, float yaw, float pitch) {
-        var pos = player.getLocation();
-        this.look(player, pos.getYaw() + yaw, pos.getPitch() + pitch);
+    private void turn(@NotNull Player fake, float yaw, float pitch) {
+        var pos = fake.getLocation();
+        this.look(fake, pos.getYaw() + yaw, pos.getPitch() + pitch);
     }
 
 

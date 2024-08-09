@@ -33,11 +33,11 @@ public class ListCommand extends AbstractCommand {
         var page = (int) args.getOptional("page").orElse(1);
         var size = (int) args.getOptional("size").orElse(10);
 
-        var fakers = sender.isOp()
+        var fakes = sender.isOp()
                 ? manager.getAll()
                 : manager.getAll(sender);
 
-        var p = Page.of(fakers, page, size);
+        var p = Page.of(fakes, page, size);
 
         var allowsTp = sender instanceof Player && sender.hasPermission(Permission.tp);
         sender.sendMessage(p.asComponent(

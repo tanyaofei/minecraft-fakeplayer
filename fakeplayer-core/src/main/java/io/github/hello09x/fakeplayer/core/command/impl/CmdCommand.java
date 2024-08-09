@@ -26,7 +26,7 @@ public class CmdCommand extends AbstractCommand {
      * 假人执行命令
      */
     public void cmd(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
+        var fake = super.getFakeplayer(sender, args);
         var command = Objects.requireNonNull((CommandResult) args.get("command"));
 
         var name = command.command().getName();
@@ -40,12 +40,12 @@ public class CmdCommand extends AbstractCommand {
             return;
         }
 
-        if (!command.command().testPermission(target)) {
-            sender.sendMessage(translatable("fakeplayer.command.cmd.error.fakeplayer-has-no-permission", text(target.getName())).color(RED));
+        if (!command.command().testPermission(fake)) {
+            sender.sendMessage(translatable("fakeplayer.command.cmd.error.fakeplayer-has-no-permission", text(fake.getName())).color(RED));
             return;
         }
 
-        if (!command.execute(target)) {
+        if (!command.execute(fake)) {
             sender.sendMessage(translatable("fakeplayer.command.cmd.error.execute-failed", RED));
             return;
         }
@@ -55,10 +55,10 @@ public class CmdCommand extends AbstractCommand {
                 GRAY
         ));
 
-        log.info("%s issued server command: %s".formatted(target.getName(), toString(command)));
+        log.info("%s issued server command: %s".formatted(fake.getName(), stringifyCommand(command)));
     }
 
-    private static @NotNull String toString(@NotNull CommandResult command) {
+    private static @NotNull String stringifyCommand(@NotNull CommandResult command) {
         var builder = new StringBuilder("/");
         builder.append(command.command().getName());
         if (command.args() != null && command.args().length > 0) {

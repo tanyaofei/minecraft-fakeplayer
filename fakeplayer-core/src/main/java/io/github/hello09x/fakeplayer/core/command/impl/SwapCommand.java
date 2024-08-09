@@ -13,8 +13,8 @@ public class SwapCommand extends AbstractCommand {
      * 交换主副手物品
      */
     public void swap(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
-        bridge.fromPlayer(target).swapItemWithOffhand();
+        var fake = super.getFakeplayer(sender, args);
+        bridge.fromPlayer(fake).swapItemWithOffhand();
     }
 
 }

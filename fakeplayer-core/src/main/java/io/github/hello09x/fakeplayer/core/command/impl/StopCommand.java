@@ -23,7 +23,7 @@ public class StopCommand extends AbstractCommand {
     }
 
     public void stop(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
-        actionManager.stop(target);
+        var fake = super.getFakeplayer(sender, args);
+        actionManager.stop(fake);
     }
 }

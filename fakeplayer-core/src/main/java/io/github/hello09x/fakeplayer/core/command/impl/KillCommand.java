@@ -18,17 +18,17 @@ public class KillCommand extends AbstractCommand {
      * 移除假人
      */
     public void kill(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var targets = super.getTargets(sender, args);
+        var fakes = super.getFakeplayers(sender, args);
 
-        if (targets.isEmpty()) {
+        if (fakes.isEmpty()) {
             sender.sendMessage(translatable("fakeplayer.command.kill.error.non-removed", GRAY));
             return;
         }
 
         var names = new StringJoiner(", ");
-        for (var target : targets) {
-            if (manager.remove(target.getName(), "command kill")) {
-                names.add(target.getName());
+        for (var fake : fakes) {
+            if (manager.remove(fake.getName(), "command kill")) {
+                names.add(fake.getName());
             }
         }
         sender.sendMessage(textOfChildren(

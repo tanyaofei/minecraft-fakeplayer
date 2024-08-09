@@ -54,21 +54,21 @@ public class StatusCommand extends AbstractCommand {
      * 查看假人状态
      */
     public void status(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var target = super.getTarget(sender, args);
+        var fake = super.getFakeplayer(sender, args);
         var title = translatable(
                 "fakeplayer.command.status.title",
-                text(target.getName(), WHITE)
+                text(fake.getName(), WHITE)
         ).color(GRAY);
 
         var lines = new ArrayList<Component>(6);
         lines.add(title);
-        lines.add(this.getHealthLine(target));
-        lines.add(this.getFoodLine(target));
+        lines.add(this.getHealthLine(fake));
+        lines.add(this.getFoodLine(fake));
         if (sender.hasPermission(Permission.expme)) {
-            lines.add(this.getExperienceLine(target));
+            lines.add(this.getExperienceLine(fake));
         }
         lines.add(LINE_SPLITTER);
-        lines.add(getConfigLine(target));
+        lines.add(getConfigLine(fake));
 
         sender.sendMessage(join(JoinConfiguration.newlines(), lines));
     }

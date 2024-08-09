@@ -1,8 +1,9 @@
-#  DO NOT EDIT HERE, copy this file and rename as config.yml and use it instead.
-# 【 不要直接修改此文件 】将这份文件复制并重命名为 config.yml 来修改配置文件
-
-# 配置文件版本, 不要修改这个值除非你在升级配置文件
-# THE VERSION OF THIS CONFIG FILE, DO NOT MODIFY IT UNLESS YOU ARE UPGRADING CONFIG FILE
+# =========================================================================================================
+#                               【Important】【非常重要】
+#  DO NOT EDIT config.temp.yml, copy it and rename to config.yml as your configuration file
+#  不要直接修改 config.tmpl.yml 文件，将这份文件复制并重命名为 config.yml 来作为配置文件
+#                               【Important】【非常重要】
+# =========================================================================================================
 version: 16
 
 # 多国语言配置
@@ -12,11 +13,13 @@ version: 16
 i18n:
   locale: zh
 
+
 # 服务器最多存在多少个假人
 # 默认: 1000
 # Define the maximum number of fake players on the server at the same time
 # default: 1000
 server-limit: 1000
+
 
 # 每个玩家最多创建多少个假人
 # 默认: 1
@@ -52,9 +55,9 @@ lifespan: 0
 # Name template of fake players
 # If this value is empty, fake players will use creators' name as their name and add a numerical suffix.
 # Otherwise, fake players will use this value as their names and add a numerical suffix.
-# placeholder:
+# Variables:
 #   %c: the name of the creator
-# tips:
+# Tips:
 #   1. If this value contains characters other than alphabetic, numbers, and underscores, many vanilla commands will not be usable on them.
 #   2. Characters longer than 16 characters will be truncated
 #   3. Can not start with '-'
@@ -106,9 +109,8 @@ persistent-data: true
 
 
 # 死亡时是否踢出游戏, 如果设置为 false, 那么玩家可以通过 /fp respawn 命令重生
-# 默认: true
-# Define whether kick the fake player who was dead, if this value is true, players can type command '/fp respawn' to respawn him
-# Default: true
+# Define whether kick the fake player who was dead,
+# if this value is false, players can type command '/fp respawn' to respawn him
 kick-on-dead: true
 
 
