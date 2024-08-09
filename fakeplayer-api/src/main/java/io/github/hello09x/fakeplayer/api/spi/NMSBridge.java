@@ -5,10 +5,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.InetAddress;
-import java.util.ServiceLoader;
 
 public interface NMSBridge {
 
@@ -24,6 +22,6 @@ public interface NMSBridge {
 
     boolean isSupported();
 
-    @NotNull ActionTicker createAction(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting);
+    @NotNull ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting);
 
 }

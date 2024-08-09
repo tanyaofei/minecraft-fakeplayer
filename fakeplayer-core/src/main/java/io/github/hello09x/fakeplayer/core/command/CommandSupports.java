@@ -5,7 +5,8 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
+import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.ActionCommand;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -33,24 +34,24 @@ public abstract class CommandSupports {
 
     private static final ActionCommand actionCommand = Main.getInjector().getInstance(ActionCommand.class);
 
-    public static @NotNull CommandAPICommand[] newActionCommands(@NotNull Action.ActionType action) {
+    public static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
                         .withOptionalArguments(fakeplayer("name"))
-                        .executes(actionCommand.action(action, Action.ActionSetting.once())),
+                        .executes(actionCommand.action(action, ActionSetting.once())),
                 command("continuous")
                         .withOptionalArguments(fakeplayer("name"))
-                        .executes(actionCommand.action(action, Action.ActionSetting.continuous())),
+                        .executes(actionCommand.action(action, ActionSetting.continuous())),
                 command("stop")
                         .withOptionalArguments(fakeplayer("name"))
-                        .executes(actionCommand.action(action, Action.ActionSetting.stop())),
+                        .executes(actionCommand.action(action, ActionSetting.stop())),
                 command("interval")
                         .withOptionalArguments(
                                 int32("interval", 1),
                                 fakeplayer("name"))
                         .executes((sender, args) -> {
                     int interval = (int) args.getOptional("interval").orElse(1);
-                    actionCommand.action(sender, args, action, Action.ActionSetting.interval(interval));
+                    actionCommand.action(sender, args, action, ActionSetting.interval(interval));
                 })
         };
     }

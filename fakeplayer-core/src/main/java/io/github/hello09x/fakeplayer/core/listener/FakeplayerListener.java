@@ -4,7 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.devtools.core.utils.MetadataUtils;
-import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
+import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
@@ -181,9 +182,9 @@ public class FakeplayerListener implements Listener {
         }
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            actionManager.setAction(player, Action.ActionType.USE, Action.ActionSetting.once());
+            actionManager.setAction(player, ActionType.USE, ActionSetting.once());
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                actionManager.setAction(player, Action.ActionType.USE, Action.ActionSetting.once());
+                actionManager.setAction(player, ActionType.USE, ActionSetting.once());
             }, Ticks.TICKS_PER_SECOND);
         }, 1);
     }

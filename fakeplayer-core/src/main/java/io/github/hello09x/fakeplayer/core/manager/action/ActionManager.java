@@ -2,8 +2,9 @@ package io.github.hello09x.fakeplayer.core.manager.action;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
 import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
+import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import org.bukkit.Bukkit;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Singleton
 public class ActionManager {
 
-    private final Map<UUID, Map<Action.ActionType, ActionTicker>> managers = new HashMap<>();
+    private final Map<UUID, Map<ActionType, ActionTicker>> managers = new HashMap<>();
 
     private final NMSBridge bridge;
 
@@ -29,8 +30,8 @@ public class ActionManager {
 
     public void setAction(
             @NotNull Player player,
-            @NotNull Action.ActionType action,
-            @NotNull Action.ActionSetting setting
+            @NotNull ActionType action,
+            @NotNull ActionSetting setting
     ) {
         var managers = this.managers.computeIfAbsent(player.getUniqueId(), key -> new HashMap<>());
         managers.put(action, bridge.createAction(player, action, setting));
@@ -43,8 +44,8 @@ public class ActionManager {
         }
 
         for (var entry : managers.entrySet()) {
-            if (!entry.getValue().equals(Action.ActionSetting.stop())) {
-                entry.setValue(bridge.createAction(player, entry.getKey(), Action.ActionSetting.stop()));
+            if (!entry.getValue().equals(ActionSetting.stop())) {
+                entry.setValue(bridge.createAction(player, entry.getKey(), ActionSetting.stop()));
             }
         }
     }

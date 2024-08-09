@@ -1,8 +1,6 @@
 package io.github.hello09x.fakeplayer.core.entity.action;
 
-import io.github.hello09x.fakeplayer.api.spi.Action;
-import io.github.hello09x.fakeplayer.api.spi.ActionTicker;
-import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
+import io.github.hello09x.fakeplayer.api.spi.*;
 import io.github.hello09x.fakeplayer.core.entity.action.impl.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +17,9 @@ public abstract class BaseActionTicker implements ActionTicker {
     protected Action action;
 
     @NotNull
-    protected Action.ActionSetting setting;
+    protected ActionSetting setting;
 
-    public BaseActionTicker(NMSBridge nms, @NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
+    public BaseActionTicker(NMSBridge nms, @NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
         this.bridge = nms;
         this.setting = setting;
         this.action = switch (action) {
@@ -38,7 +36,7 @@ public abstract class BaseActionTicker implements ActionTicker {
     @Override
     public boolean tick() {
         // 修复使用盾牌无法停止
-        if (this.setting.equals(Action.ActionSetting.stop())) {
+        if (this.setting.equals(ActionSetting.stop())) {
             this.action.stop();
             return true;
         }

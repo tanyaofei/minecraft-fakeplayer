@@ -5,7 +5,8 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandPermission;
 import io.github.hello09x.devtools.command.HelpCommand;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
-import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
+import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
@@ -219,44 +220,44 @@ public class CommandRegistry {
                                 .withPermission(Permission.attack)
                                 .withShortDescription("fakeplayer.command.attack.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.ATTACK))
-                                .executes(actionCommand.action(Action.ActionType.ATTACK, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.ATTACK))
+                                .executes(actionCommand.action(ActionType.ATTACK, ActionSetting.once())),
                         command("mine")
                                 .withPermission(Permission.mine)
                                 .withShortDescription("fakeplayer.command.mine.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.MINE))
-                                .executes(actionCommand.action(Action.ActionType.MINE, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.MINE))
+                                .executes(actionCommand.action(ActionType.MINE, ActionSetting.once())),
                         command("use")
                                 .withPermission(Permission.use)
                                 .withShortDescription("fakeplayer.command.use.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.USE))
-                                .executes(actionCommand.action(Action.ActionType.USE, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.USE))
+                                .executes(actionCommand.action(ActionType.USE, ActionSetting.once())),
                         command("jump")
                                 .withPermission(Permission.jump)
                                 .withShortDescription("fakeplayer.command.jump.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.JUMP))
-                                .executes(actionCommand.action(Action.ActionType.JUMP, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.JUMP))
+                                .executes(actionCommand.action(ActionType.JUMP, ActionSetting.once())),
                         command("drop")
                                 .withPermission(Permission.drop)
                                 .withShortDescription("fakeplayer.command.drop.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.DROP_ITEM))
-                                .executes(actionCommand.action(Action.ActionType.DROP_ITEM, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.DROP_ITEM))
+                                .executes(actionCommand.action(ActionType.DROP_ITEM, ActionSetting.once())),
                         command("dropstack")
                                 .withPermission(Permission.dropstack)
                                 .withShortDescription("fakeplayer.command.dropstack.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.DROP_STACK))
-                                .executes(actionCommand.action(Action.ActionType.DROP_STACK, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.DROP_STACK))
+                                .executes(actionCommand.action(ActionType.DROP_STACK, ActionSetting.once())),
                         command("dropinv")
                                 .withPermission(Permission.dropinv)
                                 .withShortDescription("fakeplayer.command.dropinv.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withSubcommands(newActionCommands(Action.ActionType.DROP_INVENTORY))
-                                .executes(actionCommand.action(Action.ActionType.DROP_INVENTORY, Action.ActionSetting.once())),
+                                .withSubcommands(newActionCommands(ActionType.DROP_INVENTORY))
+                                .executes(actionCommand.action(ActionType.DROP_INVENTORY, ActionSetting.once())),
                         command("sneak")
                                 .withPermission(Permission.sneak)
                                 .withShortDescription("fakeplayer.command.sneak.description")
@@ -306,7 +307,7 @@ public class CommandRegistry {
                                         command("entity")
                                                 .withShortDescription("fakeplayer.command.look.entity.description")
                                                 .withOptionalArguments(fakeplayer("name"))
-                                                .withSubcommands(newActionCommands(Action.ActionType.LOOK_AT_NEAREST_ENTITY))
+                                                .withSubcommands(newActionCommands(ActionType.LOOK_AT_NEAREST_ENTITY))
                                 ),
                         command("turn")
                                 .withPermission(Permission.turn)

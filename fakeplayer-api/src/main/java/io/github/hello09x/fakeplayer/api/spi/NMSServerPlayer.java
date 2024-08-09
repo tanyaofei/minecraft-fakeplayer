@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.api.spi;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public interface NMSServerPlayer {
@@ -94,6 +95,12 @@ public interface NMSServerPlayer {
     void setXRot(float xRot);
 
     /**
+     * 获取 Z 坐标移动
+     * @return Z 坐标移动
+     */
+    float getZza();
+
+    /**
      * 设置 Z 坐标移动
      *
      * @param zza 移动距离
@@ -101,11 +108,23 @@ public interface NMSServerPlayer {
     void setZza(float zza);
 
     /**
+     * 获取 X 坐标移动
+     * @return X 坐标移动
+     */
+    float getXxa();
+
+    /**
      * 设置 X 坐标移动
      *
      * @param xxa 与第三双重
      */
     void setXxa(float xxa);
+
+    /**
+     * 设置相对移动
+     * @param vector 相对移动
+     */
+    void setDeltaMovement(@NotNull Vector vector);
 
     /**
      * 骑上实体

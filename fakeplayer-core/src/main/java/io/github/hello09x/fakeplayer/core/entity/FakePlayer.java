@@ -4,10 +4,7 @@ import io.github.hello09x.devtools.command.exception.CommandException;
 import io.github.hello09x.devtools.core.utils.EntityUtils;
 import io.github.hello09x.devtools.core.utils.SchedulerUtils;
 import io.github.hello09x.devtools.core.utils.WorldUtils;
-import io.github.hello09x.fakeplayer.api.spi.Action;
-import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
-import io.github.hello09x.fakeplayer.api.spi.NMSNetwork;
-import io.github.hello09x.fakeplayer.api.spi.NMSServerPlayer;
+import io.github.hello09x.fakeplayer.api.spi.*;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.config.PreventKicking;
@@ -151,7 +148,7 @@ public class FakePlayer {
                     this.player.setCollidable(option.collidable());
                     this.player.setCanPickupItems(option.pickupItems());
                     if (option.lookAtEntity()) {
-                        Main.getInjector().getInstance(ActionManager.class).setAction(player, Action.ActionType.LOOK_AT_NEAREST_ENTITY, Action.ActionSetting.continuous());
+                        Main.getInjector().getInstance(ActionManager.class).setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
                     }
                     if (option.skin()) {
                         skinManager.useDefaultSkin(creator, player);

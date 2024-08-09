@@ -5,7 +5,8 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.command.exception.CommandException;
 import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.core.utils.MetadataUtils;
-import io.github.hello09x.fakeplayer.api.spi.Action;
+import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
+import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -265,8 +266,8 @@ public class FakeplayerManager {
         if (config.isDropInventoryOnQuiting()) {
             this.nms.createAction(
                     fakeplayer.getPlayer(),
-                    Action.ActionType.DROP_INVENTORY,
-                    Action.ActionSetting.once()
+                    ActionType.DROP_INVENTORY,
+                    ActionSetting.once()
             ).tick();
         }
     }

@@ -15,12 +15,14 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -77,7 +79,6 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     @Override
     public void doTick() {
         handle.doTick();
-        ;
     }
 
     @Override
@@ -106,13 +107,32 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
     }
 
     @Override
+    public float getZza() {
+        return handle.zza;
+    }
+
+    @Override
     public void setZza(float zza) {
         handle.zza = zza;
     }
 
     @Override
+    public float getXxa() {
+        return handle.xxa;
+    }
+
+    @Override
     public void setXxa(float xxa) {
         handle.xxa = xxa;
+    }
+
+    @Override
+    public void setDeltaMovement(@NotNull Vector vector) {
+        handle.setDeltaMovement(new Vec3(
+                vector.getX(),
+                vector.getY(),
+                vector.getZ()
+        ));
     }
 
     @Override

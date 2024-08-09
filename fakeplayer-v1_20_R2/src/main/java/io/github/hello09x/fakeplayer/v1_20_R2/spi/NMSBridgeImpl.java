@@ -47,7 +47,7 @@ public class NMSBridgeImpl implements NMSBridge {
     }
 
     @Override
-    public @NotNull ActionTicker createAction(@NotNull Player player, @NotNull Action.ActionType action, @NotNull Action.ActionSetting setting) {
+    public @NotNull ActionTicker createAction(@NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {
         return new ActionTickerImpl(Main.getInjector().getInstance(NMSBridge.class), player, action, setting);
     }
 
