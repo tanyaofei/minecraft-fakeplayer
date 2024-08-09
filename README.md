@@ -1,5 +1,7 @@
 # FakePlayer
 
+![BANNER_IMAGE](.github/README/BANNER.png)
+
 English | [简体中文](README_zh.md)
 
 This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon/fabric-carpet) for Minecraft `1.20.x` and `1.21.x` and above.
