@@ -44,7 +44,7 @@ public class RotationCommand extends AbstractCommand {
         if (!Objects.equals(fake.getWorld(), sender.getWorld())) {
             return;
         }
-        fake.lookAt(sender.getLocation(), LookAnchor.EYES);
+        fake.lookAt(sender.getEyeLocation(), LookAnchor.EYES);
     }
 
     /**

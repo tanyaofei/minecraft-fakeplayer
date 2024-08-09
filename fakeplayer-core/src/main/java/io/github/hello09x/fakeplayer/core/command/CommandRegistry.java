@@ -65,6 +65,8 @@ public class CommandRegistry {
     @Inject
     private SneakCommand sneakCommand;
     @Inject
+    private SprintCommand sprintCommand;
+    @Inject
     private SpawnCommand spawnCommand;
     @Inject
     private StatusCommand statusCommand;
@@ -266,6 +268,14 @@ public class CommandRegistry {
                                         fakeplayer("name"),
                                         literals("sneaking", List.of("true", "false")))
                                 .executes(sneakCommand::sneak),
+                        command("sprint")
+                                .withPermission(Permission.sprint)
+                                .withShortDescription("fakeplayer.command.sprint.description")
+                                .withRequirement(CommandSupports::hasFakeplayer)
+                                .withOptionalArguments(
+                                        fakeplayer("name"),
+                                        literals("sprinting", List.of("true", "false")))
+                                .executes(sprintCommand::sprint),
                         command("look")
                                 .withPermission(Permission.look)
                                 .withShortDescription("fakeplayer.command.look.description")

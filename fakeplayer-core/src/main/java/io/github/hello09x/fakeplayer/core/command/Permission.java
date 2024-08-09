@@ -31,6 +31,7 @@ public interface Permission {
     String use = "fakeplayer.command.use";
     String jump = "fakeplayer.command.jump";
     String sneak = "fakeplayer.command.sneak";
+    String sprint = "fakeplayer.command.sprint";
     String look = "fakeplayer.command.look";
     String turn = "fakeplayer.command.turn";
     String move = "fakeplayer.command.move";
