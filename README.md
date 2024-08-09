@@ -66,6 +66,7 @@ This approach can let you preview new content when you are upgrading it.
 | /fp move      | Move                                      | fakeplayer.command.mvoe      |                                                                    |
 | /fp ride      | Ride                                      | fakeplayer.command.ride      |                                                                    |
 | /fp sneak     | Sneak                                     | fakeplayer.command.sneak     |                                                                    |
+| /fp sprint    | Sprinting                                 | fakeplayer.command.sprint    |                                                                    |
 | /fp swap      | Swap main and off-hand items              | fakeplayer.command.swap      |                                                                    |
 | /fp hold      | Hold corresponding hotbar item            | fakeplayer.command.hold      |                                                                    |
 | /fp cmd       | Execute command                           | fakeplayer.command.cmd       |                                                                    |
@@ -135,6 +136,7 @@ Each command has its own permission node, but we provided some permissions packs
 - fakeplayer.command.use - Use
 - fakeplayer.command.jump - Jump
 - fakeplayer.command.sneak - Sneak
+- fakeplayer.command.sprint - Sprinting
 - fakeplayer.command.look - Look
 - fakeplayer.command.turn - Turn
 - fakeplayer.command.move - Move

@@ -67,6 +67,7 @@
 | /fp move      | 移动        | fakeplayer.command.move      |                         |
 | /fp ride      | 骑乘        | fakeplayer.command.ride      |                         |
 | /fp sneak     | 潜行        | fakeplayer.command.sneak     |                         |
+| /fp sprint    | 疾跑        | fakeplayer.command.sprint    |                         |
 | /fp swap      | 交换主副手物品   | fakeplayer.command.swap      |                         |
 | /fp hold      | 手持对应快捷栏物品 | fakeplayer.command.hold      |                         |
 | /fp cmd       | 让假人执行命令   | fakeplayer.command.cmd       | 不给权限的情况下，允许执行配置文件里定义的命令 |
@@ -120,6 +121,7 @@ _此外，假人是一个模拟玩家，因此可以被任何指令所识别比�
 - fakeplayer.command.use - 右键
 - fakeplayer.command.jump - 跳跃
 - fakeplayer.command.sneak - 潜行
+- fakeplayer.command.sprint - 疾跑
 - fakeplayer.command.look - 查看
 - fakeplayer.command.turn - 转身
 - fakeplayer.command.move - 移动
@@ -159,6 +161,7 @@ _此外，假人是一个模拟玩家，因此可以被任何指令所识别比�
 | pickup_items   | 是否能够拾取物品                                  |
 | skin           | 是否使用你的皮肤                                  |
 | replenish      | 是否自动补货                                    |
+| autofish       | 是否自动钓鱼                                    |
 
 ## 开发者的建议
 

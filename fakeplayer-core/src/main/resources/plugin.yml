@@ -60,6 +60,8 @@ permissions:
     description: 'Allow player to run /fp jump'
   fakeplayer.command.sneak:
     description: 'Allow player to run /fp sneak'
+  fakeplayer.command.sprint:
+    description: 'Allow player to run /fp sprint'
   fakeplayer.command.look:
     description: 'Allow player to run /fp look'
   fakeplayer.command.turn:
@@ -124,6 +126,7 @@ permissions:
       - fakeplayer.command.use
       - fakeplayer.command.jump
       - fakeplayer.command.sneak
+      - fakeplayer.command.sprint
       - fakeplayer.command.look
       - fakeplayer.command.turn
       - fakeplayer.command.move
