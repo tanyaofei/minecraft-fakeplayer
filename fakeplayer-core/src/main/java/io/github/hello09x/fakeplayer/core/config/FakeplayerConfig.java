@@ -1,6 +1,7 @@
 package io.github.hello09x.fakeplayer.core.config;
 
 
+import com.google.common.annotations.Beta;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.config.PluginConfig;
@@ -138,6 +139,12 @@ public class FakeplayerConfig extends PluginConfig {
      */
     private PreventKicking preventKicking;
 
+    /**
+     * 真实皮肤
+     */
+    @Beta
+    private boolean defaultOnlineSkin;
+
     @Inject
     public FakeplayerConfig() {
         super(Main.getInstance());
@@ -161,8 +168,6 @@ public class FakeplayerConfig extends PluginConfig {
         this.afterSpawnCommands = file.getStringList("after-spawn-commands");
         this.postQuitCommands = file.getStringList("post-quit-commands");
         this.afterQuitCommands = file.getStringList("after-quit-commands");
-//        this.preparingCommands = file.getStringList("preparing-commands");
-//        this.destroyCommands = file.getStringList("destroy-commands");
         this.nameTemplate = file.getString("name-template", "");
         this.dropInventoryOnQuiting = file.getBoolean("drop-inventory-on-quiting", true);
         this.persistData = file.getBoolean("persist-data", true);
@@ -177,6 +182,8 @@ public class FakeplayerConfig extends PluginConfig {
                                  .map(c -> c.startsWith("/") ? c.substring(1) : c)
                                  .filter(c -> !c.isBlank())
                                  .collect(Collectors.toSet());
+
+        this.defaultOnlineSkin = file.getBoolean("default-online-skin", false);
         this.debug = file.getBoolean("debug", false);
 
         if (this.isFileConfigurationOutOfDate()) {
