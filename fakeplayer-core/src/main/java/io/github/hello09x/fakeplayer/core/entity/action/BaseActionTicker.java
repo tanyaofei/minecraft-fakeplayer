@@ -52,13 +52,17 @@ public abstract class BaseActionTicker implements ActionTicker {
             return true;
         }
 
-        var valid = this.action.tick();
-        if (valid) {
-            if (this.setting.remains > 0) {
-                this.setting.remains--;
+        try {
+            if (this.action.tick()) {
+                if (this.setting.remains > 0) {
+                    this.setting.remains--;
+                }
             }
+        } finally {
+            // 声音更新抑制器会抛出异常, 但同样需要进入冷却
             this.setting.wait = this.setting.interval;
         }
+
         return false;
     }
 

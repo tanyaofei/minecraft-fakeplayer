@@ -1,5 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.action;
 
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
@@ -14,13 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @Singleton
 public class ActionManager {
 
+    private final static Logger log = Main.getInstance().getLogger();
+
     private final Map<UUID, Map<ActionType, ActionTicker>> managers = new HashMap<>();
 
     private final NMSBridge bridge;
+
 
     @Inject
     public ActionManager(NMSBridge bridge) {
@@ -66,7 +71,14 @@ public class ActionManager {
             }
 
             // do tick
-            entry.getValue().values().removeIf(ActionTicker::tick);
+            entry.getValue().values().removeIf(ticker -> {
+                try {
+                    return ticker.tick();
+                } catch (Throwable e) {
+                    log.warning(Throwables.getStackTraceAsString(e));
+                    return false;
+                }
+            });
             if (entry.getValue().isEmpty()) {
                 itr.remove();
             }
