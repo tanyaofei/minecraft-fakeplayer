@@ -13,8 +13,9 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerLifecycleListener;
 import io.github.hello09x.fakeplayer.core.listener.FakeplayerListener;
 import io.github.hello09x.fakeplayer.core.listener.PlayerListener;
-import io.github.hello09x.fakeplayer.core.listener.ReplenishListener;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerAutofishManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerReplenishManager;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
@@ -63,7 +64,8 @@ public final class Main extends JavaPlugin {
             manager.registerEvents(injector.getInstance(PlayerListener.class), this);
             manager.registerEvents(injector.getInstance(FakeplayerLifecycleListener.class), this);
             manager.registerEvents(injector.getInstance(FakeplayerListener.class), this);
-            manager.registerEvents(injector.getInstance(ReplenishListener.class), this);
+            manager.registerEvents(injector.getInstance(FakeplayerAutofishManager.class), this);
+            manager.registerEvents(injector.getInstance(FakeplayerReplenishManager.class), this);
         }
 
         if (injector.getInstance(FakeplayerConfig.class).isCheckForUpdates()) {

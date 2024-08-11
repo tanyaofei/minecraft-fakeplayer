@@ -4,16 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.devtools.core.utils.MetadataUtils;
-import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
-import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
-import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
+import io.github.hello09x.fakeplayer.core.repository.FakeplayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
-import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -22,7 +18,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -43,15 +38,13 @@ public class FakeplayerListener implements Listener {
     private final static Logger log = Main.getInstance().getLogger();
 
     private final FakeplayerManager manager;
-    private final ActionManager actionManager;
     private final UsedIdRepository usedIdRepository;
-    private final FakePlayerProfileRepository profileRepository;
+    private final FakeplayerProfileRepository profileRepository;
     private final FakeplayerConfig config;
 
     @Inject
-    public FakeplayerListener(FakeplayerManager manager, ActionManager actionManager, UsedIdRepository usedIdRepository, FakePlayerProfileRepository profileRepository, FakeplayerConfig config) {
+    public FakeplayerListener(FakeplayerManager manager, UsedIdRepository usedIdRepository, FakeplayerProfileRepository profileRepository, FakeplayerConfig config) {
         this.manager = manager;
-        this.actionManager = actionManager;
         this.usedIdRepository = usedIdRepository;
         this.profileRepository = profileRepository;
         this.config = config;
@@ -164,29 +157,6 @@ public class FakeplayerListener implements Listener {
         } finally {
             manager.cleanup(target);
         }
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void autoFishing(@NotNull PlayerFishEvent event) {
-        if (event.getState() != PlayerFishEvent.State.BITE) {
-            return;
-        }
-
-        var player = event.getPlayer();
-        if (manager.isNotFake(player)) {
-            return;
-        }
-
-        if (!player.hasMetadata(MetadataKeys.AUTOFISH)) {
-            return;
-        }
-
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            actionManager.setAction(player, ActionType.USE, ActionSetting.once());
-            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                actionManager.setAction(player, ActionType.USE, ActionSetting.once());
-            }, Ticks.TICKS_PER_SECOND);
-        }, 1);
     }
 
 }

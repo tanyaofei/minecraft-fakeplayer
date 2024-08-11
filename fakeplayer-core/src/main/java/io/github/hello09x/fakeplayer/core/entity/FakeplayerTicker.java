@@ -12,7 +12,7 @@ public class FakeplayerTicker extends BukkitRunnable {
     public final static long NON_REMOVE_AT = -1;
 
     @NotNull
-    private final FakePlayer player;
+    private final Fakeplayer player;
 
     /**
      * 移除时间
@@ -26,7 +26,7 @@ public class FakeplayerTicker extends BukkitRunnable {
     private boolean firstTick;
 
     public FakeplayerTicker(
-            @NotNull FakePlayer player,
+            @NotNull Fakeplayer player,
             long lifespan
     ) {
         this.player = player;

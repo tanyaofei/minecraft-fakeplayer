@@ -3,7 +3,8 @@ package io.github.hello09x.fakeplayer.core.repository.model;
 import io.github.hello09x.devtools.core.utils.SingletonSupplier;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
-import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerAutofishManager;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerReplenishManager;
 import net.kyori.adventure.translation.Translatable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
@@ -55,8 +56,8 @@ public record Config<T>(
 ) implements Translatable {
 
     private static final Map<String, Config<?>> values = new HashMap<>();
-
-    private final static SingletonSupplier<FakeplayerManager> manager = new SingletonSupplier<>(() -> Main.getInjector().getInstance(FakeplayerManager.class));
+    private static final SingletonSupplier<FakeplayerAutofishManager> autofishManager = new SingletonSupplier<>(() -> Main.getInjector().getInstance(FakeplayerAutofishManager.class));
+    private static final SingletonSupplier<FakeplayerReplenishManager> replenishManager = new SingletonSupplier<>(() -> Main.getInjector().getInstance(FakeplayerReplenishManager.class));
 
     public static Config<Boolean> collidable = build(
             "collidable",
@@ -136,7 +137,7 @@ public record Config<T>(
             List.of("true", "false"),
             Permission.replenish,
             Boolean::valueOf,
-            new Accessor<>(manager.get()::isReplenish, manager.get()::setReplenish)
+            new Accessor<>(replenishManager.get()::isReplenish, replenishManager.get()::setReplenish)
     );
 
     public static Config<Boolean> autofish = build(
@@ -147,7 +148,7 @@ public record Config<T>(
             List.of("true", "false"),
             Permission.autofish,
             Boolean::valueOf,
-            new Accessor<>(Main.getInjector().getInstance(FakeplayerManager.class)::isAutofish, Main.getInjector().getInstance(FakeplayerManager.class)::setAutofish)
+            new Accessor<>(autofishManager.get()::isAutofish, autofishManager.get()::setAutofish)
     );
 
     @SuppressWarnings("unchecked")

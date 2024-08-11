@@ -16,12 +16,12 @@ import java.util.UUID;
  * @since 2024/8/8
  **/
 @Singleton
-public class FakePlayerSkinRepository {
+public class FakeplayerSkinRepository {
 
     private final JdbcTemplate jdbc;
 
     @Inject
-    public FakePlayerSkinRepository(JdbcTemplate jdbc) {
+    public FakeplayerSkinRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
         this.initTables();
     }

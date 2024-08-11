@@ -1,7 +1,7 @@
 package io.github.hello09x.fakeplayer.core.manager;
 
 import com.google.inject.Singleton;
-import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
+import io.github.hello09x.fakeplayer.core.entity.Fakeplayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -12,18 +12,16 @@ import java.util.stream.Stream;
 @Singleton
 public class FakeplayerList {
 
-    private final Map<String, FakePlayer> playersByName = new HashMap<>();
-
-    private final Map<UUID, FakePlayer> playersByUUID = new HashMap<>();
-
-    private final Map<String, List<FakePlayer>> playersByCreator = new HashMap<>();
+    private final Map<String, Fakeplayer> playersByName = new HashMap<>();
+    private final Map<UUID, Fakeplayer> playersByUUID = new HashMap<>();
+    private final Map<String, List<Fakeplayer>> playersByCreator = new HashMap<>();
 
     /**
      * 添加一个假人到假人清单
      *
      * @param player 假人
      */
-    public void add(@NotNull FakePlayer player) {
+    public void add(@NotNull Fakeplayer player) {
         this.playersByName.put(player.getName(), player);
         this.playersByUUID.put(player.getUUID(), player);
         this.playersByCreator.computeIfAbsent(player.getCreator().getName(), key -> new LinkedList<>()).add(player);
@@ -35,7 +33,7 @@ public class FakeplayerList {
      * @param name 名称
      * @return 假人
      */
-    public @Nullable FakePlayer getByName(@NotNull String name) {
+    public @Nullable Fakeplayer getByName(@NotNull String name) {
         return Optional.ofNullable(this.playersByName.get(name)).map(this::checkOnline).orElse(null);
     }
 
@@ -45,7 +43,7 @@ public class FakeplayerList {
      * @param uuid UUID
      * @return 假人
      */
-    public @Nullable FakePlayer getByUUID(@NotNull UUID uuid) {
+    public @Nullable Fakeplayer getByUUID(@NotNull UUID uuid) {
         return Optional.ofNullable(this.playersByUUID.get(uuid)).map(this::checkOnline).orElse(null);
     }
 
@@ -55,7 +53,7 @@ public class FakeplayerList {
      * @param creator 创建者
      * @return 假人
      */
-    public @NotNull @Unmodifiable List<FakePlayer> getByCreator(@NotNull String creator) {
+    public @NotNull @Unmodifiable List<Fakeplayer> getByCreator(@NotNull String creator) {
         return Optional.ofNullable(this.playersByCreator.get(creator)).map(Collections::unmodifiableList).orElse(Collections.emptyList());
     }
 
@@ -64,7 +62,7 @@ public class FakeplayerList {
      *
      * @param player 假人
      */
-    public void remove(@NotNull FakePlayer player) {
+    public void remove(@NotNull Fakeplayer player) {
         this.playersByName.remove(player.getName());
         this.playersByUUID.remove(player.getUUID());
         Optional.ofNullable(this.playersByCreator.get(player.getCreator().getName())).map(players -> players.remove(player));
@@ -76,7 +74,7 @@ public class FakeplayerList {
      * @param uuid UUID
      * @return 被移除的假人
      */
-    public @Nullable FakePlayer removeByUUID(@NotNull UUID uuid) {
+    public @Nullable Fakeplayer removeByUUID(@NotNull UUID uuid) {
         var player = getByUUID(uuid);
         if (player == null) {
             return null;
@@ -103,7 +101,7 @@ public class FakeplayerList {
      *
      * @return 假人
      */
-    public @NotNull @Unmodifiable List<FakePlayer> getAll() {
+    public @NotNull @Unmodifiable List<Fakeplayer> getAll() {
         return List.copyOf(this.playersByUUID.values());
     }
 
@@ -113,7 +111,7 @@ public class FakeplayerList {
      * @param player 假人
      * @return 假人
      */
-    private @Nullable FakePlayer checkOnline(@NotNull FakePlayer player) {
+    private @Nullable Fakeplayer checkOnline(@NotNull Fakeplayer player) {
         if (!player.isOnline()) {
             this.remove(player);
             return null;
@@ -122,7 +120,7 @@ public class FakeplayerList {
         return player;
     }
 
-    public @NotNull Stream<FakePlayer> stream() {
+    public @NotNull Stream<Fakeplayer> stream() {
         return this.playersByUUID.values().stream();
     }
 

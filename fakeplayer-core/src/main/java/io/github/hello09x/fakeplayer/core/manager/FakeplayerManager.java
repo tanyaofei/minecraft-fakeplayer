@@ -11,7 +11,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
-import io.github.hello09x.fakeplayer.core.entity.FakePlayer;
+import io.github.hello09x.fakeplayer.core.entity.Fakeplayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
 import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
@@ -99,7 +99,7 @@ public class FakeplayerManager {
         var sn = name == null ? nameManager.getRegularName(creator) : nameManager.getSpecifiedName(name);
         log.info("UUID of fake player %s is %s".formatted(sn.name(), sn.uuid()));
 
-        var fp = new FakePlayer(
+        var fp = new Fakeplayer(
                 creator,
                 AddressUtils.getAddress(creator),
                 sn,
@@ -139,7 +139,7 @@ public class FakeplayerManager {
         return Optional
                 .ofNullable(this.playerList.getByName(name))
                 .filter(p -> p.isCreatedBy(creator))
-                .map(FakePlayer::getPlayer)
+                .map(Fakeplayer::getPlayer)
                 .orElse(null);
     }
 
@@ -152,7 +152,7 @@ public class FakeplayerManager {
     public @Nullable Player get(@NotNull String name) {
         return Optional
                 .ofNullable(this.playerList.getByName(name))
-                .map(FakePlayer::getPlayer)
+                .map(Fakeplayer::getPlayer)
                 .orElse(null);
     }
 
@@ -165,7 +165,7 @@ public class FakeplayerManager {
     public @Nullable String getCreatorName(@NotNull Player target) {
         return Optional
                 .ofNullable(this.playerList.getByUUID(target.getUniqueId()))
-                .map(FakePlayer::getCreator)
+                .map(Fakeplayer::getCreator)
                 .map(CommandSender::getName)
                 .orElse(null);
     }
@@ -178,7 +178,7 @@ public class FakeplayerManager {
      */
     public @Nullable CommandSender getCreator(@NotNull Player target) {
         return Optional.ofNullable(this.playerList.getByUUID(target.getUniqueId()))
-                       .map(FakePlayer::getCreator)
+                       .map(Fakeplayer::getCreator)
                        .map(creator -> {
                            if (creator instanceof Player p) {
                                return Bukkit.getPlayer(p.getUniqueId());
@@ -245,7 +245,7 @@ public class FakeplayerManager {
      * @return 经过筛选的假人
      */
     public @NotNull List<Player> getAll(@Nullable Predicate<Player> predicate) {
-        var stream = this.playerList.getAll().stream().map(FakePlayer::getPlayer);
+        var stream = this.playerList.getAll().stream().map(Fakeplayer::getPlayer);
         if (predicate != null) {
             stream = stream.filter(predicate);
         }
@@ -290,7 +290,7 @@ public class FakeplayerManager {
      * @return 假人
      */
     public @NotNull List<Player> getAll(@NotNull CommandSender creator, @Nullable Predicate<Player> predicate) {
-        var stream = this.playerList.getByCreator(creator.getName()).stream().map(FakePlayer::getPlayer);
+        var stream = this.playerList.getByCreator(creator.getName()).stream().map(Fakeplayer::getPlayer);
         if (predicate != null) {
             stream = stream.filter(predicate);
         }
@@ -341,42 +341,6 @@ public class FakeplayerManager {
     }
 
     /**
-     * 设置假人是否自动填装
-     *
-     * @param target    假人
-     * @param replenish 是否自动补货
-     */
-    public void setReplenish(@NotNull Player target, boolean replenish) {
-        if (!replenish) {
-            target.removeMetadata(MetadataKeys.REPLENISH, Main.getInstance());
-        } else {
-            target.setMetadata(MetadataKeys.REPLENISH, new FixedMetadataValue(Main.getInstance(), true));
-        }
-    }
-
-    /**
-     * 判断假人是否自动补货
-     *
-     * @param target 假人
-     * @return 是否自动补货
-     */
-    public boolean isReplenish(@NotNull Player target) {
-        return target.hasMetadata(MetadataKeys.REPLENISH);
-    }
-
-    public boolean isAutofish(@NotNull Player target) {
-        return target.hasMetadata(MetadataKeys.AUTOFISH);
-    }
-
-    public void setAutofish(@NotNull Player target, boolean autofish) {
-        if (!autofish) {
-            target.removeMetadata(MetadataKeys.AUTOFISH, Main.getInstance());
-        } else {
-            target.setMetadata(MetadataKeys.AUTOFISH, new FixedMetadataValue(Main.getInstance(), true));
-        }
-    }
-
-    /**
      * 设置玩家当前选择的假人
      *
      * @param creator 玩家
@@ -419,7 +383,7 @@ public class FakeplayerManager {
             return null;
         }
 
-        var target = Optional.ofNullable(this.playerList.getByUUID(uuid)).map(FakePlayer::getPlayer).orElse(null);
+        var target = Optional.ofNullable(this.playerList.getByUUID(uuid)).map(Fakeplayer::getPlayer).orElse(null);
         if (target == null) {
             this.setSelection(p, null);
         }
@@ -452,7 +416,7 @@ public class FakeplayerManager {
         }
     }
 
-    public void dispatchCommandsEarly(@NotNull FakePlayer fp, @NotNull List<String> commands) {
+    public void dispatchCommandsEarly(@NotNull Fakeplayer fp, @NotNull List<String> commands) {
         if (commands.isEmpty()) {
             return;
         }

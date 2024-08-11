@@ -10,7 +10,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.SchedulerUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
-import io.github.hello09x.fakeplayer.core.repository.FakePlayerSkinRepository;
+import io.github.hello09x.fakeplayer.core.repository.FakeplayerSkinRepository;
 import io.github.hello09x.fakeplayer.core.repository.model.FakePlayerSkin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public class FakeplayerSkinManager {
 
     private final static Logger log = Main.getInstance().getLogger();
-    private final FakePlayerSkinRepository repository;
+    private final FakeplayerSkinRepository repository;
     private final FakeplayerConfig config;
     private final Cache<UUID, PlayerProfile> profileCache = CacheBuilder
             .newBuilder()
@@ -40,7 +40,7 @@ public class FakeplayerSkinManager {
             .build();
 
     @Inject
-    public FakeplayerSkinManager(FakePlayerSkinRepository repository, FakeplayerConfig config) {
+    public FakeplayerSkinManager(FakeplayerSkinRepository repository, FakeplayerConfig config) {
         this.repository = repository;
         this.config = config;
     }

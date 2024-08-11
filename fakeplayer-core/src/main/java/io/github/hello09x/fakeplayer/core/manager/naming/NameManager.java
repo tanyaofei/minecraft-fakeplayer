@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.naming.exception.IllegalCustomNameException;
-import io.github.hello09x.fakeplayer.core.repository.FakePlayerProfileRepository;
+import io.github.hello09x.fakeplayer.core.repository.FakeplayerProfileRepository;
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -34,14 +34,14 @@ public class NameManager {
     private final static int MIN_LENGTH = 3; // mojang required
 
     private final UsedIdRepository legacyUsedIdRepository;
-    private final FakePlayerProfileRepository profileRepository;
+    private final FakeplayerProfileRepository profileRepository;
     private final FakeplayerConfig config;
     private final Map<String, NameSource> nameSources = new HashMap<>();
 
     private final String serverId;
 
     @Inject
-    public NameManager(UsedIdRepository legacyUsedIdRepository, FakePlayerProfileRepository profileRepository, FakeplayerConfig config) {
+    public NameManager(UsedIdRepository legacyUsedIdRepository, FakeplayerProfileRepository profileRepository, FakeplayerConfig config) {
         this.legacyUsedIdRepository = legacyUsedIdRepository;
         this.profileRepository = profileRepository;
         this.config = config;

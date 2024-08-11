@@ -9,7 +9,9 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.config.PreventKicking;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerAutofishManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.FakeplayerReplenishManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerSkinManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
@@ -37,17 +39,16 @@ import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
-public class FakePlayer {
+public class Fakeplayer {
 
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
-
     private final static FakeplayerConfig config = Main.getInjector().getInstance(FakeplayerConfig.class);
-
     private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
-
     private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
-
     private final static FakeplayerSkinManager skinManager = Main.getInjector().getInstance(FakeplayerSkinManager.class);
+    private final static FakeplayerReplenishManager replenishManager = Main.getInjector().getInstance(FakeplayerReplenishManager.class);
+    private final static FakeplayerAutofishManager autofishManager = Main.getInjector().getInstance(FakeplayerAutofishManager.class);
+
 
     @NotNull
     @Getter
@@ -89,7 +90,7 @@ public class FakePlayer {
      * @param sequenceName 序列名
      * @param lifespan     存活时间
      */
-    public FakePlayer(
+    public Fakeplayer(
             @NotNull CommandSender creator,
             @NotNull String creatorIp,
             @NotNull SequenceName sequenceName,
@@ -157,10 +158,10 @@ public class FakePlayer {
                         skinManager.useDefaultSkin(creator, player);
                     }
                     if (option.replenish()) {
-                        manager.setReplenish(player, true);
+                        replenishManager.setReplenish(player, true);
                     }
                     if (option.autofish()) {
-                        manager.setAutofish(player, true);
+                        autofishManager.setAutofish(player, true);
                     }
 
                     this.network = bridge.createNetwork(address);

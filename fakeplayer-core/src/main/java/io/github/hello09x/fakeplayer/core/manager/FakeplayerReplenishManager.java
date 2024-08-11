@@ -1,5 +1,4 @@
-package io.github.hello09x.fakeplayer.core.listener;
-
+package io.github.hello09x.fakeplayer.core.manager;
 
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.google.inject.Inject;
@@ -7,7 +6,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.BlockUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.Permission;
-import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -24,19 +23,48 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+/**
+ * @author tanyaofei
+ * @since 2024/8/11
+ **/
 @Singleton
-public class ReplenishListener implements Listener {
+public class FakeplayerReplenishManager implements Listener {
 
     private final FakeplayerManager manager;
 
     @Inject
-    public ReplenishListener(FakeplayerManager manager) {
+    public FakeplayerReplenishManager(FakeplayerManager manager) {
         this.manager = manager;
+    }
+
+    /**
+     * 设置假人是否自动填装
+     *
+     * @param target    假人
+     * @param replenish 是否自动补货
+     */
+    public void setReplenish(@NotNull Player target, boolean replenish) {
+        if (!replenish) {
+            target.removeMetadata(MetadataKeys.REPLENISH, Main.getInstance());
+        } else {
+            target.setMetadata(MetadataKeys.REPLENISH, new FixedMetadataValue(Main.getInstance(), true));
+        }
+    }
+
+    /**
+     * 判断假人是否自动补货
+     *
+     * @param target 假人
+     * @return 是否自动补货
+     */
+    public boolean isReplenish(@NotNull Player target) {
+        return target.hasMetadata(MetadataKeys.REPLENISH);
     }
 
     /**
@@ -45,7 +73,7 @@ public class ReplenishListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemUse(@NotNull PlayerItemConsumeEvent event) {
         var player = event.getPlayer();
-        if (!manager.isReplenish(player)) {
+        if (!this.isReplenish(player)) {
             return;
         }
 
@@ -64,7 +92,7 @@ public class ReplenishListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onBlockPlace(@NotNull BlockPlaceEvent event) {
         var player = event.getPlayer();
-        if (!manager.isReplenish(player)) {
+        if (!this.isReplenish(player)) {
             return;
         }
 
@@ -83,7 +111,7 @@ public class ReplenishListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onItemBreak(@NotNull PlayerItemBreakEvent event) {
         var player = event.getPlayer();
-        if (!manager.isReplenish(player)) {
+        if (!this.isReplenish(player)) {
             return;
         }
 
@@ -102,7 +130,7 @@ public class ReplenishListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onProjectileLaunch(@NotNull PlayerLaunchProjectileEvent event) {
         var player = event.getPlayer();
-        if (!manager.isReplenish(event.getPlayer())) {
+        if (!this.isReplenish(event.getPlayer())) {
             return;
         }
         var item = event.getItemStack();
@@ -246,6 +274,5 @@ public class ReplenishListener implements Listener {
             return null;
         }
     }
-
 
 }
