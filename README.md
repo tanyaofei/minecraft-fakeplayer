@@ -127,7 +127,7 @@ Each command has its own permission node, but we provided some permissions packs
 - fakeplayer.command.tphere
 - fakeplayer.command.tps
 
-### `fakeplayer.action`
+### Permission `fakeplayer.action`
 
 `fakeplayer.action` includes the following permissions:
 
