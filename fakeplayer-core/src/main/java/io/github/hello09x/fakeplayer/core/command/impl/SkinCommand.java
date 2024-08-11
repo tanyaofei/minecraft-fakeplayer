@@ -53,7 +53,7 @@ public class SkinCommand extends AbstractCommand {
         }
 
         try {
-            this.manager.useSkinAsync(fake, player)
+            this.manager.useOnlineSkinAsync(fake, player)
                         .thenAcceptAsync(success -> {
                             manager.rememberSkin(sender, fake, player);
                             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
