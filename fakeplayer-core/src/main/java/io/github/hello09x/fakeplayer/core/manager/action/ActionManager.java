@@ -61,8 +61,8 @@ public class ActionManager {
             var entry = itr.next();
             var player = Bukkit.getPlayer(entry.getKey());
 
-            if (player == null) {
-                // 假人下线
+            if (player == null || !player.isValid()) {
+                // 假人下线或者死亡
                 itr.remove();
                 for (var ticker : entry.getValue().values()) {
                     ticker.stop();
