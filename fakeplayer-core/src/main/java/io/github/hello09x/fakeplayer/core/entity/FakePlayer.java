@@ -17,6 +17,8 @@ import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.net.InetAddress;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -162,6 +165,9 @@ public class FakePlayer {
 
                     this.network = bridge.createNetwork(address);
                     this.network.placeNewPlayer(Bukkit.getServer(), this.player);
+                    this.player.setHealth(Optional.ofNullable(this.player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                                                  .map(AttributeInstance::getValue)
+                                                  .orElse(20D));    // 恢复生命值
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
