@@ -143,8 +143,19 @@ public class NameManager {
             throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.invalid", RED));
         }
 
+        {
+            var player = Bukkit.getPlayerExact(name);
+            if (player != null) {
+                if (player.isDead()) {
+                    throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.online-dead", text(name, GOLD), text("/fp respawn", DARK_GREEN)).color(RED));
+                } else {
+                    throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.online", text(name, GOLD)).color(RED));
+                }
+            }
+        }
+
         if (Bukkit.getPlayerExact(name) != null) {
-            throw new IllegalCustomNameException(translatable("fakeplayer.spawn.error.name.online", RED));
+
         }
 
         var player = Bukkit.getOfflinePlayer(name);
