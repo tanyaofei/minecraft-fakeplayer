@@ -10,6 +10,11 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 
 If you want more supports, join my [Discord](https://discord.gg/JUk5AZkr)
 
+## Buy me a coffee
+
+Buy me a coffee On [PayPal](https://paypal.me/hello09x) if you like this plugin. 
+
+
 ## Features
 
 + Lets you spawn fake players who look like real to the server, they can keep chunk loading
