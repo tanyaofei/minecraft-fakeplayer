@@ -4,11 +4,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
+import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerList;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.core.manager.invsee.DefaultInvseeManagerImpl;
 import io.github.hello09x.fakeplayer.core.manager.invsee.InvseeManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.OpenInvInvseeManagerImpl;
+import io.github.hello09x.fakeplayer.core.manager.invsee.SimpleInvseeManagerImpl;
 import io.github.hello09x.fakeplayer.core.util.ClassUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -27,14 +28,18 @@ public class FakeplayerModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public InvseeManager invseeManager(FakeplayerManager fakeplayerManager, FakeplayerList fakeplayerList) {
-        if (Bukkit.getPluginManager().isPluginEnabled("OpenInv") && ClassUtils.isClassExists("com.lishid.openinv.IOpenInv")) {
-            log.info("Using OpenInv as invsee implementation");
-            return new OpenInvInvseeManagerImpl(fakeplayerManager, fakeplayerList);
-        }
-
-        log.info("Using default invsee implementation");
-        return new DefaultInvseeManagerImpl(fakeplayerManager, fakeplayerList);
+    public InvseeManager invseeManager(FakeplayerConfig config, FakeplayerManager fakeplayerManager, FakeplayerList fakeplayerList) {
+        return switch (config.getInvseeImplement()) {
+            case SIMPLE -> new SimpleInvseeManagerImpl(fakeplayerManager, fakeplayerList);
+            case AUTO -> {
+                if (Bukkit.getPluginManager().isPluginEnabled("OpenInv") && ClassUtils.isClassExists("com.lishid.openinv.IOpenInv")) {
+                    log.info("Using OpenInv as invsee implement");
+                    yield new OpenInvInvseeManagerImpl(fakeplayerManager, fakeplayerList);
+                }
+                log.info("Using simple invsee implement");
+                yield new SimpleInvseeManagerImpl(fakeplayerManager, fakeplayerList);
+            }
+        };
     }
 
     @Provides

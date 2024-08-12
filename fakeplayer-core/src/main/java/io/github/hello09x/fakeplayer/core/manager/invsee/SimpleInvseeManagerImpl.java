@@ -16,10 +16,10 @@ import org.jetbrains.annotations.Nullable;
  * @since 2024/8/12
  **/
 @Singleton
-public class DefaultInvseeManagerImpl extends AbstractInvseeManager {
+public class SimpleInvseeManagerImpl extends AbstractInvseeManager {
 
     @Inject
-    public DefaultInvseeManagerImpl(FakeplayerManager manager, FakeplayerList fakeplayerList) {
+    public SimpleInvseeManagerImpl(FakeplayerManager manager, FakeplayerList fakeplayerList) {
         super(manager, fakeplayerList);
     }
 

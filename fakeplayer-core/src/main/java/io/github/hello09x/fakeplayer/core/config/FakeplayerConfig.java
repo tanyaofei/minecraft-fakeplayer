@@ -4,6 +4,7 @@ package io.github.hello09x.fakeplayer.core.config;
 import com.google.common.annotations.Beta;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.github.hello09x.devtools.core.config.ConfigUtils;
 import io.github.hello09x.devtools.core.config.PluginConfig;
 import io.github.hello09x.fakeplayer.core.Main;
 import lombok.Getter;
@@ -140,6 +141,11 @@ public class FakeplayerConfig extends PluginConfig {
     private PreventKicking preventKicking;
 
     /**
+     * invsee 实现方式
+     */
+    private InvseeImplement invseeImplement;
+
+    /**
      * 真实皮肤
      */
     @Beta
@@ -164,7 +170,6 @@ public class FakeplayerConfig extends PluginConfig {
         this.selfCommands = file.getStringList("self-commands");
         this.preSpawnCommands = file.getStringList("pre-spawn-commands");
         this.postSpawnCommands = file.getStringList("post-spawn-commands");
-        deprecated:
         this.afterSpawnCommands = file.getStringList("after-spawn-commands");
         this.postQuitCommands = file.getStringList("post-quit-commands");
         this.afterQuitCommands = file.getStringList("after-quit-commands");
@@ -184,6 +189,7 @@ public class FakeplayerConfig extends PluginConfig {
                                  .collect(Collectors.toSet());
 
         this.defaultOnlineSkin = file.getBoolean("default-online-skin", false);
+        this.invseeImplement = ConfigUtils.getEnum(file, "invsee-implement", InvseeImplement.class, InvseeImplement.AUTO);
         this.debug = file.getBoolean("debug", false);
 
         if (this.isFileConfigurationOutOfDate()) {
@@ -245,7 +251,7 @@ public class FakeplayerConfig extends PluginConfig {
             return PreventKicking.ON_SPAWNING;
         }
 
-        return PreventKicking.valueOf(file.getString("prevent-kicking", PreventKicking.NEVER.toString()));
+        return ConfigUtils.getEnum(file, "prevent-kicking", PreventKicking.class, PreventKicking.ON_SPAWNING);
     }
 
 }

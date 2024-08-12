@@ -4,7 +4,7 @@
 #  不要直接修改 config.tmpl.yml 文件，将这份文件复制并重命名为 config.yml 来作为配置文件
 #                               【Important】【非常重要】
 # =========================================================================================================
-version: 16
+version: 17
 
 # 多国语言配置
 # 可选项: en, zh, zh_cn, zh_tw, zh_hk
@@ -122,6 +122,17 @@ kick-on-dead: true
 # Tips:
 #    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
 kale-tps: 0
+
+
+# Invsee implement:
+# Options:
+#   AUTO: Auto choose a implement depends on server plugins. Supports: OpenInv
+#   SIMPLE: A simple implement, with it, you can NOT visit or modify equipments
+# Invsee 实现:
+# 可选项:
+#   AUTO: 自动，自动根据服务器安装的插件来选择, 当前支持的插件: OpenInv
+#   SIMPLE: 一个简单的内嵌实现, 使用这个不能看到或者编辑假人的装备栏
+invsee-implement: AUTO
 
 
 # Pre-Spawn-Commands
