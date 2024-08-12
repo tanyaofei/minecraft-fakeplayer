@@ -12,7 +12,7 @@ If you want more supports, join my [Discord](https://discord.gg/JUk5AZkr)
 
 ## Buy me a coffee
 
-Buy me a coffee On [PayPal](https://paypal.me/hello09x) if you like this plugin. 
+If you like this plugin, buy me a coffee On [PayPal](https://paypal.me/hello09x) 🎉
 
 
 ## Features
