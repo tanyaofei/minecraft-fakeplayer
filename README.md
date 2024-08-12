@@ -30,9 +30,11 @@ Buy me a coffee On [PayPal](https://paypal.me/hello09x) if you like this plugin.
 
 
 ## Config file
-Unlink other plugins, Fakeplayer only generates a template config file named `config.tmpl.yml`.
+**Fakeplayer only generates a template config file named `config.tmpl.yml`.**
 You need to rename this file to `config.yml` as your configuration file.
 This approach can let you preview new content when you are upgrading it.
+
+[Click to visit file content](fakeplayer-core/src/main/resources/config.yml)
 
 
 ## Commands
@@ -96,9 +98,6 @@ Command examples:
 | replenish          | Whether to auto-replenish                                                                                                           |
 | autofish           | Whether to autofish                                                                                                                 |
 
-## Plugin configuration
-
-[Click to visit](fakeplayer-core/src/main/resources/config.yml)
 
 ## Permissions
 
