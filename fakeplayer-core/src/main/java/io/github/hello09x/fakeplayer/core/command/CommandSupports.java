@@ -37,22 +37,26 @@ public abstract class CommandSupports {
     public static @NotNull CommandAPICommand[] newActionCommands(@NotNull ActionType action) {
         return new CommandAPICommand[]{
                 command("once")
+                        .withShortDescription("fakeplayer.command.action.once")
                         .withOptionalArguments(fakeplayer("name"))
                         .executes(actionCommand.action(action, ActionSetting.once())),
                 command("continuous")
+                        .withShortDescription("fakeplayer.command.action.continuous")
                         .withOptionalArguments(fakeplayer("name"))
                         .executes(actionCommand.action(action, ActionSetting.continuous())),
-                command("stop")
-                        .withOptionalArguments(fakeplayer("name"))
-                        .executes(actionCommand.action(action, ActionSetting.stop())),
                 command("interval")
+                        .withShortDescription("fakeplayer.command.action.interval")
                         .withOptionalArguments(
-                                int32("interval", 1),
+                                int32("ticks", 1),
                                 fakeplayer("name"))
                         .executes((sender, args) -> {
-                    int interval = (int) args.getOptional("interval").orElse(1);
+                    int interval = (int) args.getOptional("ticks").orElse(1);
                     actionCommand.action(sender, args, action, ActionSetting.interval(interval));
-                })
+                }),
+                command("stop")
+                        .withShortDescription("fakeplayer.command.action.stop")
+                        .withOptionalArguments(fakeplayer("name"))
+                        .executes(actionCommand.action(action, ActionSetting.stop()))
         };
     }
 
@@ -88,7 +92,7 @@ public abstract class CommandSupports {
         return fakeplayer(nodeName, null);
     }
 
-    public static @NotNull Argument<List<Player>> targets(@NotNull String nodeName) {
+    public static @NotNull Argument<List<Player>> fakeplayers(@NotNull String nodeName) {
         return new CustomArgument<List<Player>, String>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var arg = info.currentInput();
@@ -174,7 +178,7 @@ public abstract class CommandSupports {
     }
 
     public static boolean isCmdAvailable(@NotNull CommandSender sender) {
-        return hasFakeplayer(sender) && (sender.hasPermission(Permission.cmd) || !config.getAllowCommands().isEmpty());
+        return (sender.hasPermission(Permission.cmd) || !config.getAllowCommands().isEmpty()) && hasFakeplayer(sender);
     }
 
 }

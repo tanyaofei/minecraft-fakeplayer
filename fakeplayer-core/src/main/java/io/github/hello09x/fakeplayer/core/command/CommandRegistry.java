@@ -119,7 +119,7 @@ public class CommandRegistry {
                                 .withPermission(Permission.kill)
                                 .withShortDescription("fakeplayer.command.kill.description")
                                 .withRequirement(CommandSupports::hasFakeplayer)
-                                .withOptionalArguments(targets("names"))
+                                .withOptionalArguments(fakeplayers("names"))
                                 .executes(killCommand::kill),
                         command("list")
                                 .withPermission(Permission.list)

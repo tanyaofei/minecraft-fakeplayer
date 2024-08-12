@@ -5,6 +5,7 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import io.github.hello09x.fakeplayer.core.Main;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Range;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class MoveCommand extends AbstractCommand {
     /**
      * 假人移动
      */
-    public CommandExecutor move(float forward, float strafing) {
+    public CommandExecutor move(@Range(from = 0, to = 1) float forward, @Range(from = 0, to = 1) float strafing) {
         return (sender, args) -> {
             var fake = getFakeplayer(sender, args);
             var handle = bridge.fromPlayer(fake);

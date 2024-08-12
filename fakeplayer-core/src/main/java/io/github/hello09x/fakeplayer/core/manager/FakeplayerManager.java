@@ -13,7 +13,6 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.entity.Fakeplayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
-import io.github.hello09x.fakeplayer.core.manager.invsee.Invsee;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Config;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
@@ -21,8 +20,6 @@ import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -51,7 +48,6 @@ public class FakeplayerManager {
     public final static String REMOVAL_REASON_PREFIX = "[fakeplayer] ";
 
     private final static Logger log = Main.getInstance().getLogger();
-    private final Invsee invsee;
 
     private final NameManager nameManager;
     private final FakeplayerList playerList;
@@ -61,8 +57,7 @@ public class FakeplayerManager {
     private final ScheduledExecutorService lagMonitor;
 
     @Inject
-    public FakeplayerManager(Invsee invsee, NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, FakeplayerConfig config) {
-        this.invsee = invsee;
+    public FakeplayerManager(NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, FakeplayerConfig config) {
         this.nameManager = nameManager;
         this.playerList = playerList;
         this.configManager = configManager;
@@ -459,28 +454,6 @@ public class FakeplayerManager {
                 log.info("Dispatched command: " + cmd);
             }
         }
-    }
-
-    /**
-     * 让玩家打开假人背包
-     *
-     * @param viewer 玩家
-     * @param target  假人
-     * @return 是否打开成功
-     */
-    public boolean openInventory(@NotNull Player viewer, @NotNull Player target) {
-        var fp = this.playerList.getByName(target.getName());
-        if (fp == null) {
-            return false;
-        }
-        if (!viewer.isOp() && !fp.isCreatedBy(viewer)) {
-            return false;
-        }
-
-        this.invsee.openInventory(viewer, target);
-        var pos = target.getLocation();
-        pos.getWorld().playSound(pos, Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.3f, 1.0f);
-        return true;
     }
 
     /**

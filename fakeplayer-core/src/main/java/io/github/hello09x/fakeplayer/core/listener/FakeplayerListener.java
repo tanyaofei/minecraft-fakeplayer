@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.listener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
+import io.github.hello09x.devtools.core.utils.Exceptions;
 import io.github.hello09x.devtools.core.utils.MetadataUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
@@ -21,6 +22,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,6 +158,14 @@ public class FakeplayerListener implements Listener {
             }
         } finally {
             manager.cleanup(target);
+        }
+    }
+
+    @EventHandler
+    public void onPluginDisable(@NotNull PluginDisableEvent event) {
+        if (event.getPlugin() == Main.getInstance()) {
+            Exceptions.suppress(Main.getInstance(), manager::onDisable);
+            Exceptions.suppress(Main.getInstance(), usedIdRepository::onDisable);
         }
     }
 
