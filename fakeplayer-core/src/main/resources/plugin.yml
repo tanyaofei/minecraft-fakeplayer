@@ -7,6 +7,9 @@ website: 'https://github.com/tanyaofei/minecraft-fakeplayer'
 depend:
   - CommandAPI
 
+softdepend:
+  - OpenInv
+
 permissions:
   fakeplayer.command.spawn:
     description: 'Allow player to run /fp spawn'

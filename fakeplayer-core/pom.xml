@@ -77,6 +77,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.jikoo</groupId>
+            <artifactId>OpenInv</artifactId>
+            <version>5.1.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../lib/OpenInv.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
