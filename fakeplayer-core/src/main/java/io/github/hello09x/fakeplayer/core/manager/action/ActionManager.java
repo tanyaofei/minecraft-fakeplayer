@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -31,6 +32,16 @@ public class ActionManager {
     public ActionManager(NMSBridge bridge) {
         this.bridge = bridge;
         Bukkit.getScheduler().runTaskTimer(Main.getInstance(), this::tick, 0, 1);
+    }
+
+    public boolean hasActiveAction(
+            @NotNull Player player,
+            @NotNull ActionType action
+    ) {
+        return Optional.ofNullable(this.managers.get(player.getUniqueId()))
+                       .map(manager -> manager.get(action))
+                       .filter(ac -> ac.getSetting().remains > 0)
+                       .isPresent();
     }
 
     public void setAction(

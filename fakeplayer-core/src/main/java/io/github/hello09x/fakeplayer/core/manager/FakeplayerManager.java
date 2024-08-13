@@ -13,8 +13,9 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.entity.Fakeplayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
+import io.github.hello09x.fakeplayer.core.manager.feature.FakeplayerFeatureManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
@@ -51,16 +52,16 @@ public class FakeplayerManager {
 
     private final NameManager nameManager;
     private final FakeplayerList playerList;
-    private final UserConfigManager configManager;
+    private final FakeplayerFeatureManager featureManager;
     private final NMSBridge nms;
     private final FakeplayerConfig config;
     private final ScheduledExecutorService lagMonitor;
 
     @Inject
-    public FakeplayerManager(NameManager nameManager, FakeplayerList playerList, UserConfigManager configManager, NMSBridge nms, FakeplayerConfig config) {
+    public FakeplayerManager(NameManager nameManager, FakeplayerList playerList, FakeplayerFeatureManager featureManager, NMSBridge nms, FakeplayerConfig config) {
         this.nameManager = nameManager;
         this.playerList = playerList;
-        this.configManager = configManager;
+        this.featureManager = featureManager;
         this.nms = nms;
         this.config = config;
 
@@ -107,16 +108,16 @@ public class FakeplayerManager {
         this.dispatchCommandsEarly(fp, this.config.getPreSpawnCommands());
         return CompletableFuture
                 .supplyAsync(() -> {
-                    var configs = configManager.getConfigs(creator);
+                    var configs = featureManager.getFeatures(creator);
                     return new SpawnOption(
                             spawnAt,
-                            configs.getOrDefault(Config.invulnerable),
-                            configs.getOrDefault(Config.collidable),
-                            configs.getOrDefault(Config.look_at_entity),
-                            configs.getOrDefault(Config.pickup_items),
-                            configs.getOrDefault(Config.skin),
-                            configs.getOrDefault(Config.replenish),
-                            configs.getOrDefault(Config.autofish)
+                            configs.get(FeatureKey.invulnerable).asBoolean(),
+                            configs.get(FeatureKey.collidable).asBoolean(),
+                            configs.get(FeatureKey.look_at_entity).asBoolean(),
+                            configs.get(FeatureKey.pickup_items).asBoolean(),
+                            configs.get(FeatureKey.skin).asBoolean(),
+                            configs.get(FeatureKey.replenish).asBoolean(),
+                            configs.get(FeatureKey.autofish).asBoolean()
                     );
                 })
                 .thenComposeAsync(fp::spawnAsync)

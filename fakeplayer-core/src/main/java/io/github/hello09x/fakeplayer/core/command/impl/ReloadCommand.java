@@ -8,9 +8,8 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 
 @Singleton
 public class ReloadCommand extends AbstractCommand {
@@ -27,15 +26,8 @@ public class ReloadCommand extends AbstractCommand {
 
     public void reload(@NotNull CommandSender sender, @NotNull CommandArguments args) {
         config.reload();
-        if (!config.isFileExists()) {
-            sender.sendMessage(translatable(
-                    "fakeplayer.command.reload.config-file-not-found",
-                    text(FakeplayerConfig.CONFIG_FILE_NAME, WHITE),
-                    text(FakeplayerConfig.CONFIG_TMPL_FILE_NAME, WHITE)
-            ).color(GOLD));
-        }
         sender.sendMessage(translatable("fakeplayer.command.generic.success", GRAY));
-        if (config.isFileConfigurationOutOfDate()) {
+        if (config.isConfigFileOutOfDate()) {
             sender.sendMessage(translatable("fakeplayer.configuration.out-of-date", GRAY));
         }
     }

@@ -10,7 +10,6 @@ import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.config.PreventKicking;
 import io.github.hello09x.fakeplayer.core.constant.MetadataKeys;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerAutofishManager;
-import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerReplenishManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerSkinManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
@@ -44,10 +43,10 @@ public class Fakeplayer {
     private final static InternalAddressGenerator ipGen = new InternalAddressGenerator();
     private final static FakeplayerConfig config = Main.getInjector().getInstance(FakeplayerConfig.class);
     private final static NMSBridge bridge = Main.getInjector().getInstance(NMSBridge.class);
-    private final static FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
     private final static FakeplayerSkinManager skinManager = Main.getInjector().getInstance(FakeplayerSkinManager.class);
     private final static FakeplayerReplenishManager replenishManager = Main.getInjector().getInstance(FakeplayerReplenishManager.class);
     private final static FakeplayerAutofishManager autofishManager = Main.getInjector().getInstance(FakeplayerAutofishManager.class);
+    private final static ActionManager actionManager = Main.getInjector().getInstance(ActionManager.class);
 
 
     @NotNull
@@ -73,15 +72,15 @@ public class Fakeplayer {
     @NotNull
     private final FakeplayerTicker ticker;
 
-    @NotNull
     @Getter
+    @NotNull
     private final String name;
 
     @NotNull
     private final UUID uuid;
 
-    @UnknownNullability
     @Getter
+    @UnknownNullability
     private NMSNetwork network;
 
     /**
@@ -152,7 +151,7 @@ public class Fakeplayer {
                     this.player.setCollidable(option.collidable());
                     this.player.setCanPickupItems(option.pickupItems());
                     if (option.lookAtEntity()) {
-                        Main.getInjector().getInstance(ActionManager.class).setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
+                        actionManager.setAction(player, ActionType.LOOK_AT_NEAREST_ENTITY, ActionSetting.continuous());
                     }
                     if (option.skin()) {
                         skinManager.useDefaultSkin(creator, player);

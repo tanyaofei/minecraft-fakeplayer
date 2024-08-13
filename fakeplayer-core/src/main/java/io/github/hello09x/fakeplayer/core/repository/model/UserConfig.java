@@ -1,14 +1,21 @@
 package io.github.hello09x.fakeplayer.core.repository.model;
 
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+
 public record UserConfig(
 
         Integer id,
 
-        String playerId,
+        @NotNull
+        UUID playerId,
 
-        String key,
+        @NotNull
+        FeatureKey key,
 
+        @NotNull
         String value
 
 ) {

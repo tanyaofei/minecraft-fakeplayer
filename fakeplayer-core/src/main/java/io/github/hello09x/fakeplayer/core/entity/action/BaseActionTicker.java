@@ -2,6 +2,7 @@ package io.github.hello09x.fakeplayer.core.entity.action;
 
 import io.github.hello09x.fakeplayer.api.spi.*;
 import io.github.hello09x.fakeplayer.core.entity.action.impl.*;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
@@ -17,6 +18,7 @@ public abstract class BaseActionTicker implements ActionTicker {
     protected Action action;
 
     @NotNull
+    @Getter
     protected ActionSetting setting;
 
     public BaseActionTicker(NMSBridge nms, @NotNull Player player, @NotNull ActionType action, @NotNull ActionSetting setting) {

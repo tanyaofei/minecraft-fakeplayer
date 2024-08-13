@@ -10,7 +10,7 @@ import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
@@ -172,8 +172,8 @@ public class CommandRegistry {
                                 .withShortDescription("fakeplayer.command.set.description")
                                 .withPermission(Permission.set)
                                 .withArguments(
-                                        config("config", Config::hasAccessor),
-                                        configValue("config", "value")
+                                        configKey("feature", FeatureKey::hasModifier),
+                                        configValue("feature", "option")
                                 )
                                 .withOptionalArguments(fakeplayer("name"))
                                 .executes(setCommand::set),
@@ -183,13 +183,13 @@ public class CommandRegistry {
                                 .withSubcommands(
                                         command("set")
                                                 .withArguments(
-                                                        config("config"),
-                                                        configValue("config", "value"))
+                                                        configKey("feature"),
+                                                        configValue("feature", "option"))
                                                 .executesPlayer(configCommand::setConfig),
                                         command("list")
-                                                .executes(configCommand::listConfig)
+                                                .executesPlayer(configCommand::listConfig)
                                 )
-                                .executes(configCommand::listConfig),
+                                .executesPlayer(configCommand::listConfig),
 
                         command("expme")
                                 .withPermission(Permission.expme)

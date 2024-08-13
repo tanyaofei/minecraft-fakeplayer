@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * @author tanyaofei
@@ -19,8 +20,8 @@ public class UserConfigRowMapper implements RowMapper<UserConfig> {
     public @Nullable UserConfig mapRow(@NotNull ResultSet rs, int rowNum) throws SQLException {
         return new UserConfig(
                 rs.getInt("id"),
-                rs.getString("player_id"),
-                rs.getString("key"),
+                UUID.fromString(rs.getString("player_id")),
+                FeatureKey.valueOf(rs.getString("key")),
                 rs.getString("value")
         );
     }

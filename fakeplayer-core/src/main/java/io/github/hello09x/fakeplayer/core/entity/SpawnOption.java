@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @param replenish    自动补货
  */
 public record SpawnOption(
+
         @NotNull
         Location spawnAt,
 

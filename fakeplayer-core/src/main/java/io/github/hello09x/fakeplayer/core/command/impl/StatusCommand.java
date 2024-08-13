@@ -5,7 +5,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.utils.ExperienceUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -19,11 +19,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.JoinConfiguration.separator;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
@@ -68,7 +67,7 @@ public class StatusCommand extends AbstractCommand {
             lines.add(this.getExperienceLine(fake));
         }
         lines.add(LINE_SPLITTER);
-        lines.add(getConfigLine(fake));
+        lines.add(getFeatureLine(fake));
 
         sender.sendMessage(join(JoinConfiguration.newlines(), lines));
     }
@@ -117,23 +116,26 @@ public class StatusCommand extends AbstractCommand {
         );
     }
 
-    private @NotNull Component getConfigLine(@NotNull Player target) {
-        var configs = Arrays.stream(Config.values()).filter(Config::hasAccessor).toList();
+    private @NotNull Component getFeatureLine(@NotNull Player faker) {
         var messages = new ArrayList<Component>();
-        for (var config : configs) {
-            var name = translatable(config.translationKey(), WHITE);
-            var options = config.options();
-            var status = config.accessor().getter().apply(target).toString();
+        for (var key : FeatureKey.values()) {
+            var detector = key.getDetector();
+            if (detector == null) {
+                continue;
+            }
+            var name = translatable(key, WHITE);
+            var options = key.getOptions();
+            var status = detector.apply(faker);
 
             messages.add(textOfChildren(
                     name,
                     space(),
-                    join(JoinConfiguration.separator(space()), options.stream().map(option -> {
+                    join(separator(space()), options.stream().map(option -> {
                         var style = option.equals(status) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);
                         return text("[" + option + "]").style(style).clickEvent(
-                                runCommand("/fp set %s %s %s".formatted(config.key(), option, target.getName()))
+                                runCommand("/fp set %s %s %s".formatted(key.name(), option, faker.getName()))
                         );
-                    }).collect(Collectors.toList()))
+                    }).toList())
             ));
         }
         return join(JoinConfiguration.newlines(), messages);

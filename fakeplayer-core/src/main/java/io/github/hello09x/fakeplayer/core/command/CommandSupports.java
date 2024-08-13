@@ -11,13 +11,16 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.ActionCommand;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -123,42 +126,56 @@ public abstract class CommandSupports {
         }));
     }
 
-    public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName) {
-        return config(nodeName, null);
+    public static @NotNull Argument<FeatureKey> configKey(@NotNull String nodeName) {
+        return configKey(nodeName, ignored -> true);
     }
 
-    public static @NotNull Argument<Config<Object>> config(@NotNull String nodeName, @Nullable Predicate<Config<?>> predicate) {
+    public static @NotNull Argument<FeatureKey> configKey(@NotNull String nodeName, @NotNull Predicate<FeatureKey> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
-            Config<Object> config;
+            FeatureKey key;
             try {
-                config = io.github.hello09x.fakeplayer.core.repository.model.Config.valueOf(arg);
+                key = FeatureKey.valueOf(arg);
             } catch (Exception e) {
-                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-option"));
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-key"));
             }
-            if (predicate != null && !predicate.test(config)) {
-                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-option"));
+
+            if (!predicate.test(key)) {
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-key"));
             }
-            return config;
-        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Config.values()).filter(Optional.ofNullable(predicate).orElse(ignored -> true)).map(io.github.hello09x.fakeplayer.core.repository.model.Config::key).toList()));
+
+            if (!key.testPermissions(info.sender())) {
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.no-permission"));
+            }
+            return key;
+        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(FeatureKey.values()).filter(predicate).map(Enum::name).toArray(String[]::new)));
     }
 
-    public static @NotNull Argument<Object> configValue(@NotNull String configNodeName, @NotNull String nodeName) {
-        return new CustomArgument<>(new StringArgument(nodeName), info -> {
-            @SuppressWarnings("unchecked")
-            var config = Objects.requireNonNull((Config<Object>) info.previousArgs().get(configNodeName));
+
+    public static @NotNull Argument<String> configValue(@NotNull String configKeyNodeName, @NotNull String nodeName) {
+        return new CustomArgument<String, String>(new StringArgument(nodeName), info -> {
+            var key = (FeatureKey) info.previousArgs().get(configKeyNodeName);
+            if (key == null) {
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-key"));
+            }
             var arg = info.currentInput();
-            if (!config.options().contains(arg)) {
+            if (!key.getOptions().contains(arg)) {
                 throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-value"));
             }
-            return config.parser().apply(arg);
-        }).replaceSuggestions(ArgumentSuggestions.stringsAsync(info -> CompletableFuture.supplyAsync(() -> {var config = Objects.requireNonNull((io.github.hello09x.fakeplayer.core.repository.model.Config<?>) info.previousArgs().get(configNodeName));
-            var arg = info.currentArg().toLowerCase();
-            var options = config.options().stream();
-            if (!arg.isEmpty()) {
-                options = options.filter(o -> o.toLowerCase().contains(arg));
+
+            return arg;
+        }).replaceSuggestions(ArgumentSuggestions.stringCollectionAsync(info -> CompletableFuture.supplyAsync(() -> {
+            var key = (FeatureKey) info.previousArgs().get(configKeyNodeName);
+            if (key == null) {
+                return Collections.emptyList();
             }
-            return options.toArray(String[]::new);
+
+            var arg = info.currentArg().toLowerCase(Locale.ENGLISH);
+            if (arg.isEmpty()) {
+                return key.getOptions();
+            }
+
+            return key.getOptions().stream().filter(option -> option.contains(arg)).toList();
         })));
     }
 

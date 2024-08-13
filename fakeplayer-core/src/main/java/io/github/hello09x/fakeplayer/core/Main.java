@@ -99,7 +99,7 @@ public final class Main extends JavaPlugin {
                 }
 
             } catch (Throwable e) {
-                getLogger().warning("检测新版本发生异常: " + e.getMessage());
+                getLogger().warning("Error on checking for updates: " + e.getMessage());
             }
         });
     }

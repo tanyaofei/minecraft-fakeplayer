@@ -8,17 +8,14 @@ import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.translation.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.manager.UserConfigManager;
-import io.github.hello09x.fakeplayer.core.repository.model.Config;
+import io.github.hello09x.fakeplayer.core.manager.feature.FakeplayerFeatureManager;
+import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,57 +28,52 @@ import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 @Singleton
 public class ConfigCommand extends AbstractCommand {
 
-    private final UserConfigManager configManager;
+    private final FakeplayerFeatureManager featureManager;
 
     @Inject
-    public ConfigCommand(UserConfigManager configManager) {
-        this.configManager = configManager;
+    public ConfigCommand(FakeplayerFeatureManager featureManager) {
+        this.featureManager = featureManager;
     }
 
     /**
      * 设置配置
      */
     public void setConfig(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        @SuppressWarnings("unchecked")
-        var config = (Config<Object>) Objects.requireNonNull(args.get("config"));
-
-        if (!config.hasPermission(sender)) {
+        var key = (FeatureKey) Objects.requireNonNull(args.get("feature"));
+        if (!key.testPermissions(sender)) {
             throw CommandAPI.failWithString(ComponentUtils.toString(
                     translatable("fakeplayer.command.config.set.error.no-permission"),
                     TranslatorUtils.getLocale(sender)
             ));
         }
 
-        var value = Objects.requireNonNull(args.get("value"));
-        configManager.setConfig(sender, config, value);
+        var option = (String) Objects.requireNonNull(args.get("option"));
+        featureManager.setFeature(sender, key, option);
         sender.sendMessage(translatable(
                 "fakeplayer.command.config.set.success",
-                translatable(config.translationKey(), GOLD),
-                text(value.toString(), WHITE)
+                translatable(key.translationKey(), GOLD),
+                text(option, WHITE)
         ).color(GRAY));
     }
 
     /**
      * 获取所有配置
      */
-    public void listConfig(@NotNull CommandSender sender, @NotNull CommandArguments args) {
+    public void listConfig(@NotNull Player sender, @NotNull CommandArguments args) {
         CompletableFuture.runAsync(() -> {
-            var components = Arrays.stream(Config.values()).map(config -> {
-                var options = new ArrayList<>(config.options());
-                var value = String.valueOf(configManager.getConfig(sender, config));
-                return textOfChildren(
-                        translatable(config, GOLD),
-                        text(": ", GRAY),
-                        join(separator(space()), options.stream().map(option -> {
-                            var style = option.equals(value) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);
-                            return text("[" + option + "]").style(style).clickEvent(
-                                    runCommand("/fp config set " + config.key() + " " + option)
-                            );
-                        }).toList())
-                );
-            }).toList();
-
-            var message = Component.join(separator(newline()), components);
+            var lines = featureManager.getFeatures(sender).values().stream().map(feature -> textOfChildren(
+                    translatable(feature.key(), GOLD),
+                    text(": ", GRAY),
+                    join(separator(space()), feature.key().getOptions().stream().map(option -> {
+                        var style = option.equals(feature.value())
+                                ? Style.style(GREEN, UNDERLINED)
+                                : Style.style(GRAY);
+                        return text("[" + option + "]").style(style).clickEvent(
+                                runCommand("/fp config set " + feature.key() + " " + option)
+                        );
+                    }).toList())
+            )).toList();
+            var message = Component.join(separator(newline()), lines);
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(message));
         });
     }

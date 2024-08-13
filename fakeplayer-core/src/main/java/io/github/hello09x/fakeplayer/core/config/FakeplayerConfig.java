@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.config.ConfigUtils;
 import io.github.hello09x.devtools.core.config.PluginConfig;
 import io.github.hello09x.fakeplayer.core.Main;
+import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.Bukkit;
@@ -15,8 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -32,6 +36,8 @@ public class FakeplayerConfig extends PluginConfig {
     private final static Logger log = Main.getInstance().getLogger();
 
     private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";
+
+    public final static String SECTION_KEY_DEFAULT_FEATURES = "default-features";
 
     /**
      * 每位玩家最多多少个假人
@@ -151,6 +157,8 @@ public class FakeplayerConfig extends PluginConfig {
     @Beta
     private boolean defaultOnlineSkin;
 
+    private Map<FeatureKey, String> defaultFeatures;
+
     @Inject
     public FakeplayerConfig() {
         super(Main.getInstance());
@@ -189,10 +197,12 @@ public class FakeplayerConfig extends PluginConfig {
                                  .collect(Collectors.toSet());
 
         this.defaultOnlineSkin = file.getBoolean("default-online-skin", false);
+        this.defaultFeatures = Arrays.stream(FeatureKey.values())
+                                     .collect(Collectors.toMap(Function.identity(), key -> file.getString("default-features." + key.name(), key.getDefaultOption())));
         this.invseeImplement = ConfigUtils.getEnum(file, "invsee-implement", InvseeImplement.class, InvseeImplement.AUTO);
         this.debug = file.getBoolean("debug", false);
 
-        if (this.isFileConfigurationOutOfDate()) {
+        if (this.isConfigFileOutOfDate()) {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 if (Main.getInstance().isEnabled()) {
                     Main.getInstance().getComponentLogger().warn(translatable("fakeplayer.configuration.out-of-date"));

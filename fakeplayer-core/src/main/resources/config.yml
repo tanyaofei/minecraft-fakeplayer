@@ -252,6 +252,17 @@ allow-commands:
   - ''
   - ''
 
+# Default Features of fake players
+# 默认假人特性
+default-features:
+  collidable: true
+  pickup_items: true
+  skin: true
+  look_at_entity: false
+  invulnerable: false
+  replenish: false
+  autofish: false
+
 
 # 检测更新
 # 仅仅是检测, 并不会帮你下载
