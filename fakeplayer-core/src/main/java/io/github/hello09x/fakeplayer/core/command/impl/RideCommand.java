@@ -3,7 +3,6 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Boat;
@@ -72,7 +71,7 @@ public class RideCommand extends AbstractCommand {
         }
 
         var distance = fake.getLocation().distance(sender.getLocation());
-        if (distance > Bukkit.getViewDistance()) {
+        if (distance > 24) {
             sender.sendMessage(translatable(
                     "fakeplayer.command.ride.me.error.too-far",
                     text(fake.getName(), WHITE)
