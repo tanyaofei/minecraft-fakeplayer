@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.core.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import io.github.hello09x.devtools.command.HelpCommand;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.api.spi.ActionSetting;
@@ -387,6 +388,11 @@ public class CommandRegistry {
                                                 .withShortDescription("fakeplayer.command.ride.vehicle.description")
                                                 .withOptionalArguments(fakeplayer("name"))
                                                 .executes(rideCommand::rideVehicle),
+                                        command("entity")
+                                                .withShortDescription("fakeplayer.command.ride.entity.description")
+                                                .withArguments(new EntitySelectorArgument.OneEntity("entity"))
+                                                .withOptionalArguments(fakeplayer("name"))
+                                                .executes(rideCommand::rideEntity),
                                         command("stop")
                                                 .withShortDescription("fakeplayer.command.ride.stop.description")
                                                 .withOptionalArguments(fakeplayer("name"))
