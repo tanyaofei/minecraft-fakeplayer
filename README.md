@@ -101,6 +101,9 @@ Command examples:
 
 ## Permissions
 
+<details>
+<summary>Click to visit</summary>
+
 Each command has its own permission node, but we provided some permissions packs
 
 ### Permission `fakeplayer.spawn`
@@ -156,7 +159,7 @@ Each command has its own permission node, but we provided some permissions packs
 
 If your server does not restrict various player commands, you can use this directly.
 `fakeplayer.basic` includes all secure permissions, except for `/fp cmd` commands.
-
+</details>
 
 # Custom Translation
 1. Create a `message` folder in `plugins/fakeplayer`
