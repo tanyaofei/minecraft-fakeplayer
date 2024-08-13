@@ -253,7 +253,7 @@ allow-commands:
   - ''
 
 # Default Features of fake players
-# It takes effect when the player has never changed the config via '/fp config' or has no permission.
+# It takes effect when the player has never changed the config by '/fp config' or has no permission.
 # 默认假人特性
 # 当玩家没有通过 /fp config 更改过配置或者他没有权限时生效
 default-features:
