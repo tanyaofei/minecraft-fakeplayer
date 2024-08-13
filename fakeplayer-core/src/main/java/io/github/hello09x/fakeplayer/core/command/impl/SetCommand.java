@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.core.command.impl;
 import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,10 +18,10 @@ public class SetCommand extends AbstractCommand {
 
     public void set(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var target = super.getFakeplayer(sender, args);
-        var key = (FeatureKey) Objects.requireNonNull(args.get("feature"));
+        var feature = (Feature) Objects.requireNonNull(args.get("feature"));
         var value = (String) Objects.requireNonNull(args.get("option"));
 
-        var modifier = key.getModifier();
+        var modifier = feature.getModifier();
         if (modifier == null) {
             sender.sendMessage(translatable("fakeplayer.command.config.set.error.invalid-key", RED));
             return;
@@ -31,7 +31,7 @@ public class SetCommand extends AbstractCommand {
         sender.sendMessage(translatable(
                 "fakeplayer.command.set.success",
                 text(target.getName(), WHITE),
-                translatable(key, GOLD),
+                translatable(feature, GOLD),
                 text(value, WHITE)
         ).color(GRAY));
 

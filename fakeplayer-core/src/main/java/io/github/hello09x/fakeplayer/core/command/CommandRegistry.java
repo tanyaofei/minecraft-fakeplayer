@@ -11,7 +11,7 @@ import io.github.hello09x.fakeplayer.api.spi.ActionType;
 import io.github.hello09x.fakeplayer.core.command.impl.*;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.constant.Direction;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
@@ -173,7 +173,7 @@ public class CommandRegistry {
                                 .withShortDescription("fakeplayer.command.set.description")
                                 .withPermission(Permission.set)
                                 .withArguments(
-                                        configKey("feature", FeatureKey::hasModifier),
+                                        configKey("feature", Feature::hasModifier),
                                         configValue("feature", "option")
                                 )
                                 .withOptionalArguments(fakeplayer("name"))

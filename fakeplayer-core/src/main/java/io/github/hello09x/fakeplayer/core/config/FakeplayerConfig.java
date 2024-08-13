@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import io.github.hello09x.devtools.core.config.ConfigUtils;
 import io.github.hello09x.devtools.core.config.PluginConfig;
 import io.github.hello09x.fakeplayer.core.Main;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.Bukkit;
@@ -157,7 +157,7 @@ public class FakeplayerConfig extends PluginConfig {
     @Beta
     private boolean defaultOnlineSkin;
 
-    private Map<FeatureKey, String> defaultFeatures;
+    private Map<Feature, String> defaultFeatures;
 
     @Inject
     public FakeplayerConfig() {
@@ -197,7 +197,7 @@ public class FakeplayerConfig extends PluginConfig {
                                  .collect(Collectors.toSet());
 
         this.defaultOnlineSkin = file.getBoolean("default-online-skin", false);
-        this.defaultFeatures = Arrays.stream(FeatureKey.values())
+        this.defaultFeatures = Arrays.stream(Feature.values())
                                      .collect(Collectors.toMap(Function.identity(), key -> file.getString("default-features." + key.name(), key.getDefaultOption())));
         this.invseeImplement = ConfigUtils.getEnum(file, "invsee-implement", InvseeImplement.class, InvseeImplement.AUTO);
         this.debug = file.getBoolean("debug", false);

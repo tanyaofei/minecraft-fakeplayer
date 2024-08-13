@@ -3,7 +3,7 @@ package io.github.hello09x.fakeplayer.core.repository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.devtools.database.jdbc.JdbcTemplate;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import io.github.hello09x.fakeplayer.core.repository.model.UserConfig;
 import io.github.hello09x.fakeplayer.core.repository.model.UserConfigRowMapper;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +23,9 @@ public class UserConfigRepository {
         this.initTables();
     }
 
-    public @Nullable UserConfig selectByPlayerIdAndKey(@NotNull UUID playerId, @NotNull FeatureKey featureKey) {
+    public @Nullable UserConfig selectByPlayerIdAndKey(@NotNull UUID playerId, @NotNull Feature feature) {
         var sql = "select * from user_config where player_id = ? and `key` = ?";
-        return jdbc.queryForObject(sql, UserConfigRowMapper.instance, playerId.toString(), featureKey.name());
+        return jdbc.queryForObject(sql, UserConfigRowMapper.instance, playerId.toString(), feature.name());
     }
 
     public int saveOrUpdate(@NotNull UserConfig config) {

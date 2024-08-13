@@ -11,7 +11,7 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.command.impl.ActionCommand;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -126,16 +126,16 @@ public abstract class CommandSupports {
         }));
     }
 
-    public static @NotNull Argument<FeatureKey> configKey(@NotNull String nodeName) {
+    public static @NotNull Argument<Feature> configKey(@NotNull String nodeName) {
         return configKey(nodeName, ignored -> true);
     }
 
-    public static @NotNull Argument<FeatureKey> configKey(@NotNull String nodeName, @NotNull Predicate<FeatureKey> predicate) {
+    public static @NotNull Argument<Feature> configKey(@NotNull String nodeName, @NotNull Predicate<Feature> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var arg = info.currentInput();
-            FeatureKey key;
+            Feature key;
             try {
-                key = FeatureKey.valueOf(arg);
+                key = Feature.valueOf(arg);
             } catch (Exception e) {
                 throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-key"));
             }
@@ -148,13 +148,13 @@ public abstract class CommandSupports {
                 throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.no-permission"));
             }
             return key;
-        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(FeatureKey.values()).filter(predicate).map(Enum::name).toArray(String[]::new)));
+        }).replaceSuggestions(ArgumentSuggestions.strings(Arrays.stream(Feature.values()).filter(predicate).map(Enum::name).toArray(String[]::new)));
     }
 
 
     public static @NotNull Argument<String> configValue(@NotNull String configKeyNodeName, @NotNull String nodeName) {
         return new CustomArgument<String, String>(new StringArgument(nodeName), info -> {
-            var key = (FeatureKey) info.previousArgs().get(configKeyNodeName);
+            var key = (Feature) info.previousArgs().get(configKeyNodeName);
             if (key == null) {
                 throw CustomArgument.CustomArgumentException.fromAdventureComponent(translatable("fakeplayer.command.config.set.error.invalid-key"));
             }
@@ -165,7 +165,7 @@ public abstract class CommandSupports {
 
             return arg;
         }).replaceSuggestions(ArgumentSuggestions.stringCollectionAsync(info -> CompletableFuture.supplyAsync(() -> {
-            var key = (FeatureKey) info.previousArgs().get(configKeyNodeName);
+            var key = (Feature) info.previousArgs().get(configKeyNodeName);
             if (key == null) {
                 return Collections.emptyList();
             }

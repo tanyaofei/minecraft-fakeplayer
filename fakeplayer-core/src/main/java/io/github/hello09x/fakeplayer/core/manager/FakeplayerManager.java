@@ -15,7 +15,7 @@ import io.github.hello09x.fakeplayer.core.entity.Fakeplayer;
 import io.github.hello09x.fakeplayer.core.entity.SpawnOption;
 import io.github.hello09x.fakeplayer.core.manager.feature.FakeplayerFeatureManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.NameManager;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import io.github.hello09x.fakeplayer.core.util.AddressUtils;
 import io.github.hello09x.fakeplayer.core.util.Commands;
 import net.kyori.adventure.text.Component;
@@ -111,13 +111,13 @@ public class FakeplayerManager {
                     var configs = featureManager.getFeatures(creator);
                     return new SpawnOption(
                             spawnAt,
-                            configs.get(FeatureKey.invulnerable).asBoolean(),
-                            configs.get(FeatureKey.collidable).asBoolean(),
-                            configs.get(FeatureKey.look_at_entity).asBoolean(),
-                            configs.get(FeatureKey.pickup_items).asBoolean(),
-                            configs.get(FeatureKey.skin).asBoolean(),
-                            configs.get(FeatureKey.replenish).asBoolean(),
-                            configs.get(FeatureKey.autofish).asBoolean()
+                            configs.get(Feature.invulnerable).asBoolean(),
+                            configs.get(Feature.collidable).asBoolean(),
+                            configs.get(Feature.look_at_entity).asBoolean(),
+                            configs.get(Feature.pickup_items).asBoolean(),
+                            configs.get(Feature.skin).asBoolean(),
+                            configs.get(Feature.replenish).asBoolean(),
+                            configs.get(Feature.autofish).asBoolean()
                     );
                 })
                 .thenComposeAsync(fp::spawnAsync)

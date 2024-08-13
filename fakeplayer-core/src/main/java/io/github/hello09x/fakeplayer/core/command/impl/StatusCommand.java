@@ -5,7 +5,7 @@ import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.utils.ExperienceUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -118,13 +118,13 @@ public class StatusCommand extends AbstractCommand {
 
     private @NotNull Component getFeatureLine(@NotNull Player faker) {
         var messages = new ArrayList<Component>();
-        for (var key : FeatureKey.values()) {
-            var detector = key.getDetector();
+        for (var feature : Feature.values()) {
+            var detector = feature.getDetector();
             if (detector == null) {
                 continue;
             }
-            var name = translatable(key, WHITE);
-            var options = key.getOptions();
+            var name = translatable(feature, WHITE);
+            var options = feature.getOptions();
             var status = detector.apply(faker);
 
             messages.add(textOfChildren(
@@ -133,7 +133,7 @@ public class StatusCommand extends AbstractCommand {
                     join(separator(space()), options.stream().map(option -> {
                         var style = option.equals(status) ? Style.style(GREEN, UNDERLINED) : Style.style(GRAY);
                         return text("[" + option + "]").style(style).clickEvent(
-                                runCommand("/fp set %s %s %s".formatted(key.name(), option, faker.getName()))
+                                runCommand("/fp set %s %s %s".formatted(feature.name(), option, faker.getName()))
                         );
                     }).toList())
             ));

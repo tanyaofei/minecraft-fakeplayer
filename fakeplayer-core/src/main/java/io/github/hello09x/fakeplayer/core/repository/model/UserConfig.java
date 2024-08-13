@@ -13,7 +13,7 @@ public record UserConfig(
         UUID playerId,
 
         @NotNull
-        FeatureKey key,
+        Feature key,
 
         @NotNull
         String value

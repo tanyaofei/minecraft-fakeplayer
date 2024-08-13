@@ -21,7 +21,7 @@ public class UserConfigRowMapper implements RowMapper<UserConfig> {
         return new UserConfig(
                 rs.getInt("id"),
                 UUID.fromString(rs.getString("player_id")),
-                FeatureKey.valueOf(rs.getString("key")),
+                Feature.valueOf(rs.getString("key")),
                 rs.getString("value")
         );
     }

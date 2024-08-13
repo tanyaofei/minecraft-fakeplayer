@@ -21,7 +21,7 @@ import java.util.function.Function;
  **/
 @Getter
 @AllArgsConstructor
-public enum FeatureKey implements Translatable, Singletons {
+public enum Feature implements Translatable, Singletons {
 
     /**
      * 是否具有碰撞箱

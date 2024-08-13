@@ -9,7 +9,7 @@ import io.github.hello09x.devtools.core.translation.TranslatorUtils;
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.feature.FakeplayerFeatureManager;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
@@ -39,8 +39,8 @@ public class ConfigCommand extends AbstractCommand {
      * 设置配置
      */
     public void setConfig(@NotNull Player sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
-        var key = (FeatureKey) Objects.requireNonNull(args.get("feature"));
-        if (!key.testPermissions(sender)) {
+        var feature = (Feature) Objects.requireNonNull(args.get("feature"));
+        if (!feature.testPermissions(sender)) {
             throw CommandAPI.failWithString(ComponentUtils.toString(
                     translatable("fakeplayer.command.config.set.error.no-permission"),
                     TranslatorUtils.getLocale(sender)
@@ -48,10 +48,10 @@ public class ConfigCommand extends AbstractCommand {
         }
 
         var option = (String) Objects.requireNonNull(args.get("option"));
-        featureManager.setFeature(sender, key, option);
+        featureManager.setFeature(sender, feature, option);
         sender.sendMessage(translatable(
                 "fakeplayer.command.config.set.success",
-                translatable(key.translationKey(), GOLD),
+                translatable(feature.translationKey(), GOLD),
                 text(option, WHITE)
         ).color(GRAY));
     }

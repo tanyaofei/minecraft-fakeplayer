@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.repository.UserConfigRepository;
-import io.github.hello09x.fakeplayer.core.repository.model.FeatureKey;
+import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import io.github.hello09x.fakeplayer.core.repository.model.UserConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,45 +29,45 @@ public class FakeplayerFeatureManager {
         this.config = config;
     }
 
-    private @NotNull String getDefaultOption(@NotNull FeatureKey key) {
+    private @NotNull String getDefaultOption(@NotNull Feature key) {
         return Optional.ofNullable(config.getDefaultFeatures().get(key)).filter(option -> key.getOptions().contains(option)).orElse(key.getDefaultOption());
     }
 
-    public @NotNull Feature getFeature(@NotNull Player player, @NotNull FeatureKey key) {
+    public @NotNull FeatureInstance getFeature(@NotNull Player player, @NotNull Feature key) {
         if (!key.testPermissions(player)) {
-            return new Feature(key, this.getDefaultOption(key));
+            return new FeatureInstance(key, this.getDefaultOption(key));
         }
 
         String value = Optional.ofNullable(repository.selectByPlayerIdAndKey(player.getUniqueId(), key))
                                .map(UserConfig::value)
                                .orElseGet(() -> this.getDefaultOption(key));
 
-        return new Feature(key, value);
+        return new FeatureInstance(key, value);
     }
 
-    public @NotNull Map<FeatureKey, Feature> getFeatures(@NotNull CommandSender sender) {
-        Map<FeatureKey, UserConfig> userConfigs;
+    public @NotNull Map<Feature, FeatureInstance> getFeatures(@NotNull CommandSender sender) {
+        Map<Feature, UserConfig> userConfigs;
         if (sender instanceof Player player) {
             userConfigs = repository.selectByPlayerId(player.getUniqueId()).stream().collect(Collectors.toMap(UserConfig::key, Function.identity()));
         } else {
             userConfigs = Collections.emptyMap();
         }
 
-        var configs = new LinkedHashMap<FeatureKey, Feature>(FeatureKey.values().length, 1.0F);
-        for (var key : FeatureKey.values()) {
+        var configs = new LinkedHashMap<Feature, FeatureInstance>(Feature.values().length, 1.0F);
+        for (var key : Feature.values()) {
             String value;
             if (!key.testPermissions(sender)) {
                 value = this.getDefaultOption(key);
             } else {
                 value = Optional.ofNullable(userConfigs.get(key)).map(UserConfig::value).orElseGet(() -> this.getDefaultOption(key));
             }
-            configs.put(key, new Feature(key, value));
+            configs.put(key, new FeatureInstance(key, value));
         }
 
         return configs;
     }
 
-    public void setFeature(@NotNull Player player, @NotNull FeatureKey key, @NotNull String value) {
+    public void setFeature(@NotNull Player player, @NotNull Feature key, @NotNull String value) {
         this.repository.saveOrUpdate(new UserConfig(
                 null,
                 player.getUniqueId(),
