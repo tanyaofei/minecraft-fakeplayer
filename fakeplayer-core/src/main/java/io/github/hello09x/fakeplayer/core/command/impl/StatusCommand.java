@@ -8,7 +8,6 @@ import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.JoinConfiguration.separator;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
@@ -69,7 +69,7 @@ public class StatusCommand extends AbstractCommand {
         lines.add(LINE_SPLITTER);
         lines.add(getFeatureLine(fake));
 
-        sender.sendMessage(join(JoinConfiguration.newlines(), lines));
+        sender.sendMessage(join(newlines(), lines));
     }
 
     private @NotNull Component getFoodLine(@NotNull Player target) {
@@ -138,7 +138,7 @@ public class StatusCommand extends AbstractCommand {
                     }).toList())
             ));
         }
-        return join(JoinConfiguration.newlines(), messages);
+        return join(newlines(), messages);
     }
 
 }
