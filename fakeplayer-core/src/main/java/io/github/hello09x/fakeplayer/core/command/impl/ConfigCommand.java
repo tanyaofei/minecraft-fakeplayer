@@ -10,7 +10,6 @@ import io.github.hello09x.devtools.core.utils.ComponentUtils;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.feature.FakeplayerFeatureManager;
 import io.github.hello09x.fakeplayer.core.repository.model.Feature;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -73,7 +72,7 @@ public class ConfigCommand extends AbstractCommand {
                         );
                     }).toList())
             )).toList();
-            var message = Component.join(separator(newline()), lines);
+            var message = join(separator(newline()), lines);
             Bukkit.getScheduler().runTask(Main.getInstance(), () -> sender.sendMessage(message));
         });
     }
