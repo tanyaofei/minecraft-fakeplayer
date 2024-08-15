@@ -78,11 +78,19 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.jikoo</groupId>
+            <groupId>OpenInv</groupId>
             <artifactId>OpenInv</artifactId>
-            <version>5.1.1</version>
+            <version>SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../lib/OpenInv.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>PlaceholderAPI</groupId>
+            <artifactId>PlaceholderAPI</artifactId>
+            <version>SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../lib/PlaceholderAPI-2.11.6.jar</systemPath>
         </dependency>
 
     </dependencies>

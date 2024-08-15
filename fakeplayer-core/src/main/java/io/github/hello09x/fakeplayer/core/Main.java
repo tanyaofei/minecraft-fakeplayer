@@ -37,7 +37,10 @@ public final class Main extends JavaPlugin {
     public void onLoad() {
         loadAt = System.currentTimeMillis();
         instance = this;
+    }
 
+    @Override
+    public void onEnable() {
         injector = Guice.createInjector(
                 new FakeplayerModule(),
                 new CommandModule(),
@@ -46,11 +49,7 @@ public final class Main extends JavaPlugin {
                         "message/message",
                         TranslatorUtils.getDefaultLocale(Main.getInstance())))
         );
-    }
 
-    @Override
-    public void onEnable() {
-        injector.injectMembers(this);
         injector.getInstance(CommandRegistry.class).register();
         {
             var messenger = getServer().getMessenger();
@@ -77,7 +76,7 @@ public final class Main extends JavaPlugin {
 
     public void checkForUpdatesAsync() {
         CompletableFuture.runAsync(() -> {
-            var meta = getPluginMeta();
+            var meta = this.getPluginMeta();
             var checker = new UpdateChecker("tanyaofei", "minecraft-fakeplayer");
             try {
                 var release = checker.getLastRelease();
