@@ -293,6 +293,10 @@ public class FakeplayerManager {
         return stream.toList();
     }
 
+    public int getSize() {
+        return this.playerList.getSize();
+    }
+
     /**
      * 判断一名玩家是否是假人
      *
@@ -467,7 +471,7 @@ public class FakeplayerManager {
             return;
         }
 
-        if (this.playerList.count() >= this.config.getServerLimit()) {
+        if (this.playerList.getSize() >= this.config.getServerLimit()) {
             throw new CommandException(translatable("fakeplayer.command.spawn.error.server-limit"));
         }
 

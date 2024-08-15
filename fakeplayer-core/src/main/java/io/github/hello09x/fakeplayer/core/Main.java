@@ -17,6 +17,7 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerAutofishManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerReplenishManager;
 import io.github.hello09x.fakeplayer.core.manager.WildFakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.InvseeManager;
+import io.github.hello09x.fakeplayer.core.placeholder.FakeplayerPlaceholderExpansion;
 import io.github.hello09x.fakeplayer.core.util.update.UpdateChecker;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,6 +66,16 @@ public final class Main extends JavaPlugin {
             manager.registerEvents(injector.getInstance(FakeplayerAutofishManager.class), this);
             manager.registerEvents(injector.getInstance(FakeplayerReplenishManager.class), this);
             manager.registerEvents(injector.getInstance(InvseeManager.class), this);
+        }
+
+        {
+            var placeholderExpansion = injector.getInstance(FakeplayerPlaceholderExpansion.class);
+            if (placeholderExpansion != null) {
+                if (placeholderExpansion.register()) {
+                    getServer().getPluginManager().registerEvents(placeholderExpansion, this);
+                    getLogger().info("Successfully registered PlaceholderExpansion");
+                }
+            }
         }
 
         if (injector.getInstance(FakeplayerConfig.class).isCheckForUpdates()) {

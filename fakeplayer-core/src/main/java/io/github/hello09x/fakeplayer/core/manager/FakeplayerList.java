@@ -124,7 +124,7 @@ public class FakeplayerList {
         return this.playersByUUID.values().stream();
     }
 
-    public int count() {
+    public int getSize() {
         return this.playersByUUID.size();
     }
 

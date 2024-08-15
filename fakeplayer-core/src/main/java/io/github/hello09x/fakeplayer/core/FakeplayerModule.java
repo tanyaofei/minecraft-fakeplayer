@@ -10,9 +10,12 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.InvseeManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.OpenInvInvseeManagerImpl;
 import io.github.hello09x.fakeplayer.core.manager.invsee.SimpleInvseeManagerImpl;
+import io.github.hello09x.fakeplayer.core.placeholder.FakeplayerPlaceholderExpansion;
+import io.github.hello09x.fakeplayer.core.placeholder.FakeplayerPlaceholderExpansionImpl;
 import io.github.hello09x.fakeplayer.core.util.ClassUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
@@ -57,6 +60,15 @@ public class FakeplayerModule extends AbstractModule {
             throw new ExceptionInInitializerError("Unsupported Minecraft version: " + Bukkit.getMinecraftVersion());
         }
         return bridge;
+    }
+
+    @Singleton
+    @Provides
+    private @Nullable FakeplayerPlaceholderExpansion fakeplayerPlaceholderExpansion(FakeplayerManager fakeplayerManager) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") || !ClassUtils.isClassExists("me.clip.placeholderapi.expansion.PlaceholderExpansion")) {
+            return null;
+        }
+        return new FakeplayerPlaceholderExpansionImpl(fakeplayerManager);
     }
 
 }

@@ -9,6 +9,7 @@ depend:
 
 softdepend:
   - OpenInv
+  - PlaceholderAPI
 
 permissions:
   fakeplayer.command.spawn:
