@@ -161,6 +161,11 @@ If your server does not restrict various player commands, you can use this direc
 `fakeplayer.basic` includes all secure permissions, except for `/fp cmd` commands.
 </details>
 
+## Placeholder Variables
++ `%fakeplayer_total%`: Total count of fake players
++ `%fakeplayer_creator%`: The creator name of a fake player
++ `%fakeplayer_actions`: Active actions of a fake player such as : `USE|ATTACK`
+
 # Custom Translation
 1. Create a `message` folder in `plugins/fakeplayer`
 2. Copy [this file](fakeplayer-core/src/main/resources/message/message.properties) to `message` folder

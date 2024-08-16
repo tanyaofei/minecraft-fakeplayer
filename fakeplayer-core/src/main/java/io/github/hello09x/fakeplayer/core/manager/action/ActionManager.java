@@ -11,12 +11,11 @@ import io.github.hello09x.fakeplayer.core.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ActionManager {
@@ -42,6 +41,19 @@ public class ActionManager {
                        .map(manager -> manager.get(action))
                        .filter(ac -> ac.getSetting().remains > 0)
                        .isPresent();
+    }
+
+    public @NotNull @Unmodifiable Set<ActionType> getActiveActions(@NotNull Player player) {
+        var manager = this.managers.get(player.getUniqueId());
+        if (manager == null || managers.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        return manager.entrySet()
+                      .stream()
+                      .filter(actions -> actions.getValue().getSetting().remains > 0)
+                      .map(Map.Entry::getKey)
+                      .collect(Collectors.toSet());
     }
 
     public void setAction(

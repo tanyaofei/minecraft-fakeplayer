@@ -7,6 +7,7 @@ import io.github.hello09x.fakeplayer.api.spi.NMSBridge;
 import io.github.hello09x.fakeplayer.core.config.FakeplayerConfig;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerList;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.InvseeManager;
 import io.github.hello09x.fakeplayer.core.manager.invsee.OpenInvInvseeManagerImpl;
 import io.github.hello09x.fakeplayer.core.manager.invsee.SimpleInvseeManagerImpl;
@@ -15,6 +16,7 @@ import io.github.hello09x.fakeplayer.core.placeholder.FakeplayerPlaceholderExpan
 import io.github.hello09x.fakeplayer.core.util.ClassUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ServiceLoader;
@@ -31,7 +33,7 @@ public class FakeplayerModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public InvseeManager invseeManager(FakeplayerConfig config, FakeplayerManager fakeplayerManager, FakeplayerList fakeplayerList) {
+    public @NotNull InvseeManager invseeManager(FakeplayerConfig config, FakeplayerManager fakeplayerManager, FakeplayerList fakeplayerList) {
         return switch (config.getInvseeImplement()) {
             case SIMPLE -> new SimpleInvseeManagerImpl(fakeplayerManager, fakeplayerList);
             case AUTO -> {
@@ -47,7 +49,7 @@ public class FakeplayerModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private NMSBridge nmsBridge() {
+    private @NotNull NMSBridge nmsBridge() {
         var bridge = ServiceLoader
                 .load(NMSBridge.class, NMSBridge.class.getClassLoader())
                 .stream()
@@ -64,11 +66,11 @@ public class FakeplayerModule extends AbstractModule {
 
     @Singleton
     @Provides
-    private @Nullable FakeplayerPlaceholderExpansion fakeplayerPlaceholderExpansion(FakeplayerManager fakeplayerManager) {
+    private @Nullable FakeplayerPlaceholderExpansion fakeplayerPlaceholderExpansion(FakeplayerManager fakeplayerManager, ActionManager actionManager) {
         if (!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") || !ClassUtils.isClassExists("me.clip.placeholderapi.expansion.PlaceholderExpansion")) {
             return null;
         }
-        return new FakeplayerPlaceholderExpansionImpl(fakeplayerManager);
+        return new FakeplayerPlaceholderExpansionImpl(fakeplayerManager, actionManager);
     }
 
 }

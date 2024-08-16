@@ -32,31 +32,49 @@
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R1</artifactId>
+            <artifactId>fakeplayer-v1_20_1</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R2</artifactId>
+            <artifactId>fakeplayer-v1_20_2</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R3_R4</artifactId>
+            <artifactId>fakeplayer-v1_20_3</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_20_R5_R6</artifactId>
+            <artifactId>fakeplayer-v1_20_4</artifactId>
             <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.hello09x.fakeplayer</groupId>
-            <artifactId>fakeplayer-v1_21_R1</artifactId>
+            <artifactId>fakeplayer-v1_20_5</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_20_6</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_21</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_21_1</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -115,6 +133,11 @@
                                     </fileset>
                                 </copy>
                                 <copy tofile="../server-1.21/plugins/fakeplayer.jar">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="fakeplayer-${revision}.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy tofile="../server-1.21.1/plugins/fakeplayer.jar">
                                     <fileset dir="${project.build.directory}">
                                         <include name="fakeplayer-${revision}.jar"/>
                                     </fileset>

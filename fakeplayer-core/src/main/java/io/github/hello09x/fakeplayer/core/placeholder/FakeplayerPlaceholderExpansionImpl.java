@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author tanyaofei
@@ -22,10 +24,12 @@ import java.util.Optional;
 public class FakeplayerPlaceholderExpansionImpl extends PlaceholderExpansion implements FakeplayerPlaceholderExpansion {
 
     private final FakeplayerManager manager;
+    private final ActionManager actionManager;
 
     @Inject
-    public FakeplayerPlaceholderExpansionImpl(FakeplayerManager manager) {
+    public FakeplayerPlaceholderExpansionImpl(FakeplayerManager manager, ActionManager actionManager) {
         this.manager = manager;
+        this.actionManager = actionManager;
     }
 
     @Override
@@ -53,6 +57,11 @@ public class FakeplayerPlaceholderExpansionImpl extends PlaceholderExpansion imp
         // /papi parse CONSOLE_1 fakeplayer_creator
         if (params.equalsIgnoreCase("creator") && player != null && manager.isFake(player)) {
             return Optional.ofNullable(manager.getCreatorName(player)).orElse(params);
+        }
+
+        // papi parse CONSOLE_1 fakeplayer_actions
+        if (params.equalsIgnoreCase("actions") && player != null && manager.isFake(player)) {
+            return actionManager.getActiveActions(player).stream().map(Enum::name).collect(Collectors.joining("|"));
         }
 
         return params;

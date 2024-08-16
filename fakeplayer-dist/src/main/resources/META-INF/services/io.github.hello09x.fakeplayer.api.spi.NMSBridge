@@ -1,5 +1,8 @@
-io.github.hello09x.fakeplayer.v1_20_R1.spi.NMSBridgeImpl
-io.github.hello09x.fakeplayer.v1_20_R2.spi.NMSBridgeImpl
-io.github.hello09x.fakeplayer.v1_20_R3_R4.spi.NMSBridgeImpl
-io.github.hello09x.fakeplayer.v1_20_R5_R6.spi.NMSBridgeImpl
-io.github.hello09x.fakeplayer.v1_21_R1.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_20_1.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_20_2.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_20_3.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_20_4.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_20_5.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_20_6.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_21.spi.NMSBridgeImpl
+io.github.hello09x.fakeplayer.v1_21_1.spi.NMSBridgeImpl
