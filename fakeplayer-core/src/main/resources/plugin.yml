@@ -84,13 +84,16 @@ permissions:
     description: 'Allow player to run /fp hold'
   fakeplayer.command.cmd:
     description: 'Allow player to run /fp cmd'
+  fakeplayer.command.stop:
+    description: 'Allow player to run /fp stop'
   fakeplayer.config.replenish:
     description: 'Allow player to configure fake players can replenish'
   fakeplayer.config.replenish.chest:
     description: 'Allow player to configure fake players can replenish from nearby chest'
   fakeplayer.config.autofish:
     description: 'Allow player to configure fake players to auto-fishing'
-
+  fakeplayer.interact.right-click-invsee:
+    description: 'Allow player to open inventory of fake players by right clicking'
   fakeplayer.spawn:
     description: 'Includes all basic permissions'
     children:
@@ -105,6 +108,7 @@ permissions:
       - fakeplayer.command.dropinv
       - fakeplayer.command.skin
       - fakeplayer.command.invsee
+      - fakeplayer.interact.right-click-invsee
       - fakeplayer.command.status
       - fakeplayer.command.respawn
       - fakeplayer.command.config
