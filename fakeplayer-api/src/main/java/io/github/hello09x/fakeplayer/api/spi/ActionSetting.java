@@ -42,11 +42,11 @@ class ActionSetting implements Cloneable {
     }
 
     public static ActionSetting once() {
-        return new ActionSetting(1, 1);
+        return new ActionSetting(1, 0);
     }
 
     public static ActionSetting stop() {
-        return new ActionSetting(0, 1);
+        return new ActionSetting(0, 0);
     }
 
     public static ActionSetting interval(int interval) {
@@ -54,7 +54,7 @@ class ActionSetting implements Cloneable {
     }
 
     public static ActionSetting continuous() {
-        return new ActionSetting(-1, 1);
+        return new ActionSetting(-1, 0);
     }
 
     @Override
