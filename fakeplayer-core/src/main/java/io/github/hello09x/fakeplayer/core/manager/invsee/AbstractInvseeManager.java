@@ -1,7 +1,6 @@
 package io.github.hello09x.fakeplayer.core.manager.invsee;
 
 import io.github.hello09x.devtools.core.utils.ComponentUtils;
-import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerList;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
 import org.bukkit.Sound;
@@ -64,10 +63,6 @@ public abstract class AbstractInvseeManager implements InvseeManager {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void rightClickToInvsee(@NotNull PlayerInteractAtEntityEvent event) {
         if (!((event.getRightClicked()) instanceof Player whom)) {
-            return;
-        }
-
-        if (!event.getPlayer().hasPermission(Permission.rightClickInvsee)) {
             return;
         }
 

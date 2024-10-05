@@ -44,7 +44,6 @@ public interface Permission {
     String wakeup = "fakeplayer.command.wakeup";
     String cmd = "fakeplayer.command.cmd";
     String stop = "fakeplayer.command.stop";
-    String rightClickInvsee = "fakeplayer.interact.right-click-invsee";
 
 
     String op = "OP";
