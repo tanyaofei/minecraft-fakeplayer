@@ -4,7 +4,11 @@ import com.google.inject.Singleton;
 import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
 import dev.jorel.commandapi.executors.CommandArguments;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.RideableMinecart;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
@@ -72,10 +76,10 @@ public class RideCommand extends AbstractCommand {
     public void rideVehicle(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         var fake = getFakeplayer(sender, args);
         var entity = fake.getNearbyEntities(4.5, 4.5, 4.5)
-                           .stream()
-                           .filter(e -> e instanceof Minecart || e instanceof Boat || e instanceof AbstractHorse)
-                           .findFirst()
-                           .orElse(null);
+                         .stream()
+                         .filter(e -> e instanceof RideableMinecart || e instanceof Boat || e instanceof AbstractHorse)
+                         .findFirst()
+                         .orElse(null);
 
         if (entity == null) {
             return;
