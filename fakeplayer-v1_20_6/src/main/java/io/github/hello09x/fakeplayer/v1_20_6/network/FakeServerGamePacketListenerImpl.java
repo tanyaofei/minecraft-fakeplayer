@@ -7,7 +7,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -36,24 +35,10 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
                 .ifPresent(p -> p.addChannel(BUNGEE_CORD_CORRECTED_CHANNEL));
     }
 
-        @Override
+    @Override
     public void send(Packet<?> packet) {
         if (packet instanceof ClientboundCustomPayloadPacket p) {
             this.handleCustomPayloadPacket(p);
-        } else if (packet instanceof ClientboundSetEntityMotionPacket p) {
-            this.handleClientboundSetEntityMotionPacket(p);
-        }
-    }
-
-    /**
-     * 玩家被击退的动作由客户端完成, 假人没有客户端因此手动完成这个动作
-     */
-    public void handleClientboundSetEntityMotionPacket(@NotNull ClientboundSetEntityMotionPacket packet) {
-        if (packet.getId() == this.player.getId() && this.player.hurtMarked) {
-            Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                this.player.hurtMarked = true;
-                this.player.lerpMotion(packet.getXa(), packet.getYa(), packet.getZa());
-            });
         }
     }
 
