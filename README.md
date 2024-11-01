@@ -8,10 +8,6 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 
 [Click me](https://youtu.be/NePaDz-P5nI) to visit a demo video.
 
-## Buy me a coffee
-
-If you like this plugin, buy me a coffee On [PayPal](https://paypal.me/hello09x) 🎉
-
 
 ## Features
 
