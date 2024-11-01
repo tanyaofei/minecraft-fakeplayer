@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: 'Clear title is helpful for searching / 简要的标题有利于检索'
+title: ''
 labels: ''
 assignees: ''
 
