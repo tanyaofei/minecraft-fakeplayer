@@ -18,10 +18,11 @@
         <module>fakeplayer-v1_20_2</module>
         <module>fakeplayer-v1_20_3</module>
         <module>fakeplayer-v1_20_4</module>
+        <module>fakeplayer-v1_20_5</module>
         <module>fakeplayer-v1_20_6</module>
         <module>fakeplayer-v1_21</module>
         <module>fakeplayer-v1_21_1</module>
-        <module>fakeplayer-v1_20_5</module>
+        <module>fakeplayer-v1_21_3</module>
     </modules>
 
     <properties>
