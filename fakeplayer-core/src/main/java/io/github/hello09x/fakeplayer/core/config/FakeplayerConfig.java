@@ -37,8 +37,6 @@ public class FakeplayerConfig extends PluginConfig {
 
     private final static String defaultNameChars = "^[a-zA-Z0-9_]+$";
 
-    public final static String SECTION_KEY_DEFAULT_FEATURES = "default-features";
-
     /**
      * 每位玩家最多多少个假人
      */
