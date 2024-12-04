@@ -168,6 +168,7 @@ public class Fakeplayer {
                     this.player.setHealth(Optional.ofNullable(this.player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
                                                   .map(AttributeInstance::getValue)
                                                   .orElse(20D));    // 恢复生命值
+                    this.player.setFoodLevel(20);
                     this.setupName();
                     this.handle.setupClientOptions();   // 处理皮肤设置问题
 
