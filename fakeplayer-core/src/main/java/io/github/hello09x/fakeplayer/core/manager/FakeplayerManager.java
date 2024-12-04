@@ -67,14 +67,14 @@ public class FakeplayerManager {
 
         this.lagMonitor = Executors.newSingleThreadScheduledExecutor();
         this.lagMonitor.scheduleWithFixedDelay(() -> {
-                                         if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
-                                             Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
-                                                 if (this.removeAll("low tps") > 0) {
-                                                     Bukkit.broadcast(translatable("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
-                                                 }
-                                             });
-                                         }
-                                     }, 0, 60, TimeUnit.SECONDS
+                                                   if (Bukkit.getServer().getTPS()[1] < config.getKaleTps()) {
+                                                       Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                                                           if (this.removeAll("low tps") > 0) {
+                                                               Bukkit.broadcast(translatable("fakeplayer.manager.remove-all-on-low-tps", GRAY, ITALIC));
+                                                           }
+                                                       });
+                                                   }
+                                               }, 0, 60, TimeUnit.SECONDS
         );
     }
 
@@ -117,7 +117,8 @@ public class FakeplayerManager {
                             configs.get(Feature.pickup_items).asBoolean(),
                             configs.get(Feature.skin).asBoolean(),
                             configs.get(Feature.replenish).asBoolean(),
-                            configs.get(Feature.autofish).asBoolean()
+                            configs.get(Feature.autofish).asBoolean(),
+                            configs.get(Feature.wolverine).asBoolean()
                     );
                 })
                 .thenComposeAsync(fp::spawnAsync)

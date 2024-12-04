@@ -264,6 +264,7 @@ default-features:
   invulnerable: false
   replenish: false
   autofish: false
+  wolverine: false
 
 
 # 检测更新

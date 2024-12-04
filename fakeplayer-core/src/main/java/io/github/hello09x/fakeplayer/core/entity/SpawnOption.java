@@ -28,7 +28,9 @@ public record SpawnOption(
 
         boolean replenish,
 
-        boolean autofish
+        boolean autofish,
+
+        boolean wolverine
 
 ) {
 }

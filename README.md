@@ -8,7 +8,6 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 
 [Click me](https://youtu.be/NePaDz-P5nI) to visit a demo video.
 
-
 ## Features
 
 + Lets you spawn fake players who look like real to the server, they can keep chunk loading
@@ -22,60 +21,59 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 + [Paper](https://papermc.io) or [Purpur](http://purpurmc.org) software
 + [CommandAPI](https://commandapi.jorel.dev) Plugin
 
-
 ## Config file
+
 **Fakeplayer only generates a template config file named `config.tmpl.yml`.**
 You need to rename this file to `config.yml` as your configuration file.
 This approach can let you preview new content when you are upgrading it.
 
 [Click to visit file content](fakeplayer-core/src/main/resources/config.yml)
 
-
 ## Commands
 
-| Command       | Description                               | Permission                   | Note                                                               |
-|---------------|-------------------------------------------|------------------------------|--------------------------------------------------------------------|
-| /fp spawn     | Spawn a fake player                       | fakeplayer.command.spawn     |                                                                    |
-| /fp kill      | Kill a fake player                        | fakeplayer.command.kill      |                                                                    |
-| /fp killall   | Kill all fake players on the server       | OP                           |                                                                    |
-| /fp select    | Select a fake player as default           | fakeplayer.command.select    | Appears only when player spawned more then 1 fake players          |
-| /fp selection | View selected fake player                 | fakeplayer.command.selection | Appears only when player spawned more then 1 fake players          |
-| /fp list      | List spawned fake players                 | fakeplayer.command.list      |                                                                    |
-| /fp distance  | Show distance to a fake player            | fakeplayer.command.distance  |                                                                    |
-| /fp drop      | Drop held item                            | fakeplayer.command.drop      |                                                                    |
-| /fp dropstack | Drop entire stack of the held item        | fakeplayer.command.dropstack |                                                                    |
-| /fp dropinv   | Drop all items in the inventory           | fakeplayer.command.dropinv   |                                                                    |
-| /fp skin      | Copy skin from another player             | fakeplayer.command.skin      | 60 seconds cooldown if copy from a offline player                  | 
-| /fp invsee    | Open an inventory of a fake player        | fakeplayer.command.invsee    | Right-clicking on fake players has the same effect                 |
-| /fp sleep     | Sleep                                     | fakeplayer.command.sleep     |                                                                    |
-| /fp wakeup    | Wake up                                   | fakeplayer.command.wakeup    |                                                                    |
-| /fp status    | Show player status                        | fakeplayer.command.status    |                                                                    |
-| /fp respawn   | Respawn a dead fake player                | fakeplayer.command.respawn   | Appears only when server config does not kick on fake player death |
-| /fp tp        | Teleport to a fake player                 | fakeplayer.command.tp        |                                                                    |
-| /fp tphere    | Teleport a fake player to you             | fakeplayer.command.tphere    |                                                                    |
-| /fp tps       | Swap positions with fake player           | fakeplayer.command.tps       |                                                                    |
-| /fp set       | Change the configuration of a fake player | fakeplayer.command.set       |                                                                    |
-| /fp config    | Change default configuration              | fakeplayer.command.config    |                                                                    |
-| /fp expme     | Transfer exp to you                       | fakeplayer.command.expme     |                                                                    |
-| /fp attack    | Attack                                    | fakeplayer.command.attack    |                                                                    |
-| /fp mine      | Mine                                      | fakeplayer.command.mine      |                                                                    |
-| /fp use       | Use/Interact/Place                        | fakeplayer.command.use       |                                                                    |
-| /fp jump      | Jump                                      | fakeplayer.command.jump      |                                                                    |
-| /fp stop      | Stop all actions                          | fakeplayer.command.stop      |                                                                    |
-| /fp turn      | Turn around                               | fakeplayer.command.turn      |                                                                    |
-| /fp look      | Look at specified location                | fakeplayer.command.look      |                                                                    |
-| /fp move      | Move                                      | fakeplayer.command.mvoe      |                                                                    |
-| /fp ride      | Ride                                      | fakeplayer.command.ride      |                                                                    |
-| /fp sneak     | Sneak                                     | fakeplayer.command.sneak     |                                                                    |
-| /fp sprint    | Sprinting                                 | fakeplayer.command.sprint    |                                                                    |
-| /fp swap      | Swap main and off-hand items              | fakeplayer.command.swap      |                                                                    |
-| /fp hold      | Hold corresponding hotbar item            | fakeplayer.command.hold      |                                                                    |
-| /fp cmd       | Execute command                           | fakeplayer.command.cmd       |                                                                    |
-| /fp reload    | Reload config file                        | OP                           |                                                                    |
+| Command       | Description                               | Permission                   | Note                                                            |
+|---------------|-------------------------------------------|------------------------------|-----------------------------------------------------------------|
+| /fp spawn     | Spawn a fake player                       | fakeplayer.command.spawn     |                                                                 |
+| /fp kill      | Kill a fake player                        | fakeplayer.command.kill      |                                                                 |
+| /fp killall   | Kill all fake players on the server       | OP                           |                                                                 |
+| /fp select    | Select a fake player as default           | fakeplayer.command.select    | Available  when player spawned more then 1 fake players         |
+| /fp selection | View selected fake player                 | fakeplayer.command.selection | Available  only when player spawned more then 1 fake players    |
+| /fp list      | List spawned fake players                 | fakeplayer.command.list      |                                                                 |
+| /fp distance  | Show distance to a fake player            | fakeplayer.command.distance  |                                                                 |
+| /fp drop      | Drop held item                            | fakeplayer.command.drop      |                                                                 |
+| /fp dropstack | Drop entire stack of the held item        | fakeplayer.command.dropstack |                                                                 |
+| /fp dropinv   | Drop all items in the inventory           | fakeplayer.command.dropinv   |                                                                 |
+| /fp skin      | Copy skin from another player             | fakeplayer.command.skin      | 60 seconds cooldown if copy from a offline player               | 
+| /fp invsee    | Open an inventory of a fake player        | fakeplayer.command.invsee    | Right-clicking on fake players has the same effect              |
+| /fp sleep     | Sleep                                     | fakeplayer.command.sleep     |                                                                 |
+| /fp wakeup    | Wake up                                   | fakeplayer.command.wakeup    |                                                                 |
+| /fp status    | Show player status                        | fakeplayer.command.status    |                                                                 |
+| /fp respawn   | Respawn a dead fake player                | fakeplayer.command.respawn   | Available when server config does not kick on fake player death |
+| /fp tp        | Teleport to a fake player                 | fakeplayer.command.tp        |                                                                 |
+| /fp tphere    | Teleport a fake player to you             | fakeplayer.command.tphere    |                                                                 |
+| /fp tps       | Swap positions with fake player           | fakeplayer.command.tps       |                                                                 |
+| /fp set       | Change the configuration of a fake player | fakeplayer.command.set       |                                                                 |
+| /fp config    | Change default configuration              | fakeplayer.command.config    |                                                                 |
+| /fp expme     | Transfer exp to you                       | fakeplayer.command.expme     |                                                                 |
+| /fp attack    | Attack                                    | fakeplayer.command.attack    |                                                                 |
+| /fp mine      | Mine                                      | fakeplayer.command.mine      |                                                                 |
+| /fp use       | Use/Interact/Place                        | fakeplayer.command.use       |                                                                 |
+| /fp jump      | Jump                                      | fakeplayer.command.jump      |                                                                 |
+| /fp stop      | Stop all actions                          | fakeplayer.command.stop      |                                                                 |
+| /fp turn      | Turn around                               | fakeplayer.command.turn      |                                                                 |
+| /fp look      | Look at specified location                | fakeplayer.command.look      |                                                                 |
+| /fp move      | Move                                      | fakeplayer.command.mvoe      |                                                                 |
+| /fp ride      | Ride                                      | fakeplayer.command.ride      |                                                                 |
+| /fp sneak     | Sneak                                     | fakeplayer.command.sneak     |                                                                 |
+| /fp sprint    | Sprinting                                 | fakeplayer.command.sprint    |                                                                 |
+| /fp swap      | Swap main and off-hand items              | fakeplayer.command.swap      |                                                                 |
+| /fp hold      | Hold corresponding hotbar item            | fakeplayer.command.hold      |                                                                 |
+| /fp cmd       | Execute command                           | fakeplayer.command.cmd       |                                                                 |
+| /fp reload    | Reload config file                        | OP                           |                                                                 |
 
 ## Personal Configuration
 
-Each player can configure his own configuration, it will take effect on the next spawning
+**Each player** can configure his **own** configuration, it will take effect on the next spawning
 
 Command examples:
 
@@ -86,12 +84,12 @@ Command examples:
 |--------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | collidable         | Whether collision box is enabled                                                                                                    |
 | invulnerable       | Whether invincible mode is enabled                                                                                                  |
+| wolverine          | Whether super heal mode is enabled                                                                                                  |
 | look_at_entity     | Automatically look at nearby attackable entities (including players), can be combined with `attack` to automatically fight monsters |
 | pickup_items       | Whether to pick up items                                                                                                            |
 | skin               | Whether to use your skin                                                                                                            |
 | replenish          | Whether to auto-replenish                                                                                                           |
 | autofish           | Whether to autofish                                                                                                                 |
-
 
 ## Permissions
 
@@ -156,11 +154,13 @@ If your server does not restrict various player commands, you can use this direc
 </details>
 
 ## Placeholder Variables
+
 + `%fakeplayer_total%`: Total count of fake players
 + `%fakeplayer_creator%`: The creator name of a fake player
 + `%fakeplayer_actions`: Active actions of a fake player such as : `USE|ATTACK`
 
 # Custom Translation
+
 1. Create a `message` folder in `plugins/fakeplayer`
 2. Copy [this file](fakeplayer-core/src/main/resources/message/message.properties) to `message` folder
 3. Rename the file to `message_language_region.properties` such as `message_en_us.properties`
@@ -172,7 +172,9 @@ If your server does not restrict various player commands, you can use this direc
 # FAQs
 
 ## xxx lost connection: PacketEvents 2.0 failed to inject
+
 Some plugin change the `Connection` of the fake player, You can set `prevent-kicking` to `ALWAYS` to solve it.
+
 ```yaml
 # config.yml
 prevent-kicking: ALWAYS
@@ -196,6 +198,7 @@ self-commands:
 ```
 
 # Build Project
+
 See the [introduction](./BUILD.md).
 
 

@@ -8,10 +8,13 @@ import lombok.Getter;
 import net.kyori.adventure.translation.Translatable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -42,9 +45,27 @@ public enum Feature implements Translatable, Singletons {
             "fakeplayer.config.invulnerable",
             List.of(Permission.config),
             List.of("true", "false"),
-            "true",
+            "false",
             faker -> String.valueOf(faker.isInvulnerable()),
             (faker, value) -> faker.setInvulnerable(Boolean.parseBoolean(value))
+    ),
+
+    /**
+     * 金刚狼模式 -> 超强的再生能力
+     */
+    wolverine(
+            "fakeplayer.config.wolverine",
+            List.of(Permission.config),
+            List.of("true", "false"),
+            "false",
+            fake -> String.valueOf(Optional.ofNullable(fake.getPotionEffect(PotionEffectType.REGENERATION)).map(PotionEffect::isInfinite).orElse(false)),
+            (faker, value) -> {
+                if (Boolean.parseBoolean(value)) {
+                    faker.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, PotionEffect.INFINITE_DURATION, 4, true, true));
+                } else {
+                    faker.removePotionEffect(PotionEffectType.REGENERATION);
+                }
+            }
     ),
 
     /**
@@ -52,7 +73,7 @@ public enum Feature implements Translatable, Singletons {
      */
     look_at_entity(
             "fakeplayer.config.look_at_entity",
-            List.of(Permission.config),
+            List.of(Permission.config, Permission.look),
             List.of("true", "false"),
             "false",
             faker -> String.valueOf(actionManager.get().hasActiveAction(faker, ActionType.LOOK_AT_NEAREST_ENTITY)),
