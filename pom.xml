@@ -23,6 +23,7 @@
         <module>fakeplayer-v1_21</module>
         <module>fakeplayer-v1_21_1</module>
         <module>fakeplayer-v1_21_3</module>
+        <module>fakeplayer-v1_21_4</module>
     </modules>
 
     <properties>
