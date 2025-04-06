@@ -23,7 +23,7 @@
 
 ## 前置插件:
 
-- [CommandAPI](https://commandapi.jorel.dev)
+- [CommandAPI](https://commandapi.jorel.dev) (>=9.5.0, <= 9.7.0)
 
 ## 配置文件
 
