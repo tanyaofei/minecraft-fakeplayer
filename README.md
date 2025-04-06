@@ -19,7 +19,7 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 ## Requirements
 
 + [Paper](https://papermc.io) or [Purpur](http://purpurmc.org) software
-+ [CommandAPI](https://commandapi.jorel.dev) Plugin
++ [CommandAPI](https://commandapi.jorel.dev) Plugin (>=9.5.0, <= 9.7.0)
 
 ## Config file
 
