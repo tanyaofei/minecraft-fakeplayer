@@ -79,6 +79,8 @@ public class CommandRegistry {
     private DebugCommand debugCommand;
     @Inject
     private StopCommand stopCommand;
+    @Inject
+    private TagCommand tagCommand;
 
     @Inject
     private FakeplayerConfig config;
@@ -457,8 +459,11 @@ public class CommandRegistry {
                                                         text("message")
                                                 )
                                                 .executes(debugCommand::sendPluginMessage)
-                                )
-
+                                ),
+                        command("tag")
+                                .withPermission(Permission.basic)
+                                .withShortDescription("管理假人标签")
+                                .executesPlayer((player, args) -> tagCommand.getCommand().execute(player, args))
                 );
         HelpCommand.generateHelpCommand(root, true);
         root.register();
