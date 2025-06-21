@@ -251,4 +251,24 @@ public class NMSServerPlayerImpl implements NMSServerPlayer {
         ));
     }
 
+    @Override
+    public boolean addTag(@NotNull String tag) {
+        return handle.addTag(tag);
+    }
+
+    @Override
+    public boolean removeTag(@NotNull String tag) {
+        return handle.removeTag(tag);
+    }
+
+    @Override
+    public boolean hasTag(@NotNull String tag) {
+        return handle.getTags().contains(tag);
+    }
+
+    @Override
+    public @NotNull java.util.Set<String> getTags() {
+        return handle.getTags();
+    }
+
 }
