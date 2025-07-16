@@ -14,11 +14,11 @@ import io.github.hello09x.fakeplayer.core.manager.FakeplayerReplenishManager;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerSkinManager;
 import io.github.hello09x.fakeplayer.core.manager.action.ActionManager;
 import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
+import io.github.hello09x.fakeplayer.core.util.Attributes;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -165,7 +165,7 @@ public class Fakeplayer {
 
                     this.network = bridge.createNetwork(address);
                     this.network.placeNewPlayer(Bukkit.getServer(), this.player);
-                    this.player.setHealth(Optional.ofNullable(this.player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    this.player.setHealth(Optional.ofNullable(this.player.getAttribute(Attributes.maxHealth()))
                                                   .map(AttributeInstance::getValue)
                                                   .orElse(20D));    // 恢复生命值
                     this.player.setFoodLevel(20);

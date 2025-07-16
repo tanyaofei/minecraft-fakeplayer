@@ -135,7 +135,7 @@ public class FakeplayerListener implements Listener {
 
         // 有一些跨服同步插件会退出时同步生命值, 假人重新生成的时候同步为 0
         // 因此在死亡时将生命值设置恢复满血先
-        Optional.ofNullable(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+        Optional.ofNullable(player.getAttribute(Attribute.MAX_HEALTH))
                 .map(AttributeInstance::getValue)
                 .ifPresent(player::setHealth);
         event.setCancelled(true);

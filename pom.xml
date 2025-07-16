@@ -25,6 +25,8 @@
         <module>fakeplayer-v1_21_3</module>
         <module>fakeplayer-v1_21_4</module>
         <module>fakeplayer-v1_21_5</module>
+        <module>fakeplayer-v1_21_6</module>
+        <module>fakeplayer-v1_21_7</module>
     </modules>
 
     <properties>
@@ -32,7 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <revision>0.3.15</revision>
 
-        <detools.version>0.1.5-SNAPSHOT</detools.version>
+        <detools.version>0.1.6-SNAPSHOT</detools.version>
     </properties>
 
     <repositories>
@@ -63,7 +65,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.20-R0.1-SNAPSHOT</version>
+                <version>1.21.7-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
 

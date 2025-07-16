@@ -6,12 +6,12 @@ import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.hello09x.devtools.core.utils.ExperienceUtils;
 import io.github.hello09x.fakeplayer.core.command.Permission;
 import io.github.hello09x.fakeplayer.core.repository.model.Feature;
+import io.github.hello09x.fakeplayer.core.util.Attributes;
 import io.github.hello09x.fakeplayer.core.util.Mth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -87,7 +87,7 @@ public class StatusCommand extends AbstractCommand {
 
     private @NotNull Component getHealthLine(@NotNull Player target) {
         var health = target.getHealth();
-        double max = Optional.ofNullable(target.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+        double max = Optional.ofNullable(target.getAttribute(Attributes.maxHealth()))
                              .map(AttributeInstance::getValue)
                              .orElse(20D);
 
