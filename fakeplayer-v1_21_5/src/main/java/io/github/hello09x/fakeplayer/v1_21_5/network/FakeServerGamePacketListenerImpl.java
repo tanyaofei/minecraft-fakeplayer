@@ -3,6 +3,7 @@ package io.github.hello09x.fakeplayer.v1_21_5.network;
 import io.github.hello09x.fakeplayer.api.spi.NMSServerGamePacketListener;
 import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.manager.FakeplayerManager;
+import lombok.Lombok;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
@@ -16,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -66,7 +68,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
             return;
         }
 
-        if (!(payload instanceof DiscardedPayload p)) {
+        if (!(payload instanceof DiscardedPayload discardedPayload)) {
             return;
         }
 
@@ -82,8 +84,20 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
             return;
         }
 
-        var message = p.data().array();
+        var message = getDiscardedPayloadData(discardedPayload);
         recipient.sendPluginMessage(Main.getInstance(), BUNGEE_CORD_CHANNEL, message);
+    }
+
+    private byte[] getDiscardedPayloadData(@NotNull DiscardedPayload payload) {
+        try {
+            return payload.data().array();
+        } catch (NoSuchMethodError e) {
+            try {
+                return (byte[]) payload.getClass().getMethod("data").invoke(payload);   // 1.21.5 actual is  `public final byte[] data() {}`
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+                throw Lombok.sneakyThrow(e);
+            }
+        }
     }
 
 }
