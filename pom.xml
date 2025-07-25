@@ -27,6 +27,7 @@
         <module>fakeplayer-v1_21_5</module>
         <module>fakeplayer-v1_21_6</module>
         <module>fakeplayer-v1_21_7</module>
+        <module>fakeplayer-v1_21_8</module>
     </modules>
 
     <properties>
