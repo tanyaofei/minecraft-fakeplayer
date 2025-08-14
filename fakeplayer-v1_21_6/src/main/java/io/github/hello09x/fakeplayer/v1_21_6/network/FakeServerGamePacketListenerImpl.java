@@ -40,7 +40,11 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
     private boolean addChannel(@NotNull Player player, @NotNull String channel) {
         try {
             var method = player.getClass().getMethod("addChannel", String.class);
-            return (boolean) method.invoke(player, channel);
+            var ret = method.invoke(player, channel);
+            if (ret instanceof Boolean success) {
+                return success;
+            }
+            return true;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             return false;
         }
