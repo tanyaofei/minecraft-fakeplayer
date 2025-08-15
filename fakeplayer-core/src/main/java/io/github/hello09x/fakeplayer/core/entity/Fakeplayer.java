@@ -252,7 +252,7 @@ public class Fakeplayer {
     }
 
     private void setupName() {
-        var displayName = text(player.getName(), config.getNameStyleColor(), config.getNameStyleDecoration().toArray(new TextDecoration[0]));
+        var displayName = text(player.getName(), config.getNameStyleColor(), config.getNameStyleDecorations().toArray(new TextDecoration[0]));
         player.playerListName(displayName);
         player.displayName(displayName);
         player.customName(displayName);

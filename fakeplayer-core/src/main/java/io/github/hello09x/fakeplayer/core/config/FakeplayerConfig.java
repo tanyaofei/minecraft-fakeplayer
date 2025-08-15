@@ -64,7 +64,7 @@ public class FakeplayerConfig extends PluginConfig {
     /**
      * 名称样式, 格式
      */
-    private List<TextDecoration> nameStyleDecoration;
+    private List<TextDecoration> nameStyleDecorations;
 
     /**
      * 创建者玩家下线时是否跟随下线
@@ -215,7 +215,7 @@ public class FakeplayerConfig extends PluginConfig {
         this.invseeImplement = ConfigUtils.getEnum(file, "invsee-implement", InvseeImplement.class, InvseeImplement.AUTO);
         this.debug = file.getBoolean("debug", false);
         this.nameStyleColor = this.getNameStyleColor(file);
-        this.nameStyleDecoration = this.getNameStyleDecorations(file);
+        this.nameStyleDecorations = this.getNameStyleDecorations(file);
 
         if (this.isConfigFileOutOfDate()) {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
