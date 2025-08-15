@@ -9,6 +9,7 @@ import io.github.hello09x.fakeplayer.core.repository.FakeplayerProfileRepository
 import io.github.hello09x.fakeplayer.core.repository.UsedIdRepository;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -118,6 +119,9 @@ public class NameManager {
      * @return 序列名
      */
     public @NotNull SequenceName getSpecifiedName(@NotNull String name) {
+        if (StringUtils.isNotBlank(config.getNamePrefix())) {
+            name = config.getNamePrefix().trim() + name;
+        }
         if (name.startsWith("-")) {
             throw new IllegalCustomNameException(translatable(
                     "fakeplayer.spawn.error.name.start-with-illegal-character",
@@ -184,6 +188,9 @@ public class NameManager {
             source = creator.getName();
         }
         source = source.replace("%c", creator.getName());
+        if (StringUtils.isNotBlank(config.getNamePrefix())) {
+            source = config.getNamePrefix().trim() + source;
+        }
 
         for (int i = 0; i < 10; i++) {
             var seq = nameSources.computeIfAbsent(source, ignored -> new NameSource(config.getPlayerLimit())).pop();

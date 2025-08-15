@@ -10,16 +10,15 @@ import io.github.hello09x.fakeplayer.core.Main;
 import io.github.hello09x.fakeplayer.core.repository.model.Feature;
 import lombok.Getter;
 import lombok.ToString;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -51,6 +50,21 @@ public class FakeplayerConfig extends PluginConfig {
      * 命名模版
      */
     private String nameTemplate;
+
+    /**
+     * 假人名称前缀
+     */
+    private String namePrefix;
+
+    /**
+     * 名称样式, 颜色
+     */
+    private NamedTextColor nameStyleColor;
+
+    /**
+     * 名称样式, 格式
+     */
+    private List<TextDecoration> nameStyleDecoration;
 
     /**
      * 创建者玩家下线时是否跟随下线
@@ -187,6 +201,7 @@ public class FakeplayerConfig extends PluginConfig {
         this.namePattern = getNamePattern(file);
         this.preventKicking = this.getPreventKicking(file);
         this.nameTemplate = getNameTemplate(file);
+        this.namePrefix = file.getString("name-prefix", "");
         this.lifespan = getLifespan(file);
         this.allowCommands = file.getStringList("allow-commands")
                                  .stream()
@@ -199,6 +214,8 @@ public class FakeplayerConfig extends PluginConfig {
                                      .collect(Collectors.toMap(Function.identity(), key -> file.getString("default-features." + key.name(), key.getDefaultOption())));
         this.invseeImplement = ConfigUtils.getEnum(file, "invsee-implement", InvseeImplement.class, InvseeImplement.AUTO);
         this.debug = file.getBoolean("debug", false);
+        this.nameStyleColor = this.getNameStyleColor(file);
+        this.nameStyleDecoration = this.getNameStyleDecorations(file);
 
         if (this.isConfigFileOutOfDate()) {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
@@ -260,6 +277,30 @@ public class FakeplayerConfig extends PluginConfig {
         }
 
         return ConfigUtils.getEnum(file, "prevent-kicking", PreventKicking.class, PreventKicking.ON_SPAWNING);
+    }
+
+    private @NotNull NamedTextColor getNameStyleColor(@NotNull FileConfiguration file) {
+        var styles = Objects.requireNonNullElse(file.getString("name-style"), "").split(",\\s*");
+        var color = NamedTextColor.WHITE;
+        for (var style : styles) {
+            var c = NamedTextColor.NAMES.value(style);
+            if (c != null) {
+                color = c;
+            }
+        }
+        return color;
+    }
+
+    private @NotNull List<TextDecoration> getNameStyleDecorations(@NotNull FileConfiguration file) {
+        var styles = Objects.requireNonNullElse(file.getString("name-style"), "").split(",\\s*");
+        var decorations = new ArrayList<TextDecoration>();
+        for (var style : styles) {
+            var decoration = TextDecoration.NAMES.value(style);
+            if (decoration != null) {
+                decorations.add(decoration);
+            }
+        }
+        return decorations;
     }
 
 }

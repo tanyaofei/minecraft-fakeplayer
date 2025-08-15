@@ -17,6 +17,7 @@ import io.github.hello09x.fakeplayer.core.manager.naming.SequenceName;
 import io.github.hello09x.fakeplayer.core.util.Attributes;
 import io.github.hello09x.fakeplayer.core.util.InternalAddressGenerator;
 import lombok.Getter;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.AttributeInstance;
@@ -36,7 +37,6 @@ import java.util.concurrent.CompletableFuture;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 
 public class Fakeplayer {
 
@@ -252,7 +252,7 @@ public class Fakeplayer {
     }
 
     private void setupName() {
-        var displayName = text(player.getName(), GRAY, ITALIC);
+        var displayName = text(player.getName(), config.getNameStyleColor(), config.getNameStyleDecoration().toArray(new TextDecoration[0]));
         player.playerListName(displayName);
         player.displayName(displayName);
         player.customName(displayName);

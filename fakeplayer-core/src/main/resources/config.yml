@@ -64,6 +64,11 @@ lifespan: 0
 #   4. It's not recommended, players may give them RES privileges, or put some items into their inventory.
 name-template: ''
 
+# 假人名称前缀
+# 自动生成的名称或者玩家创建时指定名称都将会追加前缀
+# Name prefix.
+# Prefix will be added to the generated name or specified name
+name-prefix: ''
 
 # 假人自定义名称允许的字符
 #  格式: 正则表达式
@@ -73,6 +78,14 @@ name-template: ''
 #   2. 自定义名称需要玩家具有 `fakeplayer.spawn.name` 权限
 #   3. 如果你改了正则表达式, 请确保它以 `^` 开头并且以 `$` 结尾
 name-pattern: '^[a-zA-Z0-9_]+$'
+
+# 假人在 Tab 上的名称样式
+# Name style on Tab listing
+# Options:
+#   black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple, gold, gray,
+#   dark_gray, blue, green, aqua, red, light_purple, yellow, white
+#   obfuscated, bold, strikethrough, underlined, italic
+name-style: gray, italic
 
 
 # 防止假人被其他插件踢掉, 这个选项用来兼容一些插件因为某些问题而踢掉假人
