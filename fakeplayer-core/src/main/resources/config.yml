@@ -1,10 +1,18 @@
 # =========================================================================================================
-#                               【Important】【非常重要】
-#  DO NOT EDIT config.temp.yml, copy it and rename to config.yml as your configuration file
-#  不要直接修改 config.tmpl.yml 文件，将这份文件复制并重命名为 config.yml 来作为配置文件
-#                               【Important】【非常重要】
+#                               【Important】
+#  DO NOT EDIT config.tmpl.yml !!!
+#  Copy and rename this file to config.yml as your configuration file.
+#  Any changes to this file will be reverted.
+#  -------------------------------------------------------------------------------------------------------
+#                               【非常重要】
+#  不要修改 config.tmpl.yml !!!
+#  复制此文件并重命名为 config.yml 来作为你的配置文件
+#  此文件的任何修改将会在服务器启动时被还原
 # =========================================================================================================
-version: 18
+
+# DO NOT EDIT
+# 不要修改
+version: 19
 
 # 多国语言配置
 # 可选项: en, zh, zh_cn, zh_tw, zh_hk
@@ -60,7 +68,7 @@ lifespan: 0
 # Tips:
 #   1. If this value contains characters other than alphabetic, numbers, and underscores, many vanilla commands will not be usable on them.
 #   2. Characters longer than 16 characters will be truncated
-#   3. Can not start with '-'
+#   3. Cannot start with '-'
 #   4. It's not recommended, players may give them RES privileges, or put some items into their inventory.
 name-template: ''
 
