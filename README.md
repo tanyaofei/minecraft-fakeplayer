@@ -47,7 +47,7 @@ This approach can let you preview new content when you are upgrading it.
 | /fp invsee    | Open an inventory of a fake player        | fakeplayer.command.invsee    | Right-clicking on fake players has the same effect              |
 | /fp sleep     | Sleep                                     | fakeplayer.command.sleep     |                                                                 |
 | /fp wakeup    | Wake up                                   | fakeplayer.command.wakeup    |                                                                 |
-| /fp status    | Show player status                        | fakeplayer.command.status    |                                                                 |
+| /fp status    | Show status                               | fakeplayer.command.status    |                                                                 |
 | /fp respawn   | Respawn a dead fake player                | fakeplayer.command.respawn   | Available when server config does not kick on fake player death |
 | /fp tp        | Teleport to a fake player                 | fakeplayer.command.tp        |                                                                 |
 | /fp tphere    | Teleport a fake player to you             | fakeplayer.command.tphere    |                                                                 |
@@ -167,13 +167,13 @@ If your server does not restrict various player commands, you can use this direc
 4. Edit your `config.yml`, set `i18n.locale` to the name suffix which you just created such as `en_us`
 5. Type `/fp reload-translation` to reload translation file. If you change `i18n.local`, you should `/fp reload` first
 
-**Make sure the translation file is encoding with UTF-8**
+**Make sure the translation file is encoded with UTF-8**
 
 # FAQs
 
 ## xxx lost connection: PacketEvents 2.0 failed to inject
 
-Some plugin change the `Connection` of the fake player, You can set `prevent-kicking` to `ALWAYS` to solve it.
+Some plugin changes the `Connection` of the fake player, You can set `prevent-kicking` to `ALWAYS` to solve it.
 
 ```yaml
 # config.yml
