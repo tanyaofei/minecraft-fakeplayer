@@ -157,7 +157,7 @@ If your server does not restrict various player commands, you can use this direc
 
 + `%fakeplayer_total%`: Total count of fake players
 + `%fakeplayer_creator%`: The creator name of a fake player
-+ `%fakeplayer_actions`: Active actions of a fake player such as : `USE|ATTACK`
++ `%fakeplayer_actions%`: Active actions of a fake player such as : `USE|ATTACK`
 
 # Custom Translation
 
