@@ -28,14 +28,16 @@
         <module>fakeplayer-v1_21_6</module>
         <module>fakeplayer-v1_21_7</module>
         <module>fakeplayer-v1_21_8</module>
+        <module>fakeplayer-v1_21_9</module>
+        <module>fakeplayer-v1_21_10</module>
     </modules>
 
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>0.3.18</revision>
+        <revision>0.3.19</revision>
 
-        <detools.version>0.1.6-SNAPSHOT</detools.version>
+        <detools.version>0.1.7-SNAPSHOT</detools.version>
     </properties>
 
     <repositories>
@@ -104,8 +106,8 @@
 
             <dependency>
                 <groupId>dev.jorel</groupId>
-                <artifactId>commandapi-bukkit-core</artifactId>
-                <version>10.0.0</version>
+                <artifactId>commandapi-paper-core</artifactId>
+                <version>11.0.0</version>
                 <scope>provided</scope>
             </dependency>
 
