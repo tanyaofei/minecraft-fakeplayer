@@ -490,4 +490,26 @@ public class FakeplayerManager {
         Exceptions.suppress(Main.getInstance(), this.lagMonitor::shutdownNow);
     }
 
+    /**
+     * 获取玩家当前选中的假人（如果没有则取第一个自己创建的假人）
+     */
+    public Fakeplayer getByOwner(Player player) {
+        Player selected = getSelection(player);
+        if (selected != null) {
+            return this.playerList.getByUUID(selected.getUniqueId());
+        }
+        // 没有选中则取第一个自己创建的
+        List<Fakeplayer> list = this.playerList.getByCreator(player.getName());
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    /**
+     * 获取玩家自己创建且带指定标签的所有假人
+     */
+    public List<Fakeplayer> getByTag(@NotNull CommandSender owner, @NotNull String tag) {
+        return this.playerList.getByCreator(owner.getName())
+                .stream()
+                .filter(fp -> fp.getHandle().hasTag(tag))
+                .toList();
+    }
 }

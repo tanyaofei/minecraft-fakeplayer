@@ -66,9 +66,20 @@ public abstract class CommandSupports {
     public static @NotNull Argument<Player> fakeplayer(@NotNull String nodeName, @Nullable Predicate<Player> predicate) {
         return new CustomArgument<>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
-            var target = sender.isOp()
-                    ? manager.get(info.currentInput())
-                    : manager.get(sender, info.currentInput());
+            var input = info.currentInput();
+            Player target = null;
+            if (input.startsWith("*")) {
+                // 标签选择，返回第一个匹配的假人
+                var tag = input.substring(1);
+                var list = manager.getByTag(sender, tag);
+                if (!list.isEmpty()) {
+                    target = list.get(0).getPlayer();
+                }
+            } else {
+                target = sender.isOp()
+                        ? manager.get(input)
+                        : manager.get(sender, input);
+            }
             if (predicate != null && target != null && !predicate.test(target)) {
                 target = null;
             }
@@ -76,16 +87,17 @@ public abstract class CommandSupports {
         }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
             var sender = info.sender();
             var arg = info.currentArg();
-
             var targets = sender.isOp()
                     ? manager.getAll(predicate)
                     : manager.getAll(sender, predicate);
-
             var names = targets.stream().map(Player::getName);
+            // 标签补全
+            var tagNames = manager.getByTag(sender, arg.startsWith("*") ? arg.substring(1) : arg)
+                    .stream().map(fp -> "*" + arg).distinct();
+            names = Stream.concat(names, tagNames);
             if (!arg.isEmpty()) {
                 names = names.filter(n -> n.toLowerCase().contains(arg));
             }
-
             return names.toArray(String[]::new);
         }));
     }
@@ -99,29 +111,31 @@ public abstract class CommandSupports {
         return new CustomArgument<List<Player>, String>(new StringArgument(nodeName), info -> {
             var sender = info.sender();
             var arg = info.currentInput();
-
             if (arg.equals("-a")) {
                 return manager.getAll(sender);
             }
-
+            if (arg.startsWith("*")) {
+                var tag = arg.substring(1);
+                return manager.getByTag(sender, tag).stream().map(Fakeplayer::getPlayer).toList();
+            }
             var target = sender.isOp()
                     ? manager.get(arg)
                     : manager.get(sender, arg);
-
             return target == null ? Collections.emptyList() : Collections.singletonList(target);
         }).replaceSuggestions(ArgumentSuggestions.strings(info -> {
             var sender = info.sender();
             var arg = info.currentArg().toLowerCase();
-
             var fakes = sender.isOp()
                     ? manager.getAll()
                     : manager.getAll(sender);
-
             var names = Stream.concat(fakes.stream().map(Player::getName), Stream.of("-a"));
+            // 标签补全
+            var tagNames = manager.getByTag(sender, arg.startsWith("*") ? arg.substring(1) : arg)
+                    .stream().map(fp -> "*" + arg).distinct();
+            names = Stream.concat(names, tagNames);
             if (!arg.isEmpty()) {
                 names = names.filter(n -> n.toLowerCase().contains(arg));
             }
-
             return names.toArray(String[]::new);
         }));
     }

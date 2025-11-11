@@ -221,4 +221,32 @@ public interface NMSServerPlayer {
      */
     void swapItemWithOffhand();
 
+    /**
+     * 添加标签
+     * @param tag 标签
+     * @return 是否添加成功
+     */
+    boolean addTag(@NotNull String tag);
+
+    /**
+     * 移除标签
+     * @param tag 标签
+     * @return 是否移除成功
+     */
+    boolean removeTag(@NotNull String tag);
+
+    /**
+     * 是否拥有标签
+     * @param tag 标签
+     * @return 是否拥有
+     */
+    boolean hasTag(@NotNull String tag);
+
+    /**
+     * 获取所有标签
+     * @return 标签集合
+     */
+    @NotNull
+    java.util.Set<String> getTags();
+
 }
