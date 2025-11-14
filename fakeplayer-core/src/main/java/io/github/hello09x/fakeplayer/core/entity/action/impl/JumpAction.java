@@ -32,5 +32,6 @@ public class JumpAction implements Action {
 
     @Override
     public void stop() {
+        player.setJumping(false);
     }
 }

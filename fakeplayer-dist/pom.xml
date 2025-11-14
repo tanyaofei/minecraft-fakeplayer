@@ -114,6 +114,18 @@
             <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_21_9</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.hello09x.fakeplayer</groupId>
+            <artifactId>fakeplayer-v1_21_10</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -204,6 +216,16 @@
                                     </fileset>
                                 </copy>
                                 <copy tofile="../server-1.21.8/plugins/fakeplayer.jar">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="fakeplayer-${revision}.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy tofile="../server-1.21.9/plugins/fakeplayer.jar">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="fakeplayer-${revision}.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy tofile="../server-1.21.10/plugins/fakeplayer.jar">
                                     <fileset dir="${project.build.directory}">
                                         <include name="fakeplayer-${revision}.jar"/>
                                     </fileset>

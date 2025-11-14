@@ -46,7 +46,7 @@ public class FakePlayerCommandArgument extends Argument<CommandResult> implement
             if (sender == null) {
                 return Suggestions.empty();
             }
-            var commandMap = CommandAPIBukkit.get().getSimpleCommandMap();
+            var commandMap = CommandAPIBukkit.get().getNMS().getSimpleCommandMap();
             var command = info.currentArg();
 
             // Setup context for errors
@@ -194,7 +194,7 @@ public class FakePlayerCommandArgument extends Argument<CommandResult> implement
     @Override
     public <CommandSourceStack> CommandResult parseArgument(CommandContext<CommandSourceStack> cmdCtx, String key, CommandArguments previousArgs) throws CommandSyntaxException {
         var command = cmdCtx.getArgument(key, String.class);
-        var commandMap = CommandAPIBukkit.get().getSimpleCommandMap();
+        var commandMap = CommandAPIBukkit.get().getNMS().getSimpleCommandMap();
         var context = new StringReader(command);
 
         var sender = CommandAPIBukkit.<CommandSourceStack>get().getSenderForCommand(cmdCtx, false).getSource();
