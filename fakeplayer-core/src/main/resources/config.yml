@@ -135,10 +135,10 @@ persistent-data: true
 kick-on-dead: true
 
 
-# 服务器最近 5 分钟平均 TPS 低于这个值清除所有假人
-# 每 60 秒检测一次
+# 服务器最近 1 分钟平均 TPS 低于这个值将降低 1 假人上限，玩家超出上限的假人将被移除
+# 每 60 秒检测一次，持续卡顿将降低假人上限降直至 0；无卡顿则恢复 1 上限直至初始值
 # 默认: 0, 即不开启, 因为移除假人可能导致玩家红石机器出问题, 按需开启吧
-# Server will detect tps every 5 minutes, if the average tps is lower than this value, all fake players will be removed
+# Server will detect tps every 5 minutes, if the average tps is lower than this value, fakeplayer limits will gradually reduce to 0
 # Default: 0, means disabled
 # Tips:
 #    It's not recommended to enable this option, as it may cause the redstone machine to malfunction
