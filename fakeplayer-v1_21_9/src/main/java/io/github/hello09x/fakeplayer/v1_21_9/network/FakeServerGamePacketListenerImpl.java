@@ -8,6 +8,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
+import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,6 +57,8 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
             this.handleCustomPayloadPacket(p);
         } else if (packet instanceof ClientboundSetEntityMotionPacket p) {
             this.handleClientboundSetEntityMotionPacket(p);
+        } else if (packet instanceof ClientboundRespawnPacket p) {
+            this.handleClientboundRespawnPacket(p);
         }
     }
 
@@ -99,6 +102,13 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
 
         var message = getDiscardedPayloadData(discardedPayload);
         recipient.sendPluginMessage(Main.getInstance(), BUNGEE_CORD_CHANNEL, message);
+    }
+
+    private void handleClientboundRespawnPacket(@NotNull ClientboundRespawnPacket packet) {
+        // This packet is sent whenever the player changes dimensions,
+        // in which case we need to complete the dimension change.
+        // Otherwise the player will be invulnerable.
+        this.player.hasChangedDimension();
     }
 
     private byte[] getDiscardedPayloadData(@NotNull DiscardedPayload payload) {
