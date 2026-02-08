@@ -30,6 +30,7 @@
         <module>fakeplayer-v1_21_8</module>
         <module>fakeplayer-v1_21_9</module>
         <module>fakeplayer-v1_21_10</module>
+        <module>fakeplayer-v1_21_11</module>
     </modules>
 
     <properties>
