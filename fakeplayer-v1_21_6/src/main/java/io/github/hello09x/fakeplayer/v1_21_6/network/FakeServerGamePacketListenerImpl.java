@@ -113,16 +113,4 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
         }
     }
 
-    @Override
-    public void disconnect(net.minecraft.network.chat.Component reason) {
-        this.connection.disconnect(reason);
-        this.onDisconnect(reason);
-    }
-
-    @Override
-    public void disconnect(net.minecraft.network.DisconnectionDetails details) {
-        this.connection.disconnect(details);
-        this.onDisconnect(details);
-    }
-
 }
