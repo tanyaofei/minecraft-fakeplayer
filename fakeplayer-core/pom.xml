@@ -78,19 +78,17 @@
         </dependency>
 
         <dependency>
-            <groupId>OpenInv</groupId>
-            <artifactId>OpenInv</artifactId>
-            <version>SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/OpenInv.jar</systemPath>
+            <groupId>com.github.Jikoo.OpenInv</groupId>
+            <artifactId>openinvapi</artifactId>
+            <version>4.4.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>PlaceholderAPI</groupId>
-            <artifactId>PlaceholderAPI</artifactId>
-            <version>SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/PlaceholderAPI-2.11.6.jar</systemPath>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
