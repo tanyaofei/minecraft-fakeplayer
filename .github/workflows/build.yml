@@ -71,17 +71,17 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java ${{ matrix.java }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ matrix.java }}
 
       - name: Restore NMS cache
         id: nms-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository/org/spigotmc
           key: nms-${{ runner.os }}-${{ matrix.minecraft }}-${{ hashFiles('.github/workflows/build.yml') }}
@@ -104,14 +104,14 @@ jobs:
       - name: Stage NMS repository
         shell: bash
         run: |
-          mkdir -p .nms-repository
-          cp -R "${HOME}/.m2/repository/org/spigotmc/." .nms-repository/
+          mkdir -p nms-repository
+          cp -R "${HOME}/.m2/repository/org/spigotmc/." nms-repository/
 
       - name: Upload NMS repository
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: nms-${{ matrix.minecraft }}
-          path: .nms-repository
+          path: nms-repository
           if-no-files-found: error
           retention-days: 1
 
@@ -123,27 +123,27 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "25"
           cache: maven
 
       - name: Restore all NMS repositories
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: nms-*
-          path: .nms-repository
+          path: nms-repository
           merge-multiple: true
 
       - name: Install NMS repositories
         shell: bash
         run: |
           mkdir -p "${HOME}/.m2/repository/org/spigotmc"
-          cp -R .nms-repository/. "${HOME}/.m2/repository/org/spigotmc/"
+          cp -R nms-repository/. "${HOME}/.m2/repository/org/spigotmc/"
 
       - name: Build universal plugin
         run: mvn --batch-mode --no-transfer-progress clean package -DskipTests
@@ -153,7 +153,7 @@ jobs:
         run: sha256sum target/fakeplayer-*.jar > target/SHA256SUMS
 
       - name: Upload plugin
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: fakeplayer-${{ github.sha }}
           path: |
