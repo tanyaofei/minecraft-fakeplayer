@@ -61,10 +61,4 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
         recipient.sendPluginMessage(Main.getInstance(), channel, message);
     }
 
-    @Override
-    public void disconnect(net.minecraft.network.chat.Component reason) {
-        this.connection.disconnect(reason);
-        this.onDisconnect(reason);
-    }
-
 }
