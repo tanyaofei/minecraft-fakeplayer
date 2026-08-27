@@ -16,15 +16,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl implements NMSServerGamePacketListener {
+public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl
+        implements NMSServerGamePacketListener {
 
     private final FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
 
     public FakeServerGamePacketListenerImpl(
             @NotNull MinecraftServer server,
             @NotNull Connection connection,
-            @NotNull ServerPlayer player
-    ) {
+            @NotNull ServerPlayer player) {
         super(server, connection, player);
         Optional.ofNullable(Bukkit.getPlayer(player.getUUID()))
                 .map(CraftPlayer.class::cast)
@@ -41,7 +41,8 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
     }
 
     private void handleCustomPayloadPacket(@NotNull ClientboundCustomPayloadPacket packet) {
-        var channel = StandardMessenger.validateAndCorrectChannel(packet.getIdentifier().getNamespace() + ":" + packet.getIdentifier().getPath());
+        var channel = StandardMessenger.validateAndCorrectChannel(
+                packet.getIdentifier().getNamespace() + ":" + packet.getIdentifier().getPath());
         if (!channel.equals(BUNGEE_CORD_CHANNEL)) {
             return;
         }

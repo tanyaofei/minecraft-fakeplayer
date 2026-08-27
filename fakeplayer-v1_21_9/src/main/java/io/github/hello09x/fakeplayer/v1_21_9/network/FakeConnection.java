@@ -27,7 +27,7 @@ public class FakeConnection extends Connection {
 
     @Override
     public boolean isConnected() {
-        return true;
+        return this.channel != null && this.channel.isOpen();
     }
 
     @Override
@@ -44,5 +44,23 @@ public class FakeConnection extends Connection {
     public void send(Packet<?> packet) {
 
     }
+
+    @Override
+    public void disconnect(net.minecraft.network.chat.Component reason) {
+        if (this.channel instanceof FakeChannel) {
+            ((FakeChannel) this.channel).close();
+        }
+        super.disconnect(reason);
+    }
+
+    @Override
+    public void disconnect(net.minecraft.network.DisconnectionDetails details) {
+        if (this.channel instanceof FakeChannel) {
+            ((FakeChannel) this.channel).close();
+        }
+        super.disconnect(details);
+    }
+
+
 
 }

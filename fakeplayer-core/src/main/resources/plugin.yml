@@ -14,12 +14,14 @@ softdepend:
 permissions:
   fakeplayer.command.spawn:
     description: 'Allow player to run /fp spawn'
+    default: true
   fakeplayer.command.spawn.name:
     description: 'Allow player to run /fp spawn and specify a name'
   fakeplayer.command.spawn.location:
     description: 'Allow player to run /fp spawn and specify a spawn location'
   fakeplayer.command.kill:
     description: 'Allow player to run /fp kill'
+    default: true
   fakeplayer.command.list:
     description: 'Allow player to run /fp list'
   fakeplayer.command.select:

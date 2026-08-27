@@ -21,7 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl implements NMSServerGamePacketListener {
+public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl
+        implements NMSServerGamePacketListener {
 
     private final FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
     private final static Logger log = Main.getInstance().getLogger();
@@ -30,8 +31,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
             @NotNull MinecraftServer server,
             @NotNull Connection connection,
             @NotNull ServerPlayer player,
-            @NotNull CommonListenerCookie cookie
-    ) {
+            @NotNull CommonListenerCookie cookie) {
         super(server, connection, player, cookie);
         Optional.ofNullable(Bukkit.getPlayer(player.getUUID()))
                 .ifPresent(p -> this.addChannel(p, BUNGEE_CORD_CORRECTED_CHANNEL));
@@ -106,7 +106,8 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
             return payload.data().array();
         } catch (NoSuchMethodError e) {
             try {
-                return (byte[]) payload.getClass().getMethod("data").invoke(payload);   // 1.21.5 actual is  `public final byte[] data() {}`
+                return (byte[]) payload.getClass().getMethod("data").invoke(payload); // 1.21.5 actual is `public final
+                                                                                      // byte[] data() {}`
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
                 throw Lombok.sneakyThrow(e);
             }

@@ -20,7 +20,7 @@ public class FakeConnection extends Connection {
 
     @Override
     public boolean isConnected() {
-        return true;
+        return this.channel != null && this.channel.isOpen();
     }
 
     @Override

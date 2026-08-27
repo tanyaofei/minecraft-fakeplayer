@@ -241,10 +241,10 @@ public class Fakeplayer {
      * @return 是否是创建者
      */
     public boolean isCreatedBy(@NotNull CommandSender sender) {
-        if (this.creator instanceof Player pc && sender instanceof Player ps) {
-            return pc.getUniqueId().equals(ps.getUniqueId());
+        if (this.creator instanceof Player pc) {
+            return sender instanceof Player ps && pc.getUniqueId().equals(ps.getUniqueId());
         }
-        return creator.getClass() == sender.getClass() && creator.getName().equals(sender.getName());
+        return !(sender instanceof Player) && creator.getName().equals(sender.getName());
     }
 
     public @NotNull UUID getUUID() {

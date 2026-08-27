@@ -8,10 +8,11 @@
 
 仅支持 `Paper` 及其下游如 (`Purpur`) 核心，所有测试均在 `Purpur` 进行，因此 `Purpur` 的兼容性最高
 
-要求使用 JAVA 21 及以上
+Minecraft 1.20.x/1.21.x 要求 Java 21，Minecraft 26.x 要求 Java 25
 
 + 支持 `1.20`, `1.20.2`, `1.20.3`, `1.20.4`, `1.20.5`, `1.20.6`
 + 支持 `1.21`
++ 支持 `26.1`, `26.1.1`, `26.1.2`, `26.2`
 
 ## 特性
 
@@ -23,7 +24,7 @@
 
 ## 前置插件:
 
-- [CommandAPI](https://commandapi.jorel.dev) (>=9.5.0, <= 9.7.0)
+- [CommandAPI](https://commandapi.jorel.dev) 11.2.0 或更高版本
 
 ## 配置文件
 

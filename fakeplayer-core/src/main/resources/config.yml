@@ -263,15 +263,6 @@ after-quit-commands:
   - ''
 
 
-# 允许玩家让假人执行的命令
-# 在这里你可以放一些你服务器的命令，玩家就可以执行
-# 例如添加 /sit 之后, 玩家可以通过 '/fp cmd myfakeplayer sit' 让假人坐下来
-# ！！！注意: 在这里定义的命令, 不需要 fakeplayer.cmd 权限！！！
-# ！！！注意: 给了 fakeplayer.cmd 命令，玩家就能够控制假人执行所有(有权限的)命令！！！
-# Define which commands can be executed by `/fp cmd` without 'fakeplayer.cmd' permission
-allow-commands:
-  - ''
-  - ''
 
 # Default Features of fake players
 # It takes effect when the player has never changed the config by '/fp config' or has no permission.

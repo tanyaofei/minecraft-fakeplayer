@@ -4,9 +4,15 @@ Here is a simple introduction lead you to build this project
 
 ## Build NMS Dependencies
 
-Mojang does not allow anyone to publish the remapped NMS jar to any public repository,
-so you need to build it yourself
+Spigot NMS artifacts are not published to a public Maven repository, so build each
+target version locally with [BuildTools](https://www.spigotmc.org/wiki/buildtools/):
 
-1. Download [BuildTools](https://www.spigotmc.org/wiki/buildtools/)
-2. execute `java -jar BuildTools.jar --rev 1.21 --remapped` to install remapped NMS 1.21 to your local repository. _You might need to install other version depending on projects' requirements._
+```shell
+java -jar BuildTools.jar --rev 1.21 --remapped
+java -jar BuildTools.jar --rev 26.1.2
+```
+
+Minecraft 26.1 and 26.1.1 are binary-compatible with 26.1.2, so the 26.1 series
+uses the 26.1.2 artifact. The 26.2 bridge reuses that implementation and does not
+require a separate NMS artifact.
 

@@ -4,7 +4,7 @@
 
 English | [简体中文](README_zh.md)
 
-This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon/fabric-carpet) for Minecraft `1.20.x` and `1.21.x` and above.
+This server-side plugin supports Minecraft `1.20.x`, `1.21.x`, `26.1`, `26.1.1`, `26.1.2`, and `26.2`.
 
 [Click me](https://youtu.be/NePaDz-P5nI) to visit a demo video.
 
@@ -19,7 +19,8 @@ This is a server side plugin inspired by [Carpet-Mod](https://github.com/gnembon
 ## Requirements
 
 + [Paper](https://papermc.io) or [Purpur](http://purpurmc.org) software
-+ [CommandAPI](https://commandapi.jorel.dev) Plugin (Any version **except** `10.0.0`)
++ [CommandAPI](https://commandapi.jorel.dev) 11.2.0 or newer
++ Java 21 for Minecraft 1.20.x/1.21.x; Java 25 for Minecraft 26.x
 
 ## Config file
 

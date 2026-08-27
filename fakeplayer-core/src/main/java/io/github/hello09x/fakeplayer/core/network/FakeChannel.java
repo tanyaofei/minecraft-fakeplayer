@@ -13,6 +13,7 @@ public class FakeChannel extends AbstractChannel {
     private final ChannelConfig config = new DefaultChannelConfig(this);
     private final ChannelPipeline pipeline = new FakeChannelPipeline(this);
     private final InetAddress address;
+    private volatile boolean open = true;
 
     public FakeChannel(@Nullable Channel parent, @NotNull InetAddress address) {
         super(parent);
@@ -35,10 +36,14 @@ public class FakeChannel extends AbstractChannel {
 
     @Override
     protected void doClose() throws Exception {
+        org.bukkit.Bukkit.getLogger().info("FakeChannel.doClose() called");
+        this.open = false;
     }
 
     @Override
     protected void doDisconnect() throws Exception {
+        org.bukkit.Bukkit.getLogger().info("FakeChannel.doDisconnect() called");
+        this.open = false;
     }
 
     @Override
@@ -54,7 +59,7 @@ public class FakeChannel extends AbstractChannel {
 
     @Override
     public boolean isActive() {
-        return true;
+        return this.open;
     }
 
     @Override
@@ -64,7 +69,31 @@ public class FakeChannel extends AbstractChannel {
 
     @Override
     public boolean isOpen() {
-        return true;
+        return this.open;
+    }
+
+    @Override
+    public ChannelFuture close() {
+        this.open = false;
+        return super.close();
+    }
+
+    @Override
+    public ChannelFuture close(ChannelPromise promise) {
+        this.open = false;
+        return super.close(promise);
+    }
+
+    @Override
+    public ChannelFuture disconnect() {
+        this.open = false;
+        return super.disconnect();
+    }
+
+    @Override
+    public ChannelFuture disconnect(ChannelPromise promise) {
+        this.open = false;
+        return super.disconnect(promise);
     }
 
     @Override

@@ -56,14 +56,26 @@ public abstract class AbstractCommand {
      */
     protected @NotNull Player getFakeplayer(@NotNull CommandSender sender, @NotNull CommandArguments args, @Nullable Predicate<Player> predicate) throws WrapperCommandSyntaxException {
         var fake = (Player) args.get("name");
-        if (fake == null && sender instanceof Player p && args.getRaw("name") == null) {
-            fake = manager.getSelection(p);
-        }
-        if (fake != null) {
+        var hasNameArg = args.getRaw("name") != null;
+
+        if (hasNameArg) {
+            if (fake == null) {
+                throw CommandAPI.failWithString(ComponentUtils.toString(
+                        translatable("fakeplayer.command.generic.error.non-matching-fake-player"),
+                        TranslatorUtils.getLocale(sender)
+                ));
+            }
             return fake;
         }
-        var locale = TranslatorUtils.getLocale(sender);
 
+        if (sender instanceof Player p) {
+            fake = manager.getSelection(p);
+            if (fake != null) {
+                return fake;
+            }
+        }
+
+        var locale = TranslatorUtils.getLocale(sender);
         var all = manager.getAll(sender, predicate);
         var count = all.size();
         return switch (count) {
@@ -95,32 +107,37 @@ public abstract class AbstractCommand {
     protected @NotNull List<Player> getFakeplayers(@NotNull CommandSender sender, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
         @SuppressWarnings("unchecked")
         var players = (List<Player>) args.get("names");
+        var hasNamesArg = args.getRaw("names") != null;
 
-        // 优先选中的假人
-        if (players == null || players.isEmpty()) {
-            var fake = manager.getSelection(sender);
+        if (hasNamesArg) {
+            if (players == null || players.isEmpty()) {
+                throw CommandAPI.failWithString(ComponentUtils.toString(
+                        translatable("fakeplayer.command.generic.error.non-matching-fake-player"),
+                        TranslatorUtils.getLocale(sender)
+                ));
+            }
+            return players;
+        }
+
+        if (sender instanceof Player p) {
+            var fake = manager.getSelection(p);
             if (fake != null) {
                 return Collections.singletonList(fake);
             }
         }
 
-        // 查找唯一假人
-        if (players == null || players.isEmpty()) {
-            var fakeplayers = manager.getAll(sender);
-            return switch (fakeplayers.size()) {
-                case 1 -> fakeplayers;
-                case 0 -> throw CommandAPI.failWithString(ComponentUtils.toString(
-                        translatable("fakeplayer.command.generic.error.non-fake-player"),
-                        TranslatorUtils.getLocale(sender)
-                ));
-                default -> throw CommandAPI.failWithString(ComponentUtils.toString(
-                        translatable("fakeplayer.command.generic.error.name-required"),
-                        TranslatorUtils.getLocale(sender)
-                ));
-            };
-        }
-
-        return players;
+        var fakeplayers = manager.getAll(sender);
+        return switch (fakeplayers.size()) {
+            case 1 -> fakeplayers;
+            case 0 -> throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.generic.error.non-fake-player"),
+                    TranslatorUtils.getLocale(sender)
+            ));
+            default -> throw CommandAPI.failWithString(ComponentUtils.toString(
+                    translatable("fakeplayer.command.generic.error.name-required"),
+                    TranslatorUtils.getLocale(sender)
+            ));
+        };
     }
 
 }
