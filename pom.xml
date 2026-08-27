@@ -30,12 +30,14 @@
         <module>fakeplayer-v1_21_8</module>
         <module>fakeplayer-v1_21_9</module>
         <module>fakeplayer-v1_21_10</module>
+        <module>fakeplayer-v26_1_2</module>
+        <module>fakeplayer-v26_2</module>
     </modules>
 
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>0.3.19</revision>
+        <revision>0.3.20</revision>
 
         <detools.version>0.1.7-SNAPSHOT</detools.version>
     </properties>
@@ -107,7 +109,7 @@
             <dependency>
                 <groupId>dev.jorel</groupId>
                 <artifactId>commandapi-paper-core</artifactId>
-                <version>11.0.0</version>
+                <version>11.2.0</version>
                 <scope>provided</scope>
             </dependency>
 
