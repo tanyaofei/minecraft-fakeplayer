@@ -67,10 +67,4 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
         this.onDisconnect(reason);
     }
 
-    @Override
-    public void disconnect(net.minecraft.network.DisconnectionDetails details) {
-        this.connection.disconnect(details);
-        this.onDisconnect(details);
-    }
-
 }
